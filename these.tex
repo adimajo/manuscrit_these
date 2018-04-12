@@ -15,6 +15,8 @@
 %\usepackage[autostyle]{csquotes}
 %\usepackage[backend=biber,safeinputenc]{biblatex}
 \usepackage{hyperref}
+\usepackage{biblatex}
+\usepackage{glossaries}
 %\usepackage[xindy,acronyms,symbols]{glossaries}
 %
 % (Facultatif) Génération de l'index (obligatoire si un package d'index, par
@@ -23,17 +25,17 @@
 %
 % (Facultatif) Spécification de la ou des ressources bibliographiques
 % (obligatoire si le package « biblatex » est chargé)
-% \addbibresource{auxiliaires/bibliographie.bib}
+\addbibresource{auxiliaires/bibliographie.bib}
 % \addbibresource{auxiliaires/}
 %
 % (Facultatif) Génération du glossaire (obligatoire si le package « glossaries »
 % est chargé)
-% \makeglossaries
+\makeglossaries
 %
 % (Facultatif) Configuration des styles du glossaire et de la liste d'acronymes
 % (à n'utiliser que si le package « glossaries » est chargé)
-% \setglossarystyle{indexhypergroup}
-% \setacronymstyle{long-sc-short}
+\setglossarystyle{indexhypergroup}
+\setacronymstyle{long-sc-short}
 %
 % (Facultatif) Spécification de la ou des ressources terminologiques
 % \loadglsentries{auxiliaires/}
@@ -98,10 +100,10 @@
 % \include{liminaires/avertissement}
 %
 % (Facultatif) Liste des acronymes
-% \printacronyms
+%\printacronyms
 %
 % (Facultatif) Liste des symboles
-% \printsymbols
+\printsymbols
 %
 % (Facultatif) Chapitre d'avant-propos
 % \include{liminaires/avant-propos}
@@ -135,44 +137,46 @@
 % \part{...}
 %
 % Premier chapitre
-% \include{corps/}
+\include{corps/chapter_1_learning}
 %
 % Deuxième chapitre
-% \include{corps/}
+\include{corps/chapter_2_reject}
 %
 % Troisième chapitre
-% \include{corps/}
-%
+\include{corps/chapter_3_target_feature}
 %
 % Deuxième partie éventuelle
 % \part{...}
 %
 % Quatrième chapitre
-% \include{corps/}
+\include{corps/chapter_4_discretization}
 %
 % Cinquième chapitre
-% \include{corps/}
+\include{corps/chapter_5_interactions}
 %
 % Sixième chapitre
-% \include{corps/}
+\include{corps/chapter_6_trees}
+%
+% Septième chapitre
+\include{corps/chapter_7_highdimension}
 %
 % Chapitre  de conclusion (générale)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \include{corps/conclusion}
 %
 % Liste des références bibliographiques
-%\printbibliography
+\printbibliography
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Début de la partie annexe éventuelle
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \appendix
+\appendix
 %
 % Premier chapitre annexe (éventuel)
-% \include{annexes/annexeI}
+\include{annexes/annexeI}
 %
 % Deuxième chapitre annexe (éventuel)
-% \include{annexes/annexeII}
+\include{annexes/annexeII}
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Début de la partie finale
