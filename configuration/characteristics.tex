@@ -1,7 +1,7 @@
 % Auteur de la thèse : prénom (1er argument obligatoire), nom (2e argument
 % obligatoire) et éventuel courriel (argument optionnel). Les éventuels accents
 % devront figurer et le nom /ne/ doit /pas/ être saisi en capitales
-\author[adrien.ehrhardt@centraliens-lille.org]{Adrien}{Ehrhardt}
+\author[mailto:adrien.ehrhardt@centraliens-lille.org]{Adrien}{Ehrhardt}
 %
 % Titre de la thèse dans la langue principale (argument obligatoire) et dans la
 % langue secondaire (argument optionnel)
@@ -13,11 +13,11 @@
 %
 % Champ disciplinaire dans la langue principale (argument obligatoire) et dans
 % la langue secondaire (argument optionnel)
-\academicfield[Mathématiques appliquées]{Applied Mathematics}
+\academicfield[Applied Mathematics]{Mathématiques et leurs interactions}
 %
 % (Facultatif) Spécialité dans la langue principale (argument obligatoire) et
 % dans la langue secondaire (argument optionnel)
-\speciality[]{}
+\speciality[Statistics]{Statistique}
 %
 % Date de la soutenance, au format {jour}{mois}{année} donnés sous forme de
 % nombres
@@ -35,6 +35,11 @@
 %
 % Nom (argument obligatoire) de l'institut (principal en cas de cotutelle)
 \institute[logo=logos/logo_lille1.png,url=https://www.univ-lille.fr/]{Université de Lille}
+
+\company[logo=logos/logo-cacf-inria]{Crédit Agricole Consumer Finance - Inria Lille-Nord Europe}
+
+%\company[logo=logos/logo-inria]{Inria Lille-Nord Europe}
+
 %
 % (Facultatif) En cas de cotutelle (normalement, seulement dans le cas de
 % cotutelle internationale), nom (argument obligatoire) du second institut
@@ -52,9 +57,19 @@ telephone=+33 (0)3 59 57 78 00,
 fax=+33 (0)3 59 57 78 50,
 email=contact-lille@inria.fr,
 url=https://www.inria.fr/centre/lille
-]{Inria Lille Nord-Europe}{%
+]{Équipe-projet M$\Theta$DAL}{%
+Inria Lille Nord-Europe \\
 40 Avenue Halley  \\
 59650 Villeneuve-d'Ascq}
+\laboratory[
+logo=logos/logo-painleve.png,
+telephone=(+33) 03 20 43 48 50,
+url=https://math.univ-lille1.fr/
+]{Laboratoire Paul Painlevé}{%
+  CNRS U.M.R. 8524\\
+  59655 Villeneuve d'Ascq Cedex\\
+  France}
+  
 %
 % Directeur(s) de thèse et membres du jury, saisis au moyen des commandes
 % \supervisor, \cosupervisor, \comonitor, \referee, \committeepresident,
@@ -72,8 +87,8 @@ url=https://www.inria.fr/centre/lille
 %   mots clés soient accordés en genre.
 %
 \supervisor[professor,affiliation=Université de Lille]{Christophe}{Biernacki}
-\cosupervisor[associateprofessor,affiliation=Université de Lille]{Philippe}{Heinrich}
-\cosupervisor[associateprofessor,affiliation=Université de Lille]{Vincent}{Vandewalle}
+\comonitor[associateprofessor,affiliation=Université de Lille]{Philippe}{Heinrich}
+\comonitor[associateprofessor,affiliation=Université de Lille]{Vincent}{Vandewalle}
 % \comonitor[,affiliation=]{}{}
 \referee[,affiliation=]{}{}
 \referee[,affiliation=]{}{}
@@ -90,5 +105,5 @@ url=https://www.inria.fr/centre/lille
 % Préparation des mots clés dans la langue principale (1er argument) et dans la
 % langue secondaire (2e argument)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\keywords{}{}
+\keywords{scoring, risque, crédit, prédiction, discrétisation, segmentation}{scoring, credit, risk, predictin, discretization, clustering}
 
