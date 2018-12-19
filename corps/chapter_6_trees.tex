@@ -1,1 +1,59 @@
-\chapter{Tree-structure segmentation for logistic regression}
+\chapter{Tree-structure segmentation for logistic regression} \label{chap6}
+
+
+
+\tikzstyle{level 1}=[level distance=1.5cm, sibling distance=7cm]
+\tikzstyle{level 2}=[level distance=1.5cm, sibling distance=4cm]
+\tikzstyle{level 3}=[level distance=2cm, sibling distance=2cm]
+
+\begin{figure}
+\resizebox{\textwidth}{!}{
+\centering
+\begin{tikzpicture}
+  [
+    sibling distance        = 15em,
+    level distance          = 5em,
+    edge from parent/.style = {draw, -latex},
+    every node/.style       = {font=\footnotesize},
+    sloped
+  ]
+  \node [root] {\textcolor{black}{Clientèle}}
+    child { node [dummy] {}
+      child { node [dummy] {}
+        child { node [env] {\textcolor{black}{$p_{\theta_1}(y|x)$}}
+          edge from parent node [below] {Retraités} }
+        child { node [env] {\textcolor{black}{$p_{\theta_2}(y|x)$}}
+          edge from parent node [above] {Salariés} }
+        child { node [env] {\textcolor{black}{$p_{\theta_3}(y|x)$}}
+                edge from parent node [above] {Autres} }
+        edge from parent node [above] {Crédit renouvelable} }
+      child { node [env] {\textcolor{black}{$p_{\theta_4}(y|x)$}}
+              edge from parent node [above, align=center]
+                {Amortissable} }
+              edge from parent node [above] {Electroménager} }
+    child { node [dummy] {}
+      child { node [dummy] {}
+        child { node [env] {\textcolor{black}{$p_{\theta_5}(y|x)$}}
+          edge from parent node [above] {Location} }
+        child { node [env] {\textcolor{black}{$p_{\theta_6}(y|x)$}}
+                edge from parent node [above] {Amortissable} }
+        edge from parent node [above] {Fiat} }
+      child { node [env] {\textcolor{black}{$p_{\theta_7}(y|x)$}}
+              edge from parent node [above, align=center]
+                {Kawasaki} }
+              edge from parent node [above] {Automobile} };
+\end{tikzpicture}
+}
+\caption{Cartographie simplifiée de la chaîne de construction des scores.} 
+\label{fig:arbre}
+\end{figure}
+
+
+
+\bigskip
+
+Ce chapitre.
+
+
+\printbibliography[heading=subbibliography, title=Références du chapitre 5]
+

@@ -247,3 +247,20 @@ TSWLatexianTemp*
 # standalone packages
 *.sta
 
+
+########## Adrien
+
+# MTC
+*.mtc*
+
+# SLS
+*.sls
+
+# SLO
+*.slo
+
+# SLG
+*.slg
+
+# PDF
+*these.pdf

@@ -33,6 +33,14 @@
 \usepackage{csquotes}
 \usepackage{textcomp}
 \usepackage{bm}
+\usepackage{nameref}
+\usepackage{amsthm}
+\usepackage{dsfont}
+\usepackage{enumerate}
+\usepackage{subcaption}
+\usepackage[french]{minitoc}
+
+\usetikzlibrary{arrows,intersections,positioning,shapes.arrows,babel}
 
 \usepackage[xindy,acronyms,symbols]{glossaries}
 %
@@ -46,6 +54,8 @@
 % \addbibresource{auxiliaires/}
 \addbibresource{bibtex_files/introduction/introduction.bib}
 \addbibresource{bibtex_files/chapitre1/chapitre1.bib}
+\addbibresource{bibtex_files/chapitre4/chapitre4.bib}
+\addbibresource{bibtex_files/chapitre5/chapitre5.bib}
 %
 % (Facultatif) Génération du glossaire (obligatoire si le package « glossaries »
 % est chargé)
@@ -126,7 +136,8 @@
 % \include{liminaires/avant-propos}
 %
 % Sommaire
-\tableofcontents[depth=chapter,name=Sommaire]
+\dominitoc
+\tableofcontents[depth=section,name=Sommaire]
 %
 % (Facultatif) Liste des tableaux
 \listoftables
@@ -167,7 +178,7 @@
 \include{corps/chapter_2_reject}
 %
 % Troisième chapitre
-\include{corps/chapter_3_target_feature}
+%\include{corps/chapter_3_target_feature}
 %
 % Deuxième partie éventuelle
 % \part{...}
@@ -201,6 +212,9 @@
 %
 % Deuxième chapitre annexe (éventuel)
 \include{annexes/annexeII}
+%
+% Troisième chapitre annexe (éventuel)
+\include{annexes/annexeIII}
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Début de la partie finale

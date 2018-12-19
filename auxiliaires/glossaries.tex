@@ -4,6 +4,11 @@
 
 \newacronym{lr}{LR}{régression logistique}
 
+\newacronym{pdf}{pdf}{densité de probabilité}
+
+\newacronym{sem}{SEM}{Stochastic Expectation Maximization}
+
+\newacronym{em}{EM}{Expectation Maximization}
 
 % companies
 
@@ -35,6 +40,13 @@
 	name = location,
 	description = {La location est elle-même commercialisée sous deux formes : la location avec option d'achat (L.O.A.), pour laquelle le client peut décider d'acquérir le bien loué en fin d'échéancier pour un montant d'option d'achat fixé à l'avance et la location longue-durée (L.L.D.) pour laquelle c'est le magasin / concessionnaire qui dispose d'une option d'achat.},
 	plural = locations
+}
+
+\newglossaryentry{cut}
+{
+	name = cut,
+	description = {Le cut d'un score est un seuil qui représente la note (ou, de façon équivalente, la probabilité) à partir de laquelle un client est accepté ; en-dessous de celui-ci, le client est jugé trop risqué et il est refusé.},
+	plural = cuts
 }
 
 
@@ -71,7 +83,7 @@
 \newglossaryentry{x}{
         name={réalisation de $X$},
         description={},
-        symbol={\ensuremath{\bm{X}}},
+        symbol={\ensuremath{{x}}},
         type=symbols
 }
 
@@ -90,7 +102,7 @@
 }
 
 \newglossaryentry{xij}{
-        name={Réalisation de $X_j$ pour le $i^{\text{ème}}$ client},
+        name={réalisation de $X_j$ pour le $i^{\text{ème}}$ client},
         description={},
         symbol={\ensuremath{x_{i,j}}},
         type=symbols
@@ -110,12 +122,20 @@
         type=symbols
 }
 
-\newglossaryentry{bbxi}{
+\newglossaryentry{bxi}{
         name={Ligne de caractéristiques du client $i$ dans la matrice de design $\mathbf{x}$},
         description={},
-        symbol={\ensuremath{\mathbf{x}_i}},
+        symbol={\ensuremath{\bm{x}_i}},
         type=symbols
 }
+
+\newglossaryentry{bbxj}{
+        name={Colonne d'observations de la caractéristique $j$ de la matrice de design $\mathbf{x}$},
+        description={},
+        symbol={\ensuremath{\bm{x}_i}},
+        type=symbols
+}
+
 
 \newglossaryentry{Z}{
         name={vecteur aléatoire de caractéristiques discrètes / groupées},
@@ -134,7 +154,7 @@
 \newglossaryentry{Y}{
         name={variable aléatoire binaire dissociant ‘‘bons'' et ‘‘mauvais'' clients},
         description={},
-        symbol={\ensuremath{z}},
+        symbol={\ensuremath{Y}},
         type=symbols
 }
 
@@ -152,9 +172,16 @@
         type=symbols
 }
 
-\newglossaryentry{btheta}{
+\newglossaryentry{bth}{
         name={vecteur de paramètres},
         description={},
         symbol={\ensuremath{\bm{\theta}}},
+        type=symbols
+}
+
+\newglossaryentry{KL}{
+        name={divergence de Kullback-Leibler},
+        description={},
+        symbol={\ensuremath{\text{KL}}},
         type=symbols
 }
