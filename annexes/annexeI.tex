@@ -7,6 +7,52 @@
 
 \section{Discretization methods}
 
+\subsection{Méthodes non supervisées : \textit{equal-width} et \textit{equal-length}}
+
+
+\begin{algorithm}[H]
+ \KwData{$\bm{x},(m_j)_1^d$}
+ \KwResult{$\bm{e}$}
+ \For{$j=1$ to $d$}{
+Sort $\bm{x}^j$ by ascending order\;
+\For{$i=1$ to $n$}{
+Set $e_i^j = \begin{cases} 1 \text{ si } x_i^j \leq x_{\left\lceil{{\frac{n}{m_j}}}\right\rceil}^j \\ o \text{ si } x_{\left\lceil{{\frac{(o-1)*n}{m_j}}}\right\rceil}^j < x_i^j \leq x_{\left\lceil{{\frac{o*n}{m_j}}}\right\rceil}^j \\ m_j \text{ si } x_{\left\lceil{{\frac{(m_j-1)*n}{m_j}}}\right\rceil}^j < x_i^j \end{cases}$
+}
+}
+ \caption{\label{equal-freq-disc} Discrétisation equal-freq.}
+\end{algorithm}
+
+
+
+
+\subsection{Méthodes supervisées univariées : \textit{ChiMerge} et \textit{MDLP}}
+
+
+\subsection{Méthodes proposées : \textit{glmdisc} avec \gls{sem} ou réseau de neurones}
+
+\begin{algorithm}[H]
+ \KwData{$(\bm{x},\bm{y})$}
+ \KwResult{$\bm{e},(\beta_k)_1^{d_1}$,(T$^k)_{d_1}^{d_1+d_2}$}
+ $r = 0$\;
+ Initialization of $\bm{e}^{(r)}$ at random\;
+ \While{$r < $ Maximum number of iteration not reached}{
+  Adjust logistic regression $\hat{\gamma}^{(r)} = \argmax_\gamma \ell(\gamma;\bm{y},\bm{e^{(r)}})$\;
+  ${\bm{e}^{(r+1)}} \leftarrow {\bm{e}^{(r)}}$\;
+  \For{$k \leftarrow 1$ \KwTo $d_1$}{
+   Adjust multinomial logistic regression $\hat{\beta}^{k(r)} = \argmax_\beta \ell(\beta;\bm{e^{k(r)}},\bm{x^k})$\;
+   ${\bm{e}^{k(r+1)}} \leftarrow$ Mult$(p_{\hat{\gamma}^{(r)}}(\bm{y}|\bm{{e}^{(r+1)}}) p_{\hat{\beta}^{k(r)}}(\bm{e}^{k} | \bm{x}^k))$\;
+   ${\bm{e}_{MAP}^{k(r+1)}} \leftarrow \argmax_j p_{\hat{\beta}^{k(r)}}(\bm{E}^{k}=j | \bm{x}^k))$\;
+   }
+  \For{$k \leftarrow d_1+1$ \KwTo $d_1+d_2$}{
+   From the contingency table T$^{k(r)}$ of $\bm{e}^{k(r)}$ against $\bm{x}^k$, calculate the frequencies of each value of $({e}^{k},x^k)$\;
+	${\bm{e}^{k(r+1)}} \leftarrow$ Mult$(p_{\hat{\gamma}^{(r)}}(\bm{y}|\bm{{e}^{(r+1)}}) p_{T^{k(r)}}(\bm{e}^{k} | \bm{x}^k))$\;
+	${\bm{e}_{MAP}^{k(r+1)}} \leftarrow \argmax_j p_{T^{k(r)}}(\bm{E}^{k}=j | \bm{x}^k))$\;
+	}
+   $r \leftarrow r+1$\;
+ }
+ Choose the best logistic regression model from $(p_{\hat{\eta}^{(r)}}(\bm{y} | \bm{e}_{MAP}^{(r)}))_1^{Max}$\;
+ \caption{\label{SEM-disc} Discrétisation multivariée supervisée SEM-Gibbs.}
+\end{algorithm}
 
 \section{Factor levels grouping methods}
 
