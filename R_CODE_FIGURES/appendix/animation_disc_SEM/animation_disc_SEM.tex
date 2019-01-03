@@ -1,0 +1,38 @@
+\documentclass[french, xcolor={rgb,dvipsnames,table,usenames}]{beamer}
+
+\mode<presentation>{
+\usecolortheme{magpie}
+}
+
+\usepackage{animate}
+\usepackage{tikz}
+%\usetikzlibrary{arrows,intersections,positioning,shapes.arrows,decorations.pathreplacing}
+\usepackage{pgfplots}
+\usepackage{fontspec}
+\usepackage{amsfonts}
+\usepackage{bm}
+
+\title{MWE animation}
+
+\begin{document}
+
+% \newlength\figureheight
+% \newlength\figurewidth
+% \setlength\figureheight{8cm}
+% \setlength\figurewidth{11cm}
+ 
+\section{essai}
+
+\begin{frame}
+\frametitle{\secname}
+
+%\animategraphics[autoplay,loop,controls,scale=1]{5}{"False_simulated_data/false_feature_0_iteration1.tex"}{}{}
+\begin{animateinline}[poster=first, controls, palindrome, buttonfg=white]{5}
+\multiframe{200}{i=1+1}{\input{sem_simulated_data/sem_feature_1_iter_\i.tex}}%
+\end{animateinline}
+
+
+\end{frame}
+
+
+\end{document}
