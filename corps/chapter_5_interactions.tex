@@ -6,6 +6,18 @@
 
 \selectlanguage{english}
 
+Continuing my pursuit of interpretable representation learning algorithms for logistic regression, I tackle in this chapter a common problem in \textit{Credit Scoring} and other application contexts relying either on logistic regression or additive models of the form $g(y) = \sum_{j=1}^d \theta_j f_j(x_j)$. To further reduce the model bias discussed in Section~\ref{chap1:sec3} and thus obtain better predictive performance while maintaining interpretability, \textit{Credit Scoring} practitioners are used to introducing pairwise interactions.
+
+
+\section{Motivation}
+
+
+\section{Pairwise interaction screening as a feature selection problem}
+
+
+\section{A novel model selection approach}
+
+
 \section{Discretization and levels merging \textit{with} interactions} \label{sec:discwith}
 
 As described in the introduction, logistic regression is linear in its inputs which does not allow to take into account conditional dependency, see~\cite{berry2010testing}. This problem is often dealt with by sparsely introducing ``interactions'', \textit{i.e.}\ products of two features. Unfortunately, this leads again to a model selection challenge as the number of pairs of features is $\dfrac{d(d-1)}{2}$. We denote by $\bdelta$ the upper triangular matrix with $\delta_{k,\ell} = 1$ if $k < \ell$ and features $k$ and $\ell$ ``interact'' in the logistic regression in the sense of~\cite{berry2010testing}. The logistic regression with interactions $\bdelta$ is thus:
@@ -79,7 +91,7 @@ This algorithm relies on the use of logistic regression, although other predicti
 
 The experiments showed that, as was sensed empirically by statisticians in the field of \textit{Credit Scoring}, discretization, grouping and interactions can indeed provide better models than standard logistic regression. This novel approach allows practitioners to have a fully automized and statistically well-grounded tool that achieves better performance than both \textit{ad hoc} industrial practices and academic discretization heuristics at the price of decent computing time but much less of the practitioner's valuable time.
 
-The code used for numerical experiments is available as packages, in the \textsf{R} programming language on CRAN and in the Python programming language on PyPi. Both packages are named \textit{glmdisc}.
+The code used for numerical experiments is available as packages, in the \textsf{R} programming language on CRAN and in the Python programming language on PyPi. Both packages are named \textit{glmdisc}. \textcolor{red}{à modifier}
 
 
 
@@ -92,13 +104,6 @@ The code used for numerical experiments is available as packages, in the \textsf
 
 
 
-
-% cf article
-
-
-\bigskip
-
-Ce chapitre .
 
 
 \printbibliography[heading=subbibliography, title=Références du chapitre 4]

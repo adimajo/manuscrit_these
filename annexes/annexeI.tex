@@ -1,8 +1,510 @@
 \chapter{Algorithms}
 
-% anglais
+\selectlanguage{english}
 
 \section{Reject Inference methods}
+
+\subsection{Fuzzy Augmentation} \label{fuzzy}
+
+Fuzzy Augmentation can be found in \cite{economix}; it is the following procedure:
+\begin{enumerate}
+\item Construct Scorecard "Known Good Bad" (KGB) $S^{\text{f}}$ with financed clients' data (Figure \ref{fuzzy:sfig1})
+\item Calculate $p(1|x,\hat{\theta}^{\text{f}}) = \text{logit}(S^{\text{f}}(x))$ for rejects (Figure \ref{fuzzy:sfig2})
+\item Infer rejected client $i$ as good with weight $p(1|x,\hat{\theta}^{\text{f}})$ and as bad with weight {\begin{sloppypar} $1-p(1|x,\hat{\theta}^{\text{f}})$ (Figures \ref{fuzzy:sfig2} and \ref{fuzzy:sfig3}) \end{sloppypar} }
+\item Calibrate a new scorecard with the ‘‘augmented'' dataset (Figure \ref{fuzzy:sfig4})
+\end{enumerate}
+
+\begin{figure}
+{\setlength{\parindent}{0cm}
+\begin{multicols}{4}
+\small
+
+\begin{subfigure}[t]{0.22\textwidth}
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth}
+\begin{tabular}{l l}
+\toprule
+\textbf{${\bm{y}}^{\text{f}}$} & \textbf{${\bm{x}}^{\text{f}}$}\\
+\midrule
+1 & 0.562 \\
+1 & 0.910 \\
+0 & 0.430 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+\subcaption{Scorecard $S^{\text{f}}$ on financed loans}
+\label{fuzzy:sfig1}
+\end{subfigure}
+
+\columnbreak
+
+\begin{subfigure}[t]{0.22\textwidth}
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Weight} & \textbf{$\hat{\bm{y}}^{\text{nf}}$} & \textbf{${\bm{x}}^{\text{nf}}$}\\
+\midrule
+0.68 & 1 & 0.347 \\
+0.10 & 1 & 0.140 \\
+0.35 & 1 & 0.295 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+\caption{Inferred good not financed loans and their weights}
+\label{fuzzy:sfig2}
+\end{subfigure}
+
+\columnbreak
+
+\begin{subfigure}[t]{0.22\textwidth}
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Weight} & \textbf{$\hat{\bm{y}}^{\text{nf}}$} & \textbf{${\bm{x}}^{\text{nf}}$}\\
+\midrule
+0.32 & 0 & 0.347 \\
+0.90 & 0 & 0.140 \\
+0.65 & 0 & 0.295 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+\caption{Inferred bad not financed loans and their weights}
+\label{fuzzy:sfig3}
+\end{subfigure}
+
+\columnbreak
+
+\begin{subfigure}[t]{0.22\textwidth}
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Weight} & \textbf{${\bm{y}}$} & \textbf{${\bm{x}}$}\\
+\midrule
+1 & 0 & 0.562 \\
+1 & 1 & 0.910 \\
+1 & 0 & 0.430 \\
+0.68 & 1 & 0.347 \\
+0.10 & 1 & 0.140 \\
+0.35 & 1 & 0.295 \\
+0.32 & 0 & 0.347 \\
+0.90 & 0 & 0.140 \\
+0.65 & 0 & 0.295 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+\caption{Fuzzy augmented learning dataset}
+\label{fuzzy:sfig4}
+\end{subfigure}
+
+\end{multicols}
+}
+\caption{Example of implementation of the Fuzzy Augmentation method on a small dataset}
+\label{fuzzyexample}
+\end{figure}
+
+ Clearly:
+
+ \[ \forall j = 1, \ldots, d, \: \frac{\partial \sum_{i=n+1}^{m+n} \sum_{y_i = 0}^{1} p(y_i^{\text{inf}}| x_i, \hat{\theta}^{\text{f}})\ln (p(y_i| x_i, \theta))}{\partial \theta_j} = 0 \Leftrightarrow \theta = \hat{\theta}^{\text{f}} \]
+
+ It can be shown that:
+ \[\argmax_{\theta \in \Theta}  \sum_{i=n+1}^{m+n} \sum_{y_i = 0}^{1} p_{\hat{\theta}^{\text{f}}}(y_i| x_i)\ln (p_\theta(y_i| x_i)) = \hat{\theta}^{\text{f}}\]
+
+ And finally:
+ \[\argmax_{\theta \in \Theta} \ell(\theta;{\bm{x}},{\bm{y}}^{\text{f}},{\bm{y}}^{\text{inf}}) = \argmax_{\theta \in \Theta} \ell(\theta;{\bm{x}},{\bm{y}}^{\text{f}}) = \hat{\theta}^{\text{f}}\]
+
+ To conclude, this method will not change the estimated parameters of any discriminant model, asymptotically and with a finite set of observations, regardless of any assumption on the missingness mechanism or the true model hypothesis. In other words, Fuzzy Augmentation has no effect on the Kullback-Leibler divergence, making this method useless because it is no different than the accepted clients model minimizing asymptotically expression~$H^{\text{f}}_{\theta}$ and not expression~$H_{\theta}$.
+
+
+\subsection{Reclassification} \label{reclassification}
+
+Reclassification can be found in \cite{RI6}, also sometimes referred to as extrapolation as in \cite{banasik}; it is the following procedure:
+\begin{enumerate}
+\item Construct Scorecard "Known Good Bad" (KGB) $S^{\text{f}}$ with financed clients' data (Figure~\ref{reclass:sfig1})
+\item Calculate $p(1|x,\hat{\theta}^{\text{f}}) = \text{logit}(S^{\text{f}}(x))$ for rejects
+\item Infer default status of rejected client $i$ if $S^{\text{f}}(x) > \text{threshold}$; typically threshold $=0.5$ (Figure~\ref{reclass:sfig2})
+\item Calibrate a new scorecard with the ‘‘augmented'' dataset (Figure~\ref{reclass:sfig3})
+\end{enumerate}
+
+\begin{figure}
+{\setlength{\parindent}{0cm}
+\begin{multicols}{3}
+
+\begin{subfigure}[t]{0.31\textwidth}
+\begin{center}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{l l}
+\toprule
+\textbf{${\bm{y}}^{\text{f}}$} & \textbf{${\bm{x}}^{\text{f}}$}\\
+\midrule
+1 & 0.562 \\
+1 & 0.910 \\
+0 & 0.430 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+\caption{Development of scorecard $S^{\text{f}}$ on financed clients}
+\label{reclass:sfig1}
+\end{subfigure}
+
+
+\columnbreak
+
+\begin{subfigure}[t]{0.31\textwidth}
+\begin{center}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{l l l}
+\toprule
+\textbf{$p(1|x,\hat{\theta}^{\text{f}})$} & \textbf{$\hat{\bm{y}}^{\text{nf}}$} & \textbf{${\bm{x}}^{\text{nf}}$}\\
+\midrule
+0.68 & 1 & 0.347 \\
+0.10 & 0 & 0.140 \\
+0.35 & 0 & 0.295 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+\caption{We force $y^{\text{nf}}=1$ if $\text{logit}(S^{\text{f}}(x)) \geq 0.5$}
+\label{reclass:sfig2}
+\end{subfigure}
+
+\columnbreak
+
+\begin{subfigure}[t]{0.31\textwidth}
+\begin{center}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{l l}
+\toprule
+\textbf{${\bm{y}}$} & \textbf{${\bm{x}}$}\\
+\midrule
+0 & 0.562 \\
+1 & 0.910 \\
+0 & 0.430 \\
+1 & 0.347 \\
+0 & 0.140 \\
+0 & 0.295 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+\caption{Reclassified learning dataset}
+\label{reclass:sfig3}
+\end{subfigure}
+
+\end{multicols}
+}
+\caption{Example of implementation of the Reclassification method on a small dataset}
+\label{reclassexample}
+\end{figure}
+
+
+\subsection{Augmentation} \label{augmentation}
+
+\begin{enumerate}
+\item Construct Scorecard "Accept Reject" (ACRJ) $R$ with financed clients' data on target variable $Z$ (Figure~\ref{augment:sfig1})
+\item Create $K$ score bands $B_1, \ldots, B_K$ according to $R$
+\item Compute in each score band $\hat{p}_{\text{true}}(\text{f}|x \in B_k) = \dfrac{|B_k|}{|z=\text{f}|}$ (Figure~\ref{augment:sfig2})
+\item Construct Scorecard $S$ on target variable Good/Bad with financed clients' data re-weighted (Figure~\ref{augment:sfig3})
+\end{enumerate}
+
+\begin{figure}
+{\setlength{\parindent}{0cm}
+\begin{multicols}{3}
+
+\begin{subfigure}[t]{0.31\textwidth}
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth}
+
+\begin{tabular}{l l l}
+\toprule
+\textbf{${\bm{y}}$} & \textbf{${\bf{z}}$} & \textbf{Score-band}\\
+\midrule
+1 & \text{f} & 1 \\
+1 & \text{f} & 1 \\
+0 & \text{f} & 1 \\
+NA & \text{nf} & 1 \\
+NA & \text{nf} & 1 \\
+NA & \text{nf} & 1 \\
+... & ... & ... \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+\caption{Calculation of $K$ score-bands on the ACRJ score}
+\label{augment:sfig1}
+\end{subfigure}
+
+\columnbreak
+
+\begin{subfigure}[t]{0.31\textwidth}
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth}
+
+\begin{tabular}{l l l}
+\toprule
+\textbf{Score-band} & \textbf{Weight}\\
+\midrule
+1 & 2 \\
+... & ... \\
+K & 1.1 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+\caption{Aggregate the data to estimate the inverse of the probability of being accepted in each score band}
+\label{augment:sfig2}
+\end{subfigure}
+
+\columnbreak
+
+\begin{subfigure}[t]{0.31\textwidth}
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth}
+
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Weight} & \textbf{Score-band} & \textbf{${\bm{y}}$} & \textbf{${\bm{x}}$}\\
+\midrule
+2 & 1 & 1 & 0.123 \\
+2 & 1 & 0 & 0.432 \\
+2 & 1 & 1 & 0.562 \\
+... & ... & ... & ... \\
+1.1 & K & 0 & 0.962 \\
+1.1 & K & 0 & 0.812 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+\caption{Merge weights and data on financed clients to construct the new scorecard}
+\label{augment:sfig3}
+\end{subfigure}
+\end{multicols}
+}
+\caption{Example of implementation of the Augmentation method on a small dataset}
+\label{augmentexample}
+\end{figure}
+
+\subsection{Twins} \label{Twins}
+
+The Twins Method is an internal method at Crédit Agricole documented by Crédit \cite{groupe} (confidential); it consists in the following procedure:
+\begin{enumerate}
+\item Develop KGB (Known Good/Bad) scorecard $S^{\text{f}}$ on financed clients' data predicting $Y$; this gives us $\hat{\theta}^{\text{f}}$ (Figure~\ref{twins:sfig1})
+\item Develop ACRJ (Accept/Reject) scorecard $S_Z$ on all applicants predicting $Z$; this gives us $\hat{\zeta}$ (Figure~\ref{twins:sfig2})
+\item Develop a scorecard $S$ on financed clients' data predicting $Y$ based solely on $S^{\text{f}}$ and $S_Z$; this gives us $\hat{\theta}^{\text{twins}}$ (Figure~\ref{twins:sfig3})
+\item Calculate $S$ on rejected applicants and reintegrate them twice in the training dataset like we did with Fuzzy Augmentation in section \ref{subsec:reweighting} (Figure~\ref{twins:sfig4})
+\item Develop scorecard $S_{\text{twins}}$ on all applicants' data
+\end{enumerate}
+
+\begin{figure}
+{\setlength{\parindent}{0cm}
+\begin{multicols}{4}
+
+\begin{subfigure}[t]{0.22\textwidth}
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth}
+\begin{tabular}{l l l}
+\toprule
+\textbf{${\bm{y}}$} & \textbf{${\bm{x}}$}\\
+\midrule
+1 & 0.562 \\
+1 & 0.910 \\
+0 & 0.430 \\
+NA & 0.361 \\
+NA & 0.402 \\
+NA & 0.294 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+\caption{Development of scorecard $S^{\text{f}}$ on financed clients}
+\label{twins:sfig1}
+\end{subfigure}
+
+\columnbreak
+
+\begin{subfigure}[t]{0.22\textwidth}
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth}
+\begin{tabular}{l l l}
+\toprule
+\textbf{${\bm{z}}$} &  \textbf{${\bm{x}}$} \\
+\midrule
+\text{f} & 0.562 \\
+\text{f} & 0.910 \\
+\text{f} & 0.430 \\
+\text{nf} & 0.361 \\
+\text{nf} & 0.402 \\
+\text{nf} & 0.294 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+\caption{Development of scorecard $S_2$ on all clients}
+\label{twins:sfig2}
+\end{subfigure}
+
+\columnbreak
+
+\begin{subfigure}[t]{0.22\textwidth}
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth}
+\begin{tabular}{l l l}
+\toprule
+\textbf{${\bm{y}}$} & \textbf{$S^{\text{f}}({\bm{x}})$} & \textbf{$S_Z({\bm{x}})$}\\
+\midrule
+1 & 1.3 & 2.5\\
+1 & 3.1 & 4.5 \\
+0 & -0.3 & 0.4 \\
+NA & -1.2 & -0.5 \\
+NA & -0.4 & 0.3 \\
+NA & -2.0 & -2.5 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+\caption{Development of scorecard $S_3$ on financed clients}
+\label{twins:sfig3}
+\end{subfigure}
+
+\columnbreak
+
+\begin{subfigure}[t]{0.22\textwidth}
+\begin{center}
+\begin{adjustbox}{max width=0.95\textwidth}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Weight} & \textbf{$\hat{\bm{y}}^{\text{nf}}$} & \textbf{${\bm{x}}^{\text{nf}}$}\\
+\midrule
+1 & 1 & 0.562 \\
+1 & 1 & 0.910 \\
+1 & 0 & 0.430 \\
+0.64 & 0 & 0.361 \\
+0.73 & 0 & 0.402 \\
+0.44 & 0 & 0.294 \\
+0.36 & 1 & 0.361 \\
+0.27 & 1 & 0.402 \\
+0.37 & 1 & 0.294 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+\caption{Inference for not financed clients}
+\label{twins:sfig4}
+\end{subfigure}
+
+\end{multicols}
+}
+\caption{Example of implementation of the Twins method on a small dataset}
+\label{twins}
+\end{figure}
+
+
+\subsection{Parceling} \label{Parceling}
+
+Parcelling is a process of reweighing according to the probability of default by score-band that is adjusted by the credit modeler. It has been documented in \cite{saporta,banasik,RI6}.
+
+\begin{enumerate}
+\item Construct Scorecard "Known Good Bad" (KGB) $S^{\text{f}}$ with financed clients' data (Figure~\ref{parcel:sfig1})
+\item Create $K$ score bands $B_1, \ldots, B_K$ according to $S^{\text{f}}$.
+\item Compute the observed default rate for each band $T(k) = \dfrac{|\text{Bad financed in } B_k|}{|B_k|}$, $1 \leq k  \leq K$.
+\item Infer for each band the not financed default rate $U(j) = \epsilon_k T(k)$ where $\epsilon_1 > \ldots > \epsilon_k > \ldots > \epsilon_K > 1$ (Figure~\ref{parcel:sfig2}).
+\item Reintegrate 2 times each rejected applicant from $B_k$ with weight $U(k)$ as bad and weight $1-U(k)$ as good, like the Fuzzy Augmentation method in section \ref{subsec:reweighting} (Figure~\ref{parcel:sfig3}).
+\item Construct final Scorecard.
+\end{enumerate}
+
+\begin{figure}
+{\setlength{\parindent}{0cm}
+\begin{multicols}{3}
+
+\begin{subfigure}[t]{0.31\textwidth}
+\begin{center}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Weight} & \textbf{${\bm{y}}^{\text{f}}$} & \textbf{${\bm{x}}^{\text{f}}$}\\
+\midrule
+1 & 1 & 0.562 \\
+1 & 1 & 0.910 \\
+1 & 0 & 0.430 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+\caption{Development of scorecard $S^{\text{f}}$ on financed clients}
+\label{parcel:sfig1}
+\end{subfigure}
+
+\columnbreak
+
+\begin{subfigure}[t]{0.31\textwidth}
+\begin{center}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Score-band} & \textbf{$T$} &  \textbf{$U$} \\
+\midrule
+1 & 0.5 & 0.8 \\
+... & ... & ... \\
+K & 0.01 & 0.04 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+\caption{Calculation of $T(k)$ and $U(k)$}
+\label{parcel:sfig2}
+\end{subfigure}
+
+\columnbreak
+
+\begin{subfigure}[t]{0.31\textwidth}
+\begin{center}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Weight} & \textbf{${\bm{y}}$} & \textbf{${\bm{x}}$}\\
+\midrule
+1 & 0 & 0.562 \\
+1 & 1 & 0.910 \\
+1 & 0 & 0.430 \\
+1 & 1 & 0.347 \\
+1 & 0 & 0.140 \\
+1 & 0 & 0.295 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+\caption{Inference for not financed clients}
+\label{parcel:sfig3}
+\end{subfigure}
+
+\end{multicols}
+}
+\caption{Example of implementation of the Parcelling method on a small dataset}
+\label{parcel}
+\end{figure}
+
 
 
 \section{Discretization methods}
@@ -11,24 +513,51 @@
 
 
 \begin{algorithm}[H]
- \KwData{$\bm{x},(m_j)_1^d$}
- \KwResult{$\bm{e}$}
+ \KwData{$n,\glssymbol{bbx},(m_j)_1^d$}
+ \KwResult{$\hat{\q}$}
  \For{$j=1$ to $d$}{
-Sort $\bm{x}^j$ by ascending order\;
-\For{$i=1$ to $n$}{
-Set $e_i^j = \begin{cases} 1 \text{ si } x_i^j \leq x_{\left\lceil{{\frac{n}{m_j}}}\right\rceil}^j \\ o \text{ si } x_{\left\lceil{{\frac{(o-1)*n}{m_j}}}\right\rceil}^j < x_i^j \leq x_{\left\lceil{{\frac{o*n}{m_j}}}\right\rceil}^j \\ m_j \text{ si } x_{\left\lceil{{\frac{(m_j-1)*n}{m_j}}}\right\rceil}^j < x_i^j \end{cases}$
+Sort $\glssymbol{bbx}^j$ by ascending order\;
+Let $c_0=-\infty$, $c_{m_j} = + \infty$ and $c_{j,h} = x_{\left\lceil{{\frac{h \cdot n}{m_j}}}\right\rceil,j}$\;
+Let $C_{j,h} = ]c_{j,h-1};c_{j,h}]$ and $\hat{\q_j(\cdot)} = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
+Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
+%\For{$i=1$ to $n$}{
+%Set $q_i^j(x_j) = \begin{cases} 1 \text{ si } x_i^j \leq x_{\left\lceil{{\frac{n}{m_j}}}\right\rceil}^j \\ o \text{ si } x_{\left\lceil{{\frac{(o-1)*n}{m_j}}}\right\rceil}^j < x_i^j \leq x_{\left\lceil{{\frac{o*n}{m_j}}}\right\rceil}^j \\ m_j \text{ si } x_{\left\lceil{{\frac{(m_j-1)*n}{m_j}}}\right\rceil}^j < x_i^j \end{cases}$
+%}
 }
+ \caption{\label{equal-freq-disc} \textit{equal-freq} discretization: an equal number of training observations are in each bin.}
+\end{algorithm}
+
+
+\begin{algorithm}[H]
+ \KwData{$n,\glssymbol{bbx},(m_j)_1^d$}
+ \KwResult{$\hat{\q}$}
+ \For{$j=1$ to $d$}{
+Let $w_j = \max{i} x_{i,j} - \min{i} x_{i,j}$\;
+Let $c_0=-\infty$, $c_{m_j} = + \infty$ and $c_{j,h} = \frac{w_j \cdot h}{m_j} + \min{i} x_{i,j}$\;
+Let $C_{j,h} = ]c_{j,h-1};c_{j,h}]$ and $\hat{\q_j(\cdot)} = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
+Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
 }
- \caption{\label{equal-freq-disc} Discrétisation equal-freq.}
+ \caption{\label{equal-freq-disc} \textit{equal-length} discretization: each bin has the width of the training set's total support divided by the number of bins.}
 \end{algorithm}
 
 
 
+\subsection{Méthodes supervisées univariées}
 
-\subsection{Méthodes supervisées univariées : \textit{ChiMerge} et \textit{MDLP}}
+\subsubsection{\textit{ChiMerge}}
 
 
-\subsection{Méthodes proposées : \textit{glmdisc} avec \gls{sem} ou réseau de neurones}
+
+\subsubsection{\textit{MDLP}}
+
+
+
+\subsection{Proposal: \textit{glmdisc}}
+
+
+\subsubsection{\textit{glmdisc} with neural networks}
+
+\textcolor{red}{insert animation here}
 
 \begin{algorithm}[H]
  \KwData{$(\bm{x},\bm{y})$}
@@ -51,7 +580,37 @@ Set $e_i^j = \begin{cases} 1 \text{ si } x_i^j \leq x_{\left\lceil{{\frac{n}{m_j
    $r \leftarrow r+1$\;
  }
  Choose the best logistic regression model from $(p_{\hat{\eta}^{(r)}}(\bm{y} | \bm{e}_{MAP}^{(r)}))_1^{Max}$\;
- \caption{\label{SEM-disc} Discrétisation multivariée supervisée SEM-Gibbs.}
+ \caption{\label{NN-disc} \textit{glmdisc}-NN: supervised multivariate discretization for logistic regression with neural networks.}
+\end{algorithm}
+
+
+\subsubsection{\textit{glmdisc} with an \gls{sem} algorithm}
+
+
+\textcolor{red}{insert animation here}
+
+\begin{algorithm}[H]
+ \KwData{$(\bm{x},\bm{y})$}
+ \KwResult{$\bm{e},(\beta_k)_1^{d_1}$,(T$^k)_{d_1}^{d_1+d_2}$}
+ $r = 0$\;
+ Initialization of $\bm{e}^{(r)}$ at random\;
+ \While{$r < $ Maximum number of iteration not reached}{
+  Adjust logistic regression $\hat{\gamma}^{(r)} = \argmax_\gamma \ell(\gamma;\bm{y},\bm{e^{(r)}})$\;
+  ${\bm{e}^{(r+1)}} \leftarrow {\bm{e}^{(r)}}$\;
+  \For{$k \leftarrow 1$ \KwTo $d_1$}{
+   Adjust multinomial logistic regression $\hat{\beta}^{k(r)} = \argmax_\beta \ell(\beta;\bm{e^{k(r)}},\bm{x^k})$\;
+   ${\bm{e}^{k(r+1)}} \leftarrow$ Mult$(p_{\hat{\gamma}^{(r)}}(\bm{y}|\bm{{e}^{(r+1)}}) p_{\hat{\beta}^{k(r)}}(\bm{e}^{k} | \bm{x}^k))$\;
+   ${\bm{e}_{MAP}^{k(r+1)}} \leftarrow \argmax_j p_{\hat{\beta}^{k(r)}}(\bm{E}^{k}=j | \bm{x}^k))$\;
+   }
+  \For{$k \leftarrow d_1+1$ \KwTo $d_1+d_2$}{
+   From the contingency table T$^{k(r)}$ of $\bm{e}^{k(r)}$ against $\bm{x}^k$, calculate the frequencies of each value of $({e}^{k},x^k)$\;
+	${\bm{e}^{k(r+1)}} \leftarrow$ Mult$(p_{\hat{\gamma}^{(r)}}(\bm{y}|\bm{{e}^{(r+1)}}) p_{T^{k(r)}}(\bm{e}^{k} | \bm{x}^k))$\;
+	${\bm{e}_{MAP}^{k(r+1)}} \leftarrow \argmax_j p_{T^{k(r)}}(\bm{E}^{k}=j | \bm{x}^k))$\;
+	}
+   $r \leftarrow r+1$\;
+ }
+ Choose the best logistic regression model from $(p_{\hat{\eta}^{(r)}}(\bm{y} | \bm{e}_{MAP}^{(r)}))_1^{Max}$\;
+ \caption{\label{SEM-disc} \textit{glmdisc}-NN: supervised multivariate discretization for logistic regression with an \gls{sem} algorithm.}
 \end{algorithm}
 
 \section{Factor levels grouping methods}

@@ -280,147 +280,6 @@ Concerning now the number of intervals or factor levels $\boldsymbol{m} = (m_j)_
  
  \textcolor{red}{reprendre article et changer notations}
 
- 
- 
- 
- \section{Numerical experiments} \label{sec:experiments}
-
-This section is divided into three complementary parts to assess the validity of our proposal, that we call hereafter \textit{glmdisc}. First, simulated data are used to evaluate its ability to recover the true data generating mechanism. Second, the predictive quality of the new learned representation approach is illustrated on several classical benchmark datasets from the UCI library. Third, we use it on \textit{Credit Scoring} datasets provided by Credit Agricole Consumer Finance, a major European company in the consumer credit market. The Python notebooks of all experiments, excluding the confidential real data, can be found on the first author's website. \textcolor{red}{à adapter}
-
-
-\subsection{Simulated data: empirical consistency and robustness}
-
-We focus here on discretization of continuous features (similar experiments could be conducted on categorical ones). Two continuous features $x_1$ and $x_2$ are sampled from the uniform distribution on $[0,1]$ and discretized by using
-\[\q_1(\cdot)=\q_2(\cdot) = (\mathds{1}_{]-\infty,1/3]}(\cdot),\mathds{1}_{]1/3,2/3]}(\cdot),\mathds{1}_{]2/3,\infty]}(\cdot)).\]
-Here, following (\ref{eq:Cjhcont}), we have $d=2$ and $m_1=m_2=3$ and the cutpoints are $c_{j,1}=1/3$ and $c_{j,2}=2/3$ for $j=1,2$. Setting $\glssymbol{bth}=(0,-2,2,0,-2,2,0)$, the target feature $y$ is then sampled from $p_{\glssymbol{bth}}(\cdot | \q(\glssymbol{bbx}))$ via the logistic model (\ref{eq:reglogq}).
-
-From the \textit{glmdisc} algorithm, we studied three cases:
-\begin{enumerate}[(a)]
-    \item First, the quality of the cutoff estimator $\hat{c}_{j,2}$ of $c_{j,2} = 2/3$ is assessed when the starting maximum number of intervals per discretized continuous feature is set to its true value $m_1=m_2= 3$;
-    \item Second, we estimated the number of intervals $\hat{m}_1$ of $m_1=3$ when the starting maximum number of intervals per discretized continuous feature is set to $m_{\text{max}} = 10$; 
-    \item Last, we added a third feature $x_3$ also drawn uniformly on $[0,1]$ but uncorrelated to $y$ and estimated the number $\hat{m}_3$ of discretization intervals selected for $x_3$. The reason is that a non-predictive feature which is discretized or grouped into a single value is \textit{de facto} excluded from the model, and this is a positive side effect.
-\end{enumerate}
-From a statistical point of view, experiment (a) assesses the empirical consistency of the estimation of $C_{j,h}$, whereas experiments (b) and (c) focus on the consistency of the estimation of $m_j$. The results are summarized in Table~\ref{tab:estim_precision} where 95\% confidence intervals (CI) are given, with a varying sample size. Note in particular that the slight underestimation in (b) is a classical consequence of the BIC criterion on small samples. 
-\begin{table}[h!]
-    \centering
-\begin{tabular}{llll}
-Sample size & (a) $\hat{c}_{j,2}$ & (b) $\hat{m}_1$ & (c) $\hat{m}_3$\\
-\hline
-\hline
-\multicolumn{4}{c}{\textit{glmdisc}-NN} \\
-\hline
-$n = 1,000$ & $[0.656,0.666]$ & $[2.679,2.941]$ & $[1.326,1.554]$ \\
-$n = 10,000$ & $[0.666,0.666]$ & $[3.000,3.000]$ & $[1.399,1.621]$ \\
-\hline
-\multicolumn{4}{c}{\textit{glmdisc}-SEM} \\
-$n = 1,000$ & $[0]$ & $[2]$ & $[1]$ \\
-$n = 10,000$ & $[0]$ & $[3]$ & $[1]$ 
-\end{tabular}
-    \caption{(a) CI of $\hat{c}_{j,2}$ for $c_{j,2} = 2/3$. (b) CI of $\hat{m}$ for $m_1=3$. (c) CI of $\hat{m}_3$ for $m_3=1$.}
-    \label{tab:estim_precision}
-\end{table}
-
- \newlength\figureheight
- \newlength\figurewidth
- \setlength\figureheight{4cm}
- \setlength\figurewidth{14cm}
- 
-  \begin{figure}
-    \centering
-    \begin{subfigure}[t]{\textwidth}
-        \centering
-        \input{figures/chapitre4/True_simulated_data/feature_0_iteration_5.tex}
-        \vspace{-0.5cm}
-        \caption{Quantization $\hat{\q}^{(t)}_1(x_1)$ resulting from the thresholding (\ref{eq:ht}) at iterations $t = 5$ and $m_{\text{start}} = 3$.}
-    \end{subfigure}%
-    
-    \begin{subfigure}[t]{\textwidth}
-        \centering
-        \input{figures/chapitre4/True_simulated_data/feature_0_iteration_300.tex}
-        \vspace{-0.5cm}
-        \caption{Quantizations $\hat{\q}^{(t)}_1(x_1)$ resulting from the thresholding (\ref{eq:ht}) at iterations $t = 300$ and $m_{\text{start}} = 3$.}
-    \end{subfigure}
-    
-    \caption{\label{fig:MAP} Quantizations $\hat{\q}^{(t)}_1(\glssymbol{x}_1)$ of experiment (a) resulting from the thresholding (\ref{eq:ht}).}
-\end{figure}
-
-\subsection{Benchmark data}
-
-To test further the effectiveness of \textit{glmdisc} in a predictive setting, we gathered 6 datasets from the UCI library: the Adult dataset ($n=48,842$, $d=14$), the Australian dataset ($n=690$, $d=14$), the Bands dataset ($n=512$, $d=39$), the Credit-screening dataset ($n=690$, $d=15$), the German dataset ($n=1,000$, $d=20$) and the Heart dataset ($n=270$, $d=13$). Each of these datasets have mixed (continuous and categorical) features and a binary response to predict. To get more information about these datasets, their respective features, and the predictive task associated with them, readers may refer to the UCI website\footnote{\cite{Dua:2017} : http://archive.ics.uci.edu/ml}.
-
-Now that we made sure that our approach is empirically consistent, \textit{i.e.}\ it is able to find the true quantization in a well-specified setting, we wish to verify our claim that embedding the learning of a good quantization in the predictive task \textit{via glmdisc} is better than other methods that rely on \textit{ad hoc} criteria. As we were primarily interested in logistic regression, we will compare our approach to a na\"{\i}ve linear logistic regression, a logistic regression on continuous discretized data using the now standard MDLP algorithm from~\cite{fayyad1993multi} and categorical grouped data using $\chi^2$ tests of independence between each pair of factor levels and the target in the same fashion as the ChiMerge discretization algorithm proposed by~\cite{kerber1992chimerge}. Table~\ref{tab:banchmark} shows our approach yields significantly better results on these rather small datasets where the added flexibility of quantization might help the predictive task.
-
-\begin{table}
-    \centering
-\begin{tabular}{lp{0.191\linewidth}p{0.13\linewidth}p{0.15\linewidth}p{0.15\linewidth}}
-Dataset & Additive linear logistic regression & \textit{ad hoc} methods & Our proposal: \textit{glmdisc}-NN & Our proposal: \textit{glmdisc}-SEM \\
-\hline
-Adult & 81.5 & \bf{84.8} & 81.0 & 0 \\
-Australian & 73.6 & 65.9 & \bf{92.1} & 0 \\
-Bands & 48.1 & 45.4 & \bf{58.5} & 0 \\
-Credit-screening & 81.3 & 88.5 & \bf{93.4} & 0 \\
-German & 52.1 & 57.9 & \bf{70.4} & 0 \\
-Heart & 79.4 & 76.0 & \bf{84.0} & 0
-\end{tabular}
-    \caption{Gini indices of our proposed representation learning algorithm \textit{glmdisc} and two baselines: a ``na\"{\i}ve'' logistic regression and \textit{ad hoc} methods (MDLP / $\chi^2$ tests) obtained on several benchmark datasets from the UCI library.}
-    \label{tab:banchmark}
-\end{table}
-
-\textcolor{red}{ajouter CI sur Gini}
-
-\subsection{\textit{Credit Scoring} data}
-
-
-Discretization, grouping and interaction screening are preprocessing steps relatively ``manually'' performed in the field of \textit{Credit Scoring}, using $\chi^2$ tests for each feature or so-called Weights of Evidence (\cite{zeng2014necessary}). This back and forth process takes a lot of time and effort and provides no particular statistical guarantee.
-
-Table~\ref{tab:real_data} shows Gini coefficients of several portfolios for which there are $n=50,000$, $n=30,000$, $n=50,000$, $n=100,000$, $n=235,000$ and $n=7,500$ clients respectively and $d=25$, $d=16$, $d=15$, $d=14$, $d=14$ and $d=16$ features respectively. Approximately half of these features were categorical, with a number of factor levels ranging from $2$ to $100$. 
-
-We compare the rather manual, in-house approach that yields the current performance, the na\"{\i}ve linear logistic regression and \textit{ad hoc} methods introduced in the previous section and finally our \textit{glmdisc} proposal. Beside the classification performance, interpretability is maintained and unsurprisingly, the learned representation comes often close to the ``manual'' approach: for example, the complicated in-house coding of job types is roughly grouped by \textit{glmdisc} into \textit{e.g.}\ ``worker'', ``technician'', \textit{etc.} Notice that even if the ``na\"{\i}ve'' logistic regression reaches some very decent predictive results, its poor interpretability skill (no quantization at all) excludes it from standard use in the company.
-
-The usefulness of discretization and grouping is clear on \textit{Credit Scoring} data and although \textit{glmdisc} does not always perform significantly better than the manual approach, it allows practitioners to focus on other tasks by saving a lot of time, as was already stressed out. As a rule of thumb, a month is generally allocated to data pre-processing for a single data scientist working on a single scorecard. On Google Collaboratory, and relying on Keras (\cite{chollet2015keras}) and Tensorflow (\cite{tensorflow2015-whitepaper}) as a backend, it took less than an hour to perform discretization and grouping for all datasets.
-
-\begin{table}
-    \centering
-\begin{tabular}{lp{0.191\linewidth}p{0.138\linewidth}p{0.13\linewidth}p{0.15\linewidth}p{0.15\linewidth}}
-Portfolio & Additive linear logistic regression & Current \hspace{0.5cm} performance & \textit{ad hoc} methods & Our proposal: \textit{glmdisc}-NN & Our proposal: \textit{glmdisc}-NN \\
-\hline
-Automobile loans & 58.8 & 55.6 & \bf{60.4} & 55.0 & 0 \\
-Renovation loans & 52.3 & 50.9 & \bf{54.2} & 49.6 & 0 \\
-Standard loans & 39.7 & 37.1 & \bf{46.3} & 41.0 & 0 \\
-Revolving loans & 61.5 & 58.5 & \bf{62.9} & 60.3 & 0 \\
-Mass retail loans & 52.5 & 48.7 & \bf{63.7} &61.3 & 0 \\
-Electronics loans & 52.6 & 55.8 & 61.6  & \bf{67.0} & 0 
-\end{tabular}
-    \caption{Gini indices of our proposed representation learning algorithm \textit{glmdisc}, the two baselines of Table~\ref{tab:banchmark} and the current scorecard (manual / expert representation) obtained on several portfolios of Credit Agricole Consumer Finance.}
-    \label{tab:real_data}
-\end{table}
-
-\textcolor{red}{ajouter CI sur Gini}
-
-\section{Concluding remarks}
-
-Feature quantization (discretization for continuous features, grouping of factor levels for categorical ones) in a supervised multivariate classification is a recurring problem in many industrial contexts. This setting was formalized as a highly combinatorial representation learning problem and a new algorithmic approach, named \textit{glmdisc}, has been proposed as a sensible approximation of a classical statistical information criterion.
-
-\textcolor{red}{gls for SEM}
-
-The first proposed implementation relies on the use of a neural network of particular architecture and specifically a softmax approximation of each discretized or grouped feature. The second proposed implementation relies on an SEM algorithm and a polytomic multiclass \gls{lr} approximation in the same flavor as the softmax. These proposals can alternatively be replaced by any other univariate multiclass predictive model, which make them flexible and adaptable to other problems. Prediction of the target feature, given quantized features, was exemplified with logistic regression, although here as well, it can be swapped with any other supervised classification model.
-
-The experiments showed that, as was sensed empirically by statisticians in the field of \textit{Credit Scoring}, discretization and grouping can indeed provide better models than standard logistic regression. This novel approach allows practitioners to have a fully automated and statistically well-grounded tool that achieves better performance than \textit{ad hoc} industrial practices at the price of decent computing time but much less of the practitioner's valuable time.
-
-As described in the introduction, logistic regression is additive in its inputs which does not allow to take into account conditional dependency, as stated by~\cite{berry2010testing}. This problem is often dealt with by sparsely introducing ``interactions'', \textit{i.e.}\ products of two features. This leads again to a model selection challenge on a highly combinatorial discrete space that could be solved with a similar approach. In a broader context with no restriction on the predictive model, \cite{tsang2018detecting} already made use of neural networks to estimate the presence or absence of statistical interactions. I take another approach in the subsequent chapter where I tackle the parsimonious addition of pairwise interactions among quantized features, that might influence the quantization process introduced in this work, is a future area of research.
-
-
-
- 
- 
- 
- 
- 
- 
-
-
-% cf article discrétisation
-
 \begin{figure}
 \begin{multicols}{2}
 \begin{minipage}{0.45\textwidth}
@@ -518,9 +377,170 @@ As described in the introduction, logistic regression is additive in its inputs 
 \end{figure}
 
 
-\bigskip
 
-Ce chapitre.
+
+\begin{figure}
+\caption{\label{fig:exp_sim} Distribution des données simulées selon un modèle discret.}
+\centering
+\begin{tikzpicture}
+      \draw[->] (-1,0) -- (5,0) node[right] {$x$};
+      \draw[->] (0,-1) -- (0,3) node[above] {freq};
+      \draw[scale=1,domain=0.5:3.5,smooth,variable=\y,red,thick]  plot ({\y},2.5);
+      \draw[scale=1,domain=-1:0.5,smooth,variable=\y,red,thick]  plot ({\y},0);
+      \draw[scale=1,domain=3.5:5,smooth,variable=\y,red,thick]  plot ({\y},0);
+      \draw[scale=1,domain=0:2.5,smooth,variable=\x,red]  plot (0.5,{\x});
+      \draw[scale=1,domain=0:2.5,smooth,variable=\x,red]  plot (3.5,{\x});
+      
+      \draw[scale=1,domain=-0.2:2.8,smooth,variable=\x,blue]  plot (1.5,{\x});
+      \draw[scale=1,domain=-0.2:2.8,smooth,variable=\x,blue]  plot (2.5,{\x});
+
+		\node[scale=0.7] (e1) at  (0.95,2.7) {$E=0$};
+		\node[scale=0.7] (e2) at  (1.95,2.7) {$E=1$};
+		\node[scale=0.7] (e3) at  (2.95,2.7) {$E=2$};
+
+		\node[scale=0.7] (x1) at  (0.5,-0.5) {$0$};
+		\node[scale=0.7] (x2) at  (1.35,-0.5) {$S_1=1/3$};
+		\node[scale=0.7] (x3) at  (2.65,-0.5) {$S_2=2/3$};
+		\node[scale=0.7] (x4) at  (3.5,-0.5) {$1$};
+
+\end{tikzpicture}
+\end{figure}
+
+
+
+
+ 
+ 
+ \section{Numerical experiments} \label{sec:experiments}
+
+This section is divided into three complementary parts to assess the validity of our proposal, that we call hereafter \textit{glmdisc}. First, simulated data are used to evaluate its ability to recover the true data generating mechanism. Second, the predictive quality of the new learned representation approach is illustrated on several classical benchmark datasets from the UCI library. Third, we use it on \textit{Credit Scoring} datasets provided by Credit Agricole Consumer Finance, a major European company in the consumer credit market. The Python notebooks of all experiments, excluding the confidential real data, can be found on the first author's website. \textcolor{red}{à adapter}
+
+
+\subsection{Simulated data: empirical consistency and robustness}
+
+We focus here on discretization of continuous features (similar experiments could be conducted on categorical ones). Two continuous features $x_1$ and $x_2$ are sampled from the uniform distribution on $[0,1]$ and discretized by using
+\[\q_1(\cdot)=\q_2(\cdot) = (\mathds{1}_{]-\infty,1/3]}(\cdot),\mathds{1}_{]1/3,2/3]}(\cdot),\mathds{1}_{]2/3,\infty]}(\cdot)).\]
+Here, following (\ref{eq:Cjhcont}), we have $d=2$ and $m_1=m_2=3$ and the cutpoints are $c_{j,1}=1/3$ and $c_{j,2}=2/3$ for $j=1,2$. Setting $\glssymbol{bth}=(0,-2,2,0,-2,2,0)$, the target feature $y$ is then sampled from $p_{\glssymbol{bth}}(\cdot | \q(\glssymbol{bbx}))$ via the logistic model (\ref{eq:reglogq}).
+
+From the \textit{glmdisc} algorithm, we studied three cases:
+\begin{enumerate}[(a)]
+    \item First, the quality of the cutoff estimator $\hat{c}_{j,2}$ of $c_{j,2} = 2/3$ is assessed when the starting maximum number of intervals per discretized continuous feature is set to its true value $m_1=m_2= 3$;
+    \item Second, we estimated the number of intervals $\hat{m}_1$ of $m_1=3$ when the starting maximum number of intervals per discretized continuous feature is set to $m_{\text{max}} = 10$; 
+    \item Last, we added a third feature $x_3$ also drawn uniformly on $[0,1]$ but uncorrelated to $y$ and estimated the number $\hat{m}_3$ of discretization intervals selected for $x_3$. The reason is that a non-predictive feature which is discretized or grouped into a single value is \textit{de facto} excluded from the model, and this is a positive side effect.
+\end{enumerate}
+From a statistical point of view, experiment (a) assesses the empirical consistency of the estimation of $C_{j,h}$, whereas experiments (b) and (c) focus on the consistency of the estimation of $m_j$. The results are summarized in Table~\ref{tab:estim_precision} where 95\% confidence intervals (CI) are given, with a varying sample size. Note in particular that the slight underestimation in (b) is a classical consequence of the BIC criterion on small samples. 
+\begin{table}[h!]
+    \centering
+\begin{tabular}{llll}
+Sample size & (a) $\hat{c}_{j,2}$ & (b) $\hat{m}_1$ & (c) $\hat{m}_3$\\
+\hline
+\hline
+\multicolumn{4}{c}{\textit{glmdisc}-NN} \\
+\hline
+$n = 1,000$ & $[0.656,0.666]$ & $[2.679,2.941]$ & $[1.326,1.554]$ \\
+$n = 10,000$ & $[0.666,0.666]$ & $[3.000,3.000]$ & $[1.399,1.621]$ \\
+\hline
+\multicolumn{4}{c}{\textit{glmdisc}-SEM} \\
+\hline
+$n = 1,000$ & $[0]$ & $[2]$ & $[1]$ \\
+$n = 10,000$ & $[0]$ & $[3]$ & $[1]$ 
+\end{tabular}
+    \caption{(a) CI of $\hat{c}_{j,2}$ for $c_{j,2} = 2/3$. (b) CI of $\hat{m}$ for $m_1=3$. (c) CI of $\hat{m}_3$ for $m_3=1$.}
+    \label{tab:estim_precision}
+\end{table}
+
+ \newlength\figureheight
+ \newlength\figurewidth
+ \setlength\figureheight{4cm}
+ \setlength\figurewidth{14cm}
+ 
+  \begin{figure}
+    \centering
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \input{figures/chapitre4/True_simulated_data/feature_0_iteration_5.tex}
+        \vspace{-0.5cm}
+        \caption{Quantization $\hat{\q}^{(t)}_1(x_1)$ resulting from the thresholding (\ref{eq:ht}) at iterations $t = 5$ and $m_{\text{start}} = 3$.}
+    \end{subfigure}%
+    
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \input{figures/chapitre4/True_simulated_data/feature_0_iteration_300.tex}
+        \vspace{-0.5cm}
+        \caption{Quantizations $\hat{\q}^{(t)}_1(x_1)$ resulting from the thresholding (\ref{eq:ht}) at iterations $t = 300$ and $m_{\text{start}} = 3$.}
+    \end{subfigure}
+    
+    \caption{\label{fig:MAP} Quantizations $\hat{\q}^{(t)}_1(\glssymbol{x}_1)$ of experiment (a) resulting from the thresholding (\ref{eq:ht}).}
+\end{figure}
+
+\subsection{Benchmark data}
+
+To test further the effectiveness of \textit{glmdisc} in a predictive setting, we gathered 6 datasets from the UCI library: the Adult dataset ($n=48,842$, $d=14$), the Australian dataset ($n=690$, $d=14$), the Bands dataset ($n=512$, $d=39$), the Credit-screening dataset ($n=690$, $d=15$), the German dataset ($n=1,000$, $d=20$) and the Heart dataset ($n=270$, $d=13$). Each of these datasets have mixed (continuous and categorical) features and a binary response to predict. To get more information about these datasets, their respective features, and the predictive task associated with them, readers may refer to the UCI website\footnote{\cite{Dua:2017} : http://archive.ics.uci.edu/ml}.
+
+Now that we made sure that our approach is empirically consistent, \textit{i.e.}\ it is able to find the true quantization in a well-specified setting, we wish to verify our claim that embedding the learning of a good quantization in the predictive task \textit{via glmdisc} is better than other methods that rely on \textit{ad hoc} criteria. As we were primarily interested in logistic regression, we will compare our approach to a na\"{\i}ve linear logistic regression, a logistic regression on continuous discretized data using the now standard MDLP algorithm from~\cite{fayyad1993multi} and categorical grouped data using $\chi^2$ tests of independence between each pair of factor levels and the target in the same fashion as the ChiMerge discretization algorithm proposed by~\cite{kerber1992chimerge}. Table~\ref{tab:banchmark} shows our approach yields significantly better results on these rather small datasets where the added flexibility of quantization might help the predictive task.
+
+\Textcolor{red}{define ALLR}
+
+\begin{table}
+    \centering
+\begin{tabular}{lp{0.1\linewidth}p{0.13\linewidth}p{0.15\linewidth}p{0.15\linewidth}}
+Dataset & ALLR & \textit{ad hoc} methods & Our proposal: \textit{glmdisc}-NN & Our proposal: \textit{glmdisc}-SEM \\
+\hline
+Adult & 81.5 & \bf{84.8} & 81.0 & 0 \\
+Australian & 73.6 & 65.9 & \bf{92.1} & 0 \\
+Bands & 48.1 & 45.4 & \bf{58.5} & 0 \\
+Credit-screening & 81.3 & 88.5 & \bf{93.4} & 0 \\
+German & 52.1 & 57.9 & \bf{70.4} & 0 \\
+Heart & 79.4 & 76.0 & \bf{84.0} & 0
+\end{tabular}
+    \caption{Gini indices of our proposed representation learning algorithm \textit{glmdisc} and two baselines: a ``na\"{\i}ve'' logistic regression and \textit{ad hoc} methods (MDLP / $\chi^2$ tests) obtained on several benchmark datasets from the UCI library.}
+    \label{tab:banchmark}
+\end{table}
+
+\textcolor{red}{ajouter CI sur Gini}
+
+\subsection{\textit{Credit Scoring} data}
+
+
+Discretization, grouping and interaction screening are preprocessing steps relatively ``manually'' performed in the field of \textit{Credit Scoring}, using $\chi^2$ tests for each feature or so-called Weights of Evidence (\cite{zeng2014necessary}). This back and forth process takes a lot of time and effort and provides no particular statistical guarantee.
+
+Table~\ref{tab:real_data} shows Gini coefficients of several portfolios for which there are $n=50,000$, $n=30,000$, $n=50,000$, $n=100,000$, $n=235,000$ and $n=7,500$ clients respectively and $d=25$, $d=16$, $d=15$, $d=14$, $d=14$ and $d=16$ features respectively. Approximately half of these features were categorical, with a number of factor levels ranging from $2$ to $100$. 
+
+We compare the rather manual, in-house approach that yields the current performance, the na\"{\i}ve linear logistic regression and \textit{ad hoc} methods introduced in the previous section and finally our \textit{glmdisc} proposal. Beside the classification performance, interpretability is maintained and unsurprisingly, the learned representation comes often close to the ``manual'' approach: for example, the complicated in-house coding of job types is roughly grouped by \textit{glmdisc} into \textit{e.g.}\ ``worker'', ``technician'', \textit{etc.} Notice that even if the ``na\"{\i}ve'' logistic regression reaches some very decent predictive results, its poor interpretability skill (no quantization at all) excludes it from standard use in the company.
+
+The usefulness of discretization and grouping is clear on \textit{Credit Scoring} data and although \textit{glmdisc} does not always perform significantly better than the manual approach, it allows practitioners to focus on other tasks by saving a lot of time, as was already stressed out. As a rule of thumb, a month is generally allocated to data pre-processing for a single data scientist working on a single scorecard. On Google Collaboratory, and relying on Keras (\cite{chollet2015keras}) and Tensorflow (\cite{tensorflow2015-whitepaper}) as a backend, it took less than an hour to perform discretization and grouping for all datasets.
+
+\begin{table}
+    \centering
+\begin{tabular}{lp{0.1\linewidth}p{0.138\linewidth}p{0.13\linewidth}p{0.15\linewidth}p{0.15\linewidth}}
+Portfolio & ALLR & Current \hspace{0.5cm} performance & \textit{ad hoc} methods & Our proposal: \textit{glmdisc}-NN & Our proposal: \textit{glmdisc}-NN \\
+\hline
+Automobile loans & 58.8 & 55.6 & \bf{60.4} & 55.0 & 0 \\
+Renovation loans & 52.3 & 50.9 & \bf{54.2} & 49.6 & 0 \\
+Standard loans & 39.7 & 37.1 & \bf{46.3} & 41.0 & 0 \\
+Revolving loans & 61.5 & 58.5 & \bf{62.9} & 60.3 & 0 \\
+Mass retail loans & 52.5 & 48.7 & \bf{63.7} &61.3 & 0 \\
+Electronics loans & 52.6 & 55.8 & 61.6  & \bf{67.0} & 0 
+\end{tabular}
+    \caption{Gini indices of our proposed representation learning algorithm \textit{glmdisc}, the two baselines of Table~\ref{tab:banchmark} and the current scorecard (manual / expert representation) obtained on several portfolios of Credit Agricole Consumer Finance.}
+    \label{tab:real_data}
+\end{table}
+
+\textcolor{red}{ajouter CI sur Gini}
+
+\section{Concluding remarks}
+
+Feature quantization (discretization for continuous features, grouping of factor levels for categorical ones) in a supervised multivariate classification is a recurring problem in many industrial contexts. This setting was formalized as a highly combinatorial representation learning problem and a new algorithmic approach, named \textit{glmdisc}, has been proposed as a sensible approximation of a classical statistical information criterion.
+
+\textcolor{red}{gls for SEM}
+
+The first proposed implementation relies on the use of a neural network of particular architecture and specifically a softmax approximation of each discretized or grouped feature. The second proposed implementation relies on an SEM algorithm and a polytomic multiclass \gls{lr} approximation in the same flavor as the softmax. These proposals can alternatively be replaced by any other univariate multiclass predictive model, which make them flexible and adaptable to other problems. Prediction of the target feature, given quantized features, was exemplified with logistic regression, although here as well, it can be swapped with any other supervised classification model.
+
+The experiments showed that, as was sensed empirically by statisticians in the field of \textit{Credit Scoring}, discretization and grouping can indeed provide better models than standard logistic regression. This novel approach allows practitioners to have a fully automated and statistically well-grounded tool that achieves better performance than \textit{ad hoc} industrial practices at the price of decent computing time but much less of the practitioner's valuable time.
+
+As described in the introduction, logistic regression is additive in its inputs which does not allow to take into account conditional dependency, as stated by~\cite{berry2010testing}. This problem is often dealt with by sparsely introducing ``interactions'', \textit{i.e.}\ products of two features. This leads again to a model selection challenge on a highly combinatorial discrete space that could be solved with a similar approach. In a broader context with no restriction on the predictive model, \cite{tsang2018detecting} already made use of neural networks to estimate the presence or absence of statistical interactions. I take another approach in the subsequent chapter where I tackle the parsimonious addition of pairwise interactions among quantized features, that might influence the quantization process introduced in this work, is a future area of research.
+
+
 
 
 \printbibliography[heading=subbibliography, title=Références du chapitre 3]
