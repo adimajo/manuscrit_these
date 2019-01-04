@@ -26,6 +26,10 @@ As described in the introduction, logistic regression is linear in its inputs wh
 \end{equation}
 where $\glssymbol{bth} = (\theta_{0},\theta_{1}^1,\dots,\theta_{1}^{m_1},\dots,\theta_{d}^1,\dots,\theta_{d}^{m_d},\theta_{1,2}^{1,1},\dots,\theta_{1,2}^{m_1,m_2},\dots,\theta_{d-1,d}^{1,1},\dots,\theta_{d-1,d}^{m_{d-1},m_d})$ and for all features $j$, $f_j(x_j)=m_j$ is set as the ``reference'' value and consequently for all $j$, $\theta_{j}^{m_j}=0$ and for all $1 \leq k < \ell \leq d$, $\theta_{k,\ell}^{m_k,m_{\ell}}=0$.
 
+\textcolor{red}{eq:criterion undefined = c'est le BIC du chapitre précédent à harmoniser}
+
+\textcolor{red}{sec:discwithout undefined = à reprendre}
+
 Criterion~\eqref{eq:criterion} developed in the context of discretization and grouping can be adapted to take into account interactions
 \begin{equation}\label{eq:criterion_inter}
 \bm{f}^{\text{opt}},\bdelta^{\text{opt}} = \argmin_{\bm{f},\bdelta} \text{BIC}[p_{\glssymbol{bth}}(\bm{y}|\bm{f}(\bm{x}),\bdelta)].
@@ -106,4 +110,4 @@ The code used for numerical experiments is available as packages, in the \textsf
 
 
 
-\printbibliography[heading=subbibliography, title=Références du chapitre 4]
+\printbibliography[heading=subbibliography, title=References of chapter 4]

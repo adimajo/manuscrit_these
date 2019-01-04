@@ -221,7 +221,7 @@ for (i in 1:iter){
                
           }
           
-          tikz(paste0('sem_simulated_data/sem_feature_',j,'_iter_',i,'.tex'), standAlone=FALSE, width = 4, height = 3, fg = "white")
+          tikz(paste0('sem_simulated_data/sem_feature_',j,'_iter_',i,'.tex'), standAlone=FALSE, width = 4, height = 3, fg = "black")
           plot(predictors[,j],e[,j], xlab = '$x_j$', ylab = '$e_j$', col = e[,j])
           dev.off()
      }

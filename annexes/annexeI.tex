@@ -583,11 +583,14 @@ Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
  \caption{\label{NN-disc} \textit{glmdisc}-NN: supervised multivariate discretization for logistic regression with neural networks.}
 \end{algorithm}
 
+\begin{animateinline}[poster=first, controls=all, palindrome, autopause, autoresume, width=\textwidth, height=7cm]{3}
+\multiframe{200}{i=1+1}{\input{R_CODE_FIGURES/appendix/animation_disc_tensorflow/False_simulated_data/feature_0_iteration_\i.tex}}%
+\end{animateinline}
+
+
+\textcolor{red}{à décommenter // ajouter caption et numéro itération}
 
 \subsubsection{\textit{glmdisc} with an \gls{sem} algorithm}
-
-
-\textcolor{red}{insert animation here}
 
 \begin{algorithm}[H]
  \KwData{$(\bm{x},\bm{y})$}
@@ -612,6 +615,13 @@ Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
  Choose the best logistic regression model from $(p_{\hat{\eta}^{(r)}}(\bm{y} | \bm{e}_{MAP}^{(r)}))_1^{Max}$\;
  \caption{\label{SEM-disc} \textit{glmdisc}-NN: supervised multivariate discretization for logistic regression with an \gls{sem} algorithm.}
 \end{algorithm}
+
+\begin{animateinline}[poster=first, controls=all, palindrome, autopause, autoresume, width=\textwidth, height=7cm]{5}
+\multiframe{200}{i=1+1}{\input{R_CODE_FIGURES/appendix/animation_disc_SEM/sem_simulated_data/sem_feature_1_iter_\i.tex}}%
+\end{animateinline}
+Vil59650
+\textcolor{red}{à décommenter // ajouter caption}
+
 
 \section{Factor levels grouping methods}
 

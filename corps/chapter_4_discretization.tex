@@ -61,16 +61,14 @@ The space where quantizations $\q$ live will be denoted by $\Q$ in the sequel.
 
 
 
-\subparagraph{Cardinality of the quantization family in the continuous case}
+\subparagraph{Cardinality of the quantization family in the continuous case} ~\label{par:cardinality}
 
- \# TODO
+\# TODO
  
  
- \subparagraph{Cardinality of the quantization family in the categorical case}
+\subparagraph{Cardinality of the quantization family in the categorical case}
 
- 
-  \# TODO
-
+\# TODO
 
 
 \paragraph{Literature review}
@@ -279,6 +277,8 @@ Concerning now the number of intervals or factor levels $\boldsymbol{m} = (m_j)_
  
  
  \textcolor{red}{reprendre article et changer notations}
+ 
+ \textcolor{red}{penser à uniformiser caption en haut ou en bas des figures / tableaux / algorithms}
 
 \begin{figure}
 \begin{multicols}{2}
@@ -479,7 +479,7 @@ To test further the effectiveness of \textit{glmdisc} in a predictive setting, w
 
 Now that we made sure that our approach is empirically consistent, \textit{i.e.}\ it is able to find the true quantization in a well-specified setting, we wish to verify our claim that embedding the learning of a good quantization in the predictive task \textit{via glmdisc} is better than other methods that rely on \textit{ad hoc} criteria. As we were primarily interested in logistic regression, we will compare our approach to a na\"{\i}ve linear logistic regression, a logistic regression on continuous discretized data using the now standard MDLP algorithm from~\cite{fayyad1993multi} and categorical grouped data using $\chi^2$ tests of independence between each pair of factor levels and the target in the same fashion as the ChiMerge discretization algorithm proposed by~\cite{kerber1992chimerge}. Table~\ref{tab:banchmark} shows our approach yields significantly better results on these rather small datasets where the added flexibility of quantization might help the predictive task.
 
-\Textcolor{red}{define ALLR}
+\textcolor{red}{define ALLR}
 
 \begin{table}
     \centering
@@ -543,5 +543,5 @@ As described in the introduction, logistic regression is additive in its inputs 
 
 
 
-\printbibliography[heading=subbibliography, title=Références du chapitre 3]
+\printbibliography[heading=subbibliography, title=References of chapter 3]
 

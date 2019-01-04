@@ -1,8 +1,8 @@
-% arara: pdflatex
+% arara: pdflatex: {shell: yes}
 % arara: biber 
 % arara: makeglossaries
-% arara: pdflatex
-% arara: pdflatex
+% arara: pdflatex: {shell: yes}
+% arara: pdflatex: {shell: yes}
 % arara: clean
 % arara: lmkclean
 
@@ -40,6 +40,10 @@
 \usepackage{subcaption}
 \usepackage{multicol}
 \usepackage[french]{minitoc}
+\usepackage{animate}
+\usepackage{svg}
+\usepackage{bibentry}
+\nobibliography
 
 \usetikzlibrary{arrows,intersections,positioning,shapes.arrows,babel}
 
@@ -59,6 +63,7 @@
 \addbibresource{bibtex_files/chapitre2/chapitre2.bib}
 \addbibresource{bibtex_files/chapitre4/chapitre4.bib}
 \addbibresource{bibtex_files/chapitre5/chapitre5.bib}
+\addbibresource{bibtex_files/appendix/appendix.bib}
 %
 % (Facultatif) Génération du glossaire (obligatoire si le package « glossaries »
 % est chargé)
