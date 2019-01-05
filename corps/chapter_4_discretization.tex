@@ -283,7 +283,6 @@ Concerning now the number of intervals or factor levels $\boldsymbol{m} = (m_j)_
 \begin{figure}
 \begin{multicols}{2}
 \begin{minipage}{0.45\textwidth}
-\caption{\label{fig:dep}Dépendance entre $\glssymbol{X}^j$,$\E^j$ et $\glssymbol{Y}$} 
 \centering
 \begin{tikzpicture}
 \tikzset{vertex/.style = {shape=circle,draw,minimum size=1.5em}}
@@ -321,13 +320,13 @@ Concerning now the number of intervals or factor levels $\boldsymbol{m} = (m_j)_
 \draw[dashed] (e1) to (ej);
 \draw[dashed] (ej) to (ed);
 \end{tikzpicture}
+\caption{\label{fig:dep}Dépendance entre $\glssymbol{X}^j$,$\E^j$ et $\glssymbol{Y}$} 
 \end{minipage}
 
 \columnbreak
 
 \begin{minipage}{0.45\textwidth}
 \centering
-\caption{\label{fig:disc_cont} Discrétisation d'une variable continue.}
 \begin{tikzpicture}[scale=0.2,every node/.style={scale=0.7}]
 \draw[->,line width=0.08cm] (-5,0)--(26,0) node[right]{$\glssymbol{x}$};
 
@@ -338,13 +337,13 @@ Concerning now the number of intervals or factor levels $\boldsymbol{m} = (m_j)_
 \node at (8,1) {$\E = 1$};
 \node at (20,1) {$\E = 2$};
 \end{tikzpicture}
+\caption{\label{fig:disc_cont} Discrétisation d'une variable continue.}
 \end{minipage}
 
 \vfill
 
 \begin{minipage}{0.45\textwidth}
 \centering
-\caption{\label{fig:disc_disc} Discrétisation d'une variable qualitative.}
 \begin{tikzpicture}[scale=0.2,every node/.style={scale=0.7}]
 \tikzset{vertex/.style = {shape=circle,draw,scale=0.7,minimum size=1cm}}
 \tikzset{edge/.style = {->,> = latex'}}
@@ -372,6 +371,7 @@ Concerning now the number of intervals or factor levels $\boldsymbol{m} = (m_j)_
 \draw[edge,line width=0.03cm] (x5) to (e2);
 
 \end{tikzpicture}
+\caption{\label{fig:disc_disc} Discrétisation d'une variable qualitative.}
 \end{minipage}
 \end{multicols}
 \end{figure}
@@ -380,7 +380,6 @@ Concerning now the number of intervals or factor levels $\boldsymbol{m} = (m_j)_
 
 
 \begin{figure}
-\caption{\label{fig:exp_sim} Distribution des données simulées selon un modèle discret.}
 \centering
 \begin{tikzpicture}
       \draw[->] (-1,0) -- (5,0) node[right] {$x$};
@@ -404,6 +403,7 @@ Concerning now the number of intervals or factor levels $\boldsymbol{m} = (m_j)_
 		\node[scale=0.7] (x4) at  (3.5,-0.5) {$1$};
 
 \end{tikzpicture}
+\caption{\label{fig:exp_sim} Distribution des données simulées selon un modèle discret.}
 \end{figure}
 
 
@@ -431,6 +431,8 @@ From the \textit{glmdisc} algorithm, we studied three cases:
 From a statistical point of view, experiment (a) assesses the empirical consistency of the estimation of $C_{j,h}$, whereas experiments (b) and (c) focus on the consistency of the estimation of $m_j$. The results are summarized in Table~\ref{tab:estim_precision} where 95\% confidence intervals (CI) are given, with a varying sample size. Note in particular that the slight underestimation in (b) is a classical consequence of the BIC criterion on small samples. 
 \begin{table}[h!]
     \centering
+    \caption{\label{tab:estim_precision} (a) CI of $\hat{c}_{j,2}$ for $c_{j,2} = 2/3$. (b) CI of $\hat{m}$ for $m_1=3$. (c) CI of $\hat{m}_3$ for $m_3=1$.}
+    
 \begin{tabular}{llll}
 Sample size & (a) $\hat{c}_{j,2}$ & (b) $\hat{m}_1$ & (c) $\hat{m}_3$\\
 \hline
@@ -445,8 +447,6 @@ $n = 10,000$ & $[0.666,0.666]$ & $[3.000,3.000]$ & $[1.399,1.621]$ \\
 $n = 1,000$ & $[0]$ & $[2]$ & $[1]$ \\
 $n = 10,000$ & $[0]$ & $[3]$ & $[1]$ 
 \end{tabular}
-    \caption{(a) CI of $\hat{c}_{j,2}$ for $c_{j,2} = 2/3$. (b) CI of $\hat{m}$ for $m_1=3$. (c) CI of $\hat{m}_3$ for $m_3=1$.}
-    \label{tab:estim_precision}
 \end{table}
 
  \newlength\figureheight
@@ -483,6 +483,7 @@ Now that we made sure that our approach is empirically consistent, \textit{i.e.}
 
 \begin{table}
     \centering
+    \caption{\label{tab:banchmark} Gini indices of our proposed representation learning algorithm \textit{glmdisc} and two baselines: a ``na\"{\i}ve'' logistic regression and \textit{ad hoc} methods (MDLP / $\chi^2$ tests) obtained on several benchmark datasets from the UCI library.}
 \begin{tabular}{lp{0.1\linewidth}p{0.13\linewidth}p{0.15\linewidth}p{0.15\linewidth}}
 Dataset & ALLR & \textit{ad hoc} methods & Our proposal: \textit{glmdisc}-NN & Our proposal: \textit{glmdisc}-SEM \\
 \hline
@@ -493,8 +494,6 @@ Credit-screening & 81.3 & 88.5 & \bf{93.4} & 0 \\
 German & 52.1 & 57.9 & \bf{70.4} & 0 \\
 Heart & 79.4 & 76.0 & \bf{84.0} & 0
 \end{tabular}
-    \caption{Gini indices of our proposed representation learning algorithm \textit{glmdisc} and two baselines: a ``na\"{\i}ve'' logistic regression and \textit{ad hoc} methods (MDLP / $\chi^2$ tests) obtained on several benchmark datasets from the UCI library.}
-    \label{tab:banchmark}
 \end{table}
 
 \textcolor{red}{ajouter CI sur Gini}
@@ -512,6 +511,7 @@ The usefulness of discretization and grouping is clear on \textit{Credit Scoring
 
 \begin{table}
     \centering
+    \caption{\label{tab:real_data} Gini indices of our proposed representation learning algorithm \textit{glmdisc}, the two baselines of Table~\ref{tab:banchmark} and the current scorecard (manual / expert representation) obtained on several portfolios of Credit Agricole Consumer Finance.}
 \begin{tabular}{lp{0.1\linewidth}p{0.138\linewidth}p{0.13\linewidth}p{0.15\linewidth}p{0.15\linewidth}}
 Portfolio & ALLR & Current \hspace{0.5cm} performance & \textit{ad hoc} methods & Our proposal: \textit{glmdisc}-NN & Our proposal: \textit{glmdisc}-NN \\
 \hline
@@ -522,8 +522,6 @@ Revolving loans & 61.5 & 58.5 & \bf{62.9} & 60.3 & 0 \\
 Mass retail loans & 52.5 & 48.7 & \bf{63.7} &61.3 & 0 \\
 Electronics loans & 52.6 & 55.8 & 61.6  & \bf{67.0} & 0 
 \end{tabular}
-    \caption{Gini indices of our proposed representation learning algorithm \textit{glmdisc}, the two baselines of Table~\ref{tab:banchmark} and the current scorecard (manual / expert representation) obtained on several portfolios of Credit Agricole Consumer Finance.}
-    \label{tab:real_data}
 \end{table}
 
 \textcolor{red}{ajouter CI sur Gini}

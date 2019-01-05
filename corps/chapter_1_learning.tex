@@ -59,27 +59,10 @@ On considère que ces caractéristiques sont une réalisation du vecteur aléato
 
 A ce stade, deux remarques importantes doivent être faites : d'abord, la partie précédente a montré qu'en fonction du produit demandé et du canal de la demande, une partie de ces caractéristiques peuvent être absentes. Par ailleurs, ces informations étant, à ce stade, déclaratives (des contrôles supplémentaires peuvent avoir lieu en fonction du montant demandé par exemple), elles sont associées à un degré de certitude variable, la tentation étant grande, afin de s'assurer de l'attribution du crédit, de déformer la réalité de ses charges, ses revenus, etc. En synthèse, le tableau~\ref{tab:design} présente un exemple simplifié de matrice de design en \textit{Credit Scoring}. En pratique un tel tableau structuré est directement mis à disposition des statisticiens de \gls{cacf} à travers le logiciel de traitement statistique SAS.
 
-%\begin{table}
-%\centering
-%\begin{scriptsize}
-%\begin{tabular}{p{1.4cm}|p{1.7cm}|p{1cm}|p{0.8cm}|p{1.4cm}|p{0.9cm}}
-%Travail & Logement & Durée d'emploi & Enfants & Statut familial & Salaire \\
-%\hline
-%Ouvrier qualifié & Propriétaire & 20 & 3 & Veuf & 30 000  \\
-%Technicien & En location & Manquant & 1 & Concubinage & \textcolor{orange}{1700}  \\
-%Technicien spécialisé & Accédant & 5 & 0 & Divorcé & \textcolor{red}{4000}  \\
-%Cadre & Par l'employeur & 8 & 2 & Célibataire & \textcolor{orange}{2700}  \\
-%Employé & En location & 12 & 2 & Marié & \textcolor{red}{1400}  \\
-%Ouvrier & Par la famille & 2 & 0 & Célibataire & \textcolor{green}{1200}  \\
-%\end{tabular}
-%\end{scriptsize}
-%\caption{\label{tab:design} Exemple simplifié de caractéristiques de demandeurs de crédit : présence de valeurs manquantes, extrêmes, et d'un degré d'erreur de mesure différent (\textcolor{green}{faible erreur de mesure}, \textcolor{orange}{erreur de mesure moyenne}, \textcolor{red}{forte erreur de mesure} : déformation de la vérité par le client).}
-%\end{table}
 
 \begin{table}
 \centering
-%\begin{scriptsize}
-%\begin{tabular}{p{1.4cm}|p{1.7cm}|p{1cm}|p{0.8cm}|p{1.4cm}|p{0.9cm}}
+\caption{\label{tab:design} Exemple simplifié de caractéristiques de demandeurs de crédit : présence de valeurs manquantes ou extrêmes.}
 \begin{tabular}{l|l|l|l|l|l}
 Travail & Logement & Durée d'emploi & Enfants & Statut familial & Salaire \\
 \hline
@@ -90,15 +73,11 @@ Cadre & Par l'employeur & 8 & 2 & Célibataire & {2700}  \\
 Employé & En location & 12 & 2 & Marié & {1400}  \\
 Ouvrier & Par la famille & 2 & 0 & Célibataire & {1200}  \\
 \end{tabular}
-%\end{scriptsize}
-\caption{\label{tab:design} Exemple simplifié de caractéristiques de demandeurs de crédit : présence de valeurs manquantes ou extrêmes.}
 \end{table}
 
 \subsection{Préparation des données et segmentation}
 
 Le tableau~\ref{tab:design} fait apparaître deux problèmes bien connus en statistique : la gestion des observations manquantes et celle des valeurs extrêmes (\textit{outliers}).
-
-% et l'erreur de mesure, relative à la mauvaise déclaration des demandeurs. Ce dernier problème ne sera pas traité ici.
 
 Concernant les observations manquantes, deux stratégies différentes peuvent être employées. \gls{cacf} réalise une ``segmentation'' de sa clientèle, de sorte que, à titre d'exemple, plusieurs modèles statistiques spécialisés à un sous-ensemble de la population totale peuvent être employés, chacun d'eux bénéficiant alors de données complètes. On pourra par exemple se limiter aux demandeurs de crédit automobile afin d'exploiter les données du véhicule à financer, qui sont alors toutes renseignées. Le processus de choix des ``segments'', \textit{i.e.}\ la partition des lignes de $\glssymbol{bbx}$ sur lesquels développer des modèles séparés, est basé soit sur l'histoire de l'entreprise (par exemple, un modèle spécifique aux crédits automobiles a pu être développé au début de la commercialisation de ce produit), soit sur des heuristiques très simples. On détaillera ce problème en chapitre~\ref{chap6}.
 
@@ -106,15 +85,12 @@ L'autre pré-traitement répandu dans le milieu du \textit{Credit Scoring} pour 
 
 \begin{table}
 \centering
-%\begin{scriptsize}
-%\begin{tabular}{p{1.4cm}|p{1.4cm}|p{1.4cm}|p{1.4cm}|p{1.4cm}|p{1.4cm}|p{1.4cm}}
+\caption{\label{tab:disc_ex} Exemple de variable continue discrétisée.}
 \begin{tabular}{l|l|l|l|l|l|l}
 Âge du client & 18 & Manquant & 47 & 25 & 35 & 61 \\
 \hline
 Âge discrétisé & 18-30 \& Manquant & 18-30 \& Manquant & 45-$\infty$ & 18-30 & 30-45 & 45-$\infty$ \\
 \end{tabular}
-%\end{scriptsize}
-\caption{\label{tab:disc_ex} Exemple de variable continue discrétisée.}
 \end{table}
 
 \`A présent, on dispose de données rendues complètes sur l'ensemble des demandeurs de crédit et l'on souhaite prédire le niveau de risque présenté par un nouveau demandeur. Il convient donc dans un premier temps de quantifier le risque de chaque échantillon de la matrice de design $\glssymbol{bbx}$.
@@ -149,9 +125,7 @@ On cherche un point d'inflexion sur cette courbe, qui traduirait le fait qu'au-d
 
 \begin{table}
 \centering
-%\fbox{%
-%\begin{scriptsize}
-%\begin{tabular}{p{1.4cm}|p{1.7cm}|p{1.7cm}|p{1.7cm}}
+\caption{\label{tab:impayes} Exemple d'évolution de dossiers à différents niveaux d'impayés.} 
 \begin{tabular}{l|l|l|l}
 Impayés consécutifs & Amélioration & Stabilité & Dégradation \\
 \hline
@@ -162,8 +136,6 @@ Impayés consécutifs & Amélioration & Stabilité & Dégradation \\
 4 & 5\% & 15 \% & {80 \%} \\
 5 & 5\% & 5 \% & {90 \%} \\
 \end{tabular}
-%\end{scriptsize}
-\caption{\label{tab:impayes} Exemple d'évolution de dossiers à différents niveaux d'impayés.} 
 \end{table}
 
 %% schéma temporel
@@ -176,15 +148,12 @@ Pour des raisons pratiques et historiques, on choisit généralement $T=12$ mois
 
 \begin{table}
 \centering
-%\begin{scriptsize}
-%\begin{tabular}{p{1.4cm}|p{1.4cm}|p{1.4cm}|p{1.4cm}|p{1.4cm}|p{1.4cm}|p{1.4cm}}
+\caption{\label{tab:rep_ex} Exemple de vecteur $\glssymbol{bby}$ de qualification du risque des clients.}
 \begin{tabular}{|c|c|c|c|c|c|c|}
 \hline
 $y$ & 1 & Manquant - Non-financé& 0 & Manquant - Indéterminé & 0 & 1 \\
 \hline
 \end{tabular}
-%\end{scriptsize}
-\caption{\label{tab:rep_ex} Exemple de vecteur $\glssymbol{bby}$ de qualification du risque des clients.}
 \end{table}
 
 On en conclut que la performance de remboursement n'est observable que pour les clients financés non indéterminés, que l'on va assimiler dans la suite à ceux pour lesquels $Z=\f$, problème qui fait l'objet du chapitre~\ref{chap2}. Toujours-est-il qu'à présent, on dispose de données $(\glssymbol{bbx},\glssymbol{bby})$ complètes grâce auxquelles on souhaite apprendre une règle de décision, appelée \gls{score} et discernant, parmi les futurs demandeurs de crédit, les ``bons'' des ``mauvais'' clients.
@@ -401,7 +370,7 @@ Ce terme d'erreur a été introduit par le passage de $p_{\text{data}}$ à $p_{\
 		yslant=\yslant,xslant=\xslant
 	] 
 		% The frame:
-		\draw[black, dashed, thin] (0,0) rectangle (7,7); 
+		\draw[black, dashed, thin] (-0.5,-0.5) rectangle (6.5,6.5); 
 		% Agents:
 		\draw[fill=red]  
 			%(5,2) circle (.1) % Firms
@@ -519,25 +488,27 @@ où $C$ est une constante qui contrôle le compromis erreurs de classement et la
 
 \svgpath{{./figures/chapitre1/}}
 
-  \begin{figure}
+\begin{figure}
+{\setlength{\parindent}{0cm}
+\begin{multicols}{2}
     \centering
-    \begin{subfigure}[t]{\textwidth}
+    \begin{subfigure}[t]{0.45\textwidth}
         \centering
-        \includesvg[width=0.45\textwidth]{Plusieurs_separatrice_lineaire}
-        \vspace{-0.5cm}
-        \caption{\label{fig:svm1} SVM blabla.\footnote{source...}}
+        \includesvg[width=\textwidth]{Plusieurs_separatrice_lineaire}
+        \caption[SVM blabla.]{\label{fig:svm1} SVM blabla.\footnotemark[1]}
     \end{subfigure}%
-    
-    \begin{subfigure}[t]{\textwidth}
+    \columnbreak
+    \begin{subfigure}[t]{0.45\textwidth}
         \centering
-        \includesvg[width=0.45\textwidth]{Separatrice_lineaire_avec_marges}
-        \vspace{-0.5cm}
-        \caption{\label{fig:svm2} SVM blablabla.}
+        \includesvg[width=\textwidth]{Separatrice_lineaire_avec_marges}
+        \caption[SVM blablabla.]{\label{fig:svm2} SVM blablabla.\footnotemark[1]}
     \end{subfigure}
-    
-%    \caption{\label{fig:MAP} Quantizations $\hat{\q}^{(t)}_1(\glssymbol{x}_1)$ of experiment (a) resulting from the thresholding (\ref{eq:ht}).}
+\end{multicols}
+\caption{\label{fig:svm} SVM blablablablabla.}
 \end{figure}
 
+
+\footnotetext[1]{This is my footnote!}
 
 \paragraph{Kernel trick}
 
