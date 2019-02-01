@@ -525,14 +525,6 @@ The \textit{equal-freq} algorithm~\ref{equal-freq-disc} is illustrated on Figure
 \node [red,circle, fill] at (30,0) {};
 \node [red,circle, fill] at (36,0) {};
 
-%\node at (-8,-1) {};
-%\node at (0,-1) {};
-%\node at (8,-1) {};
-%\node at (15,-1) {};
-%\node at (20,-1) {};
-%\node at (25,-1) {};
-%\node at (30,-1) {};
-%\node at (36,-1) {};
 
 % Cut points
 \node [green,rectangle,rotate=90,fill] at (8,0) {};
@@ -559,7 +551,7 @@ The \textit{equal-freq} algorithm~\ref{equal-freq-disc} is illustrated on Figure
  \For{$j=1$ to $d$}{
 Sort $\glssymbol{bbx}^j$ by ascending order\;
 Let $c_0=-\infty$, $c_{m_j} = + \infty$ and $c_{j,h} = x_{\left\lceil{{\frac{h \cdot n}{m_j}}}\right\rceil,j}$\;
-Let $C_{j,h} = ]c_{j,h-1};c_{j,h}]$ and $\hat{\q_j(\cdot)} = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
+Let $C_{j,h} = ]c_{j,h-1};c_{j,h}]$ and $\hat{\q}_j(\cdot) = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
 Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
 %\For{$i=1$ to $n$}{
 %Set $q_i^j(x_j) = \begin{cases} 1 \text{ si } x_i^j \leq x_{\left\lceil{{\frac{n}{m_j}}}\right\rceil}^j \\ o \text{ si } x_{\left\lceil{{\frac{(o-1)*n}{m_j}}}\right\rceil}^j < x_i^j \leq x_{\left\lceil{{\frac{o*n}{m_j}}}\right\rceil}^j \\ m_j \text{ si } x_{\left\lceil{{\frac{(m_j-1)*n}{m_j}}}\right\rceil}^j < x_i^j \end{cases}$
@@ -588,14 +580,6 @@ The \textit{equal-length} algorithm~\ref{equal-length-disc} is illustrated on Fi
 \node [red,circle, fill] at (30,0) {};
 \node [red,circle, fill] at (36,0) {};
 
-%\node at (-8,-1) {};
-%\node at (0,-1) {};
-%\node at (8,-1) {};
-%\node at (15,-1) {};
-%\node at (20,-1) {};
-%\node at (25,-1) {};
-%\node at (30,-1) {};
-%\node at (36,-1) {};
 
 % Cut points
 \node [green,rectangle,rotate=90,fill] at (6.7,0) {};
@@ -621,7 +605,7 @@ The \textit{equal-length} algorithm~\ref{equal-length-disc} is illustrated on Fi
  \For{$j=1$ to $d$}{
 Let $w_j = \max{i} x_{i,j} - \min{i} x_{i,j}$\;
 Let $c_0=-\infty$, $c_{m_j} = + \infty$ and $c_{j,h} = \frac{w_j \cdot h}{m_j} + \min{i} x_{i,j}$\;
-Let $C_{j,h} = ]c_{j,h-1};c_{j,h}]$ and $\hat{\q_j(\cdot)} = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
+Let $C_{j,h} = ]c_{j,h-1};c_{j,h}]$ and $\hat{\q}_j(\cdot) = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
 Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
 }
  \caption{\label{equal-length-disc} \textit{equal-length} discretization: each bin has the width of the training set's total support divided by the number of bins.}
@@ -633,49 +617,73 @@ Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
 
 \subsubsection{The \textit{ChiMerge} algorithm}
 
-The \textit{ChiMerge}~\cite{kerber1992chimerge} algorithm~\ref{chimerge} is a supervised (it takes into account the labels $\glssymbol{bby}$) univariate (it does not take into account the other features $\glssymbol{x}_{\{-j\}}$)). It is used indirectly in the benchmarks of Chapter~\ref{chap4} where I applied the same approach to categorical features by computing all the pairwise $\chi^2$ indepedence tests. Here we showcase a rather na\"{\i}ve implementation as a pseudo-code~\ref{chicollapse}, which in practice would perform poorly (because of exponential complexity in the number of categories $l_j$) but, from an iteration to another, a lot of $\chi^2$ tests are unaffected, so they can be stored rather than computed again. A single step of \textit{ChiMerge} is illustrated in Table~\ref{tab:chimerge_ex}.
+The \textit{ChiMerge}~\cite{kerber1992chimerge} algorithm~\ref{chimerge} is a supervised (it takes into account the labels $\glssymbol{bby}$) univariate (it does not take into account the other features $\glssymbol{x}_{\{-j\}}$)). It is used indirectly in the benchmarks of Chapter~\ref{chap4} where I applied the same approach to categorical features by computing all the pairwise $\chi^2$ indepedence tests. Here we showcase a rather na\"{\i}ve implementation as a pseudo-code~\ref{chicollapse}, which in practice would perform poorly (because of exponential complexity in the number of categories $l_j$) but, from an iteration to another, a lot of $\chi^2$ tests are unaffected, so they can be stored rather than computed again. A single step of \textit{ChiMerge} is illustrated in Table~\ref{tab:chimerge_ex}. Refinements of the method, taking into account multiple testing and / or adapting $\alpha$ to each feature, were done in~\cite{}.
 
-\begin{table}
+%\begin{table}
+%\centering
+%\caption{\label{tab:chimerge_ex} p-values of $\chi^2$ tests between subsequent categories. The pair of categories the least independent (\textit{i.e.}\ with highest p-value) is $(-\infty-18,18-20)$ which should be merged into $-\infty-20$.}
+%\begin{tabular}{p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}}
+%Category & \# samples & \# $\{Y=1\}$ & p-value \\
+%\hline
+%$-\infty$-18 & 10 & 5 & \multirow{2}{*}{\textbf{1}} \\
+%18-20 & 10 & 5 & \multirow{2}{*}{0.3} \\
+%20-22 & 10 & 6 & \multirow{2}{*}{0.2} \\
+%22-24 & 10 & 4 & \multirow{2}{*}{0.2}\\
+%24-$+\infty$ & 10 & 2 & \multirow{2}{*}{0.2} \\
+%\dots & \dots & \dots & \dots \\
+%\end{tabular}
+%\end{table}
+%
+%\textcolor{red}{calculer les chi 2 exacts}
+
+\begin{figure}
 \centering
-\caption{\label{tab:chimerge_ex} p-values of $\chi^2$ tests between subsequent categories. The pair of categories the least independent (\textit{i.e.}\ with highest p-value) is $(-\infty-18,18-20)$ which should be merged into $-\infty-20$.}
-\begin{tabular}{p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}}
-Category & \# samples & \# $\{Y=1\}$ & p-value \\
-\hline
-$-\infty$-18 & 10 & 5 & \multirow{2}{*}{\textbf{1}} \\
-18-20 & 10 & 5 & \multirow{2}{*}{0.3} \\
-20-22 & 10 & 6 & \multirow{2}{*}{0.2} \\
-22-24 & 10 & 4 & \multirow{2}{*}{0.2}\\
-24-$+\infty$ & 10 & 2 & \multirow{2}{*}{0.2} \\
-\dots & \dots & \dots & \dots \\
-\end{tabular}
-\end{table}
-
-\textcolor{red}{calculer les chi 2 exacts}
+\includegraphics[width = \textwidth]{figures/appendix/tab_chimerge.PNG}
+\caption{\label{tab:chimerge_ex} p-values of $\chi^2$ tests between subsequent categories on the iris dataset taken from~\cite{kerber1992chimerge}.}
+\end{figure}
 
 \begin{algorithm}[H]
- \KwData{$n,\glssymbol{bbx},(m_j)_1^d$}
+ \KwData{$n,\glssymbol{bbx},\alpha$}
  \KwResult{$\hat{\q}$}
  \For{$j=1$ to $d$}{
-Let $w_j = \max{i} x_{i,j} - \min{i} x_{i,j}$\;
-Let $c_0=-\infty$, $c_{m_j} = + \infty$ and $c_{j,h} = \frac{w_j \cdot h}{m_j} + \min{i} x_{i,j}$\;
-Let $C_{j,h} = ]c_{j,h-1};c_{j,h}]$ and $\hat{\q_j(\cdot)} = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
-Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
+ $\alpha_{\text{max}}$ = 1\;
+ Sort $\glssymbol{bbx}_j$ in ascending order\;
+ Let $c_0=-\infty$, $m_j = n$, $c_{m_j} = + \infty$ and $c_{j,h} = \frac{x_{i,j} + x_{i+1,j}}{2}$ for $1 \leq i \leq n-1$\;
+ \While{$\alpha_{\text{max}} > \alpha$}{
+Let $C_{j,h} = ]c_{j,h-1};c_{j,h}]$ and $\hat{\q}_j(\cdot) = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
+Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$\;
+Perform $\chi^2$ tests of independence among all contiguous pairs\:
+$\chi^2_h = \sum_{y=0}^{1} \frac{ \left( \sum_{i=1}^n \mathds{1}_{y}(y_i) \hat{q}_{j,h}(x_{i,j} ) - \frac{\sum_{i=1}^n \hat{q}_{j,h}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n} \right)^2}{\frac{\sum_{i=1}^n \hat{q}_{j,h}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n}}$ for $1 \leq h \leq m_j-1$\;
+Under the null hypothesis that two consecutive intervals are independent w.r.t.\ the target $y$, $\chi^2_h$ is $\chi^2$-distributed (1 degree of freedom)\;
+Let $c_{j,\min_h \chi^2_h} = \frac{c_{j,h} + c_{j,h+1}}{2}$ and $c_{j,h'} \leftarrow c_{j,h'+1}$ for $\min_h \chi^2_h < h' < m_j$\;
+Let $X \sim \chi^2$ and $\alpha_{\text{max}} = max_h p(X \geq \chi^2_h) = p(X \geq max_h \chi^2_h)$.
 }
- \caption{\label{chimerge} bla.}
+}
+ \caption{\label{chimerge} ChiMerge algorithm perfoming discretization by performing $chi^2$ tests recursively at a user-defined level $\alpha$.}
 \end{algorithm}
 
+As part of Chapter~\ref{chap4}, I gave results for competing methods MDLP / $chi^2$ tests where the $chi^2$ tests can be . My rather na implementation (where, as in the pseudo-code~\ref{chicollapse}, all pairwise $\chi^2$ tests are recalculated at each step) is available as a gist on Github at \url{https://gist.github.com/adimajo/eb007492007d650091f6bd7cb2047493}. An example of the resulting usage of the grouped levels in a predictive setting is also given as a gist on Github at \url{https://gist.github.com/adimajo/8f8401b59ba838c65534673842b0f60d}.
 
 \begin{algorithm}[H]
- \KwData{$n,\glssymbol{bbx},(m_j)_1^d$}
+ \KwData{$n,\glssymbol{bbx},\alpha$}
  \KwResult{$\hat{\q}$}
  \For{$j=1$ to $d$}{
-Let $w_j = \max{i} x_{i,j} - \min{i} x_{i,j}$\;
-Let $c_0=-\infty$, $c_{m_j} = + \infty$ and $c_{j,h} = \frac{w_j \cdot h}{m_j} + \min{i} x_{i,j}$\;
-Let $C_{j,h} = ]c_{j,h-1};c_{j,h}]$ and $\hat{\q_j(\cdot)} = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
-Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
+ $\alpha_{\text{max}}$ = 1\;
+ Sort $\glssymbol{bbx}_j$ in ascending order\;
+ Let $c_0=-\infty$, $m_j = n$, $c_{m_j} = + \infty$ and $c_{j,h} = \frac{x_{i,j} + x_{i+1,j}}{2}$ for $1 \leq i \leq n-1$\;
+ \While{$\alpha_{\text{max}} > \alpha$}{
+Let $C_{j,h} = ]c_{j,h-1};c_{j,h}]$ and $\hat{\q}_j(\cdot) = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
+Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$\;
+Perform $\chi^2$ tests of independence among all contiguous pairs\:
+$\chi^2_h = \sum_{y=0}^{1} \frac{ \left( \sum_{i=1}^n \mathds{1}_{y}(y_i) \hat{q}_{j,h}(x_{i,j} ) - \frac{\sum_{i=1}^n \hat{q}_{j,h}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n} \right)^2}{\frac{\sum_{i=1}^n \hat{q}_{j,h}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n}}$ for $1 \leq h \leq m_j-1$\;
+Under the null hypothesis that two consecutive intervals are independent w.r.t.\ the target $y$, $\chi^2_h$ is $\chi^2$-distributed (1 degree of freedom)\;
+Let $c_{j,\min_h \chi^2_h} = \frac{c_{j,h} + c_{j,h+1}}{2}$ and $c_{j,h'} \leftarrow c_{j,h'+1}$ for $\min_h \chi^2_h < h' < m_j$\;
+Let $X \sim \chi^2$ and $\alpha_{\text{max}} = max_h p(X \geq \chi^2_h) = p(X \geq max_h \chi^2_h)$.
 }
- \caption{\label{chicollapse} bla.}
+}
+ \caption{\label{chicollapse} ChiCollapse algorithm: adaptation of ChiMerge to categorical features.}
 \end{algorithm}
+
 
 
 \subsubsection{The \textit{MDLP} algorithm}
@@ -683,6 +691,8 @@ Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
 The \textit{MDLP} algorithm~\cite{fayyad1993multi} is 
 
 
+\textcolor{red}{mettre une sorte d'arbre ici}
+
 \begin{algorithm}[H]
  \KwData{$n,\glssymbol{bbx},(m_j)_1^d$}
  \KwResult{$\hat{\q}$}
@@ -692,7 +702,7 @@ Let $c_0=-\infty$, $c_{m_j} = + \infty$ and $c_{j,h} = \frac{w_j \cdot h}{m_j} +
 Let $C_{j,h} = ]c_{j,h-1};c_{j,h}]$ and $\hat{\q_j(\cdot)} = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
 Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
 }
- \caption{\label{mdlp} bla.}
+ \caption{\label{mdlp} MDLP algorithm recursively perform discretization with an information gain criterion.}
 \end{algorithm}
 
 
