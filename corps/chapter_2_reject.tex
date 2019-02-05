@@ -2,7 +2,11 @@
 
 \epigraph{Sounds good, doesn't work.}{Donald J.\ Trump}
 
+\minitoc
+
 \textit{Nota Bene :} ce chapitre s'inspire fortement de l'article [...]
+
+\bigskip
 
 \selectlanguage{english}
 
@@ -29,9 +33,9 @@ The granting process of all credit institutions rejects applicants who seem risk
       0/90/30/financed/above/accepted,
       90/180/150/not-taken-up/above/accepted}
   {
-    \draw[fill=green, thick] (0,0) -- (\end:1.8cm) arc (\end:\start:1.8cm)
-      node at (\middle:1cm) {\percent};
-    \draw (\middle:1.8cm) -- (\middle:2.2cm) node[\anchor] {\name};
+    \draw[fill=green, thick] (0,0) -- (\end:2.4cm) arc (\end:\start:2.4cm)
+      node at (\middle:1.3cm) {\percent};
+    \draw (\middle:2.4cm) -- (\middle:3cm) node[\anchor] {\name};
   };
     
     \foreach \start/\end/\middle/\percent/\anchor/\name in {
@@ -39,9 +43,9 @@ The granting process of all credit institutions rejects applicants who seem risk
       240/300/270/rules/below/rejected,
       300/360/340/operator/below/rejected}
   {
-    \draw[fill=red, thick] (0,0) -- (\end:1.8cm) arc (\end:\start:1.8cm)
-      node at (\middle:1cm) {\percent};
-    \draw (\middle:1.8cm) -- (\middle:2.2cm) node[\anchor] {\name};
+    \draw[fill=red, thick] (0,0) -- (\end:2.4cm) arc (\end:\start:2.4cm)
+      node at (\middle:1.3cm) {\percent};
+    \draw (\middle:2.4cm) -- (\middle:3cm) node[\anchor] {\name};
   };
 \end{tikzpicture}
 \caption{Simplified Acceptance status in Crédit Agricole Consumer Finance - scale relations not respected}

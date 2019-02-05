@@ -1,7 +1,10 @@
 \chapter{Apprendre des demandes de crédit à la consommation} \label{chap1}
-\minitoc
+
 
 \epigraph{Les hommes mentent mais pas les chiffres.}{Kaaris}
+
+\adjustmtc
+\minitoc
 
 Ce chapitre est destiné à poser les bases de l'apprentissage statistique dans le cadre des crédits à la consommation. On introduira dans une première partie la terminologie consacrée du crédit à la consommation avant de s'attarder plus en détails, dans une seconde partie, sur l'état de l'art industriel du \textit{Credit Scoring} à travers une étude bibliographique et la pratique de \gls{cacf}. On clotûrera le chapitre par une troisième partie, la plus traditionnelle pour débuter un manuscrit de thèse, à savoir l'état de l'art académique de l'apprentissage statistique, en nous limitant bien entendu aux cas d'usage spécifiques aux crédits à la consommation mis en exergue dans les deux premières parties de ce chapitre.
 
@@ -221,7 +224,7 @@ La métrique utilisée pour comparer la qualité de \glspl{score} (le score anci
 \caption{\label{fig:ROC} Exemple de courbe ROC sur un petit jeu de données simulées et valeur de l'AUC correspondante.}
 \end{figure}
 
-Il faut remarquer à ce stade que ce critère est à la fois différent de celui optimisé par la régression logistique, que nous verrons en détails dans la partie suivante, et de l'objectif industriel de maximiser le profit, soit directement par l'usage de variables de nature financière~\cite{finlay2010credit}, soit indirectement par le choix d'un \gls{cut} approprié. Néanmoins, une étude empirique~\cite{finlay2009we} montre que la maximisation de ces différents objectifs est \textit{a priori} relativement équivalent, la qualité prédictive de différents modèles maximisant chacun de ces objectifs étant similaires sur le jeu de données considéré par l'auteur. On suppose cette équivalence dans la suite et sauf indication contraire, les résultats sur données réelles sont donnés en Gini, dont on essaiera de donner un intervalle de confiance selon la méthode développée dans~\cite{cortes2005confidence}.
+Il faut remarquer à ce stade que ce critère est à la fois différent de celui optimisé par la régression logistique, que nous verrons en détails dans la partie suivante, et de l'objectif industriel de maximiser le profit, soit directement par l'usage de variables de nature financière~\cite{finlay2010credit}, soit indirectement par le choix d'un \gls{cut} approprié. Néanmoins, une étude empirique~\cite{finlay2009we} montre que la maximisation de ces différents objectifs est \textit{a priori} relativement équivalent, la qualité prédictive de différents modèles maximisant chacun de ces objectifs étant similaires sur le jeu de données considéré par l'auteur. On suppose cette équivalence dans la suite et sauf indication contraire, les résultats sur données réelles sont donnés en Gini, dont on essaiera de donner un intervalle de confiance selon la méthode développée dans~\cite{sun2014fast}.
 
 
 
@@ -311,7 +314,7 @@ Cette divergence est donnée pour une valeur particulière $\glssymbol{bx}$ de $
 
 N'ayant accès à $\pd(\cdot | \glssymbol{bx})$ qu'à travers un échantillon, il nous faut développer un critère empirique à partir du critère théorique (on parle aussi de critère asymptotique) donné ici.
 
-\subsection{Minimisation du risque empirique et maximum de vraisemblance}
+\subsection{Minimisation du risque empirique et maximum de vraisemblance} \ref{subsec:gradient}
 
 On peut réécrire $\glssymbol{KL}(p_{\text{data}}(\cdot|\glssymbol{bx})||p_{\glssymbol{bth}}(\cdot|\glssymbol{bx}))$ pour faire apparaître un terme indépendant de $p_{\glssymbol{bth}}$ :
 \[ \glssymbol{KL}(p_{\text{data}}(\cdot|\glssymbol{bx})||p_{\glssymbol{bth}}(\cdot|\glssymbol{bx})) = \underbrace{\sum_{y \in \{0,1\}} p_{\text{data}}(y|\glssymbol{bx}) \ln [p_{\text{data}}(y|\glssymbol{bx})]}_{\perp p_{\glssymbol{bth}}} - \underbrace{\sum_{y \in \{0,1\}} p_{\text{data}}(y|\glssymbol{bx}) \ln [p_{\glssymbol{bth}}(y|\glssymbol{bx})]}_{\mathbb{E}_{\glssymbol{Y}} [\ln[p_{\glssymbol{bth}}(\cdot|\glssymbol{bx})]]}  \]
@@ -382,11 +385,11 @@ Ce terme d'erreur a été introduit par le passage de $p_{\text{data}}$ à $p_{\
 			(2,4) to (1,5); % Wages
 		 % Labels:
 		\fill[black]
-			(0.5,6.5) node[right, scale=2.5] {Espace $\Theta$}
+			(0.2,6) node[right, scale=2.5] {Espace $\Theta$}
 			(2.1,1.9) node[below,scale=2]{$\glssymbol{bth}^\star$}
 			(2.2,4.3) node [scale=2] {$\hat{\glssymbol{bth}}$} ;
 		\fill[blue]
-			(0.5,3) node [scale=1] {Biais et variance}
+			(0.7,3) node [scale=1] {Biais et variance}
             (0.5,2.7) node [scale=1] {d'estimation};
          \fill[orange]
 			(0.5,4.2) node [scale=1] {Précision}
@@ -449,8 +452,7 @@ On peut faire apparaître ce phénomène en mesurant l'écart quadratique moyen 
 Pour la dérivation rigoureuse de ce résultat, se référer à~\cite{} (p. à ).
 
 
-Dans le cas particulier du \textit{Credit Scoring}, une thèse CIFRE récente a même été consacrée au sujet de la sélection de variable~\cite{} et recommande l'utilisation de .
-% Nombreuse réf. + thèse Vidal
+Dans le cas particulier du \textit{Credit Scoring}, une thèse CIFRE récente a même été consacrée au sujet de la sélection de variable~\cite{vital2016} et recommande l'utilisation de .
 
 
 \subsubsection{Choix de modèle}
@@ -495,24 +497,24 @@ où $C$ est une constante qui contrôle le compromis erreurs de classement et la
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includesvg[width=\textwidth]{Plusieurs_separatrice_lineaire}
-        \caption[SVM blabla.]{\label{fig:svm1} SVM blabla.\protect\footnotemark[1]}
+        \caption[SVM blabla.]{\label{fig:svm1} Plusieurs frontières linéaires séparant les ``+'' des ``-''.\protect\footnotemark[1]}
     \end{subfigure}%
     \columnbreak
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includesvg[width=\textwidth]{Separatrice_lineaire_avec_marges}
-        \caption[SVM blablabla.]{\label{fig:svm2} SVM blablabla.\protect\footnotemark[1]}
+        \caption[SVM blablabla.]{\label{fig:svm2} La frontière linéaire déterminée par \gls{svm} séparant les ``+'' des ``-'' dont la marge est maximale.\protect\footnotemark[1]}
     \end{subfigure}
 \end{multicols}
-\caption{\label{fig:svm} SVM blablablablabla.}
+\caption{\label{fig:svm} Principe de fonctionnement du \gls{svm} à vaste marge.}
 \end{figure}
 
 
-\footnotetext[1]{This is my footnote!}
+\footnotetext[1]{Sylenius [\href{http://www.gnu.org/copyleft/fdl.html}{GFDL} ou \href{https://creativecommons.org/licenses/by-sa/3.0}{CC BY-SA 3.0 } de Wikimedia Commons}
 
 \paragraph{Kernel trick}
 
-D'après la description faite dans le paragraphe précédent, \gls{svm} ne sont pas si différents de la LDA ou de la \gls{lr}.
+D'après la description faite dans le paragraphe précédent, les \gls{svm} ne sont pas si différents de la LDA ou de la \gls{lr}.
 
 \subsubsection{Arbres de décision}
 
@@ -531,11 +533,10 @@ D'après la description faite dans le paragraphe précédent, \gls{svm} ne sont 
 
 \paragraph{Limites et développements récents}
 
-Les inconvénients de ce type de modèle vont de paire avec leur avantage de flexibilité : le grand nombre de paramètres et hyperparamètres rendent leur interprétation et leur apprentissage compliqués. L'interprétation aisée du modèle, \textit{e.g.} de l'effet de chaque variable (et de la significativité de cet effet), de la forme de la frontière de décision, est primordial dans de nombreux contextes applicatifs comme le \textit{Credit Scoring} : le management, dont l'exposition aux statistiques est faible ou nulle, doit pouvoir comprendre le processus de décision de même que le client pouvant se voir refuser l'accès au crédit. C'est pourquoi les régulateurs bancaires sont attentifs à ce que les décisions soient explicables au client, ce qui est généralement garanti par l'usage massif de la régression logistique, modèle développé dans les sections précédentes, mais qui est moins claire dans le cas présent des réseaux de neurones du fait de l'introduction de nombreuses non-linéarités et combinaisons de plusieurs variables (toutes les variables dans le cas de réseaux dits densément connectés). Par ailleurs, ces modèles reposent sur des techniques de descente de gradient, brièvement évoqués en section~\ref{}, qui demandent des connaissances \textit{ad hoc} et / ou spécifiques au domaine d'application pour la calibration des nombreux hyperparamètres liés au pas de gradient.
+Les inconvénients de ce type de modèle vont de paire avec leur avantage de flexibilité : le grand nombre de paramètres et hyperparamètres rendent leur interprétation et leur apprentissage compliqués. L'interprétation aisée du modèle, \textit{e.g.} de l'effet de chaque variable (et de la significativité de cet effet), de la forme de la frontière de décision, est primordial dans de nombreux contextes applicatifs comme le \textit{Credit Scoring} : le management, dont l'exposition aux statistiques est faible ou nulle, doit pouvoir comprendre le processus de décision de même que le client pouvant se voir refuser l'accès au crédit. C'est pourquoi les régulateurs bancaires sont attentifs à ce que les décisions soient explicables au client, ce qui est généralement garanti par l'usage massif de la régression logistique, modèle développé dans les sections précédentes, mais qui est moins immédiat dans le cas présent des réseaux de neurones du fait de l'introduction de nombreuses non-linéarités et combinaisons de plusieurs variables (toutes les variables dans le cas de réseaux dits densément connectés). Par ailleurs, ces modèles reposent sur des techniques de descente de gradient, brièvement évoqués en section~\ref{subsec:gradient}, qui demandent des connaissances \textit{ad hoc} et / ou spécifiques au domaine d'application pour la calibration des nombreux hyperparamètres entre autres liés au pas de gradient.
 
 Le lecteur désireux d'approfondir sa connaissance sur ce type de modèle, devenu une discipline de recherche à part entière, peut se référer à l'ouvrage~\citetitle*{goodfellow2016deep}~\cite{goodfellow2016deep}.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \bigskip
 

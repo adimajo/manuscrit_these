@@ -52,7 +52,7 @@ x_test = l[[1]]
 y_test = l[[2]]
 log_odd_test = l[[3]]
 
-bic_list = NULL
+gini_list = NULL
 
 for (k in 2:100) {
   x_disc = discretize(c(x[,1],x_test[,1]), disc="equalfreq", nbins=k)
@@ -63,7 +63,7 @@ for (k in 2:100) {
   intervals = confint(coeff_x_disc)
   coeff_x_disc_low = summary(coeff_x_disc)$coefficients[,1]+1.96*summary(coeff_x_disc)$coefficients[,2]
   coeff_x_disc_high = summary(coeff_x_disc)$coefficients[,1]-1.96*summary(coeff_x_disc)$coefficients[,2]
-  bic_list = c(bic_list,normalizedGini(y_test,predict(coeff_x_disc,data.frame(x=factor(x_disc_test),y_test))))
+  gini_list = c(gini_list,normalizedGini(y_test,predict(coeff_x_disc,data.frame(x=factor(x_disc_test),y_test))))
   coeff_x_disc = coeff_x_disc$coefficients
   
   pred = matrix(NA,5000)
@@ -87,4 +87,66 @@ for (k in 2:100) {
   dev.off()
 
 }
+
+
+
+
+
+
+
+# BIC misspecified 
+
+
+list2env(generate_data(1,20000),env=environment())
+
+gini_list = array(0,dim=c(99))
+
+for (k in 2:100) {
+    x_disc = discretize(x[,1], disc="equalfreq", nbins=k)
+    coeff_x_disc = glm(y~., data=data.frame(x=factor(x_disc[1:10000,1]),y=y[1:10000]),family=binomial(link="logit"))
+    gini_list[k-1] = glmdisc::normalizedGini(y[10001:20000],predict(coeff_x_disc,data.frame(x=factor(x_disc[10001:20000,1])),type="response"))
+}
+
+coeff_x_line = glm(y~., data=data.frame(x=x[1:10000,1],y),family=binomial(link="logit"))
+
+
+tikz(file = 'gini_mis.tex', width = 8, height = 3.2, engine="pdftex")
+plot(x=2:100,y=gini_list, ylim = c(0.3,0.4), type='l',xlab = "Number of bins in \textit{equal-freq}", ylab = "BIC", col="green")
+#lines(x=2:100,y=rep(-2*sum(log_odd)+log(10000),99), )
+lines(x=2:100,y=rep(coeff_x_line$deviance +log(10000),99), col = "red")
+legend(10,13700,c("Quantized data LR","Linear LR"), lty=c(1,1),col =c("green","red"), lwd=2)
+dev.off()
+
+
+
+# BIC well-specified
+
+generate_data <- function(k,n) {
+    set.seed(k)
+    x = matrix(runif(2*n), nrow = n, ncol = 2)
+    
+    log_odd = x[,1]
+    y = rbinom(n,1,1/(1+exp(-log_odd)))
+    return(list(x=x,y=y,log_odd=log_odd))
+}
+
+list2env(generate_data(1,20000),env=environment())
+
+bic_list = array(0,dim=c(99))
+
+for (k in 2:100) {
+    x_disc = discretize(x[,1], disc="equalfreq", nbins=k)
+    coeff_x_disc = glm(y~., data=data.frame(x=factor(x_disc[,1]),y),family=binomial(link="logit"))
+    bic_list[k-1] = coeff_x_disc$deviance + k*log(10000)
+}
+
+coeff_x_line = glm(y~., data=data.frame(x=x[,1],y),family=binomial(link="logit"))
+
+
+tikz(file = 'gini_well.tex', width = 8, height = 3.2, engine="pdftex")
+plot(x=2:100,y=bic_list,type='l',xlab = "Number of bins in \textit{equal-freq}", ylab = "BIC", col="green")
+#lines(x=2:100,y=rep(-2*sum(log_odd)+log(10000),99), )
+lines(x=2:100,y=rep(coeff_x_line$deviance +log(10000),99), col = "red")
+legend(10,13700,c("Quantized data LR","Linear LR"), lty=c(1,1),col =c("green","red"), lwd=2)
+dev.off()
 

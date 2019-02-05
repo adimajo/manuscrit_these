@@ -1,5 +1,8 @@
 \chapter{Interaction discovery for logistic regression} \label{chap5}
 
+\minitoc
+
+
 \textcolor{red}{needs quote}
 
 \textit{Nota Bene :} Ce chapitre s'inspire fortement ... \textcolor{red}{à adapter au moment de l'envoi du manuscrit}
@@ -79,6 +82,52 @@ L'algorithme de Gibbs fonctionne comme ça.
 }
 \caption{\label{fig:simulated_interaction}Distribution of the kind of interactions chosen by \textit{glmdisc} on 100 simulations.}
 \end{figure}
+
+
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\tikzset{vertex/.style = {shape=circle,draw,minimum size=1.5em}}
+\tikzset{edge/.style = {->,> = latex'}}
+% vertices
+\node[vertex] (x1) at  (0,1.5) {$\glssymbol{X}^1$};
+\node[vertex] (xj) at  (0,0) {$\glssymbol{X}^j$};
+\node[vertex] (xd) at  (0,-1.5) {$\glssymbol{X}^{d}$};
+
+\node[vertex] (delta) at  (2.5,3) {$\delta$};
+
+\node[vertex] (q1) at  (2.5,1.5) {$Q^1$};
+\node[vertex] (qj) at  (2.5,0) {$Q^j$};
+\node[vertex] (qd) at  (2.5,-1.5) {$Q^{d}$};
+
+\node[vertex] (y) at (5,0) {$\glssymbol{Y}$};
+
+%edges
+\draw[edge] (x1) to (delta);
+\draw[edge] (xj) to (delta);
+\draw[edge] (xd) to (delta);
+
+\draw[edge] (delta) to (y);
+
+\draw[edge] (x1) to (q1);
+\draw[edge] (xj) to (qj);
+\draw[edge] (xd) to (qd);
+\draw[edge] (q1) to (y);
+\draw[edge] (qj) to (y);
+\draw[edge] (qd) to (y);
+
+\draw[dashed] (x1) to (xj);
+\draw[dashed] (xj) to (xd);
+
+\draw[dashed] (q1) to (qj);
+\draw[dashed] (qj) to (qd);
+\end{tikzpicture}
+\caption{\label{fig:dep}Dépendance entre $\glssymbol{X}^j$,$\E^j$ et $\glssymbol{Y}$} 
+\end{figure}
+
+
 
 
 \section{Benchmark of \textit{glmdisc} against other approaches} \label{sec:exp}

@@ -2,7 +2,7 @@
 
 \selectlanguage{english}
 
-\section{Reject Inference methods}
+\section{Reject Inference methods} \label{app1:reject}
 
 \subsection{Fuzzy Augmentation} \label{fuzzy}
 
@@ -561,7 +561,7 @@ Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
 \end{algorithm}
 
 
-\subsubsection{The \textit{equal-length} algorithm}
+\subsubsection{The \textit{equal-length} algorithm} \label{app1:equal_length}
 
 The \textit{equal-length} algorithm~\ref{equal-length-disc} is illustrated on Figure~\ref{fig:disc_equal_length}. 
 
@@ -613,11 +613,11 @@ Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
 
 
 
-\subsection{Méthodes supervisées univariées}
+\subsection{Supervised univariate methods}
 
 \subsubsection{The \textit{ChiMerge} algorithm}
 
-The \textit{ChiMerge}~\cite{kerber1992chimerge} algorithm~\ref{chimerge} is a supervised (it takes into account the labels $\glssymbol{bby}$) univariate (it does not take into account the other features $\glssymbol{x}_{\{-j\}}$)). It is used indirectly in the benchmarks of Chapter~\ref{chap4} where I applied the same approach to categorical features by computing all the pairwise $\chi^2$ indepedence tests. Here we showcase a rather na\"{\i}ve implementation as a pseudo-code~\ref{chicollapse}, which in practice would perform poorly (because of exponential complexity in the number of categories $l_j$) but, from an iteration to another, a lot of $\chi^2$ tests are unaffected, so they can be stored rather than computed again. A single step of \textit{ChiMerge} is illustrated in Table~\ref{tab:chimerge_ex}. Refinements of the method, taking into account multiple testing and / or adapting $\alpha$ to each feature, were done in~\cite{}.
+The \textit{ChiMerge}~\cite{kerber1992chimerge} algorithm~\ref{chimerge} is a supervised (it takes into account the labels $\glssymbol{bby}$) univariate (it does not take into account the other features $\glssymbol{x}_{\{-j\}}$)). It is used indirectly in the benchmarks of Chapter~\ref{chap4} where I applied the same approach to categorical features by computing all the pairwise $\chi^2$ indepedence tests. Here we showcase a rather na\"{\i}ve implementation as a pseudo-code~\ref{chicollapse}, which in practice would perform poorly (because of exponential complexity in the number of categories $l_j$) but, from an iteration to another, a lot of $\chi^2$ tests are unaffected, so they can be stored rather than computed again. A single step of \textit{ChiMerge} is illustrated in Table~\ref{tab:chimerge_ex}. Refinements of the method, taking into account multiple testing and / or adapting $\alpha$ to each feature, were done in~\cite{liu1995chi2,wang1998concurrent,tay2002modified,su2005extended}.
 
 %\begin{table}
 %\centering
@@ -638,7 +638,7 @@ The \textit{ChiMerge}~\cite{kerber1992chimerge} algorithm~\ref{chimerge} is a su
 
 \begin{figure}
 \centering
-\includegraphics[width = \textwidth]{figures/appendix/tab_chimerge.PNG}
+\includegraphics[width = .7\textwidth]{figures/appendix/tab_chimerge.PNG}
 \caption{\label{tab:chimerge_ex} p-values of $\chi^2$ tests between subsequent categories on the iris dataset taken from~\cite{kerber1992chimerge}.}
 \end{figure}
 
@@ -653,54 +653,27 @@ The \textit{ChiMerge}~\cite{kerber1992chimerge} algorithm~\ref{chimerge} is a su
 Let $C_{j,h} = ]c_{j,h-1};c_{j,h}]$ and $\hat{\q}_j(\cdot) = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
 Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$\;
 Perform $\chi^2$ tests of independence among all contiguous pairs\:
-$\chi^2_h = \sum_{y=0}^{1} \frac{ \left( \sum_{i=1}^n \mathds{1}_{y}(y_i) \hat{q}_{j,h}(x_{i,j} ) - \frac{\sum_{i=1}^n \hat{q}_{j,h}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n} \right)^2}{\frac{\sum_{i=1}^n \hat{q}_{j,h}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n}}$ for $1 \leq h \leq m_j-1$\;
+$\chi^2_h = \sum_{h'=h}^{h+1} \sum_{y=0}^{1} \frac{ \left( \sum_{i=1}^n \mathds{1}_{y}(y_i) \hat{q}_{j,h'}(x_{i,j} ) - \frac{\sum_{i=1}^n \hat{q}_{j,h'}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n} \right)^2}{\frac{\sum_{i=1}^n \hat{q}_{j,h'}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n}}$ for $1 \leq h \leq m_j-1$\;
 Under the null hypothesis that two consecutive intervals are independent w.r.t.\ the target $y$, $\chi^2_h$ is $\chi^2$-distributed (1 degree of freedom)\;
-Let $c_{j,\min_h \chi^2_h} = \frac{c_{j,h} + c_{j,h+1}}{2}$ and $c_{j,h'} \leftarrow c_{j,h'+1}$ for $\min_h \chi^2_h < h' < m_j$\;
-Let $X \sim \chi^2$ and $\alpha_{\text{max}} = max_h p(X \geq \chi^2_h) = p(X \geq max_h \chi^2_h)$.
+Let $c_{j,\argmin_h \chi^2_h} = \frac{c_{j,h} + c_{j,h+1}}{2}$ and $c_{j,h'} \leftarrow c_{j,h'+1}$ for $\argmin_h \chi^2_h < h' < m_j$\;
+Let $m_j \leftarrow m_j-1$\;
+Let $X \sim \chi^2$ and $\alpha_{\max} = \max_h p(X \geq \chi^2_h) = p(X \geq \min_h \chi^2_h)$.
 }
 }
  \caption{\label{chimerge} ChiMerge algorithm perfoming discretization by performing $chi^2$ tests recursively at a user-defined level $\alpha$.}
 \end{algorithm}
 
-As part of Chapter~\ref{chap4}, I gave results for competing methods MDLP / $chi^2$ tests where the $chi^2$ tests can be . My rather na implementation (where, as in the pseudo-code~\ref{chicollapse}, all pairwise $\chi^2$ tests are recalculated at each step) is available as a gist on Github at \url{https://gist.github.com/adimajo/eb007492007d650091f6bd7cb2047493}. An example of the resulting usage of the grouped levels in a predictive setting is also given as a gist on Github at \url{https://gist.github.com/adimajo/8f8401b59ba838c65534673842b0f60d}.
-
-\begin{algorithm}[H]
- \KwData{$n,\glssymbol{bbx},\alpha$}
- \KwResult{$\hat{\q}$}
- \For{$j=1$ to $d$}{
- $\alpha_{\text{max}}$ = 1\;
- Sort $\glssymbol{bbx}_j$ in ascending order\;
- Let $c_0=-\infty$, $m_j = n$, $c_{m_j} = + \infty$ and $c_{j,h} = \frac{x_{i,j} + x_{i+1,j}}{2}$ for $1 \leq i \leq n-1$\;
- \While{$\alpha_{\text{max}} > \alpha$}{
-Let $C_{j,h} = ]c_{j,h-1};c_{j,h}]$ and $\hat{\q}_j(\cdot) = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
-Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$\;
-Perform $\chi^2$ tests of independence among all contiguous pairs\:
-$\chi^2_h = \sum_{y=0}^{1} \frac{ \left( \sum_{i=1}^n \mathds{1}_{y}(y_i) \hat{q}_{j,h}(x_{i,j} ) - \frac{\sum_{i=1}^n \hat{q}_{j,h}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n} \right)^2}{\frac{\sum_{i=1}^n \hat{q}_{j,h}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n}}$ for $1 \leq h \leq m_j-1$\;
-Under the null hypothesis that two consecutive intervals are independent w.r.t.\ the target $y$, $\chi^2_h$ is $\chi^2$-distributed (1 degree of freedom)\;
-Let $c_{j,\min_h \chi^2_h} = \frac{c_{j,h} + c_{j,h+1}}{2}$ and $c_{j,h'} \leftarrow c_{j,h'+1}$ for $\min_h \chi^2_h < h' < m_j$\;
-Let $X \sim \chi^2$ and $\alpha_{\text{max}} = max_h p(X \geq \chi^2_h) = p(X \geq max_h \chi^2_h)$.
-}
-}
- \caption{\label{chicollapse} ChiCollapse algorithm: adaptation of ChiMerge to categorical features.}
-\end{algorithm}
-
-
 
 \subsubsection{The \textit{MDLP} algorithm}
 
-The \textit{MDLP} algorithm~\cite{fayyad1993multi} is 
-
+The \textit{MDLP} algorithm~\cite{fayyad1993multi} is an entropy-based discretization method. Contrary to ChiMerge, where at the beginning all distinct values are put into separate categories and thereafter merged (bottom-up method), MDLP recursively calculates the entropy produced by each candidate cutpoint on their subsequent binary splits.
 
 \textcolor{red}{mettre une sorte d'arbre ici}
 
 \begin{algorithm}[H]
- \KwData{$n,\glssymbol{bbx},(m_j)_1^d$}
+ \KwData{$n,\glssymbol{bbx}$}
  \KwResult{$\hat{\q}$}
  \For{$j=1$ to $d$}{
-Let $w_j = \max{i} x_{i,j} - \min{i} x_{i,j}$\;
-Let $c_0=-\infty$, $c_{m_j} = + \infty$ and $c_{j,h} = \frac{w_j \cdot h}{m_j} + \min{i} x_{i,j}$\;
-Let $C_{j,h} = ]c_{j,h-1};c_{j,h}]$ and $\hat{\q_j(\cdot)} = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
-Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
 }
  \caption{\label{mdlp} MDLP algorithm recursively perform discretization with an information gain criterion.}
 \end{algorithm}
@@ -752,27 +725,27 @@ This section describes the \textit{glmdisc}-NN algorithm developed in Chapter~\r
 This section describes the \textit{glmdisc}-SEM algorithm developed in Chapter~\ref{chap4} and examplifies it on simulated data in Figure~\ref{fig:animSEM}
 
 \begin{algorithm}[H]
- \KwData{$(\bm{x},\bm{y})$}
- \KwResult{$\bm{e},(\beta_k)_1^{d_1}$,(T$^k)_{d_1}^{d_1+d_2}$}
+ \KwData{$((\glssymbol{bbx}_j)_1^{d_1} \text{ (continuous features)},(\glssymbol{bbx}_j)_{d_1}^{d_1 + d_2} \text{ (categorical features)}, \glssymbol{bby}),\max\_\text{iter},\bm{m}_\text{start}$}
+ \KwResult{$\hat{\q}$}
+ Initialization of $\bm{q}^{(0)}$ at random\;
  $r = 0$\;
- Initialization of $\bm{e}^{(r)}$ at random\;
- \While{$r < $ Maximum number of iteration not reached}{
-  Adjust logistic regression $\hat{\gamma}^{(r)} = \argmax_\gamma \ell(\gamma;\bm{y},\bm{e^{(r)}})$\;
-  ${\bm{e}^{(r+1)}} \leftarrow {\bm{e}^{(r)}}$\;
+ \While{$r < \max\_\text{iter}$}{
+  Adjust logistic regression $\hat{\gamma}^{(r)} = \argmax_\gamma \ell(\gamma;\q^{(r)}, \bm{y})$\;
+  ${\q^{(r+1)}} \leftarrow {\q^{(r)}}$\;
   \For{$k \leftarrow 1$ \KwTo $d_1$}{
-   Adjust multinomial logistic regression $\hat{\beta}^{k(r)} = \argmax_\beta \ell(\beta;\bm{e^{k(r)}},\bm{x^k})$\;
-   ${\bm{e}^{k(r+1)}} \leftarrow$ Mult$(p_{\hat{\gamma}^{(r)}}(\bm{y}|\bm{{e}^{(r+1)}}) p_{\hat{\beta}^{k(r)}}(\bm{e}^{k} | \bm{x}^k))$\;
-   ${\bm{e}_{MAP}^{k(r+1)}} \leftarrow \argmax_j p_{\hat{\beta}^{k(r)}}(\bm{E}^{k}=j | \bm{x}^k))$\;
+   Adjust multinomial logistic regression $\hat{\beta}_k^{(r)} = \argmax_\beta \ell(\beta;\glssymbol{bbx}_k,\q_k^{(r)})$\;
+   ${\q_k^{(r+1)}} \leftarrow$ Mult$(p_{\hat{\gamma}^{(r)}}(\bm{y}|\q^{(r+1)}) p_{\hat{\beta}^{k(r)}}(\q_{k} | \glssymbol{bx}_k))$\;
+   ${\q_k^{\text{MAP}(r+1)}} \leftarrow \argmax_j p_{\hat{\beta}^{k(r)}}(\bm{E}^{k}=j | \bm{x}^k))$\;
    }
   \For{$k \leftarrow d_1+1$ \KwTo $d_1+d_2$}{
-   From the contingency table T$^{k(r)}$ of $\bm{e}^{k(r)}$ against $\bm{x}^k$, calculate the frequencies of each value of $({e}^{k},x^k)$\;
-	${\bm{e}^{k(r+1)}} \leftarrow$ Mult$(p_{\hat{\gamma}^{(r)}}(\bm{y}|\bm{{e}^{(r+1)}}) p_{T^{k(r)}}(\bm{e}^{k} | \bm{x}^k))$\;
-	${\bm{e}_{MAP}^{k(r+1)}} \leftarrow \argmax_j p_{T^{k(r)}}(\bm{E}^{k}=j | \bm{x}^k))$\;
+   Form the contingency table T$_k^{(r)}$ of $\q_k^{(r)}$ against $\glssymbol{bbx}_k$, calculate the frequencies of each value of $({q}_{k},x_k)$\;
+	${\q_k^{(r+1)}} \leftarrow$ Mult$(p_{\hat{\gamma}^{(r)}}(\bm{y}|\q^{(r+1)}) p_{T_k^{(r)}}(\q_{k} | \glssymbol{bx}^k))$\;
+	${\q_k^{MAP(r+1)}} \leftarrow \argmax_j p_{T_k^{(r)}}(\q_{k}=j | \glssymbol{bx}_k))$\;
 	}
    $r \leftarrow r+1$\;
  }
- Choose the best logistic regression model from $(p_{\hat{\eta}^{(r)}}(\bm{y} | \bm{e}_{MAP}^{(r)}))_1^{Max}$\;
- \caption{\label{SEM-disc} \textit{glmdisc}-NN: supervised multivariate discretization for logistic regression with an \gls{sem} algorithm.}
+ Choose the best quantization and logistic regression model from $ $ where $(p_{\hat{\eta}^{(r)}}(\bm{y} | \bm{e}_{MAP}^{(r)}))_1^{Max}$.
+ \caption{\label{SEM-disc} \textit{glmdisc}-SEM: supervised multivariate discretization for logistic regression with an \gls{sem} algorithm.}
 \end{algorithm}
 
 %\begin{figure}[!h]
@@ -785,13 +758,44 @@ This section describes the \textit{glmdisc}-SEM algorithm developed in Chapter~\
 \textcolor{red}{à décommenter // ajouter caption  et numéro itération}
 
 
-\section{Factor levels grouping methods}
+\section{Factor levels grouping method}
+
+As part of Chapter~\ref{chap4}, I gave results for competing methods MDLP / $\chi^2$ tests where the $\chi^2$ tests can be explicited in Algorithm~\ref{chicollapse} which I called ChiCollapse. My rather na{\"\i}ve implementation (where, as in the pseudo-code~\ref{chicollapse}, all pairwise $\chi^2$ tests are recalculated at each step) is available as a gist on Github at \url{https://gist.github.com/adimajo/eb007492007d650091f6bd7cb2047493}. An example of the resulting usage of the grouped levels in a predictive setting is also given as a gist on Github at \url{https://gist.github.com/adimajo/8f8401b59ba838c65534673842b0f60d}.
+
+\begin{algorithm}[H]
+ \KwData{$n,\glssymbol{bbx},\alpha$}
+ \KwResult{$\hat{\q}$}
+ \For{$j=1$ to $d$}{
+ $\alpha_{\text{max}}$ = 1\;
+ Let $C_{j,h} = \{h\}$ for $1 \leq i \leq l_j$\;
+ \While{$\alpha_{\text{max}} > \alpha$}{
+Let $\hat{\q}_j(\cdot) = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
+Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$\;
+Perform all pairwise $\chi^2$ tests of independence among all contiguous pairs\:
+$\chi^2_{h_1,h_2} = \sum_{h'=h_1}^{h_2} \sum_{y=0}^{1} \frac{ \left( \sum_{i=1}^n \mathds{1}_{y}(y_i) \hat{q}_{j,h'}(x_{i,j} ) - \frac{\sum_{i=1}^n \hat{q}_{j,h'}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n} \right)^2}{\frac{\sum_{i=1}^n \hat{q}_{j,h'}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n}}$ for $1 \leq h_1 < h_2 \leq m_j$\;
+Under the null hypothesis that two factor levels are independent w.r.t.\ the target $y$, $\chi^2_{h_1,h_2}$ is $\chi^2$-distributed (1 degree of freedom)\;
+Let $(h_1,h_2) = \argmin_{h_1,h_2} \chi^2_{h_1,h_2}$, $C_{j,h_1} = C_{j,h_1} \cup C_{j,h_2}$ and $C_{j,h} \leftarrow C_{j,h+1}$ for $h_2 \leq h \leq m_j$\;
+Let $m_j \leftarrow m_j-1$\;
+Let $X \sim \chi^2$ and $\alpha_{\max} = \max_{h_1,h_2} p(X \geq \chi^2_{h_1,h_2}) = p(X \geq \min_{h_1,h_2} \chi^2_{h_1,h_2})$.
+}
+}
+ \caption{\label{chicollapse} ChiCollapse algorithm: adaptation of ChiMerge to categorical features.}
+\end{algorithm}
 
 
 \section{Interaction discovery methods}
 
 
+
 \section{Logistic regression-based trees}
+
+
+\subsection{\Gls{lmt}}
+
+
+\subsection{MOB}
+
+
 
 
 \printbibliography[heading=subbibliography, title=References of Appendix A]
