@@ -9,25 +9,19 @@
 
 \selectlanguage{english}
 
-Continuing my pursuit of interpretable representation learning algorithms for logistic regression, I tackle in this chapter a common problem in \textit{Credit Scoring} and other application contexts relying either on logistic regression or additive models of the form $g(y) = \sum_{j=1}^d \theta_j f_j(x_j)$. To further reduce the model bias discussed in Section~\ref{chap1:sec3} and thus obtain better predictive performance while maintaining interpretability, \textit{Credit Scoring} practitioners are used to introducing pairwise interactions.
+Continuing my pursuit of interpretable representation learning algorithms for logistic regression, I tackle in this chapter a common problem in \textit{Credit Scoring} and other application contexts relying either on logistic regression or additive models of the form $g(y) = \sum_{j=1}^d \glssymbol{bth}_j' \q_j(x_j)$. To further reduce the model bias discussed in Section~\ref{chap1:sec3} and thus obtain better predictive performance while maintaining interpretability, \textit{Credit Scoring} practitioners are used to introducing pairwise interactions.
 
 
-\section{Motivation}
-
-
-\section{Pairwise interaction screening as a feature selection problem}
-
-
-\section{A novel model selection approach}
-
-
-\section{Discretization and levels merging \textit{with} interactions} \label{sec:discwith}
+\section{Motivation: XOR function}
 
 As described in the introduction, logistic regression is linear in its inputs which does not allow to take into account conditional dependency, see~\cite{berry2010testing}. This problem is often dealt with by sparsely introducing ``interactions'', \textit{i.e.}\ products of two features. Unfortunately, this leads again to a model selection challenge as the number of pairs of features is $\dfrac{d(d-1)}{2}$. We denote by $\bdelta$ the upper triangular matrix with $\delta_{k,\ell} = 1$ if $k < \ell$ and features $k$ and $\ell$ ``interact'' in the logistic regression in the sense of~\cite{berry2010testing}. The logistic regression with interactions $\bdelta$ is thus:
 \begin{equation} \label{eq:reglog_sans}
 \text{logit}[p_{\glssymbol{bth}}(1|\bm{f}(\bm{x}),\bdelta)] = \theta_{0} + \sum_{j=1}^d \theta_{j}^{f_j(x^j)} + \sum_{1 \leq k < \ell \leq d} \delta_{k,\ell} \theta_{k,\ell}^{f_p(x^p),f_q(x^q)},
 \end{equation}
 where $\glssymbol{bth} = (\theta_{0},\theta_{1}^1,\dots,\theta_{1}^{m_1},\dots,\theta_{d}^1,\dots,\theta_{d}^{m_d},\theta_{1,2}^{1,1},\dots,\theta_{1,2}^{m_1,m_2},\dots,\theta_{d-1,d}^{1,1},\dots,\theta_{d-1,d}^{m_{d-1},m_d})$ and for all features $j$, $f_j(x_j)=m_j$ is set as the ``reference'' value and consequently for all $j$, $\theta_{j}^{m_j}=0$ and for all $1 \leq k < \ell \leq d$, $\theta_{k,\ell}^{m_k,m_{\ell}}=0$.
+
+
+\section{Pairwise interaction screening as a feature selection problem}
 
 \textcolor{red}{eq:criterion undefined = c'est le BIC du chapitre précédent à harmoniser}
 
@@ -39,11 +33,21 @@ Criterion~\eqref{eq:criterion} developed in the context of discretization and gr
 \end{equation}
 The combinatorics involved in this problem are much higher than those of criterion~\eqref{eq:criterion}, which already lead to an untractable greedy approach. For each feasible discretization scheme of Section~\ref{sec:discwithout}, there is now $2^{\frac{d(d-1)}{2}}$ models to test! In the following section, we will first consider the discretization fixed and develop a stochastic approach similar to the one proposed for discretization and grouping of factor levels.
 
-\subsection{With a fixed discretization}
-
 With a fixed discretization scheme $\bm{e} = \bm{f}(\glssymbol{bx})$, criterion~\ref{eq:criterion_inter} amounts to $\bdelta^{\text{opt}} = \argmin_{\bdelta} \text{BIC}[p_{\glssymbol{bth}}(y|\bm{e},\bdelta)]$ which optimization through a greedy approach is untractable with more than a few features ($d > 10$).
 
+\section{A novel model selection approach}
+
+
+%\section{Discretization and levels merging \textit{with} interactions} \label{sec:discwith}
+
+
+
+%\subsection{With a fixed discretization}
+
+
 Again, $\bdelta$ can be seen as an observation of a latent random matrix and $\bdelta^{\text{opt}}$ can be found using a stochastic approach. The BIC criterion has a desirable property relating it to the posterior probability of the model given the data, \textit{i.e.}\ $p(\bdelta | \be, y) \propto p(y | \be, \bdelta) p(\bdelta) \approx \exp(-\text{BIC}[p_{\glssymbol{bth}}(y|\bm{e},\bdelta)]/2)  p(\bdelta)$. Consequently, one can design an MCMC algorithm like Metropolis-Hastings~\cite{hastings1970monte} which should draw ``good'' interaction matrices $\bdelta$ (\textit{i.e.}\ close to $\bdelta^{\text{opt}}$) from the target distribution $p(\bdelta | \be, y)$.
+
+\section{Interaction screening with a fixed quantization}
 
 Metropolis-Hastings only requires a proposal of a transition probability between two states of the Markov chain $q: ({\{0,1\}}^{\frac{d(d-1)}{2}},{\{0,1\}}^{\frac{d(d-1)}{2}}) \mapsto \mathbb{R}$, which would require to compute $2^{d(d-1)}$ probabilities (\textit{i.e.}\ one per unique couple of matrices ($\bdelta^{(1)},\bdelta^{(2)}$)). It is thus desirable to reduce this combinatorics by making further assumptions. In what follows, we restrict possible transitions to matrices that are on a one unit $L^1$ distance to the current interaction matrix, s.t.\ $q(\bdelta^{(1)},\bdelta^{(2)}) = 0$ if $\sum_{k=1}^d \sum_{\ell=1}^d |\delta^{(1)}_{k,\ell} - \delta^{(2)}_{k,\ell}| \neq 1$.
 
@@ -57,13 +61,18 @@ The existence of the stationary distribution $p(\bdelta | \be,y)$ is guaranteed 
 
 In practice with a fixed discretization scheme, this stochastic approach is probably outperformed in computing time by Lasso-based methods or correlation-based methods like~\cite{simon}, which might obtain a suboptimal model in a fixed computing time, contrary to our approach which might take lots of steps to converge in distribution. Its double benefit however lies in the ability of the practitioner to define before-hand how many steps shall be performed and the natural integration to the discretization and grouping of factor levels algorithm proposed in the previous section, which we develop in the next one.
 
-\subsection{While discretizing and grouping}
+\section{Interaction screening and quantization}
 
 Quand on connaît $\delta$, on tire $E$ comme avant.
 
 Quand on connaît $E$, on tire $\delta$ comme montré ci-dessus.
 
 L'algorithme de Gibbs fonctionne comme ça.
+
+
+
+\section{Numerical experiments}
+
 
 \subsection{Experiments on simulated data \textit{with} interactions}
 
@@ -130,7 +139,7 @@ L'algorithme de Gibbs fonctionne comme ça.
 
 
 
-\section{Benchmark of \textit{glmdisc} against other approaches} \label{sec:exp}
+\subsection{Benchmark of \textit{glmdisc} against other approaches} \label{sec:exp}
 
 \subsection{Simulated data from a misspecifed model}
 
@@ -138,13 +147,12 @@ L'algorithme de Gibbs fonctionne comme ça.
 
 \section{Conclusion} \label{sec:ccl}
 
-The essentially industrial problem of discretization, grouping of factor levels and introduction of interactions in a supervised multivariate classification setting was formalized and a new approach, named \textit{glmdisc} has been proposed.
+The essentially industrial problem of introducing pairwise interactions in a supervised multivariate classification setting was formalized and a new approach, relying on a Metropolis-Hastings algorithm has been proposed. This algorithm relies on the use of logistic regression, although other predictive models can be plugged in place of $p_{\glssymbol{bth}}$.
 
-This algorithm relies on the use of logistic regression, although other predictive models can be plugged in place of $p_{\glssymbol{bth}}$. Similarly, our proposed use of polytomous logistic links between each discretized feature and their respective continuous version can be replaced by any other univariate multiclass predictive model, which makes it flexible and adaptable to other problems.
+The true underlying motivation was to perform intetraction screening while quantizing data using the approach developed in the preceding Chapter: \textit{glmdisc}.
+The experiments showed that, as was sensed empirically by statisticians in the field of \textit{Credit Scoring}, interactions between quantized features can indeed provide better models than without interactions, or standard logistic regression. This novel approach allows practitioners to have a fully automized and statistically well-grounded tool that achieves better performance than both \textit{ad hoc} industrial practices and academic discretization heuristics at the price of decent computing time but much less of the practitioner's valuable time.
 
-The experiments showed that, as was sensed empirically by statisticians in the field of \textit{Credit Scoring}, discretization, grouping and interactions can indeed provide better models than standard logistic regression. This novel approach allows practitioners to have a fully automized and statistically well-grounded tool that achieves better performance than both \textit{ad hoc} industrial practices and academic discretization heuristics at the price of decent computing time but much less of the practitioner's valuable time.
-
-The code used for numerical experiments is available as packages, in the \textsf{R} programming language on CRAN and in the Python programming language on PyPi. Both packages are named \textit{glmdisc}. \textcolor{red}{à modifier}
+The code used for numerical experiments is available as packages, see Appendix~\ref{app2}.
 
 
 

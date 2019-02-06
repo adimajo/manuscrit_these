@@ -753,9 +753,10 @@ As part of Chapter~\ref{chap4}, I gave results for competing methods MDLP / $\ch
  \While{$\alpha_{\text{max}} > \alpha$}{
 Let $\hat{\q}_j(\cdot) = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
 Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$\;
-Perform all pairwise $\chi^2$ tests of independence among all contiguous pairs\:
-$\chi^2_{h_1,h_2} = \sum_{h'=h_1}^{h_2} \sum_{y=0}^{1} \frac{ \left( \sum_{i=1}^n \mathds{1}_{y}(y_i) \hat{q}_{j,h'}(x_{i,j} ) - \frac{\sum_{i=1}^n \hat{q}_{j,h'}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n} \right)^2}{\frac{\sum_{i=1}^n \hat{q}_{j,h'}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n}}$ for $1 \leq h_1 < h_2 \leq m_j$\;
-Under the null hypothesis that two factor levels are independent w.r.t.\ the target $y$, $\chi^2_{h_1,h_2}$ is $\chi^2$-distributed (1 degree of freedom)\;
+%Perform all pairwise $\chi^2$ tests of independence among all contiguous pairs\:
+\For{$1 \leq h_1 < h_2 \leq m_j$}{
+$\chi^2_{h_1,h_2} = \sum_{h'=h_1}^{h_2} \sum_{y=0}^{1} \frac{ \left( \sum_{i=1}^n \mathds{1}_{y}(y_i) \hat{q}_{j,h'}(x_{i,j} ) - \frac{\sum_{i=1}^n \hat{q}_{j,h'}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n} \right)^2}{\frac{\sum_{i=1}^n \hat{q}_{j,h'}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n}}$\;}
+%Under the null hypothesis that two factor levels are independent w.r.t.\ the target $y$, $\chi^2_{h_1,h_2}$ is $\chi^2$-distributed (1 degree of freedom)\;
 Let $(h_1,h_2) = \argmin_{h_1,h_2} \chi^2_{h_1,h_2}$, $C_{j,h_1} = C_{j,h_1} \cup C_{j,h_2}$ and $C_{j,h} \leftarrow C_{j,h+1}$ for $h_2 \leq h \leq m_j$\;
 Let $m_j \leftarrow m_j-1$\;
 Let $X \sim \chi^2$ and $\alpha_{\max} = \max_{h_1,h_2} p(X \geq \chi^2_{h_1,h_2}) = p(X \geq \min_{h_1,h_2} \chi^2_{h_1,h_2})$.

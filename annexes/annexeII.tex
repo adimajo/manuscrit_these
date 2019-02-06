@@ -8,7 +8,6 @@ More information about the \textsf{R} Statistical Software, RStudio, and git, wh
 
 \subsection{The glmdisc package} \label{app2:glmdisc}
 
-% Fonctions principales
 The glmdisc package can be found on Github at \url{https://www.github.com/adimajo/glmdisc}. It consists in the \textsf{R} implementation of the \textit{glmdisc} algorithm for discretizing continuous attributes, merging factor levels and introducing sparse pairwise interactions proposed in Chapters~\ref{chap5} and~\ref{chap6}.
 
 \paragraph{Quick installation guide}
@@ -25,8 +24,13 @@ Behind company proxies however, \rinline{devtools::install_github} might not wor
 
 \paragraph{Main functions}
 
-Once installed, the \textsf{R} help and vignette detail the functioning of the package. Nevertheless, I should mention a few 
+Once installed, the \textsf{R} help and vignette detail the functioning of the package. Nevertheless, I should mention a few useful tips:
 
+%\begin{itemize}
+%\item The package's vignette can be obtained \textit{e.g.}\ by \rinline{vignette("glmdisc")}.
+%\item The main function is \rinline{glmdisc()}, where (see \rinline{?glmdisc} for help).
+%\item If a presumable bug is encountered, an issue may be raised on the Github page of the package.
+%\end{itemize}
 
 \subsection{Miscellaneous}
 
@@ -54,7 +58,7 @@ Again, behind company proxies, it might be useful to add the \bashinline{--proxy
 
 \paragraph{Main functions}
 
-Once installed, the Python help.
+Once installed, the Python help be browsed with the \pyinline{help} function. The quantization algorithm \textit{glmdisc} is here provided as a \pyinline{class}, which provides several methods among which \pyinline{fit} is appropriate to train the quantization.
 
 \subsection{The glmdisc-NN notebooks} \label{app2:nn}
 
@@ -63,7 +67,6 @@ As mentioned in Chapter~\ref{chap4}, the implementation of \textit{glmdisc}-NN i
 The following snippet illustrates how straightforward the implementation of \textit{glmdisc}-NN is, as seen as a computational graph on Figure~\ref{fig:nn}.
 
 \begin{pylisting}
-# create_model is used to "feed" the hyperas package to optimize the hyperparameters of the resulting neural network.
 # The data function which provides all inputs to create_model is not shown here for concision.
 
 def create_model(x_quant,x_qual,x_qual_dummy,y,x_quant_test,x_qual_test,x_qual_dummy_test,y_test):
@@ -72,7 +75,6 @@ def create_model(x_quant,x_qual,x_qual_dummy,y,x_quant_test,x_qual_test,x_qual_d
        x_quant,x_qual,x_qual_dummy,y,x_quant_test,x_qual_test,x_qual_dummy_test,y_test - input data given by the data() function not shown here for concision.
     Returns:
        loss - the performance (here Gini on test sample) of the resulting best quantization
-       status - for hyperas
        model - the trained model
        predicted - the predicted probabilities on the test set using the best quantization (to compute confidence intervals)
     """
@@ -263,60 +265,15 @@ def create_model(x_quant,x_qual,x_qual_dummy,y,x_quant_test,x_qual_test,x_qual_d
 	# it is the single user-defined parameter of our proposal    
     
     quant = 10
-
     qual = 5
 
     m_quant = [int(quant)] * d1
     m_qual = [int(qual)] * d2
 
-    global liste_qual_arrays
-    liste_qual_arrays = [None] * d2
-    cursor = 0
-    for j in range(d2):
-        liste_qual_arrays[j] = x_qual_dummy[:, cursor:(
-            cursor + len(np.unique(x_qual[:, j])))]
-        cursor += len(np.unique(x_qual[:, j]))
+	liste_inputs_quant, liste_layers_quant, liste_layers_quant_inputs, liste_inputs_qual, liste_layers_qual, liste_layers_qual_inputs = initialize_neural_net(m_quant,m_qual)
 
-    global liste_qual_arrays_test
-    liste_qual_arrays_test = [None] * d2
-    cursor = 0
-    for j in range(d2):
-        liste_qual_arrays_test[j] = x_qual_dummy_test[:, cursor:(
-            cursor + len(np.unique(x_qual_test[:, j])))]
-        cursor += len(np.unique(x_qual_test[:, j]))
-  
-  
-    liste_inputs_quant = [None] * d1
-    liste_inputs_qual = [None] * d2
-
-    global liste_layers_quant
-    global liste_layers_qual
-
-    liste_layers_quant = [None] * d1
-    liste_layers_qual = [None] * d2
-
-    liste_layers_quant_inputs = [None] * d1
-    liste_layers_qual_inputs = [None] * d2
-
-    for i in range(d1):
-        liste_inputs_quant[i] = Input((1, ))
-        liste_layers_quant[i] = Dense(m_quant[i], activation='softmax')
-        liste_layers_quant_inputs[i] = liste_layers_quant[i](
-          liste_inputs_quant[i])
-
-    for i in range(d2):
-        liste_inputs_qual[i] = Input((len(np.unique(x_qual[:, i])), ))
-        if (len(np.unique(x_qual[:, i])) > m_qual[i]):
-            liste_layers_qual[i] = Dense(
-            m_qual[i], activation='softmax', use_bias=False)
-        else:
-            liste_layers_qual[i] = Dense(
-            len(np.unique(x_qual[:, i])), activation='softmax', use_bias=False)
-
-        liste_layers_qual_inputs[i] = liste_layers_qual[i](
-        liste_inputs_qual[i])
-
-
+	# full_hidden is the concatenation of all component-wise layers
+	
     full_hidden = concatenate(
         list(
           chain.from_iterable(
@@ -326,45 +283,22 @@ def create_model(x_quant,x_qual,x_qual_dummy,y,x_quant_test,x_qual_test,x_qual_d
       inputs=list(chain.from_iterable([liste_inputs_quant, liste_inputs_qual])),
       outputs=[output])  
 
-    
-   
-    choiceval = {{choice(['adam', 'sgd', 'rmsprop'])}}
-    if choiceval == 'adam':
-        optim = optimizers.Adam(lr={{choice([10**-3, 10**-2, 10**-1])}})
-    elif choiceval == 'rmsprop':
-        optim = optimizers.RMSprop(lr={{choice([10**-3, 10**-2, 10**-1])}})
-    else:
-        optim = optimizers.SGD(lr={{choice([10**-3, 10**-2, 10**-1])}})        
+    optim = optimizers.SGD(lr=10**-3)       
  
     model.compile(loss='binary_crossentropy', optimizer=optim, metrics=['accuracy'])
 
     history = LossHistory()
-
-    callbacks = [
-      ReduceLROnPlateau(
-          monitor='loss',
-          factor=0.5,
-          patience=10,
-          verbose=0,
-          mode='auto',
-          min_delta=0.0001,
-          cooldown=0,
-          min_lr=0), history
-    ]
+    
     model.fit(
       list(chain.from_iterable([list(x_quant.T), liste_qual_arrays])),
       y,
       epochs=600,
-      batch_size={{choice([32,64,128])}},
-      verbose=1,
-      callbacks=callbacks)
+      batch_size=128,
+      callbacks=history)
 
-    global n_test
     n_test = x_quant_test.shape[0]
     performance, predicted = evaluate_disc("test",d1,d2,misc=[m_quant,m_qual,history,x_quant_test,x_qual_test,n_test])
   
-
-    K.clear_session()
-    return {'loss': -performance, 'status': STATUS_OK, 'model': model, 'predicted': predicted}
+    return {'loss': -performance, 'model': model, 'predicted': predicted}
 
 \end{pylisting}

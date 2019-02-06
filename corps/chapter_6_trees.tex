@@ -15,6 +15,24 @@
 
 \subsection{Context}
 
+En matières de crédit à la consommation, les instituts financiers cherchent à automatiser la d´ecision de financement tout en ne s´electionnant que les clients susceptibles
+de rembourser ledit cr´edit. Depuis une quarantaine d’ann´ees, le Credit Scoring consiste `a construire des mod`eles
+de classification supervis´ee $p_{\glssymbol{bth}}$ `a partir des donn´ees demand´ees au clients x = (xj )
+d
+1
+et de l’observation du
+remboursement des clients pass´es $y \in \{0, 1\}$. Historiquement, des scores diff´erents sont d´evelopp´es sur des
+march´es (e.g. grande distribution, ´electrom´enager, . . . ) et/ou des produits (e.g. renouvelable, amortissable, . . . )
+et/ou des partenaires et/ou des profils clients diff´erents dans l’esprit de la figure 1. Ce d´ecoupage est historique
+et rel`eve d’un a priori. On cherche ici `a rationnaliser cette pratique en consid´erant le cluster d’appartenance du
+client comme un param`etre `a optimiser. Si l’on note K le nombre de scores `a construire (inconnu) et c = 1..K
+chaque score, correspondant `a un cluster de clients, le m´elange de r´egressions logistiques s’´ecrit :
+$p(y|x) = \sum_{c=1}^K p_{\glssymbol{bth}_c}(y|x, c)p(c|x)$,
+o`u l’on restreint p(c|x) `a prendre la forme de la figure 1, de telle sorte que le m´elange n’est pas “flou” comme
+pour un mod`ele de m´elange classique o`u la contribution de chaque classe est pond´er´ee par sa probabilit´e. La
+difficult´e d’une approche directe r´eside dans cette contrainte discr`ete.
+
+
 \tikzstyle{level 1}=[level distance=1.5cm, sibling distance=7cm]
 \tikzstyle{level 2}=[level distance=1.5cm, sibling distance=4cm]
 \tikzstyle{level 3}=[level distance=2cm, sibling distance=2cm]
