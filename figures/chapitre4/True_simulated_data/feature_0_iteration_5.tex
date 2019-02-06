@@ -8,7 +8,7 @@
 height=\figureheight,
 legend cell align={left},
 legend entries={{${q}_{\bm{\alpha}_{0,0}}$},{${q}_{\bm{\alpha}_{0,1}}$},{${q}_{\bm{\alpha}_{0,2}}$},{$c_{0,1}$},{$c_{0,2}$},{$\hat{c}_{0,2}$}},
-legend style={at={(0.21,0.5)}, anchor=east, draw=white!80.0!black},
+legend style={at={(0.11,0.5)}, anchor=east, draw=white!80.0!black, nodes={scale=0.8, transform shape}},
 tick align=outside,
 tick pos=left,
 title={Continuous feature 0 at iteration 5},
@@ -20,13 +20,13 @@ y grid style={white!69.01960784313725!black},
 ylabel={${q}_{\bm{\alpha}_{0,h}}$},
 ymin=0, ymax=1
 ]
-\addlegendimage{no markers, red}
-\addlegendimage{no markers, color0}
-\addlegendimage{no markers, color1}
-\addlegendimage{no markers, green!50.0!black}
-\addlegendimage{no markers, blue}
-\addlegendimage{no markers, dashed, blue}
-\addplot [thick, red]
+\addlegendimage{no markers, ultra thick, red!70.0!black}
+\addlegendimage{no markers, ultra thick, loosely dotted, color0!70.0!black}
+\addlegendimage{no markers, ultra thick, densely dotted, color1!70.0!black}
+\addlegendimage{no markers, ultra thick, dashed, green!50.0!black}
+\addlegendimage{no markers, ultra thick, dashed, blue}
+\addlegendimage{no markers, ultra thick, blue}
+\addplot [ultra thick, red!70.0!black]
 table [row sep=\\]{%
 0.00121733135182733	7.28208306099987e-06 \\
 0.00399800202767708	7.58670148570673e-06 \\
@@ -1029,7 +1029,7 @@ table [row sep=\\]{%
 0.99412546046685	0.942256093025208 \\
 0.996591400151878	0.944197654724121 \\
 };
-\addplot [thick, color0]
+\addplot [loosely dotted, ultra thick, color0!70.0!black]
 table [row sep=\\]{%
 0.00121733135182733	0.997680306434631 \\
 0.00399800202767708	0.997666597366333 \\
@@ -2032,7 +2032,7 @@ table [row sep=\\]{%
 0.99412546046685	0.0567056983709335 \\
 0.996591400151878	0.0547939091920853 \\
 };
-\addplot [thick, color1]
+\addplot [densely dotted, ultra thick, color1!70.0!black]
 table [row sep=\\]{%
 0.00121733135182733	0.00231240480206907 \\
 0.00399800202767708	0.00232579559087753 \\
@@ -3035,22 +3035,22 @@ table [row sep=\\]{%
 0.99412546046685	0.00103821489028633 \\
 0.996591400151878	0.00100837473291904 \\
 };
-\addplot [thick, green!50.0!black, dashed]
+\addplot [ultra thick, green!50.0!black, dashed]
 table [row sep=\\]{%
 0.33333	0 \\
 0.33333	1 \\
 };
-\addplot [thick, blue, dashed]
+\addplot [ultra thick, blue, dashed]
 table [row sep=\\]{%
 0.66666	0 \\
 0.66666	1 \\
 };
-\addplot [thick, blue]
+\addplot [ultra thick, blue]
 table [row sep=\\]{%
 0.803395944271022	0 \\
 0.803395944271022	1 \\
 };
-\node at (axis cs:0.1,0.95)[
+\node at (axis cs:0.15,0.95)[
   scale=0.7,
   anchor=north west,
   text=black,
@@ -3062,7 +3062,7 @@ table [row sep=\\]{%
   text=black,
   rotate=0.0
 ]{ $\boldsymbol{q}_{0,2}$};
-\node at (axis cs:0.9,0.95)[
+\node at (axis cs:0.85,0.95)[
   scale=0.7,
   anchor=north west,
   text=black,

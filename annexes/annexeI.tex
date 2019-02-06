@@ -298,7 +298,7 @@ K & 1.1 \\
 
 \subsection{Twins} \label{Twins}
 
-The Twins Method is an internal method at Crédit Agricole documented by Crédit \cite{groupe} (confidential); it consists in the following procedure:
+The Twins Method is an internal method at Crédit Agricole documented in~\cite{groupe} (confidential); it consists in the following procedure:
 \begin{enumerate}
 \item Develop KGB (Known Good/Bad) scorecard $S^{\text{f}}$ on financed clients' data predicting $Y$; this gives us $\hat{\theta}^{\text{f}}$ (Figure~\ref{twins:sfig1})
 \item Develop ACRJ (Accept/Reject) scorecard $S_Z$ on all applicants predicting $Z$; this gives us $\hat{\zeta}$ (Figure~\ref{twins:sfig2})
@@ -617,7 +617,7 @@ Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
 
 \subsubsection{The \textit{ChiMerge} algorithm}
 
-The \textit{ChiMerge}~\cite{kerber1992chimerge} algorithm~\ref{chimerge} is a supervised (it takes into account the labels $\glssymbol{bby}$) univariate (it does not take into account the other features $\glssymbol{x}_{\{-j\}}$)). It is used indirectly in the benchmarks of Chapter~\ref{chap4} where I applied the same approach to categorical features by computing all the pairwise $\chi^2$ indepedence tests. Here we showcase a rather na\"{\i}ve implementation as a pseudo-code~\ref{chicollapse}, which in practice would perform poorly (because of exponential complexity in the number of categories $l_j$) but, from an iteration to another, a lot of $\chi^2$ tests are unaffected, so they can be stored rather than computed again. A single step of \textit{ChiMerge} is illustrated in Table~\ref{tab:chimerge_ex}. Refinements of the method, taking into account multiple testing and / or adapting $\alpha$ to each feature, were done in~\cite{liu1995chi2,wang1998concurrent,tay2002modified,su2005extended}.
+The \textit{ChiMerge}~\cite{kerber1992chimerge} algorithm~\ref{chimerge} is a supervised (it takes into account the labels $\glssymbol{bby}$) univariate (it does not take into account the other features $\glssymbol{x}_{\{-j\}}$)). It is used indirectly in the benchmarks of Chapter~\ref{chap4} where I applied the same approach to categorical features by computing all the pairwise $\chi^2$ indepedence tests. Here we showcase a rather na\"{\i}ve implementation as a pseudo-code~\ref{chicollapse}, which in practice would perform poorly (because of exponential complexity in the number of categories $l_j$) but, from an iteration to another, a lot of $\chi^2$ tests are unaffected, so they can be stored rather than computed again. The initial and final steps of \textit{ChiMerge} are illustrated in Table~\ref{tab:chimerge_ex}. Refinements of the method, taking into account multiple testing and / or adapting $\alpha$ to each feature, were done in~\cite{liu1995chi2,wang1998concurrent,tay2002modified,su2005extended}.
 
 %\begin{table}
 %\centering
@@ -636,11 +636,11 @@ The \textit{ChiMerge}~\cite{kerber1992chimerge} algorithm~\ref{chimerge} is a su
 %
 %\textcolor{red}{calculer les chi 2 exacts}
 
-\begin{figure}
+\begin{table}
+\caption{\label{tab:chimerge_ex} p-values of $\chi^2$ tests between subsequent categories on the iris dataset taken from~\cite{kerber1992chimerge}.}
 \centering
 \includegraphics[width = .7\textwidth]{figures/appendix/tab_chimerge.PNG}
-\caption{\label{tab:chimerge_ex} p-values of $\chi^2$ tests between subsequent categories on the iris dataset taken from~\cite{kerber1992chimerge}.}
-\end{figure}
+\end{table}
 
 \begin{algorithm}[H]
  \KwData{$n,\glssymbol{bbx},\alpha$}
@@ -660,11 +660,11 @@ Let $m_j \leftarrow m_j-1$\;
 Let $X \sim \chi^2$ and $\alpha_{\max} = \max_h p(X \geq \chi^2_h) = p(X \geq \min_h \chi^2_h)$.
 }
 }
- \caption{\label{chimerge} ChiMerge algorithm perfoming discretization by performing $chi^2$ tests recursively at a user-defined level $\alpha$.}
+ \caption{\label{chimerge} ChiMerge algorithm perfoming discretization by performing $\chi^2$ tests recursively at a user-defined level $\alpha$.}
 \end{algorithm}
 
 
-\subsubsection{The \textit{MDLP} algorithm}
+\subsubsection{The \textit{MDLP} algorithm} \label{app1:mdlp}
 
 The \textit{MDLP} algorithm~\cite{fayyad1993multi} is an entropy-based discretization method. Contrary to ChiMerge, where at the beginning all distinct values are put into separate categories and thereafter merged (bottom-up method), MDLP recursively calculates the entropy produced by each candidate cutpoint on their subsequent binary splits.
 
@@ -689,24 +689,6 @@ This section describes the \textit{glmdisc}-NN algorithm developed in Chapter~\r
 \begin{algorithm}[H]
  \KwData{$(\bm{x},\bm{y})$}
  \KwResult{$\bm{e},(\beta_k)_1^{d_1}$,(T$^k)_{d_1}^{d_1+d_2}$}
- $r = 0$\;
- Initialization of $\bm{e}^{(r)}$ at random\;
- \While{$r < $ Maximum number of iteration not reached}{
-  Adjust logistic regression $\hat{\gamma}^{(r)} = \argmax_\gamma \ell(\gamma;\bm{y},\bm{e^{(r)}})$\;
-  ${\bm{e}^{(r+1)}} \leftarrow {\bm{e}^{(r)}}$\;
-  \For{$k \leftarrow 1$ \KwTo $d_1$}{
-   Adjust multinomial logistic regression $\hat{\beta}^{k(r)} = \argmax_\beta \ell(\beta;\bm{e^{k(r)}},\bm{x^k})$\;
-   ${\bm{e}^{k(r+1)}} \leftarrow$ Mult$(p_{\hat{\gamma}^{(r)}}(\bm{y}|\bm{{e}^{(r+1)}}) p_{\hat{\beta}^{k(r)}}(\bm{e}^{k} | \bm{x}^k))$\;
-   ${\bm{e}_{MAP}^{k(r+1)}} \leftarrow \argmax_j p_{\hat{\beta}^{k(r)}}(\bm{E}^{k}=j | \bm{x}^k))$\;
-   }
-  \For{$k \leftarrow d_1+1$ \KwTo $d_1+d_2$}{
-   From the contingency table T$^{k(r)}$ of $\bm{e}^{k(r)}$ against $\bm{x}^k$, calculate the frequencies of each value of $({e}^{k},x^k)$\;
-	${\bm{e}^{k(r+1)}} \leftarrow$ Mult$(p_{\hat{\gamma}^{(r)}}(\bm{y}|\bm{{e}^{(r+1)}}) p_{T^{k(r)}}(\bm{e}^{k} | \bm{x}^k))$\;
-	${\bm{e}_{MAP}^{k(r+1)}} \leftarrow \argmax_j p_{T^{k(r)}}(\bm{E}^{k}=j | \bm{x}^k))$\;
-	}
-   $r \leftarrow r+1$\;
- }
- Choose the best logistic regression model from $(p_{\hat{\eta}^{(r)}}(\bm{y} | \bm{e}_{MAP}^{(r)}))_1^{Max}$\;
  \caption{\label{NN-disc} \textit{glmdisc}-NN: supervised multivariate discretization for logistic regression with neural networks.}
 \end{algorithm}
 
@@ -758,7 +740,7 @@ This section describes the \textit{glmdisc}-SEM algorithm developed in Chapter~\
 \textcolor{red}{à décommenter // ajouter caption  et numéro itération}
 
 
-\section{Factor levels grouping method}
+\section{Factor levels grouping method} \label{app1:chicollapse}
 
 As part of Chapter~\ref{chap4}, I gave results for competing methods MDLP / $\chi^2$ tests where the $\chi^2$ tests can be explicited in Algorithm~\ref{chicollapse} which I called ChiCollapse. My rather na{\"\i}ve implementation (where, as in the pseudo-code~\ref{chicollapse}, all pairwise $\chi^2$ tests are recalculated at each step) is available as a gist on Github at \url{https://gist.github.com/adimajo/eb007492007d650091f6bd7cb2047493}. An example of the resulting usage of the grouped levels in a predictive setting is also given as a gist on Github at \url{https://gist.github.com/adimajo/8f8401b59ba838c65534673842b0f60d}.
 
@@ -793,7 +775,7 @@ Let $X \sim \chi^2$ and $\alpha_{\max} = \max_{h_1,h_2} p(X \geq \chi^2_{h_1,h_2
 \subsection{\Gls{lmt}}
 
 
-\subsection{MOB}
+\subsection{\Gls{mob}}
 
 
 
