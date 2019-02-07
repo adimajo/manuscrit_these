@@ -195,7 +195,7 @@ For a continuous feature $x_j$, let $\q_j \in \Q_j$ with $m_j$ groups. The numbe
 \paragraph{Literature review}
 
 The current practice of quantization is prior to any predictive task, thus ignoring its consequences on the final predictive ability. It consists in optimizing a heuristic criterion, often totally unrelated (unsupervised methods) or at least explicitly (supervised methods) to prediction, and mostly univariate (each feature is quantized irrespective of other features' values). The cardinality of the quantization space $\Q$ can be calculated explicitely w.r.t.\ $d$, $(m_j)_1^d$ and, for categorical features, $l_j$. It is huge, so that a greedy approach is intractable and such heuristics are needed, as will be detailed in the next Section.
-Many algorithms have thus been designed and a review of approximatively 200 discretization strategies, gathering both criteria and related algorithms, can be found in~\cite{ramirez2016data}. They classify discretization methods by distinguishing, among other criteria and as said previously, unsupervised and supervised methods, for which model-specific (assumptions on $p_{\glssymbol{bth}}$) or model-free approaches are distinguished, univariate and multivariate methods. For factor levels grouping, we found no such taxonomy, but some discretization methods, \textit{e.g.}\ $\chi^2$ independence test-based methods can be naturally extended to this type of quantization, which is for example what the CHAID algorithm, proposed by~\cite{kass1980exploratory} and applied to each categorical feature, relies on.
+Many algorithms have thus been designed and a review of approximatively 200 discretization strategies, gathering both criteria and related algorithms, can be found in~\cite{ramirez2016data}. They classify discretization methods by distinguishing, among other criteria and as said previously, unsupervised and supervised methods ($\bm{y}$ is used to discretize $\bm{x}$)), for which model-specific (assumptions on $p_{\glssymbol{bth}}$) or model-free approaches are distinguished, univariate and multivariate methods (features $X^{\{-j\}} = (X^{1},\ldots,X^{j-1},X^{j+1},\ldots,X^{d})$ may influence the quantization scheme). For factor levels grouping, we found no such taxonomy, but some discretization methods, \textit{e.g.}\ $\chi^2$ independence test-based methods can be naturally extended to this type of quantization, which is for example what the CHAID algorithm, proposed by~\cite{kass1980exploratory} and applied to each categorical feature, relies on.
 For benchmarking purposes, and following results found in the taxonomy of~\cite{ramirez2016data}, I used the MDLP~\cite{fayyad1993multi} discretization method, described in-depth in Appendix~\ref{app1:mdlp}, which is a popular supervised univariate method, and I implemented an extension of ChiMerge to categorical features, performing pairwise $\chi^2$ independence tests rather than only pairs of contiguous intervals, which I called ChiCollapse and describe in-depth in Appendix~\ref{app1:chicollapse}. Note that various refinements of ChiMerge have been proposed in the literature, Chi2~\cite{liu1995chi2}, ConMerge~\cite{wang1998concurrent}, ModifiedChi2~\cite{tay2002modified}, and ExtendedChi2~\cite{su2005extended}, which seek to correct for multiple hypothesis testing and automize the choice of the confidence parameter $\alpha$ in the $\chi^2$ tests, but adapting them to categorical features for benchmarking purposes would have been too time-consuming.
 
 
@@ -330,7 +330,7 @@ In high-dimensional spaces and among models with a wildly varying number of para
 \section{The proposed neural network based quantization}
 \label{sec:proposal}
 
-\subsection{A relaxation of the optimization problem}
+\subsection{A relaxation of the optimization problem} \label{subsec:relaxation}
 
 In this section, we propose to relax the constraints on $\q_j$ to simplify the search of $\hat{\q}$. Indeed, the derivatives of $\q_j$ are zero almost everywhere and consequently a gradient descent cannot be directly applied to find an optimal quantization.
 
@@ -487,18 +487,51 @@ Concerning now the number of intervals or factor levels $\boldsymbol{m} = (m_j)_
 \section{An \gls{sem} approach} \label{sec:sem}
  
  
- \textcolor{red}{reprendre article et changer notations}
- 
+In what follows, the quantization $\q(\glssymbol{bx})$ is seen as a latent feature observation denoted by $\bqk$. The same notations can be introduced for this new feature: $\bqk_j$ will designate the $j^{\text{th}}$ vectorial component of $\bqk$, $\bbqk$ will designate the $n$-sample where $\bbqk_i$ is its $i^{\text{th}}$ row, corresponding to an observation, and so on. In the following Section, we translate earlier assumptions in probabilitics terms. In the subsequent Section, we make good use of these assumptions to provide a continuous relaxation of the quantization problem, as was empirically argumented in Section~\ref{subsec:relaxation}. This relaxation is equivalent to the one proposed in Section~\ref{sec:proposal}, although its use differs drastically, as will be emphasized in Section~\ref{subsec:stoch}.
+
+\subsection{Probabilistic assumptions regarding the quantization latent feature}
+
+Firstly, only the well-specified model case is considered, which translates, with this new latent feature, as a probabilistic assumption:
+\begin{equation} \label{hyp:true}
+\exists \glssymbol{bth}^\star, \bqk^\star \text{s.t.\ } Y \sim p_{\glssymbol{bth}^\star}(\cdot | \bqk^\star)
+\end{equation}
+Secondly, the result of the quantization is assumed to be ``self-contained'' w.r.t.\ predictive information in $\glssymbol{bx}$, \textit{i.e.}\ it is assumed we have ``squeezed'' all available information about $y$ in $\glssymbol{bx}$ by quantizing the data:
+\begin{equation} \label{hyp:squeeze}
+\forall \glssymbol{bx},y,\: p(y|\glssymbol{bx},\bqk^\star) = p(y|\bqk^\star)
+\end{equation}
+Thirdly, the component-wise nature of the quantization can be stated as:
+\begin{equation} \label{hyp:component}
+\forall \glssymbol{bx},\bqk,\: p(\bqk|\glssymbol{bx}) = \prod_{j=1}^d p(\bqk_j | x_j)
+\end{equation}
+
+
+
+\subsection{Continuous relaxation of the quantization as seen as fuzzy assignment}
+
+If we consider the deterministic discretization scheme defined in Section~\ref{sec:model_selection}, we have:
+$$
+p(\bqk_j | x_j) = 1 \text{ if } x_j \in C_{j,h} \text{ and } \qk_{j,h} = 1, 1 \leq h \leq m_j,
+$$
+which is a step function. Rewriting $p(y| \glssymbol{bx})$ by integrating over these new latent features and using hypotheses~\ref{hyp:true}, \ref{hyp:squeeze} and \ref{hyp:component} respectively, we get:
+\begin{align*}
+p(y | \glssymbol{bx}) & = p_{\glssymbol{bth}^\star}(y | \bqk^\star) \\
+& = \sum_{\bqk \in \Q} p(y, \bqk | \glssymbol{bx}) \\
+& = \sum_{\bqk \in \Q} p(y | \bqk, \glssymbol{bx}) p(\bqk | \glssymbol{bx}) \\
+& = \sum_{\bqk \in \Q} p(y | \bqk) p(\bqk | \glssymbol{bx}) \\
+& = \sum_{\bqk \in \Q} p(y | \bqk) \prod_{j=1}^d p(\bqk_j | x_j)
+\end{align*}
+The well-specified model hypothesis~\ref{hyp:true} yields for all $x_j$, $p(\bqk_j^\star | x_j) = 1$. Conversely, for $\bqk \in \Q$ such that $\bqk \cancel{\mathcal{R}} \bqk^\star$, there exists a feature $j$ and an observation $x_j$ such that $p(\bqk_j | x_j) = 0$. Consequently, the above sum reduces to $p(y | \bqk^\star)$. Thus, we have :
+\[ \bqk^\star = \argmax_{\bqk \in \Q} p(y|\bqk) \prod_{j=1}^d p(\bqk_j | x_j). \]
+This new formulation of the best quantization is still untractable since it requires to evaluate all quantizations in $\Q$, although all terms except $\bqk^\star$ contribute to $0$ in the above $\argmax$. In the misspecfied model-case however, .
+
+\subsection{Stochastic search of the best quantization} \label{subsec:stoch}
+
+\gls{sem}
 
 
 
 
-
-
-
- 
- 
- \section{Numerical experiments} \label{sec:experiments}
+\section{Numerical experiments} \label{sec:experiments}
 
 This section is divided into three complementary parts to assess the validity of our proposal, that we call hereafter \textit{glmdisc}-NN and \textit{glmdisc}-SEM, designating respectively the approaches developed in Sections~\ref{sec:proposal} and~\ref{sec:sem}. First, simulated data are used to evaluate its ability to recover the true data generating mechanism. Second, the predictive quality of the new learned representation approach is illustrated on several classical benchmark datasets from the UCI library. Third, we use it on \textit{Credit Scoring} datasets provided by Credit Agricole Consumer Finance, a major European company in the consumer credit market. The code of all experiments, excluding the confidential real data, can be retrieved following the guidelines in Appendix~\ref{app2}.
 

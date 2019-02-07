@@ -16,24 +16,26 @@ Continuing my pursuit of interpretable representation learning algorithms for lo
 
 As described in the introduction, logistic regression is linear in its inputs which does not allow to take into account conditional dependency, see~\cite{berry2010testing}. This problem is often dealt with by sparsely introducing ``interactions'', \textit{i.e.}\ products of two features. Unfortunately, this leads again to a model selection challenge as the number of pairs of features is $\dfrac{d(d-1)}{2}$. We denote by $\bdelta$ the upper triangular matrix with $\delta_{k,\ell} = 1$ if $k < \ell$ and features $k$ and $\ell$ ``interact'' in the logistic regression in the sense of~\cite{berry2010testing}. The logistic regression with interactions $\bdelta$ is thus:
 \begin{equation} \label{eq:reglog_sans}
-\text{logit}[p_{\glssymbol{bth}}(1|\bm{f}(\bm{x}),\bdelta)] = \theta_{0} + \sum_{j=1}^d \theta_{j}^{f_j(x^j)} + \sum_{1 \leq k < \ell \leq d} \delta_{k,\ell} \theta_{k,\ell}^{f_p(x^p),f_q(x^q)},
+\text{logit}[p_{\glssymbol{bth}}(1|\q(\glssymbol{bx}),\bdelta)] = \theta_{0} + \sum_{j=1}^d \glssymbol{bth}_j' \q_j(x_j) + \sum_{1 \leq k < \ell \leq d} \delta_{k,\ell} \glssymbol{bth}_{k,\ell} \odot \q_k(x_k) \q_\ell(x_\ell)',
 \end{equation}
-where $\glssymbol{bth} = (\theta_{0},\theta_{1}^1,\dots,\theta_{1}^{m_1},\dots,\theta_{d}^1,\dots,\theta_{d}^{m_d},\theta_{1,2}^{1,1},\dots,\theta_{1,2}^{m_1,m_2},\dots,\theta_{d-1,d}^{1,1},\dots,\theta_{d-1,d}^{m_{d-1},m_d})$ and for all features $j$, $f_j(x_j)=m_j$ is set as the ``reference'' value and consequently for all $j$, $\theta_{j}^{m_j}=0$ and for all $1 \leq k < \ell \leq d$, $\theta_{k,\ell}^{m_k,m_{\ell}}=0$.
+where $\glssymbol{bth}_{k,\ell} = (\theta_{k,\ell}^{r,s})_{1 \leq r \leq m_k, 1 \leq s \leq m_\ell$ and for all features $j$, $m_j$ is set as the ``reference'' value and consequently for all $j$, $\theta_{j}^{m_j}=0$ and for all $1 \leq k < \ell \leq d$, $\theta_{k,\ell}^{m_k,m_{\ell}}=0$.
+
+This formulation seems rather complicated visually and in terms of parameter dimension: a single interaction between two quantized features (or more broadly speaking, categorical features) amounts to adding $m_k \cdot m_\ell$ coefficients. Since we advocated ``interpretable'', \textit{i.e.}\ sparse, simple models to yield scorecards as in Table~\ref{tab:scorecard}, and we witnessed a high variance in estimating the numerous coefficients on Figure~\ref{fig:sin_fin}, put this way it does not seem like a good idea.
+
+Nevertheless, as thoroughly explained in~\cite{berry2010testing}, there are situations where interactions terms are unavoidable. A simple (but quite extreme) example is the XOR (exclusive or) function $f(x_1,x_2) = (x_1 + x_2)\cdot(2 - x_1 - x_2)$ where $x_1,x_2 \in \{0,1\}$. Such functions cannot be learnt by a standard logistic regression. For a more illustrative example, the broad field of medicine is often interested in knowing the factors of risks of a given disease and if these factors have additive or cumulative effects (see~\cite{morgan2014adversity} for an example), \textit{e.g.}\ risk of contracting disease A is doubled with factor B and C individually, but 6 times more when both factors are present. This is precisely what is observed in the \textit{Credit Scoring} industry: we observe higher risk among workers than executives but when associated with the time spent in the current job position, workers with ``stability'' of employment may appear less risky than less ``stable'' executives.
 
 
 \section{Pairwise interaction screening as a feature selection problem}
 
-\textcolor{red}{eq:criterion undefined = c'est le BIC du chapitre précédent à harmoniser}
-
-\textcolor{red}{sec:discwithout undefined = à reprendre}
-
-Criterion~\eqref{eq:criterion} developed in the context of discretization and grouping can be adapted to take into account interactions
+Criterion~\eqref{eq:BICq} developed in the context of quantization can be adapted to take into account interactions
 \begin{equation}\label{eq:criterion_inter}
-\bm{f}^{\text{opt}},\bdelta^{\text{opt}} = \argmin_{\bm{f},\bdelta} \text{BIC}[p_{\glssymbol{bth}}(\bm{y}|\bm{f}(\bm{x}),\bdelta)].
+\q^\star,\bdelta^\star = \argmin_{\q,\bdelta} \text{BIC}(\hat{\glssymbol{bth}_{\q,\bdelta}),
 \end{equation}
-The combinatorics involved in this problem are much higher than those of criterion~\eqref{eq:criterion}, which already lead to an untractable greedy approach. For each feasible discretization scheme of Section~\ref{sec:discwithout}, there is now $2^{\frac{d(d-1)}{2}}$ models to test! In the following section, we will first consider the discretization fixed and develop a stochastic approach similar to the one proposed for discretization and grouping of factor levels.
+where $\hat{\glssymbol{bth}_{\q,\bdelta}$ is the MLE of $\glssymbol{bth}$ given $(\glssymbol{bbx},\glssymbol{bby})$, $\q$ and $\bdelta$. The combinatorics involved in this problem are much higher than those of criterion~\eqref{eq:criterion}, which already lead to an untractable greedy approach. For each feasible quantization scheme of Section~\ref{par:cardinality}, there is now $2^{\frac{d(d-1)}{2}}$ models to test! In this section, we will first consider the discretization fixed and develop a stochastic approach similar to the one proposed for discretization and grouping of factor levels.
 
-With a fixed discretization scheme $\bm{e} = \bm{f}(\glssymbol{bx})$, criterion~\ref{eq:criterion_inter} amounts to $\bdelta^{\text{opt}} = \argmin_{\bdelta} \text{BIC}[p_{\glssymbol{bth}}(y|\bm{e},\bdelta)]$ which optimization through a greedy approach is untractable with more than a few features ($d > 10$).
+With a fixed discretization scheme $\bm{e} = \bm{f}(\glssymbol{bx})$, criterion~\ref{eq:criterion_inter} amounts to $\bdelta^{\text{opt}} = \argmin_{\bdelta} \text{BIC}(\hat{\glssymbol{bth}_{\q,\bdelta})$ which optimization through a greedy approach is untractable with more than a few features ($d > 10$). The first approach that seems straightforward in this setting is to simply see all $\frac{d(d-1)}{2}$ interactions as features to select from. In this potentially high-dimensional parameter space, the most computationnaly-effective approach is to resort to penalization. Various penalization approaches have been developed recently, among which LASSO~\cite{} and its derivatives can effectively perform feature selection. A CIFRE PhD has even been dedicated to the subject with application to \textit{Credit Scoring}~\cite{phd2016vital}.
+
+
 
 \section{A novel model selection approach}
 
