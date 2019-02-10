@@ -1,5 +1,7 @@
 \chapter{Interaction discovery for logistic regression} \label{chap5}
 
+\epigraph{.}{.}
+
 \minitoc
 
 
@@ -32,7 +34,7 @@ Moreover, the number of coefficients is kept low by having few levels, as emphas
 \section{Pairwise interaction screening as a feature selection problem}
 
 Criterion~\eqref{eq:BICq} developed in the context of quantization can be adapted to take into account interactions
-\begin{equation}\label{eq:criterion_inter}
+\begin{equation} \label{eq:criterion_inter}
 \q^\star,\bdelta^\star = \argmin_{\q,\bdelta} \text{BIC}(\hat{\glssymbol{bth}}_{\q,\bdelta}),
 \end{equation}
 where $\hat{\glssymbol{bth}}_{\q,\bdelta}$ is the MLE of $\glssymbol{bth}$ given $(\glssymbol{bbx},\glssymbol{bby})$, $\q$ and $\bdelta$. The combinatorics involved in this problem are much higher than those of criterion~\eqref{eq:criterion}, which already lead to an untractable greedy approach. For each feasible quantization scheme of Section~\ref{par:cardinality}, there is now $2^{\frac{d(d-1)}{2}}$ models to test! In this section, we will first consider the discretization fixed and develop a stochastic approach similar to the one proposed for discretization and grouping of factor levels.
@@ -54,6 +56,8 @@ This LASSO approach has been applied to the interaction screening problem~\ref{}
 
 We take another approach here, which foremost benefit will appear in the subsequent Section, and which closely resembles the strategy employed in the quantization setting of Chapter~\ref{chap4}. The variable $\bdelta$ can be seen as an observation of a latent random matrix so that we will employ a stochastic approach to search for $\bdelta^\star$.
 
+\subsection{Relation of the BIC criterion and the interaction probability}
+
 The BIC criterion has a desirable property, from a Bayesian perspective, relating it to the likelihood of the data given the model (in our case, a given interaction matrix $\bdelta$) given the data (see~\ref{lebarbier}):
 \begin{align*}
 p((\glssymbol{bbx},\glssymbol{bby}) | \bdelta) & = \int_{\Theta} p((\glssymbol{bbx},\glssymbol{bby}) | \glssymbol{bth}) p(\glssymbol{bth} | \bdelta)d\glssymbol{bth} \\
@@ -65,7 +69,15 @@ p(\bdelta | (\q(\glssymbol{bbx}),\glssymbol{bby})) & \propto p((\glssymbol{bbx},
 & \approx \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\q,\bdelta})/2) p(\bdelta)
 \end{align*}
 
+\subsection{Metropolis-Hastings sampling algorithm}
+
+
+
+\subsection{Designing an MCMC sampling of good interactions}
+
 Consequently, one can design an MCMC algorithm like Metropolis-Hastings~\cite{hastings1970monte} which draws ``good'' interaction matrices $\bdelta$ from the target posterior distribution $p(\bdelta | (\glssymbol{bbx},\glssymbol{bby}))$.
+
+\subsubsection{Transition probability}
 
 Metropolis-Hastings only requires a proposal of a transition probability between two states of the Markov chain that we denote by $\tr$:
 \begin{alignat}{2}
@@ -78,21 +90,46 @@ Only $\frac{d(d-1)}{2}$ coefficients are now needed, which can be reinterpreted 
 
 We claim that a good intuition about whether two features interact is the relative gain (or loss) in BIC between their bivariate model \textit{with} their interaction and this model \textit{without} their interaction. The rational behind such a procedure, relying again on the properties of BIC, is the following: 
 \begin{align*}
-\forall \: 1 \leq k < \ell \leq d, \; p(\delta_{k,\ell} | \q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell), \glssymbol{bby}) & \propto p((\q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell, \glssymbol{bby}) | \delta_{k,\ell}) p(\delta_{k,\ell}) \\
-& \approx \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\q_k,\q_\ell,\delta_{j,\ell}})/2).
+\forall \: 1 \leq k < \ell \leq d, \; p(\delta_{k,\ell} | \q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell), \glssymbol{bby}) & \propto p((\q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell), \glssymbol{bby}) | \delta_{k,\ell}) p(\delta_{k,\ell}) \\
+& \approx \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\q_k,\q_\ell,\delta_{j,\ell}})/2) p(\delta_{k,\ell}).
 \end{align*}
 
-Setting a uniform prior $p(\delta_{k,\ell}=1) =\begin{cases} 0 \text{ if } k \geq \ell \\ \frac{1}{2} \text{ otherwise.} \end{cases}$ and writing the same expression for $\delta_{k,\ell} = 0$ yields: $p_{k,\ell} = p(\delta_{k,\ell}=1 | e_k, e_{\ell}, y) \approx \exp \left( \frac{\text{BIC}[p_{\glssymbol{bth}}(y | e_k, e_{\ell}, \delta_{k,\ell}=0)]-\text{BIC}[p_{\glssymbol{bth}}(y | e_k, e_{\ell}, \delta_{k,\ell}=1)]}{2} \right)$. We normalize $p_{k,\ell}$ s.t.\ $\sum_{1 \leq k < \ell \leq d} p_{k,\ell} = 1$.
+Setting a uniform prior $p(\delta_{k,\ell}=1) =\begin{cases} 0 \text{ if } k \geq \ell \\ \frac{1}{2} \text{ otherwise} \end{cases}$ and denoting by $p_{k,\ell}$ the probability of an interaction given features $\q_k(x_k)$ and $\q_\ell(x_\ell)$:
+\[ p_{k,\ell} = p(\delta_{k,\ell} = 1 | \q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell, \glssymbol{bby}) \appropto \exp \left( \frac{\text{BIC}(\hat{\glssymbol{bth}}_{\q_k(\glssymbol{bbx}_k),\q_\ell(\glssymbol{bbx}_\ell),\delta_{k,\ell}=0}) - \text{BIC}(\hat{\glssymbol{bth}}_{\q_k(\glssymbol{bbx}_k),\q_\ell(\glssymbol{bbx}_\ell),\delta_{k,\ell}=1})}{2} \right) \]
+We normalize $p_{k,\ell}$ s.t.\ $\sum_{1 \leq k < \ell \leq d} p_{k,\ell} = 1$ and denote their triangular inferior matrix arrangement by $P$.
 
-We claim that if $p_{k,\ell}$ is close to $1$ (resp. $0$), then there is a strong chance that $\delta_{k,\ell}^\star = 1$ (resp. $\delta_{k,\ell}^\star = 0$) even in the full multivariate model, which is in particular true if features $e_k$ and $e_{\ell}$ are independent to other features $e_r$, $r \neq k$, $r \neq \ell$. Consequently, if at step $(s)$ of the Markov chain, $\delta_{k,\ell}^{(s)} = 1$ (resp. $0$) and $p_{k,\ell}$ is close to $0$ (resp. $1$), a good candidate for $\bdelta^{(s+1)}$ should be to change $\delta_{k,\ell}$ to $\delta_{k,\ell}^{(s+1)} = 0$ (resp. $\delta_{k,\ell}^{(s+1)} = 1$). Our proposal is thus to calculate the difference between the current interaction matrix and $(p_{k,\ell})_{1 \leq k,\ell, \leq d}$ which we denote by $q_{k,\ell}^{(s)} = |\delta_{k,\ell}^{(s)} - p_{k,\ell}|$ and normalize. This defines a proper transition probability between two interaction matrices: $q(\bdelta^{(s)},\bdelta') = \begin{cases} 0 \text{ if } \sum_{k=1}^d \sum_{\ell=1}^d |\delta^{(s)}_{k,\ell} - \delta_{k,\ell}'| \neq 1, \\ q_{k,\ell}^{(s)} \text{ for the unique couple } (k,\ell) \text{ s.t.} \: \delta^{(s)}_{k,\ell} \neq \delta_{k,\ell}'. \end{cases}$
+We claim that if $p_{k,\ell}$ is close to $1$ (resp. $0$), then there is a strong chance that $\delta_{k,\ell}^\star = 1$ (resp. $\delta_{k,\ell}^\star = 0$) even in the full multivariate model, which amounts to:
+\[ p_{k,\ell} \approx p(\delta_{k,\ell} = 1 | \q(\glssymbol{bbx}),\glssymbol{bby}) \]
+This holds in particular if features $\q_k(\glssymbol{bbx}_k)$ and $\q_\ell(\glssymbol{bbx}_\ell)$ are independent to other features $\q_{-\{k,\ell\}}(\glssymbol{bbx}_{-\{k,\ell\}})$.  \textcolor{red}{prove that claim}
 
-Now, a Metropolis-Hastings step can be conducted by drawing $\bdelta' \sim q(\bdelta^{(s)},\cdot)$. The acceptance probability of this candidate is given by $\alpha = \min \left( 1, \frac{p(\bdelta' | \be,y)}{p(\bdelta^{(s)} | \be, y)} \frac{1-q(\bdelta^{(s)},\bdelta')}{q(\bdelta^{(s)},\bdelta')} \right) \approx \min \left( 1, \exp \left( \frac{\text{BIC}[p_{\glssymbol{bth}}(y | \be, \bdelta^{(s)})] - \text{BIC}[p_{\glssymbol{bth}}(y | \be, \bdelta')]}{2} \right) \frac{1-q(\bdelta^{(s)},\bdelta')}{q(\bdelta^{(s)},\bdelta')} \right)$. If $\alpha \geq 1$, the candidate is accepted and $\bdelta^{(s+1)} = \bdelta'$; otherwise, the candidate is accepted with probability $\alpha$ s.t.\ $\bdelta^{(s+1)} = \begin{cases} \bdelta' \text{ with probability } \alpha, \\ \bdelta^{(s)} \text{ with probability } 1-\alpha. \end{cases}$
+Consequently, if at step $(s)$ of the Markov chain, $\delta_{k,\ell}^{(s)} = 1$ (resp. $0$) and $p_{k,\ell}$ is close to $0$ (resp. $1$), a good candidate for $\bdelta^{(s+1)}$ should be to change $\delta_{k,\ell}$ to $\delta_{k,\ell}^{(s+1)} = 0$ (resp. $\delta_{k,\ell}^{(s+1)} = 1$). Our proposal is thus to calculate the difference between the current interaction matrix and $P$ which we denote by $\tr^{(s)} = |\bdelta^{(s)} - P|$ and normalize.
 
-The existence of the stationary distribution $p(\bdelta | \be,y)$ is guaranteed by construction of the Metropolis-Hastings algorithm as the generated Markov chain fulfills the detailed balance condition. The uniqueness of the stationary distribution is given by the ergodicity of the Markov chain: as $\forall \: 1 \leq  k < \ell \leq d, \: q_{k,\ell} > 0$ and a transition changes only one entry $\delta_{k,\ell}$ of the interaction matrix, every state can be reached in at most $\frac{d(d-1)}{2}$ steps.
+This defines a proper transition probability between two interaction matrices:
+\[ \tr(\bdelta^{(s)},\bdelta') = \begin{cases} 0 \text{ if } \sum_{k=1}^d \sum_{\ell=1}^d |\delta^{(s)}_{k,\ell} - \delta_{k,\ell}'| \neq 1, \\ \tr^{(s)}_{k,\ell} \text{ for the unique couple } (k,\ell) \text{ s.t.} \: \delta^{(s)}_{k,\ell} \neq \delta_{k,\ell}'. \end{cases} \]
+
+\subsubsection{Acceptance probability of the proposed transition}
+
+
+Now, a Metropolis-Hastings step can be conducted by drawing $\bdelta' \sim \tr(\bdelta^{(s)},\cdot)$. The acceptance probability of this candidate is given by:
+\begin{align*}
+\alpha & = \min \left( 1, \frac{p(\bdelta' | \q(\glssymbol{bbx}),y)}{p(\bdelta^{(s)} | \q(\glssymbol{bbx}), \glssymbol{bby})} \frac{1-\tr(\bdelta^{(s)},\bdelta')}{\tr(\bdelta^{(s)},\bdelta')} \right) \\
+& \approx \min \left( 1, \exp \left( \frac{\text{BIC}(\hat{\glssymbol{bth}}_{\q(\glssymbol{bbx}),\delta_{k,\ell}=0}) - \text{BIC}(\hat{\glssymbol{bth}}_{\q(\glssymbol{bbx}),\delta_{k,\ell}=1})}{2} \right) \frac{1-\tr(\bdelta^{(s)},\bdelta')}{\tr(\bdelta^{(s)},\bdelta')} \right).
+\end{align*}
+
+If $\alpha \geq 1$, the candidate is accepted and $\bdelta^{(s+1)} = \bdelta'$; otherwise, the candidate is accepted with probability $\alpha$ s.t.\ $\bdelta^{(s+1)} = \begin{cases} \bdelta' \text{ with probability } \alpha, \\ \bdelta^{(s)} \text{ with probability } 1-\alpha. \end{cases}$
+
+\subsubsection{Acceptance probability of the proposed transition}
+
+
+The existence of the stationary distribution $p(\bdelta | \q(\glssymbol{bbx}),\glssymbol{bby})$ is guaranteed by construction of the Metropolis-Hastings algorithm as the generated Markov chain fulfills the detailed balance condition. The uniqueness of the stationary distribution is given by the ergodicity of the Markov chain: as $\forall \: 1 \leq  k < \ell \leq d, \: \tr_{k,\ell} > 0$ and a transition changes only one entry $\delta_{k,\ell}$ of the interaction matrix, every state can be reached in at most $\frac{d(d-1)}{2}$ steps.
 
 In practice with a fixed discretization scheme, this stochastic approach is probably outperformed in computing time by Lasso-based methods or correlation-based methods like~\cite{simon}, which might obtain a suboptimal model in a fixed computing time, contrary to our approach which might take lots of steps to converge in distribution. Its double benefit however lies in the ability of the practitioner to define before-hand how many steps shall be performed and the natural integration to the quantization algorithm proposed in the previous Chapter, which we develop in the next Section.
 
 \section{Interaction screening and quantization}
+
+We return to our original objective~\ref{eq:criterion_inter} and consider optimizing the BIC criterion both in terms of quantization and pairwise interactions, as varying the quantization $\q$ might influence the ``best'' interactions $\bdelta^\star$ and vice versa.
+
+We can mix the MCMC approach proposed in the previous Section with the \textit{glmdisc} algorithm proposed in the previous Chapter.
 
 Quand on connaît $\delta$, on tire $E$ comme avant.
 
