@@ -315,7 +315,7 @@ Cette divergence est donnée pour une valeur particulière $\glssymbol{bx}$ de $
 
 N'ayant accès à $\pd(\cdot | \glssymbol{bx})$ qu'à travers un échantillon, il nous faut développer un critère empirique à partir du critère théorique (on parle aussi de critère asymptotique) donné ici.
 
-\subsection{Minimisation du risque empirique et maximum de vraisemblance} \ref{subsec:gradient}
+\subsection{Minimisation du risque empirique et maximum de vraisemblance} \label{subsec:gradient}
 
 On peut réécrire $\glssymbol{KL}(p_{\text{data}}(\cdot|\glssymbol{bx})||p_{\glssymbol{bth}}(\cdot|\glssymbol{bx}))$ pour faire apparaître un terme indépendant de $p_{\glssymbol{bth}}$ :
 \[ \glssymbol{KL}(p_{\text{data}}(\cdot|\glssymbol{bx})||p_{\glssymbol{bth}}(\cdot|\glssymbol{bx})) = \underbrace{\sum_{y \in \{0,1\}} p_{\text{data}}(y|\glssymbol{bx}) \ln [p_{\text{data}}(y|\glssymbol{bx})]}_{\perp p_{\glssymbol{bth}}} - \underbrace{\sum_{y \in \{0,1\}} p_{\text{data}}(y|\glssymbol{bx}) \ln [p_{\glssymbol{bth}}(y|\glssymbol{bx})]}_{\mathbb{E}_{\glssymbol{Y}} [\ln[p_{\glssymbol{bth}}(\cdot|\glssymbol{bx})]]}  \]
@@ -356,11 +356,20 @@ En réarrangeant cette expression, on obtient la valeur mise à jour du paramèt
 \[ \glssymbol{bth}^{(s+1)} = \glssymbol{bth}^{(s)} - \mathbf{H}_{{\glssymbol{bth}}}(\glssymbol{bth}^{(s)};\glssymbol{bbx},\glssymbol{bby})^{-1} \nabla_{\glssymbol{bth}} \ell(\glssymbol{bth}^{(s)};\glssymbol{bbx},\glssymbol{bby}), \]
 où $ \nabla_{\glssymbol{bth}} \ell(\glssymbol{bth}^{(s)};\glssymbol{bbx},\glssymbol{bby}) = (\bm{1},\glssymbol{bbx})' \times (\glssymbol{bby} - \Pi)$ et $\mathbf{H}_{{\glssymbol{bth}}}(\glssymbol{bth}^{(s)};\glssymbol{bbx},\glssymbol{bby}) = (\bm{1},\glssymbol{bbx}) \mathbf{W} (\bm{1},\glssymbol{bbx})'$ avec $\Pi = (p_{\glssymbol{bth}^{(s)}}(1|\glssymbol{bx}_1),\dots,p_{\glssymbol{bth}^{(s)}}(1|\glssymbol{bx}_n))$ et $\mathbf{W} = \text{diag}(\Pi \odot (\bm{1}-\Pi))$ où $\odot$ désigne le produit d'Hadamard (\textit{i.e.}\ élément par élément). Plusieurs points importants transparaissent de cette dernière équation. D'abord, si à une étape $(s)$, le point fixe est trouvé, \textit{i.e.}\ $\glssymbol{bth}^{(s)} = \hat{\glssymbol{bth}}$, alors $\nabla_{\glssymbol{bth}} \ell(\glssymbol{bth}^{(s)};\glssymbol{bbx},\glssymbol{bby}) = 0$ et on ne bouge plus : $\forall s' \geq s, \: \glssymbol{bth}^{(s')} = \glssymbol{bth}^{(s)}$. En pratique, cela conduit la majorité des librairies logicielles implémentant la méthode de Newton à laisser à leur utilisateur le soin de calibrer deux paramètres : la précision au-delà de laquelle l'algorithme s'arrête, c'est-à-dire $\eta$ tel que s'il existe $s$ tel que $||\glssymbol{bth}^{(s+1)} - \glssymbol{bth}^{(s)}||_{\infty} \leq \eta$ alors $\hat{\glssymbol{bth}} \approx \glssymbol{bth}^{(s+1)}$ et le nombre de pas maximum $s_{\text{max}}$ à effectuer (la condition précédente n'étant potentiellement jamais remplie, l'algorithme pourrait ne pas se terminer). Une revue des principales méthodes d'optimisation utilisables dans le cadre de la \gls{lr}, suivie de leur étude empirique~\cite{minka2003comparison} montre que l'algorithme de Newton et la méthode BFGS~\cite{byrd1995limited}, de complexité respective $O(nd^2)$ et $O(d^2 + nd)$ présentent un bon compromis précision / coût de calcul lorsque comparées à d'autres méthodes de descente de gradient et sous différents scénarios de génération des données. Toutes les régressions logistique de ce manuscrit sont par conséquent estimées par l'algorithme de Newton, car à l'exception du chapitre~\ref{chap7}, le nombre de covariables $d$ est faible ($10$-$100$) relativement à $n$ ($10^5$-$10^6$). Enfin, l'algorithme requiert une initialisation $\glssymbol{bth}^{(0)}$ qui peut en influencer la vitesse de convergence. Les librairies utilisent généralement $\glssymbol{bth}^{(0)}=0$.
 
-En conclusion, là où le probabiliste, en figure~\ref{fig:projection} n'avait qu'un problème de biais de modèle, le statisticien qui souhaite estimer ce modèle à partir de données est préoccupé par deux problèmes supplémentaires. Le premier est l'erreur d'estimation, c'est-à-dire la différence entre le meilleur modèle de paramètre $\glssymbol{bth}^\star$ et le modèle estimé de paramètre $\hat{\glssymbol{bth}}$. On note $p_{\mathcal{X}}$ la \gls{pdf} marginale de $\glssymbol{X}$ et on définit pour tout $f: \mathcal{X} \to \mathbb{R}$ la norme $||f||_2^2 = \int_{\mathcal{X}} f dp_{\mathcal{X}}$. Par Pythagore, on obtient facilement pour tout $y$ :
-\begin{equation} \label{eq:biais_variance}
-||p_{\hat{\glssymbol{bth}}}(y|\cdot) - \pd(y|\cdot)||_2^2 = \underbrace{||p_{\hat{\glssymbol{bth}}}(y|\cdot) - p_{\glssymbol{bth}^\star}(y|\cdot)||_2^2}_{\text{erreur d'estimation}} + \underbrace{||p_{\glssymbol{bth}^\star}(y|\cdot) - \pd(1|\cdot)||_2^2}_{\text{biais de modèle}}.
-\end{equation}
-Ce terme d'erreur a été introduit par le passage de $p_{\text{data}}$ à $p_{\text{sample}}$, autrement dit par le passage du critère KL asymptotique~\eqref{eq:KL} au critère empirique de vraisemblance~\eqref{eq:vraisemblance}. Ce terme est matérialisé en \textcolor{blue}{bleu} sur la figure~\ref{fig:projection2} et peut être sous-divisé en deux composantes distinctes fondamentales en statistiques, le biais et la variance, sur lesquelles nous reviendrons dans la section suivante~\ref{subsubsec:selection}. Le deuxième problème est numérique et généralement négligé : il s'agit de l'erreur de précision développé au paragraphe précédent et matérialisé en \textcolor{orange}{orange} sur la figure~\ref{fig:projection2}.
+En conclusion, là où le probabiliste, en figure~\ref{fig:projection} n'avait qu'un problème de biais de modèle, le statisticien qui souhaite estimer ce modèle à partir de données est préoccupé par deux problèmes supplémentaires. Le premier est l'erreur d'estimation, c'est-à-dire la différence entre le meilleur modèle de paramètre $\glssymbol{bth}^\star$ et le modèle estimé de paramètre $\hat{\glssymbol{bth}}$.  Pour la dérivation rigoureuse de ce résultat, se référer à~\cite{schutze2008introduction} (pp. 308–314).
+%On note $p_{\mathcal{X}}$ la \gls{pdf} marginale de $\glssymbol{X}$ et on définit pour tout $f: \mathcal{X} \to \mathbb{R}$ la norme $||f||_2^2 = \int_{\mathcal{X}} f dp_{\mathcal{X}}$. Par Pythagore, on obtient facilement pour tout $y$ :
+%\begin{equation} \label{eq:biais_variance}
+%||p_{\hat{\glssymbol{bth}}}(y|\cdot) - \pd(y|\cdot)||_2^2 = \underbrace{||p_{\hat{\glssymbol{bth}}}(y|\cdot) - p_{\glssymbol{bth}^\star}(y|\cdot)||_2^2}_{\text{erreur d'estimation}} + \underbrace{||p_{\glssymbol{bth}^\star}(y|\cdot) - \pd(1|\cdot)||_2^2}_{\text{biais de modèle}}.
+%\end{equation}
+\begin{align}
+ & \mathbb{E}_{\mathcal{T}_n} \mathbb{E}_{\glssymbol{bx}} [p_{\hat{\glssymbol{bth}}}(y| \glssymbol{bx}) - \pd(y| \glssymbol{bx})]^2  \nonumber \\
+= & \mathbb{E}_{\glssymbol{bx}} [ \underbrace{[\pd(y| \glssymbol{bx}) - \mathbb{E}_{\mathcal{T}_n} [ p_{\hat{\glssymbol{bth}}}(y| \glssymbol{bx})]]^2}_{\text{biais de modèle}} + \underbrace{\mathbb{E}_{\mathcal{T}_n} [ p_{\hat{\glssymbol{bth}}}(y| \glssymbol{bx}) - \mathbb{E}_{\mathcal{T}_n} [ p_{\hat{\glssymbol{bth}}}(y| \glssymbol{bx}) ]^2}_{\text{erreur d'estimation}} ] \label{eq:bias1} \\
+= & \mathbb{E}_{\glssymbol{bx}} [ \underbrace{[\pd(y| \glssymbol{bx}) - p_{\glssymbol{bth}^\star}(y| \glssymbol{bx})]^2}_{\text{biais de modèle}} + \underbrace{\mathbb{E}_{\mathcal{T}_n} [ p_{\hat{\glssymbol{bth}}}(y| \glssymbol{bx}) - p_{\glssymbol{bth}^\star}(y| \glssymbol{bx})  ]^2}_{\text{variance}} ] \label{eq:bias2}
+\end{align}
+Le passage de~\ref{eq:bias1} à~\ref{eq:bias2} est garanti par le caractère asymptotiquement sans biais de l'estimateur du maximum de vraisemblance, même dans le cas du modèle mal spécifié~\ref{white1982maximum}. Autrement dit, pour $n$ assez grand, on a $\sqrt{n} (\hat{\glssymbol{bth}} - \glssymbol{bth}^\star) \sim \mathcal{N}(\bm{0} , \Sigma)$ ce qui garantit $|| \hat{\glssymbol{bth}} - \glssymbol{bth}^\star||_2 \to 0$ et $\mathbb{E}_{\mathcal{T}_n} [ p_{\hat{\glssymbol{bth}}}(y| \glssymbol{bx})] = p_{\glssymbol{bth}^\star}(y| \glssymbol{bx})$.
+Le dernier terme de variance a été introduit en quelque sorte par le passage du critère KL asymptotique~\eqref{eq:KL} au critère empirique de vraisemblance~\eqref{eq:vraisemblance}. Ce terme est matérialisé en \textcolor{blue}{bleu} sur la figure~\ref{fig:projection2}
+% et peut être sous-divisé en deux composantes distinctes fondamentales en statistiques, le biais (nul asymptotiquement) et la variance d'estimation, sur lesquelles nous reviendrons dans la section suivante~\ref{subsubsec:selection}.
+Le deuxième problème est numérique et généralement négligé : il s'agit de l'erreur de précision développé au paragraphe précédent et matérialisé en \textcolor{orange}{orange} sur la figure~\ref{fig:projection2}.
 
 \begin{figure}
 \begin{center}
@@ -437,57 +446,71 @@ Ce terme d'erreur a été introduit par le passage de $p_{\text{data}}$ à $p_{\
 
 Dans la partie précédente, on a réduit le problème à la seule estimation de $\glssymbol{bth}$, et on a implicitement utilisé l'ensemble des $d$ variables dans $\glssymbol{bX}$. En théorie, se faisant, les variables indépendantes de $Y$ conditionnellement aux autres variables devraient avoir un coefficient $\theta_j$ nul. C'est le cas lorsqu'une variable est totalement indépendante de la cible, par exemple la météo du jour de la demande du prêt, ou lorsqu'une variable est redondante avec une autre variable, par exemple les revenus annuels et mensuels qui sont égaux à un facteur multiplicatif près.
 
-En pratique, tous les coefficients de $\glssymbol{bth}$ seront différents de $0$ du fait des deux phénomènes illustrés sur le graphique~\ref{fig:projection2} : l'(im)précision numérique abordé dans la partie précédente et le design $\glssymbol{bbx}$ fixe introduisant un biais et une variance d'estimation. C'est pourquoi il est nécessaire de sélectionner les ``bonnes'' variables prédictives parmi $\glssymbol{X}_1,\dots,\glssymbol{X}_d$ au sens d'un critère que l'on développe ci-après, afin de réduire l'erreur d'estimation (en \textcolor{orange}{orange} sur la figure~\ref{fig:projection2})
+En pratique, tous les coefficients de $\glssymbol{bth}$ seront différents de $0$ du fait des deux phénomènes illustrés sur le graphique~\ref{fig:projection2} : l'(im)précision numérique abordé dans la partie précédente et le design $\glssymbol{bbx}$ fixe introduisant un biais et une variance d'estimation. C'est pourquoi il est nécessaire de sélectionner les ``bonnes'' variables prédictives parmi $\glssymbol{X}_1,\dots,\glssymbol{X}_d$ au sens d'un critère que l'on développe ci-après, afin de réduire l'erreur d'estimation.
+% (en \textcolor{orange}{orange} sur la figure~\ref{fig:projection2})
 
-Par ailleurs, sous certaines conditions que l'on développera dans les chapitres~\ref{chap4} et~\ref{chap5}, il peut s'avérer nécessaire d'ajouter des variables par calcul ou combinaison des variables $\glssymbol{X}_1,\dots,\glssymbol{X}_d$. On s'intéressera plus précisément aux processus de discrétisation de variables continues, de regroupement de modalités de variables catégorielles et d'introduction d'interactions, c'est-à-dire de produits de variables pré-existantes. Cela permet notamment de réduire le biais de modèle (en \textcolor{blue}{bleu} sur la figure~\ref{fig:projection2}), en adaptant en quelque sorte l'espace $\bm{\Theta}$ à $\pd$.
+Par ailleurs et toujours dans le but de trouver un compromis entre biais de modèle et erreur d'estimation, sous certaines conditions que l'on développera dans les chapitres~\ref{chap4} et~\ref{chap5}, il peut s'avérer nécessaire d'ajouter des variables par calcul ou combinaison des variables $\glssymbol{X}_1,\dots,\glssymbol{X}_d$. On s'intéressera plus précisément aux processus de discrétisation de variables continues, de regroupement de modalités de variables catégorielles et d'introduction d'interactions, c'est-à-dire de produits de variables pré-existantes. 
+%Cela permet notamment de réduire le biais de modèle (en \textcolor{blue}{bleu} sur la figure~\ref{fig:projection2}), en adaptant en quelque sorte l'espace $\bm{\Theta}$ à $\pd$.
 
 \subsubsection{Sélection de variables} \label{subsubsec:selection}
 
-Le premier réflexe du statisticien face à un problème de classification est la sélection de variable. A l'extrême, lorsque $d > n$, le problème est mal défini (la matrice hessienne n'est pas inversible par exemple) ; dans une moindre mesure, lorsque $n > d$ mais que certaines variables n'ont pas de pouvoir prédictif conditionnellement à celles déjà dans le modèle, c'est-à-dire par exemple $\pd(y | \glssymbol{bx}) = p(y|x_2,\dots,x_d)$, alors le coefficient $\hat{\theta}_1$ ajoute une dimension ``inutile'' à l'espace $\bm{\Theta}$ (on parle de la capacité d'un modèle en \textit{machine learning}) qui augmente la variance du modèle $p_{\glssymbol{bth}}$ (on parle d'\textit{overfitting} en \textit{machine learning}) en essayant en quelque sorte de prédire le bruit, les résidus du vrai modèle.
+Le premier réflexe du statisticien face à un problème de classification est la sélection de variables. A l'extrême, lorsque $d > n$, le problème est mal défini (la matrice hessienne n'est pas inversible par exemple) ; dans une moindre mesure, lorsque $n > d$ mais que certaines variables n'ont pas de pouvoir prédictif conditionnellement à celles déjà dans le modèle, c'est-à-dire par exemple $\pd(y | \glssymbol{bx}) = p(y|x_2,\dots,x_d)$, alors le coefficient $\hat{\theta}_1$ ajoute une dimension ``inutile'' à l'espace $\bm{\Theta}$ (on parle de la capacité d'un modèle en \textit{machine learning}) qui augmente la variance du modèle $p_{\glssymbol{bth}}$ (on parle d'\textit{overfitting} en \textit{machine learning}) en essayant en quelque sorte de prédire le bruit, les résidus du vrai modèle.
 
-On peut faire apparaître ce phénomène en mesurant l'écart quadratique moyen entre le meilleur modèle $p_{\glssymbol{bth}^\star}$ et le modèle proposé $p_{\hat{\glssymbol{bth}}}$; en reprenant les notations de la section précédente, on a~:
+%On peut faire apparaître ce phénomène en mesurant l'écart quadratique moyen entre le meilleur modèle $p_{\glssymbol{bth}^\star}$ et le modèle proposé $p_{\hat{\glssymbol{bth}}}$; en reprenant les notations de la section précédente, on a~:
+%\begin{align*}
+%||p_{\glssymbol{bth}^\star}(y|x) - p_{\hat{\glssymbol{bth}}}(y|x)||_2^2 & = \text{Var}(p_{\text{data}}(y|x)) & + (p_{\text{data}}(y|x) - \mathbb{E}[p_{\glssymbol{bth}}(y|x)])^2 & + \text{Var}(p_{\glssymbol{bth}}(y|x)) \\
+%& = \text{Erreur ``oracle''} & + \text{Biais de modèle}^2 & + \text{Variance du modèle}
+%\end{align*}
+%Pour la dérivation rigoureuse de ce résultat, se référer à~\cite{} (p. à ).
+
+
+Dans le cas particulier du \textit{Credit Scoring}, une thèse CIFRE récente a même été consacrée au sujet de la sélection de variable~\cite{vital2016} et recommande l'utilisation de la procédure LASSO, de la ``famille'' de métodes de pénalisation : une contrainte est ajoutée à la vraisemblance pour l'optimisation des paramètres. Le critère devient :
 \begin{align*}
-||p_{\glssymbol{bth}^\star}(y|x) - p_{\hat{\glssymbol{bth}}}(y|x)||_2^2 & = \text{Var}(p_{\text{data}}(y|x)) & + (p_{\text{data}}(y|x) - \mathbb{E}[p_{\glssymbol{bth}}(y|x)])^2 & + \text{Var}(p_{\glssymbol{bth}}(y|x)) \\
-& = \text{Erreur ``oracle''} & + \text{Biais de modèle}^2 & + \text{Variance du modèle}
+\hat{\glssymbol{bth}}^{\text{Lasso}} & = \argmin_{\glssymbol{bth}} \ell(\glssymbol{bth};\glssymbol{bbx},\glssymbol{bby}) \text{ avec } \sum_{j=1}^d |\glssymbol{bth}_j| \leq t \\
+ & = \argmin_{\glssymbol{bth}}  \ell(\glssymbol{bth};\glssymbol{bbx},\glssymbol{bby}) + \lambda \sum_{j=1}^d |\glssymbol{bth}_j|
 \end{align*}
-Pour la dérivation rigoureuse de ce résultat, se référer à~\cite{} (p. à ).
+où $t$ et $\lambda$ sont mutuellement dépendants et règlent la sévérité de la régularisation. De manière générale, la régularisation présente plusieurs avantages, et la motivation première est le contrôle du compromis biais-variance. Néanmoins, par l'utilisation d'une pénalisation de type $L^1$ comme le LASSO, un effect de bord désirable est la sélection de variables, c'est-à-dire la capacité à ``forcer'' des coefficients estimés exactement à $0$. Plusieurs variantes ou raffinements du LASSO existent aujourd'hui et possèdent des propriétés asymptotiques différentes ou meilleures : nous y reviendrons brièvement au chapitre~\ref{chap7}.
 
 
-Dans le cas particulier du \textit{Credit Scoring}, une thèse CIFRE récente a même été consacrée au sujet de la sélection de variable~\cite{vital2016} et recommande l'utilisation de .
+\subsubsection{Choix de modèle} \label{subsubsec:choix_modele}
+
+Une approche de résolution indirecte du problème de sélection de variable est le choix de modèle : considérons M modèles $\Theta^{(1)},\dots,\Theta^{(M)}$ de \gls{lr} différents, c'est-à-dire pour lesquels les variables inclues ne sont pas les mêmes. On peut d'ailleurs voir le problème de sélection de variables comme un choix entre tous les $2^d$ modèles possibles. Dans ce cadre, de nombreux critères de choix de modèle, voire d'aggrégation de modèles, c'est-à-dire de sélection de tout ou partie de ces modèles en pondérant leur contribution globale, ont été proposés. La justification de ces critères ; aussi, dans ce manuscrit, nous nous limiterons, dans le cadre de la sélection de modèle, au critère BIC (proposé dans~\ref{BIC}). Outre sa consistence asymptotique, c'est-à-dire la capacité de sélectionner, sous certaines conditions sur la famille notamment, le ``quasi-vrai'' modèle à une probabilité tendant vers $1$ lorsque la taille d'échantillon $n$ augmente, ce critère possède une propriété au coeur du chapitre~\ref{chap5} qui le lie à la probabilité a posteriori d'un modèle sachant les données. Le lecteur désireux d'en apprendre plus sur les propriétés et les fondements théoriques du critère BIC peuvent consulter~\ref{lebarbier} et en particulier une de ses références~\ref{burnham2003model}.
+
+Le critère BIC s'écrit de la manière suivante :
+\begin{equation}
+    \label{eq:BIC}
+    \text{BIC}(\hat{\glssymbol{bth}}) =  \ell_\q(\hat{\glssymbol{bth}} ; \glssymbol{bbx},\glssymbol{bby}) - \frac12 \nu \ln (n),
+\end{equation}
+où $\hat{\glssymbol{bth}}$ est l'estimateur du maximum de vraisemblance et $\nu = |\Theta|$.
 
 
-\subsubsection{Choix de modèle}
-
-Une approche de résolution indirecte du problème de sélection de variable est le choix de modèle : considérons M modèles $\glssymbol{bth}^{(1)},\dots,\glssymbol{bth}^{(M)}$ de \gls{lr} différents, c'est-à-dire pour lesquels le 
-% Lien entre choix de modèle et sélection de variable
-
-% BIC / AIC
-% Famille finie
-
-\subsubsection{Variable cible}
-
-En partie~\ref{subsec:critere}, on a vu que pour transformer un problème mal posé \textit{a priori} quantitatif de maximisation du profit en un problème de classification supervisée, on résumait en réalité les informations collectées sur le client, ce qui peut s'apparenter à une perte d'information par ``compression''.
-
-% SEME
-
-% Analyse de survie
-
-% Analyse de profit
+%\subsubsection{Variable cible}
+%
+%En partie~\ref{subsec:critere}, on a vu que pour transformer un problème mal posé \textit{a priori} quantitatif de maximisation du profit en un problème de classification supervisée, on résumait en réalité les informations collectées sur le client, ce qui peut s'apparenter à une perte d'information par ``compression''.
+%
+%% SEME
+%Partant de ce constat, plusieurs approches sont envisageables pour mieux exploiter l'information brute de remboursement ou non de chaque mensualité du crédit. Un sujet a été proposé en ce sens à la Semaine d'\'Etude Maths-Entreprise (SEME) de Lille du X au X 2018 où 5 doctorants de disciplines diverses ont .
+%
+%% Analyse de survie
+%
+%
+%% Analyse de profit
 
 
 \subsection{Autres modèles prédictifs}
 
-L'objectif de cette partie est de donner un éclairage à d'autres familles de modèles prédictifs qui pourraient être utilisés en lieu et place de la \gls{lr} traditionnellement utilisée en \textit{Credit Scoring} pour les nombreuses raisons pratiques et statistiques précédemment évoquées. Ces modèles sont utilisés dans la suite de ce manuscrit en comparaison de la \gls{lr} afin d'en montrer les forces et les faiblesses.
+L'objectif de cette partie est de donner un éclairage à d'autres familles de modèles prédictifs qui pourraient être utilisés en lieu et place de la \gls{lr} traditionnellement utilisée en \textit{Credit Scoring} pour les nombreuses raisons pratiques et statistiques précédemment évoquées. Ces modèles sont utilisés dans le chapitre~\ref{chap2} de ce manuscrit en comparaison de la \gls{lr}, ainsi que, pour les réseaux de neurones, dans le chapitre~\ref{chap4}.
 
 \subsubsection{\Gls{svm}}
 
 \paragraph{Principe}
 
-\textcolor{red}{reprendre dégénérescence}
 
-Les Séparateurs à Vaste Marge~\cite{vapnik2013nature} reposent, en classification, sur l'idée de trouver une frontière de séparation, dont des exemples sont donnés en figure~\ref{fig:svm1}, entre deux classes (bons et mauvais payeurs dans notre cas) dont la marge est maximale, c'est-à-dire dont la distance à la plus proche instance de chaque classe est la plus grande possible, comme en figure~\ref{fig:svm2}. Dans le cas de données parfaitement séparables, on parle de ``hard margin''. Bien entendu, dans la plupart des cas d'application, dont le \textit{Credit Scoring}, il n'existe pas de telle séparation, qui rendrait d'ailleurs la régression logistique dégénérescente \textit{i.e.}\ on a alors $||\bm{\theta}^{(s)}||_{\infty} \to_{s \to \infty} +\infty$ car $\max_{\glssymbol{bth}} \ell(\glssymbol{bth};\glssymbol{bbx},\glssymbol{bby}) = + \infty$. On introduit alors des variables ``ressort'' qui relâchent les contraintes d'optimisation pour permettre les mauvais classements. Le problème d'optimisation est alors :
-
-où $C$ est une constante qui contrôle le compromis erreurs de classement et largeur de la marge. Il existe un lien très étroit, .
+Les Séparateurs à Vaste Marge~\cite{vapnik2013nature} reposent, en classification, sur l'idée de trouver une frontière de séparation, dont des exemples sont donnés en figure~\ref{fig:svm1}, entre deux classes (bons et mauvais payeurs dans notre cas) dont la marge est maximale, c'est-à-dire dont la distance à la plus proche instance de chaque classe est la plus grande possible, comme en figure~\ref{fig:svm2}. Dans le cas de données parfaitement séparables, on parle de ``hard margin''. Bien entendu, dans la plupart des cas d'application, dont le \textit{Credit Scoring}, il n'existe pas de telle séparation, qui rendrait d'ailleurs la régression logistique dégénérescente \textit{i.e.}\ on a alors $||\bm{\theta}^{(s)}||_{\infty} \to +\infty$ quand ${s \to \infty}$ car $\max_{\glssymbol{bth}} \ell(\glssymbol{bth};\glssymbol{bbx},\glssymbol{bby}) = + \infty$. On introduit alors des variables ``ressort'' qui relâchent les contraintes d'optimisation pour permettre les mauvais classements. Le problème d'optimisation est alors :
+\begin{equation*}
+\frac{1}{n} \sum_{i=1}^n \max(0,1 - y_i(\glssymbol{bth} \cdot \glssymbol{bx}_i)) + C ||\glssymbol{bth}||_2^2,
+\end{equation*}
+où $C$ est une constante qui contrôle le compromis erreurs de classement et largeur de la marge.
 
 \svgpath{{./figures/chapitre1/}}
 
@@ -501,7 +524,7 @@ où $C$ est une constante qui contrôle le compromis erreurs de classement et la
         \caption[SVM blabla.]{\label{fig:svm1} Plusieurs frontières linéaires séparant les ``+'' des ``-''.\protect\footnotemark[1]}
     \end{subfigure}%
     \columnbreak
-    \begin{subfigure}[t]{0.45\textwidth}
+    \hspace*{1cm} \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includesvg[width=\textwidth]{Separatrice_lineaire_avec_marges}
         \caption[SVM blablabla.]{\label{fig:svm2} La frontière linéaire déterminée par \gls{svm} séparant les ``+'' des ``-'' dont la marge est maximale.\protect\footnotemark[1]}
@@ -511,7 +534,7 @@ où $C$ est une constante qui contrôle le compromis erreurs de classement et la
 \end{figure}
 
 
-\footnotetext[1]{Sylenius [\href{http://www.gnu.org/copyleft/fdl.html}{GFDL} ou \href{https://creativecommons.org/licenses/by-sa/3.0}{CC BY-SA 3.0 } de Wikimedia Commons}
+\footnotetext[1]{Sylenius [\href{http://www.gnu.org/copyleft/fdl.html}{GFDL} ou \href{https://creativecommons.org/licenses/by-sa/3.0}{CC BY-SA 3.0}] de Wikimedia Commons}
 
 \paragraph{Kernel trick}
 

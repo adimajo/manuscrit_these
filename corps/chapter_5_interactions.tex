@@ -13,33 +13,33 @@
 
 \selectlanguage{english}
 
-Continuing my pursuit of interpretable representation learning algorithms for logistic regression, I tackle in this chapter a common problem in \textit{Credit Scoring} and other application contexts relying either on logistic regression or additive models of the form $g(y) = \sum_{j=1}^d \glssymbol{bth}_j' \q_j(x_j)$. To further reduce the model bias discussed in Section~\ref{chap1:sec3} and thus obtain better predictive performance while maintaining interpretability, \textit{Credit Scoring} practitioners are used to introducing pairwise interactions.
+Continuing my pursuit of interpretable representation learning algorithms for logistic regression, I tackle in this chapter a common problem in \textit{Credit Scoring} and other application contexts relying either on logistic regression or additive models of the form $f(y) = \sum_{j=1}^d \glssymbol{bth}_j' \q_j(x_j)$. To further reduce the model bias discussed in Section~\ref{chap1:sec3} and thus obtain better predictive performance while maintaining interpretability, \textit{Credit Scoring} practitioners are used to introducing pairwise interactions.
 
 
 \section{Motivation: XOR function}
 
-As described in the introduction, logistic regression is linear in its inputs which does not allow to take into account conditional dependency, see~\cite{berry2010testing}. This problem is often dealt with by sparsely introducing ``interactions'', \textit{i.e.}\ products of two features. Unfortunately, this leads again to a model selection challenge as the number of pairs of features is $\dfrac{d(d-1)}{2}$. We denote by $\bdelta$ the upper triangular matrix with $\delta_{k,\ell} = 1$ if $k < \ell$ and features $k$ and $\ell$ ``interact'' in the logistic regression in the sense of~\cite{berry2010testing}. The logistic regression with interactions $\bdelta$ is thus:
+As described in the introduction, logistic regression is linear in its inputs which does not allow to take into account conditional dependency (see~\cite{berry2010testing}). This problem is often dealt with by sparsely introducing ``interactions'', \textit{i.e.}\ products of two features. Unfortunately, this leads again to a model selection challenge as the number of pairs of features is $\dfrac{d(d-1)}{2}$. We denote by $\bdelta$ the triangular inferior matrix with $\delta_{k,\ell} = 1$ if $k < \ell$ and features $k$ and $\ell$ ``interact'' in the logistic regression in the sense of~\cite{berry2010testing}. The logistic regression with interactions $\bdelta$ is thus:
 \begin{equation} \label{eq:reglog_sans}
 \text{logit}[p_{\glssymbol{bth}}(1|\q(\glssymbol{bx}),\bdelta)] = \theta_{0} + \sum_{j=1}^d \glssymbol{bth}_j' \q_j(x_j) + \sum_{1 \leq k < \ell \leq d} \delta_{k,\ell} \glssymbol{bth}_{k,\ell} \odot \q_k(x_k) \q_\ell(x_\ell)',
 \end{equation}
-where $\odot$ denotes the element-wise matrix multiplication, $\glssymbol{bth}_{k,\ell} = (\theta_{k,\ell}^{r,s})_{1 \leq r \leq m_k, 1 \leq s \leq m_\ell}$ and for all features $j$, $m_j$ is set as the ``reference'' value and consequently for all $j$, $\theta_{j}^{m_j}=0$ and for all $1 \leq k < \ell \leq d$, $\theta_{k,\ell}^{m_k,m_{\ell}}=0$.
+where $\odot$ denotes the element-wise (Hadamard) matrix multiplication (already used in Chapter~\ref{chap1}), $\glssymbol{bth}_{k,\ell} = (\theta_{k,\ell}^{r,s})_{1 \leq r \leq m_k, 1 \leq s \leq m_\ell}$ and for all features $j$, $m_j$ is set as the ``reference'' value and consequently for all $j$, $\theta_{j}^{m_j}=0$ and for all $1 \leq k < \ell \leq d$, $\theta_{k,\ell}^{m_k,m_{\ell}}=0$.
 
-This formulation seems rather complicated visually and in terms of parameter dimension: a single interaction between two quantized features (or more broadly speaking, categorical features) amounts to adding $m_k \cdot m_\ell$ coefficients. Since we advocated ``interpretable'', \textit{i.e.}\ sparse, simple models to yield scorecards as in Table~\ref{tab:ex_scorecard}, and we witnessed a high variance when estimating numerous coefficients on Figure~\ref{fig:sinus_fin}, it does not seem like a good idea.
+This formulation seems rather complicated visually and in terms of parameter dimension: a single interaction between two quantized features (or more broadly speaking, categorical features) amounts to adding $m_k \cdot m_\ell - 1$ coefficients. Since we advocated ``interpretable'', \textit{i.e.}\ sparse, simple models to yield scorecards as in Table~\ref{tab:ex_scorecard}, and we witnessed a high variance when estimating numerous coefficients on Figure~\ref{fig:sinus_fin}, it does not seem like a good idea.
 
-Nevertheless, as thoroughly explained in~\cite{berry2010testing}, there are situations where interactions terms are unavoidable. A simple (but quite extreme) example is the XOR (exclusive or) function $f(x_1,x_2) = (x_1 + x_2)\cdot(2 - x_1 - x_2)$ where $x_1,x_2 \in \{0,1\}$. Such functions cannot be learnt by a standard logistic regression. For a more illustrative example, the broad field of medicine is often interested in knowing the factors of risks of a given disease and if these factors have additive or cumulative effects (see~\cite{morgan2014adversity} for an example), \textit{e.g.}\ risk of contracting disease A is doubled with factors B and C individually, but 6 times more when both factors are present. This is precisely what is observed in the \textit{Credit Scoring} industry: we observe higher risk among workers than executives but when associated with the time spent in the current job position, workers with ``stability'' of employment may appear less risky than less ``stable'' executives.
+Nevertheless, as thoroughly explained in~\cite{berry2010testing}, there are situations where interactions terms are unavoidable. A simple (but quite extreme) example is the XOR (exclusive or) function $f(x_1,x_2) = (x_1 + x_2)\cdot(2 - x_1 - x_2)$ where $x_1,x_2 \in \{0,1\}$. Such functions cannot be learnt by a standard logistic regression. For a more illustrative example, the broad field of medicine is often interested in knowing the factors of risks of a given disease and if these factors have additive or cumulative effects (see~\cite{morgan2014adversity} for an example), \textit{e.g.}\ risk of contracting disease A is doubled with factors B and C individually, but 6 times more when both factors are present. This is precisely what is observed in the \textit{Credit Scoring} industry: we observe higher risk among workers than executives but when associated with the time spent in the current job position, workers with ``stability'' of employment may appear less risky than less ``stable'' executives in a non-additive way.
 
-Moreover, the number of coefficients is kept low by having few levels, as emphasized in Chapter~\ref{chap4}, and few interactions, as emphasized by the $\bdelta$ notation. In such a setting, . Additionally and traditionally in \textit{Credit Scoring}, so-called ``main-effects'', \textit{i.e.}\ features $\q_k(x_k)$ and $\q_\ell(x_\ell)$ are removed when their interaction term is present ($\delta_{k,\ell} = 1$). In biostatistics, it is usually the contrary (interactions are only considered when main effects are present), as will be seen in the following Section, where a literature review is given, alongside a reformulation of the problem.
+Moreover, the number of coefficients is nevertheless kept low by having few levels, as emphasized in Chapter~\ref{chap4}, and few interactions, as emphasized by the $\bdelta$ notation. Additionally and traditionally in \textit{Credit Scoring}, so-called ``main-effects'', \textit{i.e.}\ features $\q_k(x_k)$ and $\q_\ell(x_\ell)$ are removed when their interaction term is present ($\delta_{k,\ell} = 1$). In biostatistics, it is usually the contrary (interactions are only considered when main effects are present), as will be seen in the following Section, where a literature review is given, alongside a reformulation of the problem.
 
 
 \section{Pairwise interaction screening as a feature selection problem}
 
-Criterion~\eqref{eq:BICq} developed in the context of quantization can be adapted to take into account interactions
+Criterion~\eqref{eq:BICq} developed in the context of quantization can be adapted to take into account interactions:
 \begin{equation} \label{eq:criterion_inter}
 \q^\star,\bdelta^\star = \argmin_{\q,\bdelta} \text{BIC}(\hat{\glssymbol{bth}}_{\q,\bdelta}),
 \end{equation}
-where $\hat{\glssymbol{bth}}_{\q,\bdelta}$ is the MLE of $\glssymbol{bth}$ given $(\glssymbol{bbx},\glssymbol{bby})$, $\q$ and $\bdelta$. The combinatorics involved in this problem are much higher than those of criterion~\eqref{eq:criterion}, which already lead to an untractable greedy approach. For each feasible quantization scheme of Section~\ref{par:cardinality}, there is now $2^{\frac{d(d-1)}{2}}$ models to test! In this section, we will first consider the discretization fixed and develop a stochastic approach similar to the one proposed for discretization and grouping of factor levels.
+where $\hat{\glssymbol{bth}}_{\q,\bdelta}$ is the MLE of $\glssymbol{bth}$ given $(\glssymbol{bbx},\glssymbol{bby})$, $\q$ and $\bdelta$. The combinatorics involved in this problem are much higher than those of criterion~\eqref{eq:BICq}, which already lead to an untractable greedy approach. For each feasible quantization scheme of Section~\ref{par:cardinality}, there is now $2^{\frac{d(d-1)}{2}}$ models to test! In this section, we will first consider the discretization fixed and develop a stochastic approach similar to the one proposed for discretization and grouping of factor levels.
 
-With a fixed discretization scheme $\q = \q(\glssymbol{bx})$, criterion~\ref{eq:criterion_inter} amounts to $\bdelta^\star = \argmin_{\bdelta} \text{BIC}(\hat{\glssymbol{bth}}_{\q,\bdelta})$ which optimization through a greedy approach is untractable with more than a few features ($d > 10$). The first approach that seems straightforward in this setting is to simply see all $\frac{d(d-1)}{2}$ interactions as features to select from. In this potentially high-dimensional parameter space, the most computationnaly-effective approach is to resort to penalization. Various penalization approaches have been developed recently, among which LASSO~\cite{tibshirani1996regression} and its derivatives can effectively perform feature selection. A CIFRE PhD has even been dedicated to the subject with application to \textit{Credit Scoring}~\cite{vital2016}.
+With a fixed discretization scheme $\q$, criterion~\ref{eq:criterion_inter} amounts to $\bdelta^\star = \argmin_{\bdelta} \text{BIC}(\hat{\glssymbol{bth}}_{\q,\bdelta})$ which optimization through a greedy approach is untractable with more than a few features ($d > 10$). The first approach that seems straightforward in this setting is to simply see all $\frac{d(d-1)}{2}$ interactions as features to select from. In this potentially high-dimensional parameter space, the most computationnaly-effective approach is to resort to penalization. Various penalization approaches have been developed recently, among which LASSO~\cite{tibshirani1996regression} and its derivatives can effectively perform feature selection. A CIFRE PhD has even been dedicated to the subject with application to \textit{Credit Scoring}~\cite{vital2016} as was explained in Chapter~\ref{chap1}.
 
 This LASSO approach has been applied to the interaction screening problem~\ref{}.
 
@@ -54,18 +54,22 @@ This LASSO approach has been applied to the interaction screening problem~\ref{}
 
 \section{A novel model selection approach}
 
-We take another approach here, which foremost benefit will appear in the subsequent Section, and which closely resembles the strategy employed in the quantization setting of Chapter~\ref{chap4}. The variable $\bdelta$ can be seen as an observation of a latent random matrix so that we will employ a stochastic approach to search for $\bdelta^\star$.
+We take another approach here, which foremost benefit will appear in the subsequent Section, and which closely resembles the strategy employed in the quantization setting of Chapter~\ref{chap4} and in particular Section~\ref{sec:sem}. The variable $\bdelta$ can be seen as an observation of a latent random matrix so that we will employ a stochastic approach to search for $\bdelta^\star$.
 
 \subsection{Relation of the BIC criterion and the interaction probability}
 
-The BIC criterion has a desirable property, from a Bayesian perspective, relating it to the likelihood of the data given the model (in our case, a given interaction matrix $\bdelta$) given the data (see~\ref{lebarbier}):
+The BIC criterion has a desirable property, from a Bayesian perspective, relating it to the likelihood of the data given the model (in our case, a given interaction matrix $\bdelta$) given the data (see~\ref{lebarbier}), where the parameter space $\Theta$ depends on the model $\bdelta$:
+%\begin{align*}
+%p(\glssymbol{bbx},\glssymbol{bby} | \bdelta) & = \int_{\Theta} p(\glssymbol{bbx},\glssymbol{bby} | \glssymbol{bth}) p(\glssymbol{bth} | \bdelta)d\glssymbol{bth} \\
+%& = \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\bdelta})/2 + O(1))
+%\end{align*}
 \begin{align*}
-p((\glssymbol{bbx},\glssymbol{bby}) | \bdelta) & = \int_{\Theta} p((\glssymbol{bbx},\glssymbol{bby}) | \glssymbol{bth}) p(\glssymbol{bth} | \bdelta)d\glssymbol{bth} \\
+p(\glssymbol{bby} | \glssymbol{bbx}, \bdelta) & = \int_{\Theta} p_{\glssymbol{bth}}(\glssymbol{bby} | \glssymbol{bbx}, \bdelta) p(\glssymbol{bth} | \glssymbol{bbx}, \bdelta)d\glssymbol{bth} \\
 & = \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\bdelta})/2 + O(1))
 \end{align*}
 Replacing the features $\glssymbol{bbx}$ by their (fixed) quantized version $\q(\glssymbol{bbx})$ and rewriting the posterior probability of the model by introducing the preceding likelihood, we get:
 \begin{align*}
-p(\bdelta | (\q(\glssymbol{bbx}),\glssymbol{bby})) & \propto p((\glssymbol{bbx},\glssymbol{bby}) | \bdelta) p(\bdelta) \\
+p(\bdelta | \q(\glssymbol{bbx}),\glssymbol{bby}) & \propto p(\glssymbol{bby} | \glssymbol{bbx}, \bdelta) p(\bdelta) \\
 & \approx \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\q,\bdelta})/2) p(\bdelta)
 \end{align*}
 
@@ -75,11 +79,11 @@ p(\bdelta | (\q(\glssymbol{bbx}),\glssymbol{bby})) & \propto p((\glssymbol{bbx},
 
 \subsection{Designing an MCMC sampling of good interactions}
 
-Consequently, one can design an MCMC algorithm like Metropolis-Hastings~\cite{hastings1970monte} which draws ``good'' interaction matrices $\bdelta$ from the target posterior distribution $p(\bdelta | (\glssymbol{bbx},\glssymbol{bby}))$.
+It follows from the preceding Section that one can design an MCMC algorithm like Metropolis-Hastings~\cite{hastings1970monte} which draws ``good'' interaction matrices $\bdelta$ from the target posterior distribution $p(\bdelta | \glssymbol{bbx},\glssymbol{bby})$.
 
 \subsubsection{Transition probability}
 
-Metropolis-Hastings only requires a proposal of a transition probability between two states of the Markov chain that we denote by $\tr$:
+Metropolis-Hastings only requires a proposal of a transition probability between two states of the Markov chain that was denoted by $\tr$:
 \begin{alignat}{2}
 \tr: \; & ({\{0,1\}}^{\frac{d(d-1)}{2}},{\{0,1\}}^{\frac{d(d-1)}{2}}) && \mapsto \mathbb{R} \nonumber \\ 
 & (\bdelta^{(1)},\bdelta^{(2)}) && \to \tr(\bdelta^{(1)},\bdelta^{(2)}) = \tr(\bdelta^{(2)} | \bdelta^{(1)}) \nonumber
@@ -89,13 +93,17 @@ This approach would require to compute $2^{d(d-1)}$ probabilities (\textit{i.e.}
 Only $\frac{d(d-1)}{2}$ coefficients are now needed, which can be reinterpreted as the probability to switch on (resp. off) an entry of $\bdelta^{(1)}$ which is currently off (resp. on).
 
 We claim that a good intuition about whether two features interact is the relative gain (or loss) in BIC between their bivariate model \textit{with} their interaction and this model \textit{without} their interaction. The rational behind such a procedure, relying again on the properties of BIC, is the following: 
+%\begin{align*}
+%\forall \: 1 \leq k < \ell \leq d, \; p(\delta_{k,\ell} | \q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell), \glssymbol{bby}) & \propto p(\q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell), \glssymbol{bby} | \delta_{k,\ell}) p(\delta_{k,\ell}) \\
+%& \approx \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\q_k,\q_\ell,\delta_{k,\ell}})/2) p(\delta_{k,\ell}).
+%\end{align*}
 \begin{align*}
-\forall \: 1 \leq k < \ell \leq d, \; p(\delta_{k,\ell} | \q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell), \glssymbol{bby}) & \propto p((\q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell), \glssymbol{bby}) | \delta_{k,\ell}) p(\delta_{k,\ell}) \\
-& \approx \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\q_k,\q_\ell,\delta_{j,\ell}})/2) p(\delta_{k,\ell}).
+\forall \: 1 \leq k < \ell \leq d, \; p(\delta_{k,\ell} | \q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell), \glssymbol{bby}) & \propto p(\glssymbol{bby} | \q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell), \delta_{k,\ell}) p(\delta_{k,\ell}) \\
+& \approx \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\q_k,\q_\ell,\delta_{k,\ell}})/2) p(\delta_{k,\ell}).
 \end{align*}
 
 Setting a uniform prior $p(\delta_{k,\ell}=1) =\begin{cases} 0 \text{ if } k \geq \ell \\ \frac{1}{2} \text{ otherwise} \end{cases}$ and denoting by $p_{k,\ell}$ the probability of an interaction given features $\q_k(x_k)$ and $\q_\ell(x_\ell)$:
-\[ p_{k,\ell} = p(\delta_{k,\ell} = 1 | \q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell, \glssymbol{bby}) \appropto \exp \left( \frac{\text{BIC}(\hat{\glssymbol{bth}}_{\q_k(\glssymbol{bbx}_k),\q_\ell(\glssymbol{bbx}_\ell),\delta_{k,\ell}=0}) - \text{BIC}(\hat{\glssymbol{bth}}_{\q_k(\glssymbol{bbx}_k),\q_\ell(\glssymbol{bbx}_\ell),\delta_{k,\ell}=1})}{2} \right) \]
+\[ p_{k,\ell} = p(\delta_{k,\ell} = 1 | \q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell), \glssymbol{bby}) \appropto \exp \left( \frac{\text{BIC}(\hat{\glssymbol{bth}}_{\q_k,\q_\ell,\delta_{k,\ell}=0}) - \text{BIC}(\hat{\glssymbol{bth}}_{\q_k(\glssymbol{bbx}_k),\q_\ell(\glssymbol{bbx}_\ell),\delta_{k,\ell}=1})}{2} \right) \]
 We normalize $p_{k,\ell}$ s.t.\ $\sum_{1 \leq k < \ell \leq d} p_{k,\ell} = 1$ and denote their triangular inferior matrix arrangement by $P$.
 
 We claim that if $p_{k,\ell}$ is close to $1$ (resp. $0$), then there is a strong chance that $\delta_{k,\ell}^\star = 1$ (resp. $\delta_{k,\ell}^\star = 0$) even in the full multivariate model, which amounts to:
@@ -112,13 +120,13 @@ This defines a proper transition probability between two interaction matrices:
 
 Now, a Metropolis-Hastings step can be conducted by drawing $\bdelta' \sim \tr(\bdelta^{(s)},\cdot)$. The acceptance probability of this candidate is given by:
 \begin{align*}
-\alpha & = \min \left( 1, \frac{p(\bdelta' | \q(\glssymbol{bbx}),y)}{p(\bdelta^{(s)} | \q(\glssymbol{bbx}), \glssymbol{bby})} \frac{1-\tr(\bdelta^{(s)},\bdelta')}{\tr(\bdelta^{(s)},\bdelta')} \right) \\
+\alpha & = \min \left( 1, \frac{p(\bdelta' | \q(\glssymbol{bbx}), \glssymbol{bby})}{p(\bdelta^{(s)} | \q(\glssymbol{bbx}), \glssymbol{bby})} \frac{1-\tr(\bdelta^{(s)},\bdelta')}{\tr(\bdelta^{(s)},\bdelta')} \right) \\
 & \approx \min \left( 1, \exp \left( \frac{\text{BIC}(\hat{\glssymbol{bth}}_{\q(\glssymbol{bbx}),\delta_{k,\ell}=0}) - \text{BIC}(\hat{\glssymbol{bth}}_{\q(\glssymbol{bbx}),\delta_{k,\ell}=1})}{2} \right) \frac{1-\tr(\bdelta^{(s)},\bdelta')}{\tr(\bdelta^{(s)},\bdelta')} \right).
 \end{align*}
 
 If $\alpha \geq 1$, the candidate is accepted and $\bdelta^{(s+1)} = \bdelta'$; otherwise, the candidate is accepted with probability $\alpha$ s.t.\ $\bdelta^{(s+1)} = \begin{cases} \bdelta' \text{ with probability } \alpha, \\ \bdelta^{(s)} \text{ with probability } 1-\alpha. \end{cases}$
 
-\subsubsection{Acceptance probability of the proposed transition}
+\subsubsection{Validity of the approach}
 
 
 The existence of the stationary distribution $p(\bdelta | \q(\glssymbol{bbx}),\glssymbol{bby})$ is guaranteed by construction of the Metropolis-Hastings algorithm as the generated Markov chain fulfills the detailed balance condition. The uniqueness of the stationary distribution is given by the ergodicity of the Markov chain: as $\forall \: 1 \leq  k < \ell \leq d, \: \tr_{k,\ell} > 0$ and a transition changes only one entry $\delta_{k,\ell}$ of the interaction matrix, every state can be reached in at most $\frac{d(d-1)}{2}$ steps.
@@ -129,7 +137,7 @@ In practice with a fixed discretization scheme, this stochastic approach is prob
 
 We return to our original objective~\ref{eq:criterion_inter} and consider optimizing the BIC criterion both in terms of quantization and pairwise interactions, as varying the quantization $\q$ might influence the ``best'' interactions $\bdelta^\star$ and vice versa.
 
-We can mix the MCMC approach proposed in the previous Section with the \textit{glmdisc} algorithm proposed in the previous Chapter.
+We can mix the MCMC approach proposed in the previous Section with the \textit{glmdisc} algorithm proposed in the previous Chapter. A brute force way of doing this is to conduct a full MCMC search, as proposed in the previous Section, for each proposed quantization $\hat{\q}^{(t)}$ from Chapter~\ref{chap4} (either with the SEM or NN approach). Of course, this is too computationally intensive: .
 
 Quand on connaît $\delta$, on tire $E$ comme avant.
 
@@ -141,6 +149,7 @@ L'algorithme de Gibbs fonctionne comme ça.
 
 \section{Numerical experiments}
 
+The code used for numerical experiments is available as packages, see Appendix~\ref{app2}.
 
 \subsection{Experiments on simulated data \textit{with} interactions}
 
@@ -217,12 +226,11 @@ L'algorithme de Gibbs fonctionne comme ça.
 
 The essentially industrial problem of introducing pairwise interactions in a supervised multivariate classification setting was formalized and a new approach, relying on a Metropolis-Hastings algorithm has been proposed. This algorithm relies on the use of logistic regression, although other predictive models can be plugged in place of $p_{\glssymbol{bth}}$. (insister là-dessus car toutes les autres approches existantes supposent des modèles)
 
-The true underlying motivation was to perform intetraction screening while quantizing data using the approach developed in the preceding Chapter: \textit{glmdisc}.
+The true underlying motivation was to perform interaction screening while quantizing data using the approach developed in the preceding Chapter: \textit{glmdisc}.
 The experiments showed that, as was sensed empirically by statisticians in the field of \textit{Credit Scoring}, interactions between quantized features can indeed provide better models than without interactions, or standard logistic regression. This novel approach allows practitioners to have a fully automized and statistically well-grounded tool that achieves better performance than both \textit{ad hoc} industrial practices and academic discretization heuristics at the price of decent computing time but much less of the practitioner's valuable time.
 
-The code used for numerical experiments is available as packages, see Appendix~\ref{app2}.
 
-
+The previous Chapters were about constructing one scorecard while a financial institution like \gls{cacf} might have dozens of them, such that they are scarcely reviewed (one new / replacement scorecard should appear to the reader, at this point of the manuscript, relatively costly in terms of practitioners' time). The next Chapter aims at proposing a strategy to build several in a one-shot fashion.
 
 
 
