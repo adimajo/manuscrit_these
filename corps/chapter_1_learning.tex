@@ -79,7 +79,7 @@ Ouvrier & Par la famille & 2 & 0 & Célibataire & {1200}  \\
 \end{tabular}
 \end{table}
 
-\subsection{Préparation des données et segmentation}
+\subsection{Préparation des données et segmentation} \label{subsec:segmentation}
 
 Le tableau~\ref{tab:design} fait apparaître deux problèmes bien connus en statistique : la gestion des observations manquantes et celle des valeurs extrêmes (\textit{outliers}).
 
@@ -118,7 +118,9 @@ On cherche le nombre d'impayés consécutifs $I$ au-delà duquel la proportion d
 
 On cherche un point d'inflexion sur cette courbe, qui traduirait le fait qu'au-delà d'un certain horizon $T$, la proportion de dossiers ``mauvais'' n'évolue plus et l'on considère que tous les ``mauvais'' clients sont déjà identifiés.
 \end{itemize}
-\item Choisir le couple $(T,I)$ qui répond au mieux aux critères ci-dessus et permet d'avoir un nombre significatif de dossiers ``mauvais''. Il faut garder à l'esprit que plus l'on choisit un horizon $T$ faible et / ou un nombre élevé d'impayés consécutifs $I$, plus la proportion $\hat{\pi}_0$ (l'estimateur de la moyenne pour $\pi_i = p(Y=i)$) de dossiers ``mauvais'' par rapport aux dossiers ``bons'' devient faible. On note dans la suite, de manière classique, $\pi_i = p(Y=i)$. Or, on veut éviter au maximum les nombreux problèmes que génèrent des classes déséquilibrées en classification supervisée~\cite{sun2009classification}.
+\item Choisir le couple $(T,I)$ qui répond au mieux aux critères ci-dessus et permet d'avoir un nombre significatif de dossiers ``mauvais''. Il faut garder à l'esprit que plus l'on choisit un horizon $T$ faible et / ou un nombre élevé d'impayés consécutifs $I$, plus la proportion $\hat{\pi}_0$ (l'estimateur de la moyenne pour $\pi_i = p(Y=i)$) de dossiers ``mauvais'' par rapport aux dossiers ``bons'' devient faible.
+%On note dans la suite, de manière classique, $\pi_i = p(Y=i)$. 
+Or, on veut éviter au maximum les nombreux problèmes que génèrent des classes déséquilibrées en classification supervisée~\cite{sun2009classification}.
 \end{itemize}
 
 \begin{figure}
@@ -366,7 +368,7 @@ En conclusion, là où le probabiliste, en figure~\ref{fig:projection} n'avait q
 = & \mathbb{E}_{\glssymbol{bx}} [ \underbrace{[\pd(y| \glssymbol{bx}) - \mathbb{E}_{\mathcal{T}_n} [ p_{\hat{\glssymbol{bth}}}(y| \glssymbol{bx})]]^2}_{\text{biais de modèle}} + \underbrace{\mathbb{E}_{\mathcal{T}_n} [ p_{\hat{\glssymbol{bth}}}(y| \glssymbol{bx}) - \mathbb{E}_{\mathcal{T}_n} [ p_{\hat{\glssymbol{bth}}}(y| \glssymbol{bx}) ]^2}_{\text{erreur d'estimation}} ] \label{eq:bias1} \\
 = & \mathbb{E}_{\glssymbol{bx}} [ \underbrace{[\pd(y| \glssymbol{bx}) - p_{\glssymbol{bth}^\star}(y| \glssymbol{bx})]^2}_{\text{biais de modèle}} + \underbrace{\mathbb{E}_{\mathcal{T}_n} [ p_{\hat{\glssymbol{bth}}}(y| \glssymbol{bx}) - p_{\glssymbol{bth}^\star}(y| \glssymbol{bx})  ]^2}_{\text{variance}} ] \label{eq:bias2}
 \end{align}
-Le passage de~\ref{eq:bias1} à~\ref{eq:bias2} est garanti par le caractère asymptotiquement sans biais de l'estimateur du maximum de vraisemblance, même dans le cas du modèle mal spécifié~\ref{white1982maximum}. Autrement dit, pour $n$ assez grand, on a $\sqrt{n} (\hat{\glssymbol{bth}} - \glssymbol{bth}^\star) \sim \mathcal{N}(\bm{0} , \Sigma)$ ce qui garantit $|| \hat{\glssymbol{bth}} - \glssymbol{bth}^\star||_2 \to 0$ et $\mathbb{E}_{\mathcal{T}_n} [ p_{\hat{\glssymbol{bth}}}(y| \glssymbol{bx})] = p_{\glssymbol{bth}^\star}(y| \glssymbol{bx})$.
+Le passage de~\ref{eq:bias1} à~\ref{eq:bias2} est garanti par le caractère asymptotiquement sans biais de l'estimateur du maximum de vraisemblance, même dans le cas du modèle mal spécifié~\cite{white1982maximum}. Autrement dit, pour $n$ assez grand, on a $\sqrt{n} (\hat{\glssymbol{bth}} - \glssymbol{bth}^\star) \sim \mathcal{N}(\bm{0} , \Sigma)$ ce qui garantit $|| \hat{\glssymbol{bth}} - \glssymbol{bth}^\star||_2 \to 0$ et $\mathbb{E}_{\mathcal{T}_n} [ p_{\hat{\glssymbol{bth}}}(y| \glssymbol{bx})] = p_{\glssymbol{bth}^\star}(y| \glssymbol{bx})$.
 Le dernier terme de variance a été introduit en quelque sorte par le passage du critère KL asymptotique~\eqref{eq:KL} au critère empirique de vraisemblance~\eqref{eq:vraisemblance}. Ce terme est matérialisé en \textcolor{blue}{bleu} sur la figure~\ref{fig:projection2}
 % et peut être sous-divisé en deux composantes distinctes fondamentales en statistiques, le biais (nul asymptotiquement) et la variance d'estimation, sur lesquelles nous reviendrons dans la section suivante~\ref{subsubsec:selection}.
 Le deuxième problème est numérique et généralement négligé : il s'agit de l'erreur de précision développé au paragraphe précédent et matérialisé en \textcolor{orange}{orange} sur la figure~\ref{fig:projection2}.
@@ -474,7 +476,7 @@ où $t$ et $\lambda$ sont mutuellement dépendants et règlent la sévérité de
 
 \subsubsection{Choix de modèle} \label{subsubsec:choix_modele}
 
-Une approche de résolution indirecte du problème de sélection de variable est le choix de modèle : considérons M modèles $\Theta^{(1)},\dots,\Theta^{(M)}$ de \gls{lr} différents, c'est-à-dire pour lesquels les variables inclues ne sont pas les mêmes. On peut d'ailleurs voir le problème de sélection de variables comme un choix entre tous les $2^d$ modèles possibles. Dans ce cadre, de nombreux critères de choix de modèle, voire d'aggrégation de modèles, c'est-à-dire de sélection de tout ou partie de ces modèles en pondérant leur contribution globale, ont été proposés. La justification de ces critères ; aussi, dans ce manuscrit, nous nous limiterons, dans le cadre de la sélection de modèle, au critère BIC (proposé dans~\ref{BIC}). Outre sa consistence asymptotique, c'est-à-dire la capacité de sélectionner, sous certaines conditions sur la famille notamment, le ``quasi-vrai'' modèle à une probabilité tendant vers $1$ lorsque la taille d'échantillon $n$ augmente, ce critère possède une propriété au coeur du chapitre~\ref{chap5} qui le lie à la probabilité a posteriori d'un modèle sachant les données. Le lecteur désireux d'en apprendre plus sur les propriétés et les fondements théoriques du critère BIC peuvent consulter~\ref{lebarbier} et en particulier une de ses références~\ref{burnham2003model}.
+Une approche de résolution indirecte du problème de sélection de variable est le choix de modèle : considérons M modèles $\Theta^{(1)},\dots,\Theta^{(M)}$ de \gls{lr} différents, c'est-à-dire pour lesquels les variables inclues ne sont pas les mêmes. On peut d'ailleurs voir le problème de sélection de variables comme un choix entre tous les $2^d$ modèles possibles. Dans ce cadre, de nombreux critères de choix de modèle, voire d'aggrégation de modèles, c'est-à-dire de sélection de tout ou partie de ces modèles en pondérant leur contribution globale, ont été proposés. La justification de ces critères ; aussi, dans ce manuscrit, nous nous limiterons, dans le cadre de la sélection de modèle, au critère BIC (proposé dans~\cite{BIC}). Outre sa consistence asymptotique, c'est-à-dire la capacité de sélectionner, sous certaines conditions sur la famille notamment, le ``quasi-vrai'' modèle à une probabilité tendant vers $1$ lorsque la taille d'échantillon $n$ augmente, ce critère possède une propriété au coeur du chapitre~\ref{chap5} qui le lie à la probabilité a posteriori d'un modèle sachant les données. Le lecteur désireux d'en apprendre plus sur les propriétés et les fondements théoriques du critère BIC peuvent consulter~\cite{lebarbier} et en particulier une de ses références~\cite{burnham2003model}.
 
 Le critère BIC s'écrit de la manière suivante :
 \begin{equation}
@@ -507,9 +509,9 @@ L'objectif de cette partie est de donner un éclairage à d'autres familles de m
 
 
 Les Séparateurs à Vaste Marge~\cite{vapnik2013nature} reposent, en classification, sur l'idée de trouver une frontière de séparation, dont des exemples sont donnés en figure~\ref{fig:svm1}, entre deux classes (bons et mauvais payeurs dans notre cas) dont la marge est maximale, c'est-à-dire dont la distance à la plus proche instance de chaque classe est la plus grande possible, comme en figure~\ref{fig:svm2}. Dans le cas de données parfaitement séparables, on parle de ``hard margin''. Bien entendu, dans la plupart des cas d'application, dont le \textit{Credit Scoring}, il n'existe pas de telle séparation, qui rendrait d'ailleurs la régression logistique dégénérescente \textit{i.e.}\ on a alors $||\bm{\theta}^{(s)}||_{\infty} \to +\infty$ quand ${s \to \infty}$ car $\max_{\glssymbol{bth}} \ell(\glssymbol{bth};\glssymbol{bbx},\glssymbol{bby}) = + \infty$. On introduit alors des variables ``ressort'' qui relâchent les contraintes d'optimisation pour permettre les mauvais classements. Le problème d'optimisation est alors :
-\begin{equation*}
+\begin{equation} \label{eq:svm}
 \frac{1}{n} \sum_{i=1}^n \max(0,1 - y_i(\glssymbol{bth} \cdot \glssymbol{bx}_i)) + C ||\glssymbol{bth}||_2^2,
-\end{equation*}
+\end{equation}
 où $C$ est une constante qui contrôle le compromis erreurs de classement et largeur de la marge.
 
 \svgpath{{./figures/chapitre1/}}
@@ -538,22 +540,32 @@ où $C$ est une constante qui contrôle le compromis erreurs de classement et la
 
 \paragraph{Kernel trick}
 
-D'après la description faite dans le paragraphe précédent, les \gls{svm} ne sont pas si différents de la LDA ou de la \gls{lr}.
+D'après la description faite dans le paragraphe précédent, les \gls{svm} ne sont pas si différents de la Linear Discriminant Analysis (LDA) ou de la \gls{lr} en ce qu'ils cherchent une frontière linéaire entre les deux classes. Pour des raisons théoriques exposées au chapitre~\ref{chap7}, à $n$ fixé, la ``séparabilité'' des données, autrement dit la probabilité d'existence de ladite frontière linéaire, augmente avec la dimension $d$ de l'espace des covariables.
+
+Il est donc tentant d'augmenter cette dimension par construction, à partir des covariables d'origine, en créant diverses combinaisons. Une approche possible est l'utilisation de noyaux, intimement liés aux \gls{svm} : on applique une transformation non-linéaire $\q$ au vecteur d'entrée $\glssymbol{bx}$ dont l'espace d'arrivée est ``grand''. En réexprimant l'équation~\ref{eq:svm} à l'aide de multiplicateurs de Lagrange (voir les développements techniques dans~\cite{scholkopf2002learning}), on obtient la formulation dite \textit{duale} des \gls{svm} qui ne fait intervenir que des produits scalaires entre les observations $i,i'$, $\q(\glssymbol{bx}_i)' \q(\glssymbol{bx}_i')$. C'est ce dernier produit scalaire que l'on écrit sous la forme d'un noyau $K(\glssymbol{bx}_i,\glssymbol{bx}_i')$, dont le calcul se fait dans l'espace d'origine et qui ne nécessite pas la connaissance explicite de $\q$.
+
+Dans les expériences du chapitre~\ref{chap1}, on utilise le noyau gaussien $K(\glssymbol{bx}_i,\glssymbol{bx}_i') = \exp \left( - \frac{|| \glssymbol{bx}_i - \glssymbol{bx}_i' ||_2^2}{2 \sigma^2} \right)$.
+
 
 \subsubsection{Arbres de décision}
 
 \paragraph{Principe}
 
+Toutes les observations entrent au sommet de l'arbre qui dispose d'un noeud. Ce noeud contient une règle de classement parmi les noeuds fils de type \verb|si ... alors ...|. Chacun de ces noeuds fils disposent alors d'un sous-ensemble des observations de départ, et la procédure se répète récursivement jusqu'aux feuilles de l'arbre, c'est-à-dire les noeuds dépourvus de fils, dont les observations sont affectées, dans le cadre de l'apprentissage supervisée, à une classe bon / mauvais payeur. Cette structure est utilisée en \textit{Credit Scoring} dans le cadre de la segmentation (section~\ref{subsec:segmentation}), pratique que l'on revisite en chapitre~\ref{chap6} et où un exemple d'arbre est visible en Figure~\ref{fig:arbre}.
+
 \paragraph{Algorithmes}
+
+Ainsi posé, l'arbre de décision semble à la fois simple dans sa formulation, et complexe dans la mise en oeuvre de son apprentissage : comment choisir les règles de chaque noeud, le nombre de noeuds fils à chaque noeud, le critère d'arrêt, etc. En pratique, de nombreux algorithmes ont été proposés. Dans les expériences du chapitre~\ref{chap1}, on utilise l'algorithme C4.5~\cite{quinlan2014c4} qui repose sur la divergence de Kullback-Leibler pour choisir une variable $x_j$ à chaque noeud et un ensemble $C_j$ tel que les observations vérifiant $x_j \in C_j$ (resp.\ $x_j \not\in C_j$) soient orientés vers le noeud fils gauche (resp.\ droit). L'algorithme s'arrête lorsque les feuilles ne contiennent qu'une seule classe, et des techniques d'``élagage'' permettent ensuite de réduire la complexité de l'arbre résultant. Dans les expériences du chapitre~\ref{chap1}, on utilise cet algorithme.
 
 \paragraph{Faiblesses}
 
-\subsubsection{Techniques de Boosting}
-
+Les arbres de décision souffrent souvent de large variance~\cite{geurts2000investigation}. C'est pourquoi, les Forêts Aléatoires~\cite{breiman2001random} et / ou algorithmes dits de ``Boosting''~\cite{zhou2012ensemble} sont plébiscités~: plusieurs arbres de décision sont appris, sur des sous-échantillons et / ou en pondérant les observations d'apprentissage, dont les décisions sont ensuite combinées. Pour les données de \textit{Credit Scoring}, il a été constaté en interne à \gls{cacf} que ces modèles permettent d'obtenir de bonne performance, en perdant cependant l'interprétation aisée des arbres de décision ou de la \gls{lr}.
 
 \subsubsection{Réseaux de neurones}
 
 \paragraph{Principe}
+
+Chaque variable d'entrée, c'est-à-dire une covariable $\glssymbol{bx}_j$, est vue comme un neurone, tout comme la variable de sortie, c'est-à-dire la variable dépendante à prédire $y$. Les neurones intermédiaires, formant la (les) couche(s) caché(s) réalisent un calcul à partir de leur(s) neurone(s) parent(s) (phase de propagation dite \textit{feedforward}) consistant typique en une addition et une transformation non-linéaire (comme la sigmoïde qui sert en \gls{lr}. Le résultat $\hat{y}$ prédit est comparé aux exemples d'apprentissage $\glssymbol{bby}$ et l'erreur est rétropropagée (phase dite \textit{backpropagation}) : comme en \gls{lr}, les couches cachées disposent de coefficients $\glssymbol{bth}$ qui sont ajustés par descente de gradient. La comparaison biologique est cependant bien plus limitée que ce que leur nom laisse supposer : les neurones représentent simplement un état résultant d'un calcul, et les synapses sont les arêtes du graph de calcul (qui déterminent le(s) neurone(s) parent(s) / enfant(s) de chaque neurone). Une architecture particulière de ce modèle est utilisée dans le chapitre~\ref{chap4} comme graph de calcul pour résoudre le problème de discrétisation évoquée en section~\ref{subsec:segmentation}.
 
 \paragraph{Limites et développements récents}
 

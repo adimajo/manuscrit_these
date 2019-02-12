@@ -652,9 +652,11 @@ The \textit{ChiMerge}~\cite{kerber1992chimerge} algorithm~\ref{chimerge} is a su
  \While{$\alpha_{\text{max}} > \alpha$}{
 Let $C_{j,h} = ]c_{j,h-1};c_{j,h}]$ and $\hat{\q}_j(\cdot) = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
 Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$\;
-Perform $\chi^2$ tests of independence among all contiguous pairs\:
-$\chi^2_h = \sum_{h'=h}^{h+1} \sum_{y=0}^{1} \frac{ \left( \sum_{i=1}^n \mathds{1}_{y}(y_i) \hat{q}_{j,h'}(x_{i,j} ) - \frac{\sum_{i=1}^n \hat{q}_{j,h'}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n} \right)^2}{\frac{\sum_{i=1}^n \hat{q}_{j,h'}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n}}$ for $1 \leq h \leq m_j-1$\;
-Under the null hypothesis that two consecutive intervals are independent w.r.t.\ the target $y$, $\chi^2_h$ is $\chi^2$-distributed (1 degree of freedom)\;
+%Perform $\chi^2$ tests of independence among all contiguous pairs\:
+\For{$1 \leq h \leq m_j-1$}{
+$\chi^2_h = \sum_{h'=h}^{h+1} \sum_{y=0}^{1} \frac{ \left( \sum_{i=1}^n \mathds{1}_{y}(y_i) \hat{q}_{j,h'}(x_{i,j} ) - \frac{\sum_{i=1}^n \hat{q}_{j,h'}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n} \right)^2}{\frac{\sum_{i=1}^n \hat{q}_{j,h'}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n}}$\;
+}
+%Under the null hypothesis that two consecutive intervals are independent w.r.t.\ the target $y$, $\chi^2_h$ is $\chi^2$-distributed (1 degree of freedom)\;
 Let $c_{j,\argmin_h \chi^2_h} = \frac{c_{j,h} + c_{j,h+1}}{2}$ and $c_{j,h'} \leftarrow c_{j,h'+1}$ for $\argmin_h \chi^2_h < h' < m_j$\;
 Let $m_j \leftarrow m_j-1$\;
 Let $X \sim \chi^2$ and $\alpha_{\max} = \max_h p(X \geq \chi^2_h) = p(X \geq \min_h \chi^2_h)$.
@@ -716,13 +718,13 @@ This section describes the \textit{glmdisc}-SEM algorithm developed in Chapter~\
   ${\q^{(r+1)}} \leftarrow {\q^{(r)}}$\;
   \For{$k \leftarrow 1$ \KwTo $d_1$}{
    Adjust multinomial logistic regression $\hat{\beta}_k^{(r)} = \argmax_\beta \ell(\beta;\glssymbol{bbx}_k,\q_k^{(r)})$\;
-   ${\q_k^{(r+1)}} \leftarrow$ Mult$(p_{\hat{\gamma}^{(r)}}(\bm{y}|\q^{(r+1)}) p_{\hat{\beta}^{k(r)}}(\q_{k} | \glssymbol{bx}_k))$\;
-   ${\q_k^{\text{MAP}(r+1)}} \leftarrow \argmax_j p_{\hat{\beta}^{k(r)}}(\bm{E}^{k}=j | \bm{x}^k))$\;
+   ${\q_k^{(r+1)}} \leftarrow$ Mult$\left( p_{\hat{\gamma}^{(r)}}(\bm{y}|\q^{(r+1)}) p_{\hat{\beta}^{k(r)}}(\q_{k} | \glssymbol{bx}_k) \right)$\;
+   ${\q_k^{\text{MAP}(r+1)}} \leftarrow \argmax_j p_{\hat{\beta}^{k(r)}}(\q_{k}=j | \bm{x}^k)$\;
    }
   \For{$k \leftarrow d_1+1$ \KwTo $d_1+d_2$}{
    Form the contingency table T$_k^{(r)}$ of $\q_k^{(r)}$ against $\glssymbol{bbx}_k$, calculate the frequencies of each value of $({q}_{k},x_k)$\;
-	${\q_k^{(r+1)}} \leftarrow$ Mult$(p_{\hat{\gamma}^{(r)}}(\bm{y}|\q^{(r+1)}) p_{T_k^{(r)}}(\q_{k} | \glssymbol{bx}^k))$\;
-	${\q_k^{MAP(r+1)}} \leftarrow \argmax_j p_{T_k^{(r)}}(\q_{k}=j | \glssymbol{bx}_k))$\;
+	${\q_k^{(r+1)}} \leftarrow$ Mult$\left( p_{\hat{\gamma}^{(r)}}(\bm{y}|\q^{(r+1)}) p_{T_k^{(r)}}(\q_{k} | \glssymbol{bx}^k) \right)$\;
+	${\q_k^{MAP(r+1)}} \leftarrow \argmax_j p_{T_k^{(r)}}(\q_{k}=j | \glssymbol{bx}_k)$\;
 	}
    $r \leftarrow r+1$\;
  }
@@ -757,7 +759,7 @@ Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$\;
 \For{$1 \leq h_1 < h_2 \leq m_j$}{
 $\chi^2_{h_1,h_2} = \sum_{h'=h_1}^{h_2} \sum_{y=0}^{1} \frac{ \left( \sum_{i=1}^n \mathds{1}_{y}(y_i) \hat{q}_{j,h'}(x_{i,j} ) - \frac{\sum_{i=1}^n \hat{q}_{j,h'}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n} \right)^2}{\frac{\sum_{i=1}^n \hat{q}_{j,h'}(x_{i,j}) \times \sum_{i=1}^n \mathds{1}_{y}(y_i)}{n}}$\;}
 %Under the null hypothesis that two factor levels are independent w.r.t.\ the target $y$, $\chi^2_{h_1,h_2}$ is $\chi^2$-distributed (1 degree of freedom)\;
-Let $(h_1,h_2) = \argmin_{h_1,h_2} \chi^2_{h_1,h_2}$, $C_{j,h_1} = C_{j,h_1} \cup C_{j,h_2}$ and $C_{j,h} \leftarrow C_{j,h+1}$ for $h_2 \leq h \leq m_j$\;
+Let $(h_1,h_2) = \argmin_{h_1,h_2} \chi^2_{h_1,h_2}$, $C_{j,h_1} = C_{j,h_1} \cup C_{j,h_2}$ and $C_{j,h} \leftarrow C_{j,h+1}$ for $h_2 \leq h < m_j$\;
 Let $m_j \leftarrow m_j-1$\;
 Let $X \sim \chi^2$ and $\alpha_{\max} = \max_{h_1,h_2} p(X \geq \chi^2_{h_1,h_2}) = p(X \geq \min_{h_1,h_2} \chi^2_{h_1,h_2})$.
 }

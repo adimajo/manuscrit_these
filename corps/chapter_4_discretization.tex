@@ -42,7 +42,7 @@ From now on, the generic term quantization will stand for both discretization of
 The outline of this chapter is the following. After some introductory examples, I illustrate cases where quantization is either beneficial or detrimental depending on the data generating mechanism. In the subsequent section, I formalize both continuous and categorical quantization. Selecting the best quantization in a predictive setting is reformulated as a model selection problem on a huge discrete space which size is precisely derived. In Section~\ref{sec:proposal}, a particular neural network architecture is used to optimize a relaxed version of this criterion and propose good quantization candidates. At first, an \gls{sem} procedure was proposed to solve the quantization problem and is reported in section~\ref{sec:sem}. Section~\ref{sec:experiments} is dedicated to numerical experiments on both simulated and real data from the field of Credit Scoring, highlightening the good results offered by the use of the two new methods without any human intervention. A final section concludes the work by stating also new challenges.
 
 
-\section{Illustration of the bias-variance quantization tradeoff}
+\section{Illustration of the bias-variance quantization tradeoff} \label{sec:bias_variance_quant}
  
 
 The previous section motivated the use of quantization on a practical level. On a theoretical level, at least in terms of probability theory, quantization is equivalent to throwing away information: for continuous features, we only know they belong to a certain interval and for categorical features, we lose their granularity among the original levels.
@@ -198,7 +198,7 @@ For a continuous feature $x_j$, let $\q_j \in \Q_j$ with $m_j$ groups. The numbe
 
 The current practice of quantization is prior to any predictive task, thus ignoring its consequences on the final predictive ability. It consists in optimizing a heuristic criterion, often totally unrelated (unsupervised methods) or at least explicitly (supervised methods) to prediction, and mostly univariate (each feature is quantized irrespective of other features' values). The cardinality of the quantization space $\Q$ can be calculated explicitely w.r.t.\ $d$, $(m_j)_1^d$ and, for categorical features, $l_j$. It is huge, so that a greedy approach is intractable and such heuristics are needed, as will be detailed in the next Section.
 Many algorithms have thus been designed and a review of approximatively 200 discretization strategies, gathering both criteria and related algorithms, can be found in~\cite{ramirez2016data}. They classify discretization methods by distinguishing, among other criteria and as said previously, unsupervised and supervised methods ($\bm{y}$ is used to discretize $\bm{x}$), for which model-specific (assumptions on $p_{\glssymbol{bth}}$) or model-free approaches are distinguished, univariate and multivariate methods (features $X_{-\{j\}} = (X_{1},\ldots,X_{j-1},X_{j+1},\ldots,X_{d})$ may influence the quantization scheme). For factor levels grouping, I found no such taxonomy, but some discretization methods, \textit{e.g.}\ $\chi^2$ independence test-based methods can be naturally extended to this type of quantization, which is for example what the CHAID algorithm, proposed in~\cite{kass1980exploratory} and applied to each categorical feature, relies on.
-For benchmarking purposes, and following results found in the taxonomy of~\cite{ramirez2016data}, I used the MDLP~\cite{fayyad1993multi} discretization method, described in-depth in Appendix~\ref{app1:mdlp}, which is a popular supervised univariate method, and I implemented an extension of ChiMerge to categorical features, performing pairwise $\chi^2$ independence tests rather than only pairs of contiguous intervals, which I called ChiCollapse and describe in-depth in Appendix~\ref{app1:chicollapse}. Note that various refinements of ChiMerge have been proposed in the literature, Chi2~\cite{liu1995chi2}, ConMerge~\cite{wang1998concurrent}, ModifiedChi2~\cite{tay2002modified}, and ExtendedChi2~\cite{su2005extended}, which seek to correct for multiple hypothesis testing~\ref{shaffer1995multiple} and automize the choice of the confidence parameter $\alpha$ in the $\chi^2$ tests, but adapting them to categorical features for benchmarking purposes would have been too time-consuming.
+For benchmarking purposes, and following results found in the taxonomy of~\cite{ramirez2016data}, I used the MDLP~\cite{fayyad1993multi} discretization method, described in-depth in Appendix~\ref{app1:mdlp}, which is a popular supervised univariate method, and I implemented an extension of ChiMerge to categorical features, performing pairwise $\chi^2$ independence tests rather than only pairs of contiguous intervals, which I called ChiCollapse and describe in-depth in Appendix~\ref{app1:chicollapse}. Note that various refinements of ChiMerge have been proposed in the literature, Chi2~\cite{liu1995chi2}, ConMerge~\cite{wang1998concurrent}, ModifiedChi2~\cite{tay2002modified}, and ExtendedChi2~\cite{su2005extended}, which seek to correct for multiple hypothesis testing~\cite{shaffer1995multiple} and automize the choice of the confidence parameter $\alpha$ in the $\chi^2$ tests, but adapting them to categorical features for benchmarking purposes would have been too time-consuming.
 
 
 \subsection{Quantization embedded in a predictive process}
@@ -228,14 +228,14 @@ provides a Maximum Likelihood estimator $\hat{\glssymbol{bth}}_\q$ of $\glssymbo
 \tikzset{edge/.style = {->,> = latex'}}
 
 % vertices
-\node[vertex] (x1) at  (0,1.5) {$\glssymbol{X}^1$};
-\node[vertex] (xj) at  (0,0) {$\glssymbol{X}^j$};
-\node[vertex] (xd) at  (0,-1.5) {$\glssymbol{X}^{d}$};
+\node[vertex] (x1) at  (0,1.5) {$\glssymbol{X}_1$};
+\node[vertex] (xj) at  (0,0) {$\glssymbol{X}_j$};
+\node[vertex] (xd) at  (0,-1.5) {$\glssymbol{X}_{d}$};
 
 
-\node[vertex] (q1) at  (2.5,1.5) {$Q^1$};
-\node[vertex] (qj) at  (2.5,0) {$Q^j$};
-\node[vertex] (qd) at  (2.5,-1.5) {$Q^{d}$};
+\node[vertex] (q1) at  (2.5,1.5) {$Q_1$};
+\node[vertex] (qj) at  (2.5,0) {$Q_j$};
+\node[vertex] (qd) at  (2.5,-1.5) {$Q_{d}$};
 
 \node[vertex] (y) at (5,0) {$\glssymbol{Y}$};
 
@@ -524,9 +524,15 @@ p(y | \glssymbol{bx}) & = p_{\glssymbol{bth}^\star}(y | \bqk^\star) & \text{ (us
 & = \sum_{\bqk \in \Q} p(y | \bqk) p(\bqk | \glssymbol{bx}) & \text{ (using \ref{hyp:squeeze}) } \\
 & = \sum_{\bqk \in \Q} p(y | \bqk) \prod_{j=1}^d p(\bqk_j | x_j) & \text{ (using \ref{hyp:component}) }
 \end{align*}
-The well-specified model hypothesis~\ref{hyp:true} yields for all $x_j$, $p(\bqk_j^\star | x_j) = 1$. Conversely, for $\bqk \in \Q$ such that $\bqk \cancel{\mathcal{R}_{\mathcal{T}_n}} \bqk^\star$, there exists a feature $j$ and an observation $x_j$ such that $p(\bqk_j | x_j) = 0$. Consequently, the above sum reduces to $p(y | \bqk^\star)$. Thus, we have :
-\[ \bqk^\star = \argmax_{\bqk \in \Q} p(y|\bqk) \prod_{j=1}^d p(\bqk_j | x_j). \]
-This new formulation of the best quantization is still untractable since it requires to evaluate all quantizations in $\Q$, although all terms except $\bqk^\star$ contribute to $0$ in the above $\argmax$. In the misspecfied model-case however, .
+The well-specified model hypothesis~\ref{hyp:true} yields for all $x_j$, $p(\bqk_j^\star | x_j) = 1$. Conversely, for $\bqk \in \Q$ such that $\bqk \cancel{\mathcal{R}_{\mathcal{T}_n}} \bqk^\star$, there exists a feature $j$ and an observation $x_{i,j}$ such that $p(\bqk_j | x_j) = 0$. Consequently, the above sum, over all training observations in $\mathcal{T}_n$, reduces to:
+\begin{align*}
+p(\glssymbol{bby} | \glssymbol{bbx}) & = \prod_{i=1}^n p(y_i | \glssymbol{bx}_i) \\
+ & = \sum_{\bqk \in \Q} \prod_{i=1}^n p(y_i | \bqk_i) \prod_{j=1}^d p(\bqk_{i,j} | x_{i,j}) \\
+ & = \prod_{i=1}^n p(y_i | \bqk_i^\star) \prod_{j=1}^d p(\bqk_{i,j}^\star | x_{i,j})
+\end{align*}
+Thus, we have :
+\[ \bqk^\star = \argmax_{\bqk \in \Q} \prod_{i=1}^n p(y_i | \bqk_i ) \prod_{j=1}^d p(\bqk_{i,j} | x_{i,j}). \]
+This new formulation of the best quantization is still untractable since it requires to evaluate all quantizations in $\Q$, although all terms except $\bqk^\star$ contribute to $0$ in the above $\argmax$. In the misspecfied model-case however, there is no such garantee but it can still be claimed that the best candidate $\q^\star$ in terms of criterion~\eqref{eq:BICq} dominates the sum.
 
 \subsection{Stochastic search of the best quantization} \label{subsec:stoch}
 
@@ -587,7 +593,7 @@ From a statistical point of view, experiment (a) assesses the empirical consiste
     \caption{For \textit{glmdisc}-NN and \textit{glmdisc}-SEM and different sample sizes $n$, (A) CI of $\hat{c}_{j,2}$ for $c_{j,2} = 2/3$. (B) Bar plot of $\hat{m} = 2, 3, 4$ (resp.) for $m_1=3$. (C) Bar plot of $\hat{m}_3 = 1, 2, 3$ (resp.) for $m_3=1$.}
     \label{tab:estim_precision}
 \begin{tabular}{lllllll}
-Algorithm & $n$ & (A) $\hat{c}_{j,2}$ & (B) & $\hat{m}_1$ & (C) & $\hat{m}_3$ \\
+Algorithm & $n$ & (a) $\hat{c}_{j,2}$ & (b) & $\hat{m}_1$ & (c) & $\hat{m}_3$ \\
 \hline
 \textit{glmdisc}-NN & $1{,}000$ & $[0.656,0.666]$ & \myobar{9}{90}{1} & \mybar{60}{32}{8} \\
 \textit{glmdisc}-SEM & $1{,}000$ & $[0.656,0.666]$ & \myobar{9}{90}{1} & \mybar{60}{32}{8} \\

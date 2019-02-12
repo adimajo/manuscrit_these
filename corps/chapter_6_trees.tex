@@ -11,7 +11,7 @@
 
 \selectlanguage{english}
 
-In Chapter~\ref{chap1}, and parallel to quantization, it was argued in Section~\ref{} tat, what is referred to as ``segmentation'' in the \textit{Credit Scoring} industry, could also be a straightforward solution to deal with missing values and outliers. The more theoretical justification of quantization, sketched in Section~\ref{}, was to achieve a good bias-variance tradeoff of the predictive task. This goal was embedded in the proposed quantization algorithm. Here again, the resulting segmentation and scorecards therein can be viewed as a single model for the whole population. In the next Section, we give some industrial context to the problem which is followed in Section~\ref{} by a literature review. Section~\ref{} reinterprets this problem, as promised, as a model selection problem for which a specific approach is design in subsequent Sections.
+In Chapter~\ref{chap1}, and parallel to quantization, it was argued in Section~\ref{subsec:segmentation} that, what is referred to as ``segmentation'' in the \textit{Credit Scoring} industry, could also be a straightforward solution to deal with missing values and outliers. The more theoretical justification of quantization, sketched in Section~\ref{sec:bias_variance_quant}, was to achieve a good bias-variance tradeoff of the predictive task. This goal was embedded in the proposed quantization algorithm. Here again, the resulting segmentation and scorecards therein can be viewed as a single model for the whole population. In the next Section, we give some industrial context to the problem which is followed in Section~\ref{sec:literature} by a literature review. Section~\ref{sec:model_selec_tree} reinterprets this problem, as promised, as a model selection problem for which a specific approach is designed in subsequent Sections.
 
 
 \section{Introduction}
@@ -37,34 +37,34 @@ difficulté d’une approche directe réside dans cette contrainte discrète.
     every node/.style       = {font=\footnotesize},
     sloped
   ]
-  \node [root] {\textcolor{black}{Clientèle}}
+  \node [root] {\textcolor{black}{Applicants}}
     child { node [dummy] {}
       child { node [dummy] {}
-        child { node [env] {\textcolor{black}{$p_{\theta_1}(y|x)$}}
-          edge from parent node [below] {Retraités} }
-        child { node [env] {\textcolor{black}{$p_{\theta_2}(y|x)$}}
-          edge from parent node [above] {Salariés} }
-        child { node [env] {\textcolor{black}{$p_{\theta_3}(y|x)$}}
-                edge from parent node [above] {Autres} }
-        edge from parent node [above] {Crédit renouvelable} }
-      child { node [env] {\textcolor{black}{$p_{\theta_4}(y|x)$}}
+        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}_1}(y|\q^1(\glssymbol{bx})))$}}
+          edge from parent node [below] {Renters} }
+        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}_2}(y|\q^2(\glssymbol{bx}))$}}
+          edge from parent node [above] {Salaried} }
+        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}_3}(y|\q^3(\glssymbol{bx}))$}}
+                edge from parent node [above] {Others} }
+        edge from parent node [above] {Revolving} }
+      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}_4}(y|\q^4(\glssymbol{bx}))$}}
               edge from parent node [above, align=center]
-                {Amortissable} }
-              edge from parent node [above] {Electroménager} }
+                {Standard loan} }
+              edge from parent node [above] {Home Appliances} }
     child { node [dummy] {}
       child { node [dummy] {}
-        child { node [env] {\textcolor{black}{$p_{\theta_5}(y|x)$}}
-          edge from parent node [above] {Location} }
-        child { node [env] {\textcolor{black}{$p_{\theta_6}(y|x)$}}
-                edge from parent node [above] {Amortissable} }
+        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}_5}(y|\q^5(\glssymbol{bx}))$}}
+          edge from parent node [above] {Leasing} }
+        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}_6}(y|\q^6(\glssymbol{bx}))$}}
+                edge from parent node [above] {Standard loan} }
         edge from parent node [above] {Fiat} }
-      child { node [env] {\textcolor{black}{$p_{\theta_7}(y|x)$}}
+      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}_7}(y|\q^7(\glssymbol{bx}))$}}
               edge from parent node [above, align=center]
                 {Kawasaki} }
               edge from parent node [above] {Automobile} };
 \end{tikzpicture}
 }
-\caption{Cartographie simplifiée de la chaîne de construction des scores.} 
+\caption{Simplified cartography of the application scorecards.} 
 \label{fig:arbre}
 \end{figure}
 
@@ -77,7 +77,7 @@ difficulté d’une approche directe réside dans cette contrainte discrète.
 
 
 
-\section{Litterature review}
+\section{Litterature review} \label{sec:literature}
 
 
 \subsection{Clustering methods}
@@ -87,7 +87,7 @@ difficulté d’une approche directe réside dans cette contrainte discrète.
 
 
 
-\section{Logistic regression trees as a combinatorial model selection problem}
+\section{Logistic regression trees as a combinatorial model selection problem} \label{sec:model_selec_tree}
 
 
 \subsection{Cardinality example}
