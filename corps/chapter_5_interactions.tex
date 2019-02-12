@@ -77,7 +77,7 @@ p(\bdelta | \q(\glssymbol{bbx}),\glssymbol{bby}) & \propto p(\glssymbol{bby} | \
 
 This Section is dedicated to describing the Metropolis-Hastings~\cite{hastings1970monte} sampling algorithm that will be used in the next section to sample from $p(\bdelta | \q(\glssymbol{bbx}),\glssymbol{bby})$ that will be denoted, for simplicity, by $\pi(\bdelta)$ in this Section.
 
-The distribution $\pi(\bdelta)$ is not known explicitely but $f(\bdelta) = \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\q,\bdelta})/2) p(\bdelta)$ is proportional to $\pi(\bdelta)$. Consequently, given two matrices $\bdelta^{(1)},\bdelta^{(2)}$, the \gls{pdf} ratio is the same: $\frac{\pi(\bdelta^{(1)}}{\pi(\bdelta^{(2)}} = \frac{f(\bdelta^{(1)}}{f(\bdelta^{(2)}}$.
+The distribution $\pi(\bdelta)$ is not known explicitely but $f(\bdelta) = \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\q,\bdelta})/2) p(\bdelta)$ is proportional to $\pi(\bdelta)$. Consequently, given two matrices $\bdelta^{(1)},\bdelta^{(2)}$, the \gls{pdf} ratio is the same: $\frac{\pi(\bdelta^{(1)})}{\pi(\bdelta^{(2)})} = \frac{f(\bdelta^{(1)}}{f(\bdelta^{(2)}}$.
 
 Now suppose we have at our disposal a proposal distribution of the form:
 \begin{alignat}{2}
@@ -87,27 +87,28 @@ Now suppose we have at our disposal a proposal distribution of the form:
 This instrumental conditional distribution will be used to design an MCMC which empirical distribution of drawn matrices $\bdelta^{(0)}, \dots, \bdelta^{(\text{iter})}$ approaches $\pi(\bdelta)$. The algorithm is the following:
 
 \begin{algorithm}[H]
- \KwData{$f, \tr, \max\_{\text{iter}}$}
+ \KwData{$f, \tr, \text{max\_iter}$}
  \KwResult{$ \bdelta^{(0)}, \dots, \bdelta^{(\text{iter})} $}
  Initialization of $ \bdelta^{(0)} $\;
  $s = 0$\;
- \While{$s < \max\_{\text{iter}} $}{
+ \While{$s < \text{max\_iter} $}{
 
 Draw $\bdelta'$ from $\tr(\cdot | \bdelta^{(s)})$\;
 
 Calculate the acceptance probability $\alpha = \min \left( 1, \frac{f(\bdelta'}{f(\bdelta^{(s)}} \frac{\tr(\bdelta' | \bdelta^{(s)})}{\tr(\bdelta^{(s)} | \bdelta')} \right) $\;
 
-\uIf{$\alpha \geq 1$}{
-Let $\bdelta^{(s+1)} \leftarrow \bdelta'$\;
-}
-\Else{
-Let $\bdelta^{(s+1)} \leftarrow \begin{cases} \bdelta' \text{ with probability } \alpha, \\ \bdelta^{(s)} \text{ with probability } 1-\alpha.  \end{cases}$\;
-}
+%\uIf{$\alpha \geq 1$}{
+%Let $\bdelta^{(s+1)} \leftarrow \bdelta'$\;
+%}
+%\Else{
+%Let $\bdelta^{(s+1)} \leftarrow \begin{cases} \bdelta' \text{ with probability } \alpha, \\ \bdelta^{(s)} \text{ with probability } 1-\alpha.  \end{cases}$\;
+%}
+Let $\bdelta^{(s+1)} \leftarrow \begin{cases} \bdelta' \text{ with probability } \min(1,\alpha), \\ \bdelta^{(s)} \text{ with probability } \max(0,1-\alpha).  \end{cases}$\;
 }
 \caption{\label{metropolis} Metropolis-Hastings.}
 \end{algorithm}
 
-This algorithm reaches asymptotically the target distribution $\pi(\bdelta)$ if such a stationary distribution exists and is unique. ``Detailed balance'' is a sufficient but not necessary condition of existence according to which each transition $\bdelta^{(s)} \rightarrow \bdelta^{(s+1)}$ is reversible. Uniqueness is guaranteed if the resulting Markov Chain is ergodic. This is satisfied if every matrix is aperiodic and positive recurrent (\text{i.e.}\ each matrix $\bdelta \in {\{0,1\}}^{\frac{d(d-1)}{2}}$ is reachable in a finite number of iterations). 
+This algorithm reaches asymptotically the target distribution $\pi(\bdelta)$ if such a stationary distribution exists and is unique. ``Detailed balance'' is a sufficient but not necessary condition of existence according to which each transition $\bdelta^{(s)} \rightarrow \bdelta^{(s+1)}$ is reversible. Uniqueness is guaranteed if the resulting Markov Chain is ergodic. This is satisfied if every interaction matrix $\bdelta$ is aperiodic and positive recurrent (\text{i.e.}\ each matrix $\bdelta \in {\{0,1\}}^{\frac{d(d-1)}{2}}$ is reachable in a finite number of iterations). 
 
 It is also important to notice that, apart from verifying the above assumptions, there are no guidelines about how to choose the proposal distribution or the number of iterations necessary for proper estimation. These are ``hyperparameters'' that may influence greatly the effectiveness of the method.
 
@@ -117,11 +118,9 @@ It follows from the preceding Section that one can design an MCMC algorithm like
 
 \subsubsection{Transition probability}
 
-Metropolis-Hastings only requires a proposal of a transition probability between two matrices of the Markov chain that was denoted by $\tr$:
-
-This approach would require to compute $2^{d(d-1)}$ probabilities (\textit{i.e.}\ one per unique couple of matrices ($\bdelta^{(1)},\bdelta^{(2)}$)). It is thus desirable to reduce this combinatorics by making further assumptions. In what follows, we restrict possible transitions to matrices that are on a one unit $L^1$ distance to the current interaction matrix, s.t.\ 
+Metropolis-Hastings only requires a proposal of a transition probability between two matrices of the Markov chain that was denoted by $\tr$. This approach would require to compute $2^{d(d-1)}$ probabilities (\textit{i.e.}\ one per unique couple of matrices ($\bdelta^{(1)},\bdelta^{(2)}$)). It is thus desirable to reduce this combinatorics by making further assumptions. In what follows, we restrict possible transitions to matrices that are on a one unit $L^1$ distance to the current interaction matrix, s.t.\ 
 \[ \tr(\bdelta^{(1)},\bdelta^{(2)}) = 0 \text{ if } \sum_{k=1}^d \sum_{\ell=1}^d |\delta^{(1)}_{k,\ell} - \delta^{(2)}_{k,\ell}| \neq 1. \]
-Only $\frac{d(d-1)}{2}$ coefficients are now needed, which can be reinterpreted as the probability to switch on (resp. off) an entry of $\bdelta^{(1)}$ which is currently off (resp. on). We claim that a good intuition about whether two features interact is the relative gain (or loss) in BIC between their bivariate model \textit{with} their interaction and this model \textit{without} their interaction. The rational behind such a procedure, relying again on the properties of BIC, is the following: 
+Only $\frac{d(d-1)}{2}$ coefficients are now needed, which can be reinterpreted as the probability to switch on (resp. off) an entry of $\bdelta^{(1)}$ which is currently off (resp. on). We claim that a good intuition about whether two features interact is the relative gain (or loss) in BIC between their bivariate model \textit{with} their interaction and this model \textit{without} their interaction. The rationale behind such a procedure, relying again on the properties of BIC, is the following: 
 %\begin{align*}
 %\forall \: 1 \leq k < \ell \leq d, \; p(\delta_{k,\ell} | \q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell), \glssymbol{bby}) & \propto p(\q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell), \glssymbol{bby} | \delta_{k,\ell}) p(\delta_{k,\ell}) \\
 %& \approx \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\q_k,\q_\ell,\delta_{k,\ell}})/2) p(\delta_{k,\ell}).
@@ -244,12 +243,12 @@ In this first part, focus is given on showing empirically the consistency of the
 Here, following (\ref{eq:Cjhcont}), we have $d=2$ and $m_1=m_2=3$ and the cutpoints are $c_{j,1}=1/3$ and $c_{j,2}=2/3$ for $j=1,2$. Setting $\glssymbol{bth}^{(1)}=(0,-2,2,0,-2,2,0)$, $\bdelta^{(1)} = 0$, $\glssymbol{bth}^{(2)} = (\glssymbol{bth}^{(1)},)$, $\bdelta^{(2)} = 1$ the target feature $y$ is then sampled from $p_{\glssymbol{bth}^{(o)}}(\cdot | \q(\glssymbol{bbx}), \bdelta^{(o)}), o = \{1,2\}$ via the logistic model (\ref{eq:reglogq}). Two cases are first studied:
 \begin{enumerate}[(a)]
     \item First, we assess that in the presence of a true interaction, it is discovered by our procedure, so that we simulate $Y \sim p_{\glssymbol{bth}^{(2)}}$ and provide $\q(\glssymbol{bbx})$;
-    \item Second, we assess that in the absence of a true interaction, no interaction is found by our procedure, so that we simulate $Y \sim p_{\glssymbol{bth}^{(1)}}$ and provide $\q(\glssymbol{bbx})$; 
+    \item Second, we assess that in the absence of a true interaction, no interaction is found by our procedure, so that we simulate $Y \sim p_{\glssymbol{bth}^{(1)}}$ and provide $\q(\glssymbol{bbx})$.
 \end{enumerate}
 As promised, two further cases are first studied:
 \begin{enumerate}[(a)]
     \item First, we assess that in the presence of a true interaction, it is discovered by \textit{glmdisc} while quantizing the data, so that we simulate $Y \sim p_{\glssymbol{bth}^{(2)}}$ and provide $\glssymbol{bbx}$;
-    \item Second, we assess that in the absence of a true interaction, no interaction is found by \textit{glmdisc} while quantizing the data, so that we simulate $Y \sim p_{\glssymbol{bth}^{(1)}}$ and provide $\glssymbol{bbx}$; 
+    \item Second, we assess that in the absence of a true interaction, no interaction is found by \textit{glmdisc} while quantizing the data, so that we simulate $Y \sim p_{\glssymbol{bth}^{(1)}}$ and provide $\glssymbol{bbx}$.
 \end{enumerate}
 Note that the interaction screening procedure is also applicable to continuous features, which is not tested here. These 4 experiments are run 100 times with $n = \{1{,}000,10{,}000\}$ and histograms are given in Table~\ref{tab:simu_inter}.
 

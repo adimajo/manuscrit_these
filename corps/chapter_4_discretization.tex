@@ -113,9 +113,11 @@ where $m_j$ is an integer and the sets $C_{j,h}$ are defined with respect to eac
 C_{j,h}=(c_{j,h-1},c_{j,h}]
 \end{equation}
 where $c_{j,1},\ldots,c_{j,m_j-1}$ are increasing numbers called cutpoints, $c_{j,0}=-\infty$, $c_{j,m_j}=\infty$. For example, the quantization of the unit segment in thirds would be defined as $m_j=3$, $c_{j,1} = 1/3$, $c_{j,2} = 2/3$ and subsequently $\q_j(0.1) = (1,0,0)$. This is visually exemplified on Figure~\ref{fig:disc_cont}.
-\paragraph{Raw categorical features} If $x_j$ is a categorical component of $\glssymbol{bx}$, quantization $\q_j$ consists in grouping levels of $\glssymbol{x}_j$ and the $C_{j,h}$s form a partition of the set, say $\{1,\ldots,l_j\}$, of levels of $\glssymbol{x}_j$: 
+\paragraph{Raw categorical features} If $x_j$ is a categorical component of $\glssymbol{bx}$, quantization $\q_j$ consists in grouping levels of $\glssymbol{x}_j$ and the $C_{j,h}$s form a partition of the set $\glssymbol{NO}$.
+%, say $\{1,\ldots,l_j\}$, of levels of $\glssymbol{x}_j$: 
 \begin{equation*}
-\bigsqcup_{h=1}^{m_j}C_{j,h}=\{1,\ldots,l_j\}.
+%\bigsqcup_{h=1}^{m_j}C_{j,h}=\{1,\ldots,l_j\}.
+\bigsqcup_{h=1}^{m_j}C_{j,h}=\glssymbol{NO}.
 \end{equation*}
 For example, the grouping of levels encoded as ``1'' and ``2'' would yield $C_{j,1} = \{1,2\}$ such that $\q_j(1) = \q_j(2) = (1,0,\ldots,0)$. This is visually exemplified on Figure~\ref{fig:disc_disc}.
 
