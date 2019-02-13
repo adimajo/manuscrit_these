@@ -542,24 +542,32 @@ p(\glssymbol{bby} | \glssymbol{bbx}) & = \prod_{i=1}^n p(y_i | \glssymbol{bx}_i)
 \end{align*}
 Thus, we have :
 \[ \bqk^\star = \argmax_{\bqk \in \Q} \prod_{i=1}^n p(y_i | \bqk_i ) \prod_{j=1}^d p(\bqk_{i,j} | x_{i,j}). \]
-This new formulation of the best quantization is still untractable since it requires to evaluate all quantizations in $\Q$, although all terms except $\bqk^\star$ contribute to $0$ in the above $\argmax$. In the misspecfied model-case however, there is no such garantee but it can still be claimed that the best candidate $\q^\star$ in terms of criterion~\eqref{eq:BICq} dominates the sum.
+This new formulation of the best quantization is still untractable since it requires to evaluate all quantizations in $\Q$, although all terms except $\bqk^\star$ contribute to $0$ in the above $\argmax$. In the misspecfied model-case however, there is no such garantee but it can still be claimed that the best candidate $\bqk^\star$ in terms of criterion~\eqref{eq:BICq} dominates the sum.
 
-Our goal in the next Section is to generate $\bbqk$ from $p(\glssymbol{bby} | \cdot) \prod_{j=1}^d p(\cdot | \glssymbol{bbx}_j)$. Among other things detailed later on, we shall . If the resulting MCMC is efficient, $\q_\star$ will be the mode of the empirical distribution of generated candidates, which, as in Section~\ref{sec:proposal} with the neural network approach, can be selected with the BIC criterion~\eqref{eq:BICq}. Using \eqref{hyp:true}, it seems most natural to use a logistic regression for $p( y | \bqk)$. Following Section~\ref{sec:proposal} and as was empirically argumented in Section~\ref{subsec:relaxation}, $p(\bqk | x_j)$ will be parametrized as a poytomous logistic regression, similar to the softmax function of Equation~\eqref{eq:softmax} without the over-parametrization (one level per feature $j$, say $m_j$, is considered reference). Similarly, $p(\bqk | x_j)$ are no more step functions but smooth functions as in Figure~\ref{fig:MAP}.
+Our goal in the next Section is to generate $\bbqk$ from $p(\glssymbol{bby} | \cdot) \prod_{j=1}^d p(\cdot | \glssymbol{bbx}_j)$. Among other things detailed later on, we shall propose models for $p(\glssymbol{bby} | \bqk)$ and $p(\bqk_j | x_j)$. If the resulting MCMC is efficient, $\q_\star$ will be the mode of the empirical distribution of generated candidates, which, as in Section~\ref{sec:proposal} with the neural network approach, can be selected with the BIC criterion~\eqref{eq:BICq}. Using \eqref{hyp:true}, it seems most natural to use a logistic regression for $p( y | \bqk_j)$. Following Section~\ref{sec:proposal} and as was empirically argumented in Section~\ref{subsec:relaxation}, $p(\bqk_j | x_j)$ will be parametrized by $\ag$. For a continuous feature, we resort to a poytomous logistic regression, similar to the softmax function of Equation~\eqref{eq:softmax} without the over-parametrization (one level per feature $j$, say $m_j$, is considered reference). For categorical features, simple contingency tables are employed. Similarly, $p(\bqk | x_j)$ are no more step functions but smooth functions as in Figure~\ref{fig:MAP}.
 
 \subsection{Stochastic search of the best quantization} \label{subsec:stoch}
 
 We parametrized $p(y|\glssymbol{bx})$ as:
 \begin{equation}
-p(y | \glssymbol{bx}, \glssymbol{bth}, \ag) = \sum_{\bqk in \Q} p_{\glssymbol{bth}}(y | \bqk) \prod_{j=1}^d p_{\ag}(\bqk_j | x_j)
+p(y | \glssymbol{bx}, \glssymbol{bth}, \ag) = \sum_{\bqk \in \Q} p_{\glssymbol{bth}}(y | \bqk) \prod_{j=1}^d p_{\ag}(\bqk_j | x_j)
 \end{equation}
 A straightforward way to maximize the likelihood of $p(y | \glssymbol{bx}, \glssymbol{bth}, \ag)$ in $(\glssymbol{bth}, \ag)$ (not to be mistaken with~\eqref{eq:lqa}), as was done in Section~\ref{sec:proposal}, to deduce $\q^\star$ from $\ag$ \textit{via} the $\argmax$ operation (see Section~\ref{subsec:relaxation} and Equation~\eqref{eq:ht}), is to use an \gls{em} algorithm.
 
-However, as was the case in Section~\ref{sec:proposal}, we are not truly interested in maximizing this likelihood: 
-
-\gls{sem}
-
+However, maximizing this likelihood directly is untractable as the Expectation step requires to sum over $\bqk \in \Q$ which is untractable. Classically, the \gls{em} can be replaced by an MCMC method called \Gls{sem}: the expectation (the sum over $\bqk \in \Q$) is approximated by the empirical distribution of draws $\bqk^{(1)}, \dots, \bqk^{(\max_{\text{iter}})}$ from $p_{\glssymbol{bth}}(y | \cdot) \prod_{j=1}^d p_{\ag}(\cdot | x_j)$.
 
 \subsubsection{\gls{sem} as a quantization provider}
+
+As the parameters $\ag$ of $\q_{\ag}$ were initialized randomly in the neural network approach, the latent features observations $\bbqk^{(0)}$ are initialized randomly. At step $s$, the \gls{sem} algorithm allows us to compute the MLE of $\glssymbol{bth}$ (resp. $\ag$) as $\hat{\glssymbol{bth}}^{(s)}$ (resp. $\hat{\ag}^{(s)}$) given $\bbqk^{(s)}$. As the \gls{lr} $p_{\glssymbol{bth}}(y | \bqk)$ is multivariate, it is hard to sample simultaneously all latent features. We have to resort to the Gibbs-sampler~\cite{}: we sample $\bqk_j$ while holding latent features $\bqk_{-\{j\}}$ fixed:
+\[ \bqk_j^{(s+1)} \sim p_{\hat{\glssymbol{bth}}^{(s)}}(y | \bqk_{-\{j\}}^{(s)}, \cdot) p_{\hat{\ag}^{(s)}}(\cdot | x_j) \]
+We repeat this process for all features $1 \leq j \leq d$.
+
+This MCMC provides parameters $\hat{\ag}^{(1)}, \dots, \hat{\ag}^{(\max_{\text{iter}})}$ which can be used to produce $\hat{\q}^{(1)}, \dots, \hat{\q}^{(\max_{\text{iter}})}$ as in Equation~\eqref{eq:ht}. The best proposed quantization $\q^\star$ is thus chosen among them \textit{via} the BIC criterion as in Equation~\eqref{eq:}.
+
+\textcolor{red}{mettre les liens formels avec les annexes}
+
+\subsubsection{Validity of the approach}
+
 
 
 

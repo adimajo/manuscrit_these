@@ -64,8 +64,9 @@ The BIC criterion has a desirable property, from a Bayesian perspective, relatin
 %& = \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\bdelta})/2 + O(1))
 %\end{align*}
 \begin{align*}
-p(\glssymbol{bby} | \glssymbol{bbx}, \bdelta) & = \int_{\Theta} p_{\glssymbol{bth}}(\glssymbol{bby} | \glssymbol{bbx}, \bdelta) p(\glssymbol{bth} | \glssymbol{bbx}, \bdelta)d\glssymbol{bth} \\
-& = \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\bdelta})/2 + O(1))
+p(\glssymbol{bbx}, \glssymbol{bby} | \bdelta) & = \int_{\Theta} p_{\glssymbol{bth}}(\glssymbol{bbx}, \glssymbol{bby} | \bdelta) p(\glssymbol{bth} | \bdelta)d\glssymbol{bth} \\
+p(\glssymbol{bbx}, \glssymbol{bby} | \bdelta) & = \int_{\Theta} p_{\glssymbol{bth}}(\glssymbol{bby} | \glssymbol{bbx}, \bdelta) p(\glssymbol{bth} | \bdelta)d\glssymbol{bth} + p(\glssymbol{bx}) \\
+& = \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\bdelta})/2 + O(1)) + p(\glssymbol{bx})
 \end{align*}
 Replacing the features $\glssymbol{bbx}$ by their (fixed) quantized version $\q(\glssymbol{bbx})$ and rewriting the posterior probability of the model by introducing the preceding likelihood, we get:
 \begin{align*}
