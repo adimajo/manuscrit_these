@@ -322,14 +322,20 @@ As dicussed in the previous section, and emphasized in the literature review, qu
     \label{eq:BICq}
     \hat{\q}=\argmax_{\q \in \Q} \text{BIC}(\hat{\glssymbol{bth}}_\q)
 \end{equation}
-where $\nu_\q$ is the number of continuous parameters to be estimated in the $\glssymbol{bth}$-parameter space. Note however that an exhaustive search of $\hat{\q}\in\Q$ is an intractable task due to its highly combinatorial nature as was explicitly formulated in the previous Section. Anyway, the optimization~(\ref{eq:BICq}) requires a new specific strategy that I describe in the next section.
+where $\nu_\q$ is traditionally the number of continuous parameters to be estimated in the $\glssymbol{bth}$-parameter space. Note however that an exhaustive search of $\hat{\q}\in\Q$ is an intractable task due to its highly combinatorial nature as was explicitly formulated in the previous Section. Anyway, the optimization~(\ref{eq:BICq}) requires a new specific strategy that I describe in the next section.
 
 \paragraph{Remark on model selection consistency}
 
-In high-dimensional spaces and among models with a wildly varying number of parameters, classical model selection tools like BIC can have disappointing asymptotic properties, as emphasized in~\cite{chen2008extended}, where a modified BIC criterion, taking into account the number of models per parameter size, is proposed. Moreover, as was shown in the previous Section, the number of quantizations in $\Q$ depends on $n$ whenever there is at least one continuous feature. This setting is tackled in~\cite{} where a new penalty is proposed: exponential weights are calculated to further penalize the size of the model space for a fixed number of parameter. As will be made clearer in the numerical experiments, $d$ and $m_j$ are rather ``low'' ($\approx 10$), so it was decided to stick with the BIC criterion.
+In high-dimensional spaces and among models with a wildly varying number of parameters, classical model selection tools like BIC can have disappointing asymptotic properties, as emphasized in~\cite{chen2008extended}, where a modified BIC criterion, taking into account the number of models per parameter size, is proposed.
+Moreover in essence, as is apparent from the $\hat{\glssymbol{bth}}_\q$ symbol, and supplemental to the \gls{lr} coefficients $\glssymbol{bth}$, the inherent parameters of $\q$, which are the $C_{j,h}$ (see Equation~\eqref{eq:Cjhcont}) shall be accounted for in the penalization term $\nu_\q$: they are estimated indirectly in the subsequent Section.
+Lastly, in this setting, the BIC criterion relies on the Laplace approximation~\cite{lebarbier} which requires the likelihood to be twice differentiable in the parameters. However, as $\q$ consists in a collection of step functions of parameters $C_{j,h}$, this is not the case. For continuous features, since it is nevertheless almost everywhere differentiable, for the properties of the BIC criterion to hold, it suffices that there exists a neighbourhood $V_{j,h}$ around true parameters $c_{j,h}^\star$ where there is no observation: $\not\exists i, \: x_{i,j} \in V_{j,h}$.
 
+\textcolor{red}{commentaire sur m}
 
-\textcolor{red}{à compléter des idées de Massart}
+\textcolor{red}{cas catégoriel}
+
+%Moreover, as was shown in the previous Section, the number of quantizations in $\Q$ depends on $n$ whenever there is at least one continuous feature. This setting is tackled in~\cite{} where a new penalty is proposed: exponential weights are calculated to further penalize the size of the model space for a fixed number of parameter. As will be made clearer in the numerical experiments, $d$ and $m_j$ are rather ``low'' ($\approx 10$), so it was decided to stick with the BIC criterion.
+%\textcolor{red}{à compléter des idées de Massart}
 
 \section{The proposed neural network based quantization}
 \label{sec:proposal}
@@ -352,7 +358,9 @@ where functions $q_{\ag_{j,h}}(\cdot)$, properly defined hereafter for both cont
 
 
  {\bf For continuous features}, we set for $\ag_{j,h} = (\alpha^0_{j,h},\alpha^1_{j,h}) \in \mathbb{R}^2$
-\[q_{\ag_{j,h}}(\cdot) = \frac{\exp(\alpha^0_{j,h} + \alpha^1_{j,h}  \cdot)}{\sum_{g=1}^{m_j} \exp(\alpha^0_{j,g} + \alpha^1_{j,g}  \cdot)}\]
+\begin{equation} \label{eq:softmax}
+q_{\ag_{j,h}}(\cdot) = \frac{\exp(\alpha^0_{j,h} + \alpha^1_{j,h}  \cdot)}{\sum_{g=1}^{m_j} \exp(\alpha^0_{j,g} + \alpha^1_{j,g}  \cdot)}
+\end{equation}
 where $\ag_{j,m_j}$ is set to $(0,0)$ for identifiability reasons.
 
 
@@ -364,13 +372,13 @@ where $l_j$ is the number of levels of the categorical feature $\glssymbol{x}_j$
 
 \paragraph{Parameter estimation}
 
-With this new fuzzy quantization, the logistic regression for the predictive task is then expressed as
+With this new fuzzy quantization, the \gls{lr} for the predictive task is then expressed as
 \begin{equation}
     \label{eq:reglogqa}
     \ln \left( \dfrac{p_{\glssymbol{bth}}(1|\q_{\ag} (\glssymbol{bx}))}{1 - p_{\glssymbol{bth}}(1|\q_{\ag} (\glssymbol{bx}))} \right) = \theta_0 + \sum_{j=1}^d {\glssymbol{bth}_j' \cdot \q_{\ag_{j}}(x_j)},
 \end{equation}
 where $\q$ has been replaced by $\q_{\ag}$ from Equation~(\ref{eq:reglogq}).
-Note that as $\q_{\ag}$ is a sound approximation of $\q$ (see above), this logistic regression in $\q_{\ag}$ is consequently a good approximation of the logistic regression in $\q$ from Equation~(\ref{eq:reglogq}). The relevant log-likelihood is here 
+Note that as $\q_{\ag}$ is a sound approximation of $\q$ (see above), this \gls{lr} in $\q_{\ag}$ is consequently a good approximation of the \gls{lr} in $\q$ from Equation~(\ref{eq:reglogq}). The relevant log-likelihood is here 
 \begin{equation}
     \label{eq:lqa}
     \ell_{\q_{\ag}}(\glssymbol{bth} ; (\glssymbol{bbx},\glssymbol{bby}))=\sum_{i=1}^n \ln p_{\glssymbol{bth}}(y_i|\q_{\bm{\alpha}}(\bm{x}_i))
@@ -476,10 +484,10 @@ For a continuous feature $\glssymbol{x}_j$ of $\glssymbol{bx}$, the combined use
 
 \paragraph{Stochastic gradient descent as a quantization provider}
 
-By relying on a stochastic gradient descent, the smoothed likelihood (\ref{eq:lqa}) can be maximized over $\left(\ag, \glssymbol{bth} \right)$. The results should be close to the maximizers of the original likelihood (\ref{eq:lq}) if the model is well-specified, when there is a true underlying quantization. In the mis-specified model case, there is no such guarantee. Therefore, to be more conservative, I evaluate at each training epoch $(t)$ the quantization $\hat{\q}^{(t)}$ resulting from the \textit{maximum a posteriori} procedure explicited in Equation~(\ref{eq:ht}), then classicaly estimate the logistic regression parameter \textit{via} maximum likelihood, as done in Equation~(\ref{eq:lq}):
+By relying on a stochastic gradient descent, the smoothed likelihood (\ref{eq:lqa}) can be maximized over $\left(\ag, \glssymbol{bth} \right)$. The results should be close to the maximizers of the original likelihood (\ref{eq:lq}) if the model is well-specified, when there is a true underlying quantization. In the mis-specified model case, there is no such guarantee. Therefore, to be more conservative, I evaluate at each training epoch $(t)$ the quantization $\hat{\q}^{(t)}$ resulting from the \textit{maximum a posteriori} procedure explicited in Equation~(\ref{eq:ht}), then classicaly estimate the \gls{lr} parameter \textit{via} maximum likelihood, as done in Equation~(\ref{eq:lq}):
 \[\hat{\glssymbol{bth}}^{(t)} = \argmin_{\glssymbol{bth}} \ell_{\hat{q}^{(t)}}(\glssymbol{bth}; (\glssymbol{bbx},\glssymbol{bby}))\]
-and the resulting $\mbox{BIC}^{(t)}$ as in (\ref{eq:BICq}). If $T$ is a given maximum number of iterations of the stochastic gradient descent algorithm, the quantization retained at the end is then determined by the optimal epoch
-\[t_*=\argmin_{t\in \{1,\ldots, T\}} \mbox{BIC}^{(t)}.\]
+and the resulting $\mbox{BIC}(\hat{\glssymbol{bth}}^{(t)})$ as in (\ref{eq:BICq}). If $T$ is a given maximum number of iterations of the stochastic gradient descent algorithm, the quantization retained at the end is then determined by the optimal epoch
+\[t_*=\argmin_{t\in \{1,\ldots, T\}} \mbox{BIC}(\hat{\glssymbol{bth}}^{(t)}).\]
  
 \paragraph{Choosing an appropriate number of levels}
 
@@ -536,11 +544,28 @@ Thus, we have :
 \[ \bqk^\star = \argmax_{\bqk \in \Q} \prod_{i=1}^n p(y_i | \bqk_i ) \prod_{j=1}^d p(\bqk_{i,j} | x_{i,j}). \]
 This new formulation of the best quantization is still untractable since it requires to evaluate all quantizations in $\Q$, although all terms except $\bqk^\star$ contribute to $0$ in the above $\argmax$. In the misspecfied model-case however, there is no such garantee but it can still be claimed that the best candidate $\q^\star$ in terms of criterion~\eqref{eq:BICq} dominates the sum.
 
+Our goal in the next Section is to generate $\bbqk$ from $p(\glssymbol{bby} | \cdot) \prod_{j=1}^d p(\cdot | \glssymbol{bbx}_j)$. Among other things detailed later on, we shall . If the resulting MCMC is efficient, $\q_\star$ will be the mode of the empirical distribution of generated candidates, which, as in Section~\ref{sec:proposal} with the neural network approach, can be selected with the BIC criterion~\eqref{eq:BICq}. Using \eqref{hyp:true}, it seems most natural to use a logistic regression for $p( y | \bqk)$. Following Section~\ref{sec:proposal} and as was empirically argumented in Section~\ref{subsec:relaxation}, $p(\bqk | x_j)$ will be parametrized as a poytomous logistic regression, similar to the softmax function of Equation~\eqref{eq:softmax} without the over-parametrization (one level per feature $j$, say $m_j$, is considered reference). Similarly, $p(\bqk | x_j)$ are no more step functions but smooth functions as in Figure~\ref{fig:MAP}.
+
 \subsection{Stochastic search of the best quantization} \label{subsec:stoch}
+
+We parametrized $p(y|\glssymbol{bx})$ as:
+\begin{equation}
+p(y | \glssymbol{bx}, \glssymbol{bth}, \ag) = \sum_{\bqk in \Q} p_{\glssymbol{bth}}(y | \bqk) \prod_{j=1}^d p_{\ag}(\bqk_j | x_j)
+\end{equation}
+A straightforward way to maximize the likelihood of $p(y | \glssymbol{bx}, \glssymbol{bth}, \ag)$ in $(\glssymbol{bth}, \ag)$ (not to be mistaken with~\eqref{eq:lqa}), as was done in Section~\ref{sec:proposal}, to deduce $\q^\star$ from $\ag$ \textit{via} the $\argmax$ operation (see Section~\ref{subsec:relaxation} and Equation~\eqref{eq:ht}), is to use an \gls{em} algorithm.
+
+However, as was the case in Section~\ref{sec:proposal}, we are not truly interested in maximizing this likelihood: 
 
 \gls{sem}
 
 
+\subsubsection{\gls{sem} as a quantization provider}
+
+
+
+\subsubsection{Choosing an appropriate number of levels}
+
+Contrary to the neural network approach developed in Section~\ref{sec:proposal}, the \gls{sem} algorithm alternates between drawing $\bbqk^{(s)}$ and fitting $\hat{\glssymbol{bth}}^{(s)}$ and $\hat{\ag}^{(s)}$  at each step $s$. Therefore, additionally to the phenomenon caused by the \textit{maximum a posteriori} procedure similar to the neural network approach, if a level $h$ of $\bqk$ is not drawn from $ p_{\glssymbol{bth}}(y | \bqk_{-\{j\}}, \cdot) \prod_{j=1}^d p_{\ag}(\cdot | x_j) $ at step $s$, then at step $s+1$ when adjusting parameters $\ag_j$, the level will have disappeared and cannot be drawn again (for which a Reversible-Jump MCMC approach would be needed~\cite{green1995reversible} and contrary to the neural network approach). As a consequence, with a design matrix of fixed size $n$, there is a non-zero probability that for any given feature, any of its levels ``vanishes'' at each step. The MCMC has thus an absorbing state for which all features are quantized into one level (the empty model with no features) which is reached in a finite number of steps (although very high if $n$ is sufficiently large as is the case with \textit{Credit Scoring} data). The \gls{sem} algorithm is an effective way to start from a high number of levels per feature $\bm{m}_{\max}$ and explore smaller values.
 
 
 \section{Numerical experiments} \label{sec:experiments}
@@ -633,7 +658,7 @@ Algorithm & $n$ & (a) $\hat{c}_{j,2}$ & (b) & $\hat{m}_1$ & (c) & $\hat{m}_3$ \\
 
 To test further the effectiveness of \textit{glmdisc} in a predictive setting, I gathered 6 datasets from the UCI library: the Adult dataset ($n=48,842$, $d=14$), the Australian dataset ($n=690$, $d=14$), the Bands dataset ($n=512$, $d=39$), the Credit-screening dataset ($n=690$, $d=15$), the German dataset ($n=1,000$, $d=20$) and the Heart dataset ($n=270$, $d=13$). Each of these datasets have mixed (continuous and categorical) features and a binary response to predict. To get more information about these datasets, their respective features, and the predictive task associated with them, readers may refer to the UCI website\footnote{\cite{Dua:2017} : http://archive.ics.uci.edu/ml}.
 
-Now that we made sure that our approach is empirically consistent, \textit{i.e.}\ it is able to find the true quantization in a well-specified setting, we wish to verify our claim that embedding the learning of a good quantization in the predictive task \textit{via glmdisc} is better than other methods that rely on \textit{ad hoc} criteria. As we were primarily interested in logistic regression, I will compare our approach to a na\"{\i}ve linear logistic regression (hereafter ALLR), a logistic regression on continuous discretized data using the now standard MDLP algorithm from~\cite{fayyad1993multi} and categorical grouped data using $\chi^2$ tests of independence between each pair of factor levels and the target in the same fashion as the ChiMerge discretization algorithm proposed by~\cite{kerber1992chimerge} (hereafter MDLP/$\chi^2$). Table~\ref{tab:banchmark} shows our approach yields significantly better results on these rather small datasets where the added flexibility of quantization might help the predictive task.
+Now that we made sure that our approach is empirically consistent, \textit{i.e.}\ it is able to find the true quantization in a well-specified setting, we wish to verify our claim that embedding the learning of a good quantization in the predictive task \textit{via glmdisc} is better than other methods that rely on \textit{ad hoc} criteria. As we were primarily interested in \gls{lr}, I will compare our approach to a na\"{\i}ve linear \gls{lr} (hereafter ALLR), a \gls{lr} on continuous discretized data using the now standard MDLP algorithm from~\cite{fayyad1993multi} and categorical grouped data using $\chi^2$ tests of independence between each pair of factor levels and the target in the same fashion as the ChiMerge discretization algorithm proposed by~\cite{kerber1992chimerge} (hereafter MDLP/$\chi^2$). Table~\ref{tab:banchmark} shows our approach yields significantly better results on these rather small datasets where the added flexibility of quantization might help the predictive task.
 
 \begin{table}
     \centering
@@ -663,7 +688,7 @@ Discretization, grouping and interaction screening are preprocessing steps relat
 
 Table~\ref{tab:real_data} shows Gini coefficients of several portfolios for which there are $n=50,000$, $n=30,000$, $n=50,000$, $n=100,000$, $n=235,000$ and $n=7,500$ clients respectively and $d=25$, $d=16$, $d=15$, $d=14$, $d=14$ and $d=16$ features respectively. Approximately half of these features were categorical, with a number of factor levels ranging from $2$ to $100$. 
 
-I compare the rather manual, in-house approach that yields the current performance, the na\"{\i}ve linear logistic regression and \textit{ad hoc} methods introduced in the previous section and finally our \textit{glmdisc} proposal. Beside the classification performance, interpretability is maintained and unsurprisingly, the learned representation comes often close to the ``manual'' approach: for example, the complicated in-house coding of job types is roughly grouped by \textit{glmdisc} into \textit{e.g.}\ ``worker'', ``technician'', \textit{etc.} Notice that even if the ``na\"{\i}ve'' logistic regression reaches some very decent predictive results, its poor interpretability skill (no quantization at all) excludes it from standard use in the company.
+I compare the rather manual, in-house approach that yields the current performance, the na\"{\i}ve linear \gls{lr} and \textit{ad hoc} methods introduced in the previous section and finally our \textit{glmdisc} proposal. Beside the classification performance, interpretability is maintained and unsurprisingly, the learned representation comes often close to the ``manual'' approach: for example, the complicated in-house coding of job types is roughly grouped by \textit{glmdisc} into \textit{e.g.}\ ``worker'', ``technician'', \textit{etc.} Notice that even if the ``na\"{\i}ve'' \gls{lr} reaches some very decent predictive results, its poor interpretability skill (no quantization at all) excludes it from standard use in the company.
 
 The usefulness of discretization and grouping is clear on \textit{Credit Scoring} data and although \textit{glmdisc} does not always perform significantly better than the manual approach, it allows practitioners to focus on other tasks by saving a lot of time, as was already stressed out. As a rule of thumb, a month is generally allocated to data pre-processing for a single data scientist working on a single scorecard. On Google Collaboratory, and relying on Keras (\cite{chollet2015keras}) and Tensorflow (\cite{tensorflow2015-whitepaper}) as a backend, it took less than an hour to perform discretization and grouping for all datasets.
 
@@ -696,11 +721,11 @@ Electronics & 52.9 (11.9) & 55.8 (10.8) & 56.3 (10.2)  & \bf{72.6} (7.4) & &
 
 Feature quantization (discretization for continuous features, grouping of factor levels for categorical ones) in a supervised multivariate classification is a recurring problem in many industrial contexts. This setting was formalized as a highly combinatorial representation learning problem and a new algorithmic approach, named \textit{glmdisc}, has been proposed as a sensible approximation of a classical statistical information criterion.
 
-The first proposed implementation relies on the use of a neural network of particular architecture and specifically a softmax approximation of each discretized or grouped feature. The second proposed implementation relies on an SEM algorithm and a polytomic multiclass \gls{lr} approximation in the same flavor as the softmax. These proposals can alternatively be replaced by any other univariate multiclass predictive model, which make them flexible and adaptable to other problems. Prediction of the target feature, given quantized features, was exemplified with logistic regression, although here as well, it can be swapped with any other supervised classification model.
+The first proposed implementation relies on the use of a neural network of particular architecture and specifically a softmax approximation of each discretized or grouped feature. The second proposed implementation relies on an SEM algorithm and a polytomic multiclass \gls{lr} approximation in the same flavor as the softmax. These proposals can alternatively be replaced by any other univariate multiclass predictive model, which make them flexible and adaptable to other problems. Prediction of the target feature, given quantized features, was exemplified with \gls{lr}, although here as well, it can be swapped with any other supervised classification model.
 
-The experiments showed that, as was sensed empirically by statisticians in the field of \textit{Credit Scoring}, discretization and grouping can indeed provide better models than standard logistic regression. This novel approach allows practitioners to have a fully automated and statistically well-grounded tool that achieves better performance than \textit{ad hoc} industrial practices at the price of decent computing time but much less of the practitioner's valuable time.
+The experiments showed that, as was sensed empirically by statisticians in the field of \textit{Credit Scoring}, discretization and grouping can indeed provide better models than standard \gls{lr}. This novel approach allows practitioners to have a fully automated and statistically well-grounded tool that achieves better performance than \textit{ad hoc} industrial practices at the price of decent computing time but much less of the practitioner's valuable time.
 
-As described in the introduction, logistic regression is additive in its inputs which does not allow to take into account conditional dependency, as stated by~\cite{berry2010testing}. This problem is often dealt with by sparsely introducing ``interactions'', \textit{i.e.}\ products of two features. This leads again to a model selection challenge on a highly combinatorial discrete space that could be solved with a similar approach. In a broader context with no restriction on the predictive model, \cite{tsang2018detecting} already made use of neural networks to estimate the presence or absence of statistical interactions. I take another approach in the subsequent chapter where I tackle the parsimonious addition of pairwise interactions among quantized features, that might influence the quantization process introduced in this work, is a future area of research.
+As described in the introduction, \gls{lr} is additive in its inputs which does not allow to take into account conditional dependency, as stated by~\cite{berry2010testing}. This problem is often dealt with by sparsely introducing ``interactions'', \textit{i.e.}\ products of two features. This leads again to a model selection challenge on a highly combinatorial discrete space that could be solved with a similar approach. In a broader context with no restriction on the predictive model, \cite{tsang2018detecting} already made use of neural networks to estimate the presence or absence of statistical interactions. I take another approach in the subsequent chapter where I tackle the parsimonious addition of pairwise interactions among quantized features, that might influence the quantization process introduced in this work, is a future area of research.
 
 
 
