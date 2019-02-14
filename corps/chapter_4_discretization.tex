@@ -18,6 +18,7 @@ As stated in~\cite{hosmer2013applied} and illustrated in this manuscript, in man
 
 \begin{table}
 \centering
+\caption{\label{tab:ex_scorecard} Example of a final scorecard on quantized data.}
 \begin{tabular}{p{3cm}|p{3cm}|p{2cm}}
 Feature & Level & Points \\
 \hline
@@ -31,7 +32,6 @@ Feature & Level & Points \\
  & 2000-$+\infty$ & 35 \\
  \dots & \dots & \dots \\
 \end{tabular}
-\caption{\label{tab:ex_scorecard} Example of a final scorecard on quantized data.}
 \end{table}
 
 
@@ -324,7 +324,7 @@ As dicussed in the previous section, and emphasized in the literature review, qu
 \end{equation}
 where $\nu_\q$ is traditionally the number of continuous parameters to be estimated in the $\glssymbol{bth}$-parameter space. Note however that an exhaustive search of $\hat{\q}\in\Q$ is an intractable task due to its highly combinatorial nature as was explicitly formulated in the previous Section. Anyway, the optimization~(\ref{eq:BICq}) requires a new specific strategy that I describe in the next section.
 
-\paragraph{Remark on model selection consistency}
+\paragraph{Remark on model selection consistency} \label{par:consistency}
 
 In high-dimensional spaces and among models with a wildly varying number of parameters, classical model selection tools like BIC can have disappointing asymptotic properties, as emphasized in~\cite{chen2008extended}, where a modified BIC criterion, taking into account the number of models per parameter size, is proposed.
 Moreover in essence, as is apparent from the $\hat{\glssymbol{bth}}_\q$ symbol, and supplemental to the \gls{lr} coefficients $\glssymbol{bth}$, the inherent parameters of $\q$, which are the $C_{j,h}$ (see Equation~\eqref{eq:Cjhcont}) shall be accounted for in the penalization term $\nu_\q$: they are estimated indirectly in the subsequent Section.
@@ -487,13 +487,15 @@ For a continuous feature $\glssymbol{x}_j$ of $\glssymbol{bx}$, the combined use
 By relying on a stochastic gradient descent, the smoothed likelihood (\ref{eq:lqa}) can be maximized over $\left(\ag, \glssymbol{bth} \right)$. The results should be close to the maximizers of the original likelihood (\ref{eq:lq}) if the model is well-specified, when there is a true underlying quantization. In the mis-specified model case, there is no such guarantee. Therefore, to be more conservative, I evaluate at each training epoch $(t)$ the quantization $\hat{\q}^{(t)}$ resulting from the \textit{maximum a posteriori} procedure explicited in Equation~(\ref{eq:ht}), then classicaly estimate the \gls{lr} parameter \textit{via} maximum likelihood, as done in Equation~(\ref{eq:lq}):
 \[\hat{\glssymbol{bth}}^{(t)} = \argmin_{\glssymbol{bth}} \ell_{\hat{q}^{(t)}}(\glssymbol{bth}; (\glssymbol{bbx},\glssymbol{bby}))\]
 and the resulting $\mbox{BIC}(\hat{\glssymbol{bth}}^{(t)})$ as in (\ref{eq:BICq}). If $T$ is a given maximum number of iterations of the stochastic gradient descent algorithm, the quantization retained at the end is then determined by the optimal epoch
-\[t_*=\argmin_{t\in \{1,\ldots, T\}} \mbox{BIC}(\hat{\glssymbol{bth}}^{(t)}).\]
+\begin{equation} \label{eq:opt_epoch}
+t_*=\argmin_{t\in \{1,\ldots, T\}} \mbox{BIC}(\hat{\glssymbol{bth}}^{(t)}).
+\end{equation}
  
 \paragraph{Choosing an appropriate number of levels}
 
-Concerning now the number of intervals or factor levels $\boldsymbol{m} = (m_j)_1^d$, they have also to be estimated since in practice they are unknown. Looping over all candidates $\boldsymbol{m}$ is intractable. But in practice, by relying on the \textit{maximum a posteriori} procedure developed in Equation~(\ref{eq:ht}), we might drop a lot of unseen factor levels, \textit{e.g.}\ if $q_{\ag_{j,h}}(x_{i,j}) \ll 1$ for all training observations $\glssymbol{xij}$, the level $h$ ``vanishes'', \textit{i.e.}\ $\hat{q}_{j,h} = 0$. In practice, I recommend to start with a user-chosen $\bm{m}=\boldsymbol{m}_{\max}$ and we will see in the experiments of Section~\ref{sec:experiments} that the proposed approach is able to explore small values of $\boldsymbol{m}$ and to select a value $\hat{\boldsymbol{m}}$ drastically smaller than $\boldsymbol{m}_{\max}$. This phenomenon, which reduces the computational burden of the quantization task, is also illustrated in the next section.
+Concerning now the number of intervals or factor levels $\boldsymbol{m} = (m_j)_1^d$, they have also to be estimated since in practice they are unknown. Looping over all candidates $\boldsymbol{m}$ is intractable. But in practice, by relying on the \textit{maximum a posteriori} procedure developed in Equation~(\ref{eq:ht}), we might drop a lot of unseen factor levels, \textit{e.g.}\ if $q_{\ag_{j,h}}(x_{i,j}) \ll 1$ for all training observations $\glssymbol{xij}$, the level $h$ ``vanishes'', \textit{i.e.}\ $\hat{q}_{j,h} = 0$. In practice, I recommend to start with a user-chosen $\bm{m}=\boldsymbol{m}_{\max}$ and we will see in the experiments of Section~\ref{sec:experiments} that the proposed approach is able to explore small values of $\boldsymbol{m}$ and to select a value $\hat{\boldsymbol{m}}$ drastically smaller than $\boldsymbol{m}_{\max}$. This phenomenon, which reduces the computational burden of the quantization task, is also illustrated in Section~\ref{sec:experiments}.
 
-
+The full algorithm is described in Appendix~\ref{app1:glmdiscNN}.
 
 
 \section{An \gls{sem} approach} \label{sec:sem}
@@ -518,9 +520,9 @@ Thirdly, the component-wise nature of the quantization can be stated as:
 
 
 
-\subsection{Continuous relaxation of the quantization as seen as fuzzy assignment}
+\subsection{Continuous relaxation of the quantization as seen as fuzzy assignment} \label{subsec:fuzzy}
 
-If we consider the deterministic discretization scheme defined in Section~\ref{sec:model_selection}, we have:
+If we consider the deterministic discretization scheme defined in Section~\ref{sec:model_selection}, we have, analogous to Equation~\eqref{eq:qj}:
 $$
 p(\bqk_j | x_j) = 1 \text{ if } x_j \in C_{j,h} \text{ and } \qk_{j,h} = 1, 1 \leq h \leq m_j,
 $$
@@ -528,13 +530,13 @@ which is a step function. Rewriting $p(y| \glssymbol{bx})$ by integrating over t
 % and using hypotheses~\ref{hyp:true}, \ref{hyp:squeeze} and \ref{hyp:component} respectively, 
 we get:
 \begin{align*}
-p(y | \glssymbol{bx}) & = p_{\glssymbol{bth}^\star}(y | \bqk^\star) & \text{ (using \ref{hyp:true}) } \\
+p(y | \glssymbol{bx}) & = p_{\glssymbol{bth}^\star}(y | \bqk^\star) & \text{ (using \eqref{hyp:true}) } \\
 & = \sum_{\bqk \in \Q} p(y, \bqk | \glssymbol{bx}) \\
 & = \sum_{\bqk \in \Q} p(y | \bqk, \glssymbol{bx}) p(\bqk | \glssymbol{bx}) \\
-& = \sum_{\bqk \in \Q} p(y | \bqk) p(\bqk | \glssymbol{bx}) & \text{ (using \ref{hyp:squeeze}) } \\
-& = \sum_{\bqk \in \Q} p(y | \bqk) \prod_{j=1}^d p(\bqk_j | x_j) & \text{ (using \ref{hyp:component}) }
+& = \sum_{\bqk \in \Q} p(y | \bqk) p(\bqk | \glssymbol{bx}) & \text{ (using \eqref{hyp:squeeze}) } \\
+& = \sum_{\bqk \in \Q} p(y | \bqk) \prod_{j=1}^d p(\bqk_j | x_j) & \text{ (using \eqref{hyp:component}) }
 \end{align*}
-The well-specified model hypothesis~\ref{hyp:true} yields for all $x_j$, $p(\bqk_j^\star | x_j) = 1$. Conversely, for $\bqk \in \Q$ such that $\bqk \cancel{\mathcal{R}_{\mathcal{T}_n}} \bqk^\star$, there exists a feature $j$ and an observation $x_{i,j}$ such that $p(\bqk_j | x_j) = 0$. Consequently, the above sum, over all training observations in $\mathcal{T}_n$, reduces to:
+The well-specified model hypothesis~\eqref{hyp:true} yields for all $x_j$, $p(\bqk_j^\star | x_j) = 1$. Conversely, for $\bqk \in \Q$ such that $\bqk \cancel{\mathcal{R}_{\mathcal{T}_n}} \bqk^\star$, there exists a feature $j$ and an observation $x_{i,j}$ such that $p(\bqk_j | x_j) = 0$. Consequently, the above sum, over all training observations in $\mathcal{T}_n$, reduces to:
 \begin{align*}
 p(\glssymbol{bby} | \glssymbol{bbx}) & = \prod_{i=1}^n p(y_i | \glssymbol{bx}_i) \\
  & = \sum_{\bqk \in \Q} \prod_{i=1}^n p(y_i | \bqk_i) \prod_{j=1}^d p(\bqk_{i,j} | x_{i,j}) \\
@@ -544,37 +546,54 @@ Thus, we have :
 \[ \bqk^\star = \argmax_{\bqk \in \Q} \prod_{i=1}^n p(y_i | \bqk_i ) \prod_{j=1}^d p(\bqk_{i,j} | x_{i,j}). \]
 This new formulation of the best quantization is still untractable since it requires to evaluate all quantizations in $\Q$, although all terms except $\bqk^\star$ contribute to $0$ in the above $\argmax$. In the misspecfied model-case however, there is no such garantee but it can still be claimed that the best candidate $\bqk^\star$ in terms of criterion~\eqref{eq:BICq} dominates the sum.
 
-Our goal in the next Section is to generate $\bbqk$ from $p(\glssymbol{bby} | \cdot) \prod_{j=1}^d p(\cdot | \glssymbol{bbx}_j)$. Among other things detailed later on, we shall propose models for $p(\glssymbol{bby} | \bqk)$ and $p(\bqk_j | x_j)$. If the resulting MCMC is efficient, $\q_\star$ will be the mode of the empirical distribution of generated candidates, which, as in Section~\ref{sec:proposal} with the neural network approach, can be selected with the BIC criterion~\eqref{eq:BICq}. Using \eqref{hyp:true}, it seems most natural to use a logistic regression for $p( y | \bqk_j)$. Following Section~\ref{sec:proposal} and as was empirically argumented in Section~\ref{subsec:relaxation}, $p(\bqk_j | x_j)$ will be parametrized by $\ag$. For a continuous feature, we resort to a poytomous logistic regression, similar to the softmax function of Equation~\eqref{eq:softmax} without the over-parametrization (one level per feature $j$, say $m_j$, is considered reference). For categorical features, simple contingency tables are employed. Similarly, $p(\bqk | x_j)$ are no more step functions but smooth functions as in Figure~\ref{fig:MAP}.
+Our goal in the next Section is to generate good candidates $\bbqk$ as in Section~\ref{sec:estim}. Among other things detailed later on, we shall propose models for $p(\glssymbol{bby} | \bqk)$ and $p(\bqk_j | x_j)$. If the resulting MCMC is efficient, $\q_\star$ will be the mode of the empirical distribution of generated candidates, which, as in Section~\ref{sec:proposal} with the neural network approach, can be selected with the BIC criterion~\eqref{eq:BICq}. Using \eqref{hyp:true}, it seems most natural to use a \gls{lr} for $p( y | \bqk_j)$. Following Section~\ref{sec:proposal} and as was empirically argumented in Section~\ref{subsec:relaxation}, $p(\bqk_j | x_j)$ will be parametrized by $\ag_j$. 
+
+{\bf For a continuous feature}, we resort to a polytomous logistic regression, similar to the softmax function of Equation~\eqref{eq:softmax} without the over-parametrization (one level per feature $j$, say $m_j$, is considered reference):
+\[ p_{\ag_{j,h}}(\bqk_j | x_j) = \begin{cases} \frac{1}{\sum_{h'=1}^{m_j-1} \exp(\alpha_{j,h'}^0 + \alpha_{j,h'}^1 x_j)} \text{ if } h = m_j, \\ \frac{\alpha_{j,h}^0 + \alpha_{j,h}^1 x_j}{\sum_{h'=1}^{m_j-1} \exp(\alpha_{j,h'}^0 + \alpha_{j,h'}^1 x_j)} \text{ otherwise.} \end{cases} \]
+{\bf For categorical features}, simple contingency tables are employed:
+\[ p_{\ag_{j,h}^o}(\bqk_j | x_j) = \frac{|\bbqk_{j,h}|}{|\{x_j=o\}|} \text{ for } 1 \leq o \leq l_j \]
+Similarly, $p_{\ag_j}(\bqk_j | x_j)$ are no more step functions but smooth functions as in Figure~\ref{fig:MAP}.
 
 \subsection{Stochastic search of the best quantization} \label{subsec:stoch}
 
 We parametrized $p(y|\glssymbol{bx})$ as:
 \begin{equation}
-p(y | \glssymbol{bx}, \glssymbol{bth}, \ag) = \sum_{\bqk \in \Q} p_{\glssymbol{bth}}(y | \bqk) \prod_{j=1}^d p_{\ag}(\bqk_j | x_j)
+p(y | \glssymbol{bx}, \glssymbol{bth}, \ag) = \sum_{\bqk \in \Q} p_{\glssymbol{bth}}(y | \bqk) \prod_{j=1}^d p_{\ag_j}(\bqk_j | \glssymbol{bbx}_j)
 \end{equation}
-A straightforward way to maximize the likelihood of $p(y | \glssymbol{bx}, \glssymbol{bth}, \ag)$ in $(\glssymbol{bth}, \ag)$ (not to be mistaken with~\eqref{eq:lqa}), as was done in Section~\ref{sec:proposal}, to deduce $\q^\star$ from $\ag$ \textit{via} the $\argmax$ operation (see Section~\ref{subsec:relaxation} and Equation~\eqref{eq:ht}), is to use an \gls{em} algorithm.
+A straightforward way to maximize the likelihood of $p(y | \glssymbol{bx}, \glssymbol{bth}, \ag)$ in $(\glssymbol{bth}, \ag)$ (not to be mistaken with~\eqref{eq:lqa}), as was done in Section~\ref{sec:proposal}, to deduce $\q^\star$ from $\ag$ \textit{via} the $\argmax$ operation (see Section~\ref{subsec:relaxation} and Equation~\eqref{eq:ht}), is to use an \gls{em} algorithm~\cite{dempster1977maximum}.
 
-However, maximizing this likelihood directly is untractable as the Expectation step requires to sum over $\bqk \in \Q$ which is untractable. Classically, the \gls{em} can be replaced by an MCMC method called \Gls{sem}: the expectation (the sum over $\bqk \in \Q$) is approximated by the empirical distribution of draws $\bqk^{(1)}, \dots, \bqk^{(\max_{\text{iter}})}$ from $p_{\glssymbol{bth}}(y | \cdot) \prod_{j=1}^d p_{\ag}(\cdot | x_j)$.
+However, maximizing this likelihood directly is untractable as the Expectation step requires to sum over $\bqk \in \Q$. Classically, the \gls{em} can be replaced by an MCMC method called \acrlong{sem}~\cite{celeux1985sem}: the expectation (the sum over $\bqk \in \Q$) is approximated by the empirical distribution of draws $\bqk^{(1)}, \dots, \bqk^{(\max\_{\text{iter}})}$ from $p_{\glssymbol{bth}}(y | \cdot) \prod_{j=1}^d p_{\ag_j}(\cdot | x_j)$.
 
 \subsubsection{\gls{sem} as a quantization provider}
 
-As the parameters $\ag$ of $\q_{\ag}$ were initialized randomly in the neural network approach, the latent features observations $\bbqk^{(0)}$ are initialized randomly. At step $s$, the \gls{sem} algorithm allows us to compute the MLE of $\glssymbol{bth}$ (resp. $\ag$) as $\hat{\glssymbol{bth}}^{(s)}$ (resp. $\hat{\ag}^{(s)}$) given $\bbqk^{(s)}$. As the \gls{lr} $p_{\glssymbol{bth}}(y | \bqk)$ is multivariate, it is hard to sample simultaneously all latent features. We have to resort to the Gibbs-sampler~\cite{}: we sample $\bqk_j$ while holding latent features $\bqk_{-\{j\}}$ fixed:
-\[ \bqk_j^{(s+1)} \sim p_{\hat{\glssymbol{bth}}^{(s)}}(y | \bqk_{-\{j\}}^{(s)}, \cdot) p_{\hat{\ag}^{(s)}}(\cdot | x_j) \]
+As the parameters $\ag$ of $\q_{\ag}$ were initialized randomly in the neural network approach, the latent features observations $\bbqk^{(0)}$ are initialized randomly. At step $s$, the \gls{sem} algorithm allows us to compute the MLE of $\glssymbol{bth}$ (resp. $\ag$) as $\hat{\glssymbol{bth}}^{(s)}$ (resp. $\hat{\ag}^{(s)}$) given $\bbqk^{(s)}$ by maximizing the following likelihoods:
+\begin{alignat}{2}
+\hat{\glssymbol{bth}}^{(s)} & = \argmax_{\glssymbol{bth}} \ell(\glssymbol{bth}; \bbqk^{(s)}, \glssymbol{bby}) && = \argmax_{\glssymbol{bth}} \sum_{i=1}^n \ln p_{\glssymbol{bth}}(y_i | \bqk^{(s)}_i), \nonumber \\
+\hat{\ag_j}^{(s)} & = \argmax_{\ag_j} \ell(\ag_j; \glssymbol{bbx}_j, \bbqk^{(s)}_j) && = \argmax_{\ag_j} \sum_{i=1}^n \ln p_{\ag_j}(\bqk^{(s)}_{i,j} | x_{i,j}) \text{ for } 1 \leq j \leq d. \label{eq:mle_ag}
+\end{alignat}
+
+As the \gls{lr} $p_{\glssymbol{bth}}(y | \bqk)$ is multivariate, it is hard to sample simultaneously all latent features. We have to resort to the Gibbs-sampler~\cite{casella1992explaining}: we sample $\bqk_j$ while holding latent features $\bqk_{-\{j\}}$ fixed:
+\begin{equation} \label{eq:q_draw}
+\bqk_j^{(s+1)} \sim p_{\hat{\glssymbol{bth}}^{(s)}}(y | \bqk_{-\{j\}}^{(s)}, \cdot) p_{\hat{\ag}^{(s)}}(\cdot | x_j)
+\end{equation}
 We repeat this process for all features $1 \leq j \leq d$.
 
-This MCMC provides parameters $\hat{\ag}^{(1)}, \dots, \hat{\ag}^{(\max_{\text{iter}})}$ which can be used to produce $\hat{\q}^{(1)}, \dots, \hat{\q}^{(\max_{\text{iter}})}$ as in Equation~\eqref{eq:ht}. The best proposed quantization $\q^\star$ is thus chosen among them \textit{via} the BIC criterion as in Equation~\eqref{eq:}.
+%This MCMC provides parameters $\hat{\ag}^{(1)}, \dots, \hat{\ag}^{(\max\_{\text{iter}})}$ which can be used to produce $\hat{\q}^{(1)}, \dots, \hat{\q}^{(\max\_{\text{iter}})}$ following the \textit{maximum a posteriori} scheme from Equation~\eqref{eq:ht}. The best proposed quantization $\q^\star$ is thus chosen among them \textit{via} the BIC criterion as in Equation~\eqref{eq:opt_epoch}.
 
-\textcolor{red}{mettre les liens formels avec les annexes}
 
 \subsubsection{Validity of the approach}
 
+The pseudo-completed sample $(\glssymbol{bbx}, \bbqk^{(s)}, \glssymbol{bby})$ allows to compute $(\hat{\glssymbol{bth}}^{(s)},\hat{\ag}^{(s)})$ which do not converge to the MLE of $p(\glssymbol{bby} | \glssymbol{bbx}, \glssymbol{bth}, \ag)$, for the simple reason that, being random in essence, it does not converge pointwise. From its authors, the \gls{sem} is however expected to be directed by the \gls{em} dynamics~\cite{celeux_sem} and as any MCMC approach, its empirical distribution converges to the target distribution $p(\glssymbol{bby} | \glssymbol{bbx}, \glssymbol{bth}, \ag)$ provided such a distribution exists and is unique. This existence is guaranteed by remarking that for all features $j$, $ p(\bqk_j | x_j, \bqk^{(s)}_{-\{j\}} y, \glssymbol{bth}, \ag) \propto p_{\glssymbol{bth}}(y | \bqk^{(s)}_{-\{j\}}, \bqk_j) p_{\ag_j}(\bqk_j | x_j) > 0 $ by definition of the \gls{lr} and polytomous logistic regressions or the contingency tables respectively. The uniqueness is not guaranteed since levels can disappear and there is an absorbing state (the empty model): this point is detailed in the next Section.
 
-
+In its original purpose~\cite{celeux_sem}, the \gls{sem} was employed either to find good starting points for the \gls{em} (\textit{e.g.}\ to avoid local maxima) or to propose an estimator of the MLE of the target distribution as the mean or the mode of the resulting empirical distribution, eventually after a burn-in phase. As, in our setting, we are not interested directly in the MLE but only to the best quantization in the sense of Equation~\eqref{eq:BICq}, we compute $\hat{\q}^{(1)}, \dots, \hat{\q}^{(\max\_{\text{iter}})}$ following the \textit{maximum a posteriori} scheme from Equation~\eqref{eq:ht}. The best proposed quantization $\q^\star$ is thus chosen among them \textit{via} the BIC criterion as in Equation~\eqref{eq:opt_epoch}.
 
 \subsubsection{Choosing an appropriate number of levels}
 
-Contrary to the neural network approach developed in Section~\ref{sec:proposal}, the \gls{sem} algorithm alternates between drawing $\bbqk^{(s)}$ and fitting $\hat{\glssymbol{bth}}^{(s)}$ and $\hat{\ag}^{(s)}$  at each step $s$. Therefore, additionally to the phenomenon caused by the \textit{maximum a posteriori} procedure similar to the neural network approach, if a level $h$ of $\bqk$ is not drawn from $ p_{\glssymbol{bth}}(y | \bqk_{-\{j\}}, \cdot) \prod_{j=1}^d p_{\ag}(\cdot | x_j) $ at step $s$, then at step $s+1$ when adjusting parameters $\ag_j$, the level will have disappeared and cannot be drawn again (for which a Reversible-Jump MCMC approach would be needed~\cite{green1995reversible} and contrary to the neural network approach). As a consequence, with a design matrix of fixed size $n$, there is a non-zero probability that for any given feature, any of its levels ``vanishes'' at each step. The MCMC has thus an absorbing state for which all features are quantized into one level (the empty model with no features) which is reached in a finite number of steps (although very high if $n$ is sufficiently large as is the case with \textit{Credit Scoring} data). The \gls{sem} algorithm is an effective way to start from a high number of levels per feature $\bm{m}_{\max}$ and explore smaller values.
+Contrary to the neural network approach developed in Section~\ref{sec:proposal}, the \gls{sem} algorithm alternates between drawing $\bbqk^{(s)}$ and fitting $\hat{\glssymbol{bth}}^{(s)}$ and $\hat{\ag}^{(s)}$  at each step $s$. Therefore, additionally to the phenomenon of ``vanishing'' levels caused by the \textit{maximum a posteriori} procedure similar to the neural network approach, if a level $h$ of $\bqk$ is not drawn, following Equation~\eqref{eq:q_draw}, at step $s$, then at step $s+1$ when adjusting parameters $\ag_j$ by maximum likelihood from Equation~\eqref{eq:mle_ag}, this level will have disappeared and cannot be drawn again. A Reversible-Jump MCMC approach would be needed~\cite{green1995reversible} to ``resuscitate'' these levels, which is not needed in the neural network approach because its architecture is fixed in advance. As a consequence, with a design matrix of fixed size $n$, there is a non-zero probability that for any given feature, any of its levels collapses at each step such that $m_j^{(s+1)} \leftarrow m_j^{(s)} - 1$.
 
+The MCMC has thus an absorbing state for which all features are quantized into one level (the empty model with no features) which is reached in a finite number of steps (although very high if $n$ is sufficiently large as is the case with \textit{Credit Scoring} data). The \gls{sem} algorithm is an effective way to start from a high number of levels per feature $\bm{m}_{\max}$ and explore smaller values.
+
+The full algorithm is described in Appendix~\ref{app1:glmdiscSEM}.
 
 \section{Numerical experiments} \label{sec:experiments}
 
@@ -662,7 +681,7 @@ Algorithm & $n$ & (a) $\hat{c}_{j,2}$ & (b) & $\hat{m}_1$ & (c) & $\hat{m}_3$ \\
     \caption{\label{fig:MAP} Quantizations $\hat{\q}^{(t)}_1(\glssymbol{x}_1)$ of experiment (a) resulting from the thresholding (\ref{eq:ht}).}
 \end{figure}
 
-\subsection{Benchmark data}
+\subsection{Benchmark data} \label{subsec:exp_benchmark}
 
 To test further the effectiveness of \textit{glmdisc} in a predictive setting, I gathered 6 datasets from the UCI library: the Adult dataset ($n=48,842$, $d=14$), the Australian dataset ($n=690$, $d=14$), the Bands dataset ($n=512$, $d=39$), the Credit-screening dataset ($n=690$, $d=15$), the German dataset ($n=1,000$, $d=20$) and the Heart dataset ($n=270$, $d=13$). Each of these datasets have mixed (continuous and categorical) features and a binary response to predict. To get more information about these datasets, their respective features, and the predictive task associated with them, readers may refer to the UCI website\footnote{\cite{Dua:2017} : http://archive.ics.uci.edu/ml}.
 
@@ -673,23 +692,25 @@ Now that we made sure that our approach is empirically consistent, \textit{i.e.}
         \caption{Gini indices (the greater the value, the better the performance) of our proposed quantization algorithm \textit{glmdisc} and two baselines: ALLR and MDLP / $\chi^2$ tests obtained on several benchmark datasets from the UCI library.}
     \label{tab:banchmark}
 \begin{small}
-\begin{tabular}{llllll}
-Dataset & ALLR & \textit{ad hoc} methods & \makecell{Our proposal:\\ \textit{glmdisc}-NN} & \makecell{Our proposal:\\ \textit{glmdisc}-SEM} & \makecell{\textit{glmdisc}-SEM\\ w.\ interactions} \\
+\begin{tabular}{lllll}
+Dataset & ALLR & \textit{ad hoc} methods & \makecell{Our proposal:\\ \textit{glmdisc}-NN} & \makecell{Our proposal:\\ \textit{glmdisc}-SEM} \\
 \hline
-Adult & 81.4 (1.0) & \textbf{85.3} (0.9) & 80.4 (1.0) & 0 & \\
-Australian & 72.1 (10.4) & 84.1 (7.5) & \textbf{92.5} (4.5) & 0 & \\
-Bands & 48.3 (17.8) & 47.3 (17.6) & \textbf{58.5} (12.0) & 0 & \\
-Credit & 81.3 (9.6) & 88.7 (6.4) & \textbf{92.0} (4.7) & 0 & \\
-German & 52.0 (11.3) & 54.6 (11.2) & \textbf{69.2} (9.1) & 0 & \\
-Heart & 80.3 (12.1) & 78.7 (13.1) & \textbf{86.3} (10.6) & 0 & 
+Adult & 81.4 (1.0) & \textbf{85.3} (0.9) & 80.4 (1.0) & 0 \\
+Australian & 72.1 (10.4) & 84.1 (7.5) & \textbf{92.5} (4.5) & 0 \\
+Bands & 48.3 (17.8) & 47.3 (17.6) & \textbf{58.5} (12.0) & 0 \\
+Credit & 81.3 (9.6) & 88.7 (6.4) & \textbf{92.0} (4.7) & 0 \\
+German & 52.0 (11.3) & 54.6 (11.2) & \textbf{69.2} (9.1) & 0 \\
+Heart & 80.3 (12.1) & 78.7 (13.1) & \textbf{86.3} (10.6) & 0 
 \end{tabular}
 \end{small}
 \end{table}
 
-
 \textcolor{red}{ajouter SEM}
 
-\subsection{\textit{Credit Scoring} data}
+
+
+
+\subsection{\textit{Credit Scoring} data} \label{subsec:exp_real}
 
 
 Discretization, grouping and interaction screening are preprocessing steps relatively ``manually'' performed in the field of \textit{Credit Scoring}, using $\chi^2$ tests for each feature or so-called Weights of Evidence (\cite{zeng2014necessary}). This back and forth process takes a lot of time and effort and provides no particular statistical guarantee.
@@ -708,15 +729,16 @@ The usefulness of discretization and grouping is clear on \textit{Credit Scoring
     \label{tab:real_data}
 \begin{footnotesize}
 %\begin{tabular}{lp{0.1\linewidth}p{0.138\linewidth}p{0.13\linewidth}p{0.15\linewidth}p{0.15\linewidth}l}
-\begin{tabular}{lllllll}
-Portfolio & ALLR & \makecell{Current\\performance} & \makecell{\textit{ad hoc}\\methods} & \makecell{Our proposal:\\ \textit{glmdisc}-NN} & \makecell{Our proposal:\\ \textit{glmdisc}-SEM} & \makecell{\textit{glmdisc}-SEM\\ w.\ interactions} \\
+\begin{tabular}{llllll}
+Portfolio & ALLR & \makecell{Current\\performance} & \makecell{\textit{ad hoc}\\methods} & \makecell{Our proposal:\\ \textit{glmdisc}-NN} & \makecell{Our proposal:\\ \textit{glmdisc}-SEM} \\
 \hline
-Automobile & \bf{59.3} (3.1) & 55.6 (3.4) & \bf{59.3} (3.0) & 58.9 (2.6) & & \\
-Renovation & 52.3 (5.5) & 50.9 (5.6) & 54.0 (5.1) & \bf{56.7} (4.8) & & \\
-Standard & 39.7 (3.3) & 37.1 (3.8) & \bf{45.3} (3.1) & 43.8 (3.2) & & \\
-Revolving & 62.7 (2.8) & 58.5 (3.2) & \bf{63.2} (2.8) & 62.3 (2.8) & & \\
-Mass retail & 52.8 (5.3) & 48.7 (6.0) & 61.4 (4.7) & \bf{61.8} (4.6) & & \\
-Electronics & 52.9 (11.9) & 55.8 (10.8) & 56.3 (10.2)  & \bf{72.6} (7.4) & & 
+Automobile & \bf{59.3} (3.1) & 55.6 (3.4) & \bf{59.3} (3.0) & 58.9 (2.6) & \\
+Renovation & 52.3 (5.5) & 50.9 (5.6) & 54.0 (5.1) & \bf{56.7} (4.8) & \\
+Standard & 39.7 (3.3) & 37.1 (3.8) & \bf{45.3} (3.1) & 43.8 (3.2) & \\
+Revolving & 62.7 (2.8) & 58.5 (3.2) & \bf{63.2} (2.8) & 62.3 (2.8) & \\
+Mass retail & 52.8 (5.3) & 48.7 (6.0) & 61.4 (4.7) & \bf{61.8} (4.6) & \\
+Electronics & 52.9 (11.9) & 55.8 (10.8) & 56.3 (10.2)  & \bf{72.6} (7.4) & \\
+Behavioural &  &  &  &  & 
 \end{tabular}
 \end{footnotesize}
 \end{table}

@@ -18,6 +18,8 @@ In Chapter~\ref{chap1}, and parallel to quantization, it was argued in Section~\
 
 \subsection{Context}
 
+As was emphasized in all previous Chapters, \gls{lr} is the building block of a scorecard predicting the creditworthiness of an applicant and partly automating the acceptance / rejection mechanism. However, .
+
 En matières de crédit à la consommation, les instituts financiers cherchent à automatiser la d´ecision de financement tout en ne sélectionnant que les clients susceptibles de rembourser ledit crédit. Depuis une quarantaine d’années, le Credit Scoring consiste à construire des modèles de classification supervisée $p_{\glssymbol{bth}}$ à partir des données demandées au clients $\glssymbol{bx} = (x_j)_1^d$ et de l’observation du remboursement des clients passés $y \in \{0, 1\}$. Historiquement, des scores différents sont développés sur des marchés (\textit{e.g.}\ grande distribution, électroménager, \dots) et/ou des produits (e.g. renouvelable, amortissable, \dots) et/ou des partenaires et/ou des profils clients différents dans l’esprit de la figure~\ref{fig:arbre}. Ce découpage est historique et relève d’un \textit{a priori}. On cherche ici à rationnaliser cette pratique en considérant le cluster d’appartenance du client comme un paramètre à optimiser. Si l’on note $K$ le nombre de scores à construire (inconnu) et $c = 1..K$ chaque score, correspondant à un cluster de clients, le mélange de régressions logistiques s’écrit : $p(y|x) = \sum_{c=1}^K p_{\glssymbol{bth}_c}(y|x, c)p(c|x)$, où l’on restreint $p(c|x)$ à prendre la forme de la figure~\ref{fig:arbre}, de telle sorte que le mélange n’est pas “flou” comme pour un modèle de mélange classique où la contribution de chaque classe est pondérée par sa probabilité. La
 difficulté d’une approche directe réside dans cette contrainte discrète.
 
@@ -64,7 +66,7 @@ difficulté d’une approche directe réside dans cette contrainte discrète.
               edge from parent node [above] {Automobile} };
 \end{tikzpicture}
 }
-\caption{Simplified cartography of the application scorecards.} 
+\caption{Simplified cartography of the application scorecards.}
 \label{fig:arbre}
 \end{figure}
 
@@ -72,6 +74,120 @@ difficulté d’une approche directe réside dans cette contrainte discrète.
 
 
 \subsection{In-house \textit{ad hoc} practice}
+
+Additionally to 
+
+
+
+\subsection{These practices can fail}
+
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+
+
+\begin{axis}[xtick=\empty, ytick=\empty, xlabel={\large Revenus}, ylabel={\large Endettement}]
+\myGlobalTransformation{0}{0};
+
+% pauvres
+\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand+x};
+\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand+x+2.5};
+
+%moyens
+\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=2:6]{rand+x};
+\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=2:6]{rand+x+2.5};
+
+%riches
+\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=7:11]{rand+x};
+\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=7:11]{rand+x+2.5};
+
+%frontière
+\addplot [black, very thick, domain=-3:11] {x+1.25};
+\end{axis}
+
+
+\end{tikzpicture}
+\caption{\label{fig:xdiff} blabla}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+
+
+\begin{axis}[xtick=\empty, ytick=\empty, xlabel={\large Revenus}, ylabel={\large Endettement},domain=-3:1, enlargelimits=false,ymin=-3,ymax=6]
+\myGlobalTransformationbis{0}{0};
+
+% techniciens
+\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand};
+\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand-2};
+\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand-4};
+\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand+2.5};
+\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand+4.5};
+\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand+6.5};
+
+%frontière
+\addplot [black, very thick, domain=-3:1] {1.25};
+\end{axis}
+
+
+
+
+
+\begin{axis}[xtick=\empty, ytick=\empty, xlabel={\large Revenus}, ylabel={\large Endettement},domain=-3:1, enlargelimits=false,ymin=-3,ymax=6]
+\myGlobalTransformationbis{0}{3};
+
+% cadres
+\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand-x};
+\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand-x-2};
+\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand-x-4};
+\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand-x+2.5};
+\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand-x+4.5};
+\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand-x+6.5};
+
+%frontière
+\addplot [black, very thick, domain=-3:1] {-x+1.25};
+\end{axis}
+
+
+
+\begin{axis}[xtick=\empty, ytick=\empty, xlabel={Revenus}, ylabel={Endettement},domain=-3:1, enlargelimits=false,ymin=-3,ymax=6]
+\myGlobalTransformationbis{0}{6};
+
+% libérales
+\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand+x};
+\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand+x-2};
+\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand+x-4};
+\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand+x+2.5};
+\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand+x+4.5};
+\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand+x+6.5};
+\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand+x+8.5};
+
+%frontière
+\addplot [black, very thick, domain=-3:1] {x+1.25};
+\end{axis}
+
+
+
+\end{tikzpicture}
+\caption{\label{fig:ydiff} bla}
+\end{figure}
+
+
+
 
 
 

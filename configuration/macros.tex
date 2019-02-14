@@ -106,3 +106,158 @@ yshift=-3ex,
 
 \definecolor{light-gray}{gray}{0.95}
 \newcommand{\code}[1]{\colorbox{light-gray}{\texttt{#1}}}
+
+
+\newcommand{\myGlobalTransformation}[2]
+{
+    \pgftransformcm{1}{0}{0.4}{0.5}{\pgfpoint{#1cm}{#2cm}}
+}
+
+
+\newcommand{\myGlobalTransformationbis}[2]
+{
+    \pgftransformcm{1}{0}{0.4}{0.3}{\pgfpoint{#1cm}{#2cm}}
+}
+
+\newcommand{\gridThreeD}[3]
+{
+    \begin{scope}
+        \myGlobalTransformation{#1}{#2};
+        \draw [#3,step=7cm] grid (7,7);
+    \end{scope}
+}
+
+\tikzstyle myBG=[line width=3pt,opacity=1.0]
+
+\newcommand{\drawLinewithBG}[2]
+{
+    \draw[white,myBG]  (#1) -- (#2);
+    \draw[black,very thick] (#1) -- (#2);
+}
+
+\newcommand{\graphLinesHorizontal}
+{
+    \drawLinewithBG{1,1}{7,1};
+    \drawLinewithBG{1,3}{7,3};
+    \drawLinewithBG{1,5}{7,5};
+    \drawLinewithBG{1,7}{7,7};
+}
+
+\newcommand{\graphLinesVertical}
+{
+    %swaps x and y coordinate (hence vertical lines):
+    \pgftransformcm{0}{1}{1}{0}{\pgfpoint{0cm}{0cm}}
+    \graphLinesHorizontal;
+}
+
+\newcommand{\graphThreeDnodes}[2]
+{
+    \begin{scope}
+        \myGlobalTransformation{#1}{#2};
+        \foreach \x in {1,3,5,7} {
+            \foreach \y in {1,3,5,7} {
+                \node at (\x,\y) [circle,fill=black,scale=0.3] {};
+                %this way circle of nodes will not be transformed
+            }
+        }
+    \end{scope}
+}
+
+\newcommand\rstyle{%
+  \NoAutoSpacing
+  \lstset{%
+    language=R,
+    alsoletter={_},
+otherkeywords={install_github},             % Add keywords here
+%    basicstyle=\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{green},
+%    numbers=left,
+%    numberstyle=\tiny,
+%    numbersep=5pt,
+  numbers=left,                   % where to put the line-numbers
+  numberstyle=\tiny\color{blue},  % the style that is used for the line-numbers
+  stepnumber=1,                   % the step between two line-numbers. If it is 1, each line
+                                  % will be numbered
+  numbersep=5pt,                  % how far the line-numbers are from the code
+  showspaces=false,               % show spaces adding particular underscores
+  showstringspaces=false,         % underline spaces within strings
+  showtabs=false,                 % show tabs within strings adding particular underscores
+  breaklines=true,                % sets automatic line breaking
+  breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+    frame=single%
+  }%
+}
+
+\lstnewenvironment{rlisting}
+{\rstyle}{}
+
+\newcommand\rinline[1]{{\rstyle\lstinline!#1!}}
+
+\newcommand\pystyle{%
+  \NoAutoSpacing
+  \lstset{%
+    language=R,
+    alsoletter={_},
+    alsoletter={.},
+otherkeywords={install_github},             % Add keywords here
+%    basicstyle=\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{green},
+%    numbers=left,
+%    numberstyle=\tiny,
+%    numbersep=5pt,
+  numbers=left,                   % where to put the line-numbers
+  numberstyle=\tiny\color{blue},  % the style that is used for the line-numbers
+  stepnumber=1,                   % the step between two line-numbers. If it is 1, each line
+                                  % will be numbered
+  numbersep=5pt,                  % how far the line-numbers are from the code
+  showspaces=false,               % show spaces adding particular underscores
+  showstringspaces=false,         % underline spaces within strings
+  showtabs=false,                 % show tabs within strings adding particular underscores
+  breaklines=true,                % sets automatic line breaking
+  breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+    frame=single%
+  }%
+}
+
+\lstnewenvironment{pylisting}
+{\pystyle}{}
+
+\newcommand\pyinline[1]{{\pystyle\lstinline!#1!}}
+
+
+
+
+
+
+\newcommand\bashstyle{%
+  \NoAutoSpacing
+  \lstset{%
+    language=bash,
+    alsoletter={_},
+otherkeywords={install_github},             % Add keywords here
+%    basicstyle=\small,
+%    keywordstyle=\color{blue},
+%    stringstyle=\color{green},
+%    numbers=left,
+%    numberstyle=\tiny,
+%    numbersep=5pt,
+  numbers=left,                   % where to put the line-numbers
+%  numberstyle=\tiny\color{blue},  % the style that is used for the line-numbers
+  stepnumber=1,                   % the step between two line-numbers. If it is 1, each line
+                                  % will be numbered
+  numbersep=5pt,                  % how far the line-numbers are from the code
+  showspaces=false,               % show spaces adding particular underscores
+  showstringspaces=false,         % underline spaces within strings
+  showtabs=false,                 % show tabs within strings adding particular underscores
+  breaklines=true,                % sets automatic line breaking
+  breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+    frame=single%
+  }%
+}
+
+\lstnewenvironment{bashlisting}
+{\bashstyle}{}
+
+\newcommand\bashinline[1]{{\bashstyle\lstinline!#1!}}

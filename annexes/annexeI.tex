@@ -684,7 +684,7 @@ The \textit{MDLP} algorithm~\cite{fayyad1993multi} is an entropy-based discretiz
 \subsection{Proposal: \textit{glmdisc}}
 
 
-\subsubsection{\textit{glmdisc} with neural networks}
+\subsubsection{\textit{glmdisc} with neural networks} \label{app1:glmdiscNN}
 
 This section describes the \textit{glmdisc}-NN algorithm developed in Chapter~\ref{chap4} and examplifies it on simulated data in Figure~\ref{fig:animNN}
 
@@ -704,7 +704,7 @@ This section describes the \textit{glmdisc}-NN algorithm developed in Chapter~\r
 
 \textcolor{red}{à décommenter // ajouter caption}
 
-\subsubsection{\textit{glmdisc} with an \gls{sem} algorithm}
+\subsubsection{\textit{glmdisc} with an \gls{sem} algorithm} \label{app1:glmdiscSEM}
 
 This section describes the \textit{glmdisc}-SEM algorithm developed in Chapter~\ref{chap4} and examplifies it on simulated data in Figure~\ref{fig:animSEM}
 
@@ -712,21 +712,21 @@ This section describes the \textit{glmdisc}-SEM algorithm developed in Chapter~\
  \KwData{$((\glssymbol{bbx}_j)_1^{d_1} \text{ (continuous features)},(\glssymbol{bbx}_j)_{d_1}^{d_1 + d_2} \text{ (categorical features)}, \glssymbol{bby}),\max\_\text{iter},\bm{m}_\text{start}$}
  \KwResult{$\hat{\q}$}
  Initialization of $\bm{q}^{(0)}$ at random\;
- $r = 0$\;
- \While{$r < \max\_\text{iter}$}{
-  Adjust logistic regression $\hat{\gamma}^{(r)} = \argmax_\gamma \ell(\gamma;\q^{(r)}, \bm{y})$\;
-  ${\q^{(r+1)}} \leftarrow {\q^{(r)}}$\;
+ $s = 0$\;
+ \While{$s < \max\_\text{iter}$}{
+  Adjust logistic regression $\hat{\gamma}^{(s)} = \argmax_\gamma \ell(\gamma;\q^{(s)}, \bm{y})$\;
+  ${\q^{(s+1)}} \leftarrow {\q^{(s)}}$\;
   \For{$k \leftarrow 1$ \KwTo $d_1$}{
-   Adjust multinomial logistic regression $\hat{\beta}_k^{(r)} = \argmax_\beta \ell(\beta;\glssymbol{bbx}_k,\q_k^{(r)})$\;
-   ${\q_k^{(r+1)}} \leftarrow$ Mult$\left( p_{\hat{\gamma}^{(r)}}(\bm{y}|\q^{(r+1)}) p_{\hat{\beta}^{k(r)}}(\q_{k} | \glssymbol{bx}_k) \right)$\;
-   ${\q_k^{\text{MAP}(r+1)}} \leftarrow \argmax_j p_{\hat{\beta}^{k(r)}}(\q_{k}=j | \bm{x}^k)$\;
+   Adjust multinomial logistic regression $\hat{\beta}_k^{(s)} = \argmax_\beta \ell(\beta;\glssymbol{bbx}_k,\q_k^{(s)})$\;
+   ${\q_k^{(s+1)}} \leftarrow$ Mult$\left( p_{\hat{\gamma}^{(s)}}(\bm{y}|\q^{(s+1)}) p_{\hat{\beta}^{k(s)}}(\q_{k} | \glssymbol{bx}_k) \right)$\;
+   ${\q_k^{\text{MAP}(s+1)}} \leftarrow \argmax_j p_{\hat{\beta}^{k(s)}}(\q_{k}=j | \bm{x}^k)$\;
    }
   \For{$k \leftarrow d_1+1$ \KwTo $d_1+d_2$}{
-   Form the contingency table T$_k^{(r)}$ of $\q_k^{(r)}$ against $\glssymbol{bbx}_k$, calculate the frequencies of each value of $({q}_{k},x_k)$\;
-	${\q_k^{(r+1)}} \leftarrow$ Mult$\left( p_{\hat{\gamma}^{(r)}}(\bm{y}|\q^{(r+1)}) p_{T_k^{(r)}}(\q_{k} | \glssymbol{bx}^k) \right)$\;
-	${\q_k^{MAP(r+1)}} \leftarrow \argmax_j p_{T_k^{(r)}}(\q_{k}=j | \glssymbol{bx}_k)$\;
+   Form the contingency table T$_k^{(s)}$ of $\q_k^{(s)}$ against $\glssymbol{bbx}_k$, calculate the frequencies of each value of $({q}_{k},x_k)$\;
+	${\q_k^{(s+1)}} \leftarrow$ Mult$\left( p_{\hat{\gamma}^{(s)}}(\bm{y}|\q^{(s+1)}) p_{T_k^{(s)}}(\q_{k} | \glssymbol{bx}^k) \right)$\;
+	${\q_k^{MAP(s+1)}} \leftarrow \argmax_j p_{T_k^{(s)}}(\q_{k}=j | \glssymbol{bx}_k)$\;
 	}
-   $r \leftarrow r+1$\;
+   $s \leftarrow s+1$\;
  }
  Choose the best quantization and logistic regression model from $ $ where $(p_{\hat{\eta}^{(r)}}(\bm{y} | \bm{e}_{MAP}^{(r)}))_1^{Max}$.
  \caption{\label{SEM-disc} \textit{glmdisc}-SEM: supervised multivariate discretization for logistic regression with an \gls{sem} algorithm.}
