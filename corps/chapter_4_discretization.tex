@@ -603,7 +603,7 @@ This section is divided into three complementary parts to assess the validity of
 \subsection{Simulated data: empirical consistency and robustness}
 
 I focus here on discretization of continuous features (similar experiments could be conducted on categorical ones). Two continuous features $x_1$ and $x_2$ are sampled from the uniform distribution on $[0,1]$ and discretized as exemplified on Figure~\ref{fig:exp_sim} by using
-\[\q_1(\cdot)=\q_2(\cdot) = (\mathds{1}_{]-\infty,1/3]}(\cdot),\mathds{1}_{]1/3,2/3]}(\cdot),\mathds{1}_{]2/3,\infty]}(\cdot)).\]
+\[\q_1(\cdot)=\q_2(\cdot) = (\mathds{1}_{]-\infty,1/3]}(\cdot),\mathds{1}_{]1/3,2/3]}(\cdot),\mathds{1}_{]2/3,\infty[}(\cdot)).\]
 Here, following (\ref{eq:Cjhcont}), we have $d=2$ and $m_1=m_2=3$ and the cutpoints are $c_{j,1}=1/3$ and $c_{j,2}=2/3$ for $j=1,2$. Setting $\glssymbol{bth}=(0,-2,2,0,-2,2,0)$, the target feature $y$ is then sampled from $p_{\glssymbol{bth}}(\cdot | \q(\glssymbol{bbx}))$ via the logistic model (\ref{eq:reglogq}).
 
 \begin{figure}
