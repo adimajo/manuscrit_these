@@ -327,15 +327,16 @@ where $\nu_\q$ is traditionally the number of continuous parameters to be estima
 \paragraph{Remark on model selection consistency} \label{par:consistency}
 
 In high-dimensional spaces and among models with a wildly varying number of parameters, classical model selection tools like BIC can have disappointing asymptotic properties, as emphasized in~\cite{chen2008extended}, where a modified BIC criterion, taking into account the number of models per parameter size, is proposed.
-Moreover in essence, as is apparent from the $\hat{\glssymbol{bth}}_\q$ symbol, and supplemental to the \gls{lr} coefficients $\glssymbol{bth}$, the inherent parameters of $\q$, which are the $C_{j,h}$ (see Equation~\eqref{eq:Cjhcont}) shall be accounted for in the penalization term $\nu_\q$: they are estimated indirectly in the subsequent Section.
-Lastly, in this setting, the BIC criterion relies on the Laplace approximation~\cite{lebarbier} which requires the likelihood to be twice differentiable in the parameters. However, as $\q$ consists in a collection of step functions of parameters $C_{j,h}$, this is not the case. For continuous features, since it is nevertheless almost everywhere differentiable, for the properties of the BIC criterion to hold, it suffices that there exists a neighbourhood $V_{j,h}$ around true parameters $c_{j,h}^\star$ where there is no observation: $\not\exists i, \: x_{i,j} \in V_{j,h}$.
+Moreover in essence, as is apparent from the $\hat{\glssymbol{bth}}_\q$ symbol, and supplemental to the \gls{lr} coefficients $\glssymbol{bth}$, the inherent parameters of $\q$, in the continuous case, which are the $c_{j,h}$ (see Equation~\eqref{eq:Cjhcont}) shall be accounted for in the penalization term $\nu_\q$: they are estimated indirectly in the subsequent Section.
+In addition, in this setting, the BIC criterion relies on the Laplace approximation~\cite{lebarbier} which requires the likelihood to be twice differentiable in the parameters. However, as $\q$ consists in a collection of step functions of parameters $C_{j,h}$, this is not the case. For continuous features, since it is nevertheless almost everywhere differentiable, for the properties of the BIC criterion to hold, it suffices that there exists a neighbourhood $V_{j,h}$ around true parameters $c_{j,h}^\star$ where there is no observation: $\not\exists i, \: x_{i,j} \in V_{j,h}$.
 
-\textcolor{red}{commentaire sur m}
+\textcolor{red}{cas catégoriel : référence de Vincent (on ne peut pas compter les paramètres discrets)}
 
-\textcolor{red}{cas catégoriel}
+Lastly, for the asymptotic properties of BIC to hold in the case of nested models (which is not \textit{stricto sensu} the case here since for any global quantization order $|\q|$ there are a lot of possible univariate quantization orders $|\q_j|$), any multiplicative constant to the number of parameters is appropriate. Indeed, suppose two nested models $M_i$, $M_t$ have parameters $|\q|_i > |\q|_t$ respectively; then, we have:
+\[ \text{BIC}_i - \text{BIC}_t \approx - \chi^2_{|\q|_i - |\q|_t} + C(|\q|_i - |\q|_t)\ln n, \]
+where $C=1$ for the BIC criterion but could be replaced by any other $C \in \mathbb{R}^+_\star$ since for $n \to + \infty$, $C(|\q|_i - |\q|_t)\ln n$ will dominate and reject the overly parametrized model $M_i$.
 
-%Moreover, as was shown in the previous Section, the number of quantizations in $\Q$ depends on $n$ whenever there is at least one continuous feature. This setting is tackled in~\cite{} where a new penalty is proposed: exponential weights are calculated to further penalize the size of the model space for a fixed number of parameter. As will be made clearer in the numerical experiments, $d$ and $m_j$ are rather ``low'' ($\approx 10$), so it was decided to stick with the BIC criterion.
-%\textcolor{red}{à compléter des idées de Massart}
+For all these reasons, we use in the remainder of this manuscript the BIC criterion which penalizes only on the logistic regression parameters $\glssymbol{bth}$.
 
 \section{The proposed neural network based quantization}
 \label{sec:proposal}

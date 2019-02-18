@@ -18,16 +18,16 @@ In Chapter~\ref{chap1}, and parallel to quantization, it was argued in Section~\
 
 \subsection{Context}
 
-As was emphasized in all previous Chapters, \gls{lr} is the building block of a scorecard predicting the creditworthiness of an applicant and partly automating the acceptance / rejection mechanism. However, estimating \gls{lr} coefficients means that training data $(\glssymbol{bbx},\glssymbol{bby})$ is available. This is not the case when a new product, \textit{e.g.}\ smartphone leasing, is added to the acceptance system. On a practical note, some other previously learnt scorecard may not be applicable on this new market because the same information is not asked to applicants, \textit{e.g.}\ marital status, because given the low amounts at stake, it was decided to collect the fewest data possible, to make the process as simple and quick as possible. On a more theoretical note, it is probable that applicants to smartphone leasing are not stemming from the same data generating mechanism $p(\glssymbol{bX},Y)$ as the .
+As was emphasized in all previous Chapters, \gls{lr} is the building block of a scorecard predicting the creditworthiness of an applicant and partly automating the acceptance / rejection mechanism. However, estimating \gls{lr} coefficients means that training data $(\glssymbol{bbx},\glssymbol{bby})$ is available. This is not the case when a new product, \textit{e.g.}\ smartphone leasing, is added to the acceptance system. On a practical note, some other previously learnt scorecard may not be applicable on this new market because the same information is not asked to applicants, \textit{e.g.}\ marital status, because given the low amounts at stake, it was decided to collect the fewest data possible, to make the process as simple and quick as possible. On a more theoretical note, it is probable that applicants to smartphone leasing are not stemming from the same data generating mechanism $p(\glssymbol{bX},Y)$ as any other previous applicants (\textit{i.e.}\ on other markets). Put it another way, the possibility of having several \gls{lr} scorecards on sub-populations of the total portfolio allows to have more flexibility, and thus potentially reduces model bias discussed in Chapter~\ref{chap1}.
 
+For these reasons, several industries, among which \textit{Credit Scoring}, rely on several ``weak learners'' such as \gls{lr}, arranged in a tree. We assume there are $K$ ``clusters'' which form the leaves of this tree and which assigning latent random feature is denoted by $C$ (lower-case for observations). The other notations employed inspire from the preceding Chapters: the superscript notation is used to insist on the fact that available features $\glssymbol{bx}^c$ differ potentially in each of the scorecards. It follows that quantizations $\q^c$ and interactions $\bdelta^c$, discussed in Chapters~\ref{chap4} and~\ref{chap5} respectively are also different. Consequently, the \gls{lr} coefficients $\glssymbol{bth}^c$ are also obviously different.
 
+Such decision process is illustrated on Figure~\ref{fig:arbre}. This tree structure and the vocabulary of ``weak learners'' would indicate a use-case of Mixtures of Experts~\cite{jordan1994hierarchical} or aggregation / ensemble methods~\cite{opitz1999popular} respectively. However, as is covered by the~\ref{sec:literature}~\nameref{sec:literature}, these fuzzy methods imply that all applicants are scored by all scorecards, which is obviously neither desirable (for interpretation purposes) nor feasible (since available features differ).
 
-En matières de crédit à la consommation, les instituts financiers cherchent à automatiser la d´ecision de financement tout en ne sélectionnant que les clients susceptibles de rembourser ledit crédit. Depuis une quarantaine d’années, le Credit Scoring consiste à construire des modèles de classification supervisée $p_{\glssymbol{bth}}$ à partir des données demandées au clients $\glssymbol{bx} = (x_j)_1^d$ et de l’observation du remboursement des clients passés $y \in \{0, 1\}$. Historiquement, des scores différents sont développés sur des marchés (\textit{e.g.}\ grande distribution, électroménager, \dots) et/ou des produits (e.g. renouvelable, amortissable, \dots) et/ou des partenaires et/ou des profils clients différents dans l’esprit de la figure~\ref{fig:arbre}. Ce découpage est historique et relève d’un \textit{a priori}. On cherche ici à rationnaliser cette pratique en considérant le cluster d’appartenance du client comme un paramètre à optimiser. Si l’on note $K$ le nombre de scores à construire (inconnu) et $c = 1..K$ chaque score, correspondant à un cluster de clients, le mélange de régressions logistiques s’écrit : $p(y|x) = \sum_{c=1}^K p_{\glssymbol{bth}_c}(y|x, c)p(c|x)$, où l’on restreint $p(c|x)$ à prendre la forme de la figure~\ref{fig:arbre}, de telle sorte que le mélange n’est pas “flou” comme pour un modèle de mélange classique où la contribution de chaque classe est pondérée par sa probabilité. La
-difficulté d’une approche directe réside dans cette contrainte discrète.
+The next Section illustrates how such a structure is achieved using \gls{cacf}'s in-house practices.
 
-
-\tikzstyle{level 1}=[level distance=2cm, sibling distance=7cm]
-\tikzstyle{level 2}=[level distance=2cm, sibling distance=4cm]
+\tikzstyle{level 1}=[level distance=2.2cm, sibling distance=7cm]
+\tikzstyle{level 2}=[level distance=2cm, sibling distance=5cm]
 \tikzstyle{level 3}=[level distance=2cm, sibling distance=3cm]
 
 \begin{figure}
@@ -44,25 +44,25 @@ difficulté d’une approche directe réside dans cette contrainte discrète.
   \node [root] {\textcolor{black}{Applicants}}
     child { node [dummy] {}
       child { node [dummy] {}
-        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}_1}(y|\q^1(\glssymbol{bx})))$}}
+        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^1}(y|\q^1(\glssymbol{bx}),\bdelta^1))$}}
           edge from parent node [below] {Renters} }
-        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}_2}(y|\q^2(\glssymbol{bx}))$}}
+        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^2}(y|\q^2(\glssymbol{bx}),\bdelta^2)$}}
           edge from parent node [above] {Salaried} }
-        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}_3}(y|\q^3(\glssymbol{bx}))$}}
+        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^3}(y|\q^3(\glssymbol{bx}),\bdelta^3)$}}
                 edge from parent node [above] {Others} }
         edge from parent node [above] {Revolving} }
-      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}_4}(y|\q^4(\glssymbol{bx}))$}}
+      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^4}(y|\q^4(\glssymbol{bx}),\bdelta^4)$}}
               edge from parent node [above, align=center]
                 {Standard loan} }
               edge from parent node [above] {Home Appliances} }
     child { node [dummy] {}
       child { node [dummy] {}
-        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}_5}(y|\q^5(\glssymbol{bx}))$}}
+        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^5}(y|\q^5(\glssymbol{bx}),\bdelta^5)$}}
           edge from parent node [above] {Leasing} }
-        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}_6}(y|\q^6(\glssymbol{bx}))$}}
+        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^6}(y|\q^6(\glssymbol{bx}),\bdelta^6)$}}
                 edge from parent node [above] {Standard loan} }
         edge from parent node [above] {Fiat} }
-      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}_7}(y|\q^7(\glssymbol{bx}))$}}
+      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^7}(y|\q^7(\glssymbol{bx}),\bdelta^7)$}}
               edge from parent node [above, align=center]
                 {Kawasaki} }
               edge from parent node [above] {Automobile} };
@@ -83,6 +83,11 @@ Additionally to
 
 \subsection{These practices can fail}
 
+Of course, like all \textit{ad hoc} methods that rely on ``two-stages'' procedures which do not share a common objective, the aforementioned in-house practice can fail. \textit{Credit Scoring} practitioners are probably aware that their methods are not bullet-proof, but like most industries, unless proven and provided to them with easily usable software, these practices remain.
+
+This Chapter has no intent in filling that gap as was ambitioned in Chapters~\ref{chap4} and~\ref{chap5} but rather to give insights on more elaborate, readily usable methods that will be covered in Section~\ref{sec:literature} and to propose a few ideas for future research. That is why, in the present, we show two data generating mechanisms where current in-house methods fail. In Section~\ref{sec:model_selec_tree}, we will propose an \gls{sem} algorithm that shares similitude with the one proposed for quantization in Section~\ref{sec:sem} that performs well where current methods fail.
+
+The first of these failing situations is when the density of covariates (suppose for simplicity that all of them are continuous) $p(\glssymbol{bx})$ is multi-modal as on Figure~\ref{fig:xdiff} where we distinguish the lower, middle and upper-classes of respective low, average and high wages and indebtedness. An unsupervised generative approach like PCA would urge the practitioner to construct 3 scorecards (one for each of the aforementioned classes). However, displaying $y$ as \textcolor{red}{red} (resp.\ \textcolor{green}{green}) for bad borrowers (resp.\ good borrowers), we can see that perfect separation can be achieved: it depends solely on the indebtedness level (the ratio of wages over indebtedness). Thus, the resulting scorecards would be asymptotically the same, but they use three times more parameters! In a finite sample setting, and following remarks in Chapters~\ref{chap1}, \ref{chap4} and~\ref{chap5} on model bias and model choice consistency, it will imply lower performance since each of these coefficients have three times less samples to train on, which amounts to increasing the variance by the same factor. On a practical note, one could argue that it reduces interpretability by adding an avoidable complexity to the decision system.
 
 
 \begin{figure}
@@ -94,16 +99,16 @@ Additionally to
 \myGlobalTransformation{0}{0};
 
 % pauvres
-\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand+x};
-\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand+x+2.5};
+\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand+x};
+\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=-3:1]{rand+x+2.5};
 
 %moyens
-\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=2:6]{rand+x};
-\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=2:6]{rand+x+2.5};
+\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=2:6]{rand+x};
+\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=2:6]{rand+x+2.5};
 
 %riches
-\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=7:11]{rand+x};
-\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=7:11]{rand+x+2.5};
+\addplot [green, only marks, mark=*, samples=300, mark size=0.75,domain=7:11]{rand+x};
+\addplot [red, only marks, mark=*, samples=300, mark size=0.75,domain=7:11]{rand+x+2.5};
 
 %frontière
 \addplot [black, very thick, domain=-3:11] {x+1.25};
@@ -111,17 +116,18 @@ Additionally to
 
 
 \end{tikzpicture}
-\caption{\label{fig:xdiff} blabla}
+\caption{\label{fig:xdiff} Multi-modal wages and indebtedness data generating mechanism with $y = \{0,1\}$ classes displayed in \textcolor{red}{red} and \textcolor{green}{green} respectively.}
 \end{figure}
 
 
+\textcolor{red}{lien avec les expériences}
+
+
+The second failing situation is the counterpart of the first tailored data generating mechanism. This time, suppose the covariates wages and indebtedness are uniformly sampled. Suppose there is a third categorical feature ``wages source'' which is drawn uniformly from three levels: renters, salaried workers and self-employed. One could argue that renters' risk level do not depend on their indebtedness, which is typically low (and a higher one is a major red flag), salaried workers' risk level is positively correlated with their indebtedness ratio as was the case for the first introductory example (see Figure~\ref{fig:xdiff}) and self-employed people's risk level is negatively correlated with this indebtedness ratio (say, the higher their personal engagement, the higher the chances of success of their business). This example data generating mechanism is illustrated on Figure~\ref{fig:ydiff}. In this situation, and contrary to the first example, an unsupervised generative clustering algorithm like PCA would not partition the data and the \textit{Credit Scoring} practitioner would construct only one scorecard. This scorecard would have high model bias since it is too simple to accommodate for the variety of the data generating mechanism and consequently perform poorly.
 
 
 
-
-
-
-
+\textcolor{red}{lien avec les expériences}
 
 
 
@@ -185,7 +191,7 @@ Additionally to
 
 
 \end{tikzpicture}
-\caption{\label{fig:ydiff} bla}
+\caption{\label{fig:ydiff} Uni-modal wages and indebtedness data generating mechanism with $y = \{0,1\}$ classes displayed in \textcolor{red}{red} and \textcolor{green}{green} respectively which depends on a third feature.}
 \end{figure}
 
 
@@ -195,10 +201,13 @@ Additionally to
 
 
 
-\section{Litterature review} \label{sec:literature}
+\section{Literature review} \label{sec:literature}
 
+This Section aims at providing an eluded literature review of some well-known supervised clustering approaches that could be transposed to the \textit{Credit Scoring} industry.
 
 \subsection{Clustering methods}
+
+In the preceding Section, examples of classical unsupervised clustering methods were given: PCA (continuous data), MCA (categorical data) and ultimately (mixed data). In this Section, focus is given to supervised generative methods. Indeed, a fully generative model $p(\glssymbol{bx},y)$, if sufficiently flexible, could have easily spotted the bottlenecks of the failures of the PCA approach illustrated on Figures~\ref{fig:xdiff} and~\ref{fig:ydiff}.
 
 
 \subsection{Direct approaches: logistic regression trees}
