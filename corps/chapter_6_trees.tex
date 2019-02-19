@@ -22,7 +22,7 @@ As was emphasized in all previous Chapters, \gls{lr} is the building block of a 
 
 For these reasons, several industries, among which \textit{Credit Scoring}, rely on several ``weak learners'' such as \gls{lr}, arranged in a tree. We assume there are $K$ ``clusters'' which form the leaves of this tree and which assigning latent random feature is denoted by $C$ (lower-case for observations). The other notations employed inspire from the preceding Chapters: the superscript notation is used to insist on the fact that available features $\glssymbol{bx}^c$ differ potentially in each of the scorecards. It follows that quantizations $\q^c$ and interactions $\bdelta^c$, discussed in Chapters~\ref{chap4} and~\ref{chap5} respectively are also different. Consequently, the \gls{lr} coefficients $\glssymbol{bth}^c$ are also obviously different.
 
-Such decision process is illustrated on Figure~\ref{fig:arbre}. This tree structure and the vocabulary of ``weak learners'' would indicate a use-case of Mixtures of Experts~\cite{jordan1994hierarchical} or aggregation / ensemble methods~\cite{opitz1999popular} respectively. However, as is covered by the~\ref{sec:literature}~\nameref{sec:literature}, these fuzzy methods imply that all applicants are scored by all scorecards, which is obviously neither desirable (for interpretation purposes) nor feasible (since available features differ).
+Such decision process is illustrated on Figure~\ref{fig:arbre}. This tree structure and the vocabulary of ``weak learners'' would indicate a use-case of Mixtures of Experts~\cite{jordan1994hierarchical} or aggregation / ensemble methods~\cite{opitz1999popular} respectively. However, as is covered by the~\nameref{sec:literature}, these fuzzy methods imply that all applicants are scored by all scorecards, which is obviously neither desirable (for interpretation purposes) nor feasible (since available features differ).
 
 The next Section illustrates how such a structure is achieved using \gls{cacf}'s in-house practices.
 
@@ -77,9 +77,25 @@ The next Section illustrates how such a structure is achieved using \gls{cacf}'s
 
 \subsection{In-house \textit{ad hoc} practice}
 
-Additionally to 
+\textit{Credit Scoring} practitioners are often asked by the management to study ``locally'' the decision process displayed on Figure~\ref{fig:arbre} by \textit{e.g.}\ merging branches (Standard loans and Leasing for Fiat) or conversely to spread sub-populations (Kawasaki into Standard loans and Leasing).
 
+\paragraph{\gls{pca}}
 
+The goal of \gls{pca}~\cite{pages2014multiple} is to represent observations graphically in a way that exhibits most efficiently their similitude and differences by combining input features in so-called orthogonal ``principal components'' $\bm{u} = (\bm{u}_1,\dots,\bm{u}_d)$ such that the inertia $\glssymbol{x}_i' \bm{u}_j$ of each axis $j$ is maximized. It can be shown that it is equivalent to seeking the ordering of the eigenvalues $\bm{\lambda} = (\lambda_1,\dots,\lambda_d)$ of the covariance matrix $\Sigma = \glssymbol{bbx}'\glssymbol{bbx}$. The explained variance of each axis $j$ is given by $\frac{\lambda_j}{\sum_{j'=1}^d \lambda_j'}$. Classically, only the two first axes $(\bm{u}_1,\bm{u}_2)$ are used to represent graphically the data in this new space and the \textit{Credit Scoring} practitioner decide if, visually, clusters are formed (\textit{i.e.}\ clouds with little intra-class variance) which would be used to build separate scorecards $(p_{\glssymbol{bth}^{1}},p_{\glssymbol{bth}^{2}})$, as is the case on Figure~\ref{fig:pca}. The method is described in Appendix~\ref{app1:pca}.
+
+However, the \textit{Credit Scoring} data is of mixed type and \textit{Credit Scoring} practitioners are used to quantizing the data as in Chapter~\ref{chap4} before testing for homogeneous clusters by using \textit{e.g.\ equal-freq} or $\chi^2$ tests (see Appendix~\ref{app1}).
+
+\paragraph{\gls{mca}}
+
+In presence of only categorical features (or following quantization), the \gls{mca} algorithm is more appropriate. It extends the \gls{pca} approach to categorical features by using the disjunctive table (dummy / one-hot encoding of $\glssymbol{bbx}$). For a thorough introduction to \gls{mca}, see \textit{e.g.}~\cite{lebart1995statistique}. What is most interesting in this method is that both categorical features' levels and observations can be simultaneously displayed on the first principal components axes, as is the case on Figure~\ref{fig:mca}. The method is described in Appendix~\ref{app1:mca}. This is of high practical interest in \textit{Credit Scoring} because clouds of points are directly characterized by the categorical levels that are displayed nearest, contrary to \gls{pca} where groups correspond to surfaces like $\glssymbol{bx} ' \bm{u}_1 + \glssymbol{bx} ' \bm{u}_2 \geq \alpha$ where $alpha$ encodes the decision of separation of resulting clusters, which would yield a decision system, as on Figure~\ref{fig:arbre}, arguably less interpretable.
+
+Nevertheless, a method applicable to mixed data exists as well and could directly be applied to ``raw'' features.
+
+\paragraph{\gls{famd}}
+
+The \gls{famd} algorithm~\cite{pages2014multiple} aims at performing both \gls{mca} on categorical features and \gls{pca} on continuous features in a simultaneous fashion. Resulting principal component axes depend on both data types, as can be seen from Figure~\ref{fi:famd}. The method is described in Appendix~\ref{app1:famd}. This method has the advantage of not requiring the \textit{Credit Scoring} practitioner to preprocess the ``raw'' data by quantizing it, which could have a huge impact on the results of the subsequent method employed, as argumented in Chapter~\ref{chap4}. Moreover, the practitioner would fine-tune the quantization of each sub-population which, if fed back to the \gls{mca}, would potentially yield completely different results!
+
+It appears clearly that all these methods do not directly optimize a predictive goal such as the one optimized by \gls{lr}. Moreover, the \textit{ad hoc} preprocessing step of quantization might influence the structure of the retained segmentation.
 
 \subsection{These practices can fail}
 
@@ -123,7 +139,7 @@ The first of these failing situations is when the density of covariates (suppose
 \textcolor{red}{lien avec les expériences}
 
 
-The second failing situation is the counterpart of the first tailored data generating mechanism. This time, suppose the covariates wages and indebtedness are uniformly sampled. Suppose there is a third categorical feature ``wages source'' which is drawn uniformly from three levels: renters, salaried workers and self-employed. One could argue that renters' risk level do not depend on their indebtedness, which is typically low (and a higher one is a major red flag), salaried workers' risk level is positively correlated with their indebtedness ratio as was the case for the first introductory example (see Figure~\ref{fig:xdiff}) and self-employed people's risk level is negatively correlated with this indebtedness ratio (say, the higher their personal engagement, the higher the chances of success of their business). This example data generating mechanism is illustrated on Figure~\ref{fig:ydiff}. In this situation, and contrary to the first example, an unsupervised generative clustering algorithm like PCA would not partition the data and the \textit{Credit Scoring} practitioner would construct only one scorecard. This scorecard would have high model bias since it is too simple to accommodate for the variety of the data generating mechanism and consequently perform poorly.
+The second failing situation is the counterpart of the first tailored data generating mechanism. This time, suppose the covariates wages and indebtedness are uniformly sampled. Suppose there is a third categorical feature ``wages source'' which is drawn uniformly from three levels: renters, salaried workers and self-employed. One could argue that renters' risk level do not depend on their indebtedness, which is typically low (and a higher one is a major red flag), salaried workers' risk level is positively correlated with their indebtedness ratio as was the case for the first introductory example (see Figure~\ref{fig:xdiff}) and self-employed people's risk level is negatively correlated with this indebtedness ratio (say, the higher their personal engagement, the higher the chances of success of their business). This example data generating mechanism is illustrated on Figure~\ref{fig:ydiff}. In this situation, and contrary to the first example, an unsupervised generative clustering algorithm like \gls{pca} would not partition the data and the \textit{Credit Scoring} practitioner would construct only one scorecard. This scorecard would have high model bias since it is too simple to accommodate for the variety of the data generating mechanism and consequently perform poorly.
 
 
 
@@ -207,11 +223,29 @@ This Section aims at providing an eluded literature review of some well-known su
 
 \subsection{Clustering methods}
 
-In the preceding Section, examples of classical unsupervised clustering methods were given: PCA (continuous data), MCA (categorical data) and ultimately (mixed data). In this Section, focus is given to supervised generative methods. Indeed, a fully generative model $p(\glssymbol{bx},y)$, if sufficiently flexible, could have easily spotted the bottlenecks of the failures of the PCA approach illustrated on Figures~\ref{fig:xdiff} and~\ref{fig:ydiff}.
+In the preceding Section, examples of classical unsupervised clustering methods were given: \gls{pca} (continuous data), \gls{mca} (categorical data) and ultimately \gls{famd} (mixed data). In this Section, focus is given to supervised generative methods. Indeed, a fully generative model $p(\glssymbol{bx},y)$, if sufficiently flexible, could have easily spotted the bottlenecks of the failures of the \gls{pca} approach illustrated on Figures~\ref{fig:xdiff} and~\ref{fig:ydiff}.
+
+\paragraph{\gls{pls}}
+
+
+
+\paragraph{\gls{satimix}}
+
+
+
+\paragraph{\gls{spc}}
+
 
 
 \subsection{Direct approaches: logistic regression trees}
 
+\paragraph{LOTUS}
+
+
+\paragraph{LMT}
+
+
+\paragraph{MOB}
 
 
 \section{Logistic regression trees as a combinatorial model selection problem} \label{sec:model_selec_tree}
@@ -244,7 +278,7 @@ In the preceding Section, examples of classical unsupervised clustering methods 
 
 \bigskip
 
-Ce chapitre.
+This chapter was .
 
 
 \printbibliography[heading=subbibliography, title=References of Chapter 5]
