@@ -73,7 +73,7 @@ p(\bdelta | \q(\glssymbol{bbx}),\glssymbol{bby}) & \propto p(\glssymbol{bby} | \
 
 This Section is dedicated to describing the Metropolis-Hastings~\cite{hastings1970monte} sampling algorithm that will be used in the next section to sample from $p(\bdelta | \q(\glssymbol{bbx}),\glssymbol{bby})$ that will be denoted, for simplicity, by $\pi(\bdelta)$ in this Section.
 
-The distribution $\pi(\bdelta)$ is not known explicitely but $f(\bdelta) = \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\q,\bdelta})/2) p(\bdelta)$ is proportional to $\pi(\bdelta)$. Consequently, given two matrices $\bdelta^{(1)},\bdelta^{(2)}$, the \gls{pdf} ratio is the same: $\frac{\pi(\bdelta^{(1)})}{\pi(\bdelta^{(2)})} = \frac{f(\bdelta^{(1)})}{f(\bdelta^{(2)})}$.
+The distribution $\pi(\bdelta)$ is not known explicitly but $f(\bdelta) = \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\q,\bdelta})/2) p(\bdelta)$ is proportional to $\pi(\bdelta)$. Consequently, given two matrices $\bdelta,\bdelta'$, the \gls{pdf} ratio is the same: $\frac{\pi(\bdelta)}{\pi(\bdelta')} = \frac{f(\bdelta)}{f(\bdelta')}$.
 
 Now suppose we have at our disposal a proposal distribution of the form:
 \begin{alignat}{2}
@@ -115,13 +115,13 @@ It follows from the preceding Section that one can design an MCMC algorithm like
 
 \subsubsection{Transition probability}
 
-Metropolis-Hastings only requires a proposal of a transition probability between two matrices of the Markov chain that was denoted by $\tr$. This approach would require to compute $2^{d(d-1)}$ probabilities (\textit{i.e.}\ one per unique couple of matrices ($\bdelta^{(1)},\bdelta^{(2)}$)). It is thus desirable to reduce this combinatorics by making further assumptions. In what follows, we restrict possible transitions to matrices that are on a one unit $L^{1,1}$ distance (sum of all absolute entries) to the current interaction matrix, or equivalently which belong to the $\left( \frac{d(d-1)}{2}-1 \right)$-sphere of center $\bdelta^{(1)}$ denoted by $S^{\left( \frac{d(d-1)}{2}-1 \right)}_{\bdelta^{(1)}}$: 
+Metropolis-Hastings only requires a proposal of a transition probability between two matrices of the Markov chain that was denoted by $\tr$. This approach would require to compute $2^{d(d-1)}$ probabilities (\textit{i.e.}\ one per unique couple of matrices ($\bdelta,\bdelta'$)). It is thus desirable to reduce this combinatorics by making further assumptions. In what follows, we restrict possible transitions to matrices that are on a one unit $L^{1,1}$ distance (sum of all absolute entries) to the current interaction matrix, or equivalently which belong to the $\left( \frac{d(d-1)}{2}-1 \right)$-sphere of center $\bdelta$ denoted by $S^{\left( \frac{d(d-1)}{2}-1 \right)}_{\bdelta}$: 
 \begin{align*}
-\tr(\bdelta^{(1)},\bdelta^{(2)}) = 0 & \text{ if } \sum_{k=1}^d \sum_{\ell=1}^d |\delta^{(1)}_{k,\ell} - \delta^{(2)}_{k,\ell}| \neq 1 \\
- & \equiv ||\bdelta^{(1)} - \bdelta^{(2)}||_{1,1} \neq 1 \\
- & \equiv \bdelta^{(2)} \not\in S^{\left( \frac{d(d-1)}{2}-1 \right)}_{\bdelta^{(1)}}.
+\tr(\bdelta,\bdelta') = 0 & \text{ if } \sum_{k=1}^d \sum_{\ell=1}^d |\delta_{k,\ell} - \delta'_{k,\ell}| \neq 1 \\
+ & \equiv ||\bdelta - \bdelta'||_{1,1} \neq 1 \\
+ & \equiv \bdelta' \not\in S^{\left( \frac{d(d-1)}{2}-1 \right)}_{\bdelta}.
 \end{align*}
-Only $\frac{d(d-1)}{2}$ coefficients are now needed, which can be reinterpreted as the probability to switch on (resp. off) an entry of $\bdelta^{(1)}$ which is currently off (resp. on). We claim that a good intuition about whether two features interact is the relative gain (or loss) in BIC between their bivariate model \textit{with} their interaction and this model \textit{without} their interaction. The rationale behind such a procedure, relying again on the properties of BIC, is the following: 
+Only $\frac{d(d-1)}{2}$ coefficients are now needed, which can be reinterpreted as the probability to switch on (resp. off) an entry of $\bdelta$ which is currently off (resp. on). We claim that a good intuition about whether two features interact is the relative gain (or loss) in BIC between their bivariate model \textit{with} their interaction and this model \textit{without} their interaction. The rationale behind such a procedure, relying again on the properties of BIC, is the following: 
 %\begin{align*}
 %\forall \: 1 \leq k < \ell \leq d, \; p(\delta_{k,\ell} | \q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell), \glssymbol{bby}) & \propto p(\q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell), \glssymbol{bby} | \delta_{k,\ell}) p(\delta_{k,\ell}) \\
 %& \approx \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\q_k,\q_\ell,\delta_{k,\ell}})/2) p(\delta_{k,\ell}).
@@ -263,15 +263,15 @@ The code used for numerical experiments is available as packages, see Appendix~\
 
 In this first part, focus is given on showing empirically the consistency of the approach. The same data generation process as in Chapter~\ref{chap4} is employed: two continuous features $x_1$ and $x_2$ are sampled from the uniform distribution on $[0,1]$ and discretized as exemplified on Figure~\ref{fig:exp_sim} by using
 \[\q_1(\cdot)=\q_2(\cdot) = (\mathds{1}_{]-\infty,1/3]}(\cdot),\mathds{1}_{]1/3,2/3]}(\cdot),\mathds{1}_{]2/3,\infty[}(\cdot)).\]
-Here, following (\ref{eq:Cjhcont}), we have $d=2$ and $m_1=m_2=3$ and the cutpoints are $c_{j,1}=1/3$ and $c_{j,2}=2/3$ for $j=1,2$. Setting $\glssymbol{bth}^{(1)}=(0,-2,2,0,-2,2,0)$, $\bdelta^{(1)} = 0$, $\glssymbol{bth}^{(2)} = (\glssymbol{bth}^{(1)},)$, $\bdelta^{(2)} = 1$ the target feature $y$ is then sampled from $p_{\glssymbol{bth}^{(o)}}(\cdot | \q(\glssymbol{bbx}), \bdelta^{(o)}), o = \{1,2\}$ via the logistic model (\ref{eq:reglogq}). Two cases are first studied:
+Here, following (\ref{eq:Cjhcont}), we have $d=2$ and $m_1=m_2=3$ and the cutpoints are $c_{j,1}=1/3$ and $c_{j,2}=2/3$ for $j=1,2$. Setting $\glssymbol{bth}^{1}=(0,-2,2,0,-2,2,0)$, $\bdelta^{1} = 0$, $\glssymbol{bth}^{2} = (\glssymbol{bth}^{1},)$, $\bdelta^{2} = 1$ the target feature $y$ is then sampled from $p_{\glssymbol{bth}^{o}}(\cdot | \q(\glssymbol{bbx}), \bdelta^{o}), o = \{1,2\}$ via the logistic model (\ref{eq:reglogq}). Two cases are first studied:
 \begin{enumerate}[(a)]
-    \item First, we assess that in the presence of a true interaction, it is discovered by our procedure, so that we simulate $Y \sim p_{\glssymbol{bth}^{(2)}}$ and provide $\q(\glssymbol{bbx})$;
-    \item Second, we assess that in the absence of a true interaction, no interaction is found by our procedure, so that we simulate $Y \sim p_{\glssymbol{bth}^{(1)}}$ and provide $\q(\glssymbol{bbx})$.
+    \item First, we assess that in the presence of a true interaction, it is discovered by our procedure, so that we simulate $Y \sim p_{\glssymbol{bth}^{2}}$ and provide $\q(\glssymbol{bbx})$;
+    \item Second, we assess that in the absence of a true interaction, no interaction is found by our procedure, so that we simulate $Y \sim p_{\glssymbol{bth}^{1}}$ and provide $\q(\glssymbol{bbx})$.
 \end{enumerate}
 As promised, two further cases are first studied:
 \begin{enumerate}[(a)]
-    \item First, we assess that in the presence of a true interaction, it is discovered by \textit{glmdisc} while quantizing the data, so that we simulate $Y \sim p_{\glssymbol{bth}^{(2)}}$ and provide $\glssymbol{bbx}$;
-    \item Second, we assess that in the absence of a true interaction, no interaction is found by \textit{glmdisc} while quantizing the data, so that we simulate $Y \sim p_{\glssymbol{bth}^{(1)}}$ and provide $\glssymbol{bbx}$.
+    \item First, we assess that in the presence of a true interaction, it is discovered by \textit{glmdisc} while quantizing the data, so that we simulate $Y \sim p_{\glssymbol{bth}^{2}}$ and provide $\glssymbol{bbx}$;
+    \item Second, we assess that in the absence of a true interaction, no interaction is found by \textit{glmdisc} while quantizing the data, so that we simulate $Y \sim p_{\glssymbol{bth}^{1}}$ and provide $\glssymbol{bbx}$.
 \end{enumerate}
 Note that the interaction screening procedure is also applicable to continuous features, which is not tested here. These 4 experiments are run 100 times with $n = \{1{,}000,10{,}000\}$ and histograms are given in Table~\ref{tab:simu_inter}.
 
