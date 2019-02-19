@@ -241,11 +241,38 @@ In the preceding Section, examples of classical unsupervised clustering methods 
 
 \paragraph{LOTUS}
 
+The first research work focusing on a similar problem than the present one seems to be~\cite{}, where logistic regression trees are constructed so as to select features to split the data into sub-populations which break the linearity assumption of logistic regression and with an applicationcase similar to ours, namely the insurance market. The algorithm is detailed in Appendix~\ref{app1:lotus}.
+
+Their motivation is that \gls{lr} has a fixed parameter space, defined by the number of input features, whereas trees adapt their flexibility (\textit{i.e.}\ depth) to the sample size $n$; however, trees perform well for classification (\textit{i.e.}\ $\hat{y} = \argmax_y p(y | \glssymbol{bx})$) but poorly in assessing the probability of the event (\textit{i.e.}\ $p(y\glssymbol{bx})$)as it is piecewise constant; if the true decision boundary separating the two classes of $y$ given $\glssymbol{bx}$ is linear, they need an infinite depth to estimate it as well as \gls{lr}. Thus, they search for trees which leaves are \gls{lr} with few, continuous only, features and which intermediate nodes split based on categorical or continuous features which relationship to the log-odd ratio of $y$ is not linear (\textit{i.e.}\ features that would perform poorly in a \gls{lr}).
+
+They propose a split selection method that is bias-free: as seen in Chapters~\ref{chap4} and~\ref{chap5}, the number of partitions of $l_j$ lavelled factor levels into $m_j$ unlabelled categories (which would here be the tree split criterion) is huge which yields overfitting; thus, their approach relies on a $\chi^2$ test which degrees of freedom is linked to the number of potential splits. Their optimizes criterion is the sum of the log-likelihoods of the \Gls{lr} on the tree's leaves. Of course, this leads also to overfitting which requires the tree to be pruned (as is classical for classification trees). Lastly, their proposed method is not directly applicable to missing values: these observations are not used during training (in the \textit{Credit Scoring} industry, there would most likely be at least one missing value for each observation) and during test, their missing values are imputed by the mean or median.
 
 \paragraph{LMT}
 
+utilise toutes les observations via une sorte de boosting
+
+proche de notre paramétrisation en variables latentes
+
+
 
 \paragraph{MOB}
+
+features at leaves different from splits
+
+criterion optimized is sum of criteria optimized on the leaves
+
+partitioning feature is the one to which the residuals are most correlated
+
+no mention to missing values
+
+number of segments per split is searched exhaustively
+
+splitting with categorical features require $2^{l_j}$ tests for binary splits
+
+
+Note sur les variables catégorielles dans C4.5
+
+
 
 
 \section{Logistic regression trees as a combinatorial model selection problem} \label{sec:model_selec_tree}
