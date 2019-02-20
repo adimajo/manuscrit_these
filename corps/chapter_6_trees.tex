@@ -20,9 +20,9 @@ In Chapter~\ref{chap1}, and parallel to quantization, it was argued in Section~\
 
 As was emphasized in all previous Chapters, \gls{lr} is the building block of a scorecard predicting the creditworthiness of an applicant and partly automating the acceptance / rejection mechanism. However, estimating \gls{lr} coefficients means that training data $(\glssymbol{bbx},\glssymbol{bby})$ is available. This is not the case when a new product, \textit{e.g.}\ smartphone leasing, is added to the acceptance system. On a practical note, some other previously learnt scorecard may not be applicable on this new market because the same information is not asked to applicants, \textit{e.g.}\ marital status, because given the low amounts at stake, it was decided to collect the fewest data possible, to make the process as simple and quick as possible. On a more theoretical note, it is probable that applicants to smartphone leasing are not stemming from the same data generating mechanism $p(\glssymbol{bX},Y)$ as any other previous applicants (\textit{i.e.}\ on other markets). Put it another way, the possibility of having several \gls{lr} scorecards on sub-populations of the total portfolio allows to have more flexibility, and thus potentially reduces model bias discussed in Chapter~\ref{chap1}.
 
-For these reasons, several industries, among which \textit{Credit Scoring}, rely on several ``weak learners'' such as \gls{lr}, arranged in a tree. It is assumed there are $K$ ``clusters'' which form the leaves of this tree and which assigning latent random feature is denoted by $C$ (lower-case for observations). The other notations employed inspire from the preceding Chapters: the superscript notation is used to insist on the fact that available features $\glssymbol{bx}^c$ differ potentially in each of the scorecards. It follows that quantizations $\q^c$ and interactions $\bdelta^c$, discussed in Chapters~\ref{chap4} and~\ref{chap5} respectively are also different. Consequently, the \gls{lr} coefficients $\glssymbol{bth}^c$ are also obviously different.
+For these reasons, several industries, among which \textit{Credit Scoring}, rely on several ``weak learners'' such as \gls{lr}, arranged in a tree. It is assumed there are $K$ ``clusters'' which form the leaves of this tree and which assigning latent random feature is denoted by $C$ (lower-case for observations). The other notations employed inspire from the preceding Chapters: the superscript notation is used to insist on the fact that available features $\glssymbol{bx}^c$ differ potentially in each of the scorecards. It follows that quantizations $\q^c$ and interactions $\bdelta^c$, discussed in Chapters~\ref{chap4} and~\ref{chap5} respectively, are also different. Consequently, the \gls{lr} coefficients $\glssymbol{bth}^c$ are also obviously different.
 
-Such decision process is illustrated on Figure~\ref{fig:arbre}. This tree structure and the vocabulary of ``weak learners'' would indicate a use-case of Mixtures of Experts~\cite{jordan1994hierarchical} or aggregation / ensemble methods~\cite{opitz1999popular} respectively. However, as is covered by the~\nameref{sec:literature}, these fuzzy methods imply that all applicants are scored by all scorecards, which is obviously neither desirable (for interpretation purposes) nor feasible (since available features differ).
+Such decision process is illustrated on Figure~\ref{fig:arbre}. This tree structure and the vocabulary of ``weak learners'' would indicate a use-case of well-known Mixtures of Experts~\cite{jordan1994hierarchical} or aggregation / ensemble methods~\cite{opitz1999popular} respectively. However, as is covered by the~\nameref{sec:literature}, these fuzzy methods imply, among other incompatibilities that all applicants are scored by all scorecards, which is obviously neither desirable (for interpretation purposes) nor feasible (since available features differ).
 
 The next Section illustrates how such a structure is achieved using \gls{cacf}'s in-house practices.
 
@@ -44,7 +44,7 @@ The next Section illustrates how such a structure is achieved using \gls{cacf}'s
   \node [root] {\textcolor{black}{Applicants}}
     child { node [dummy] {}
       child { node [dummy] {}
-        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^1}(y|\q^1(\glssymbol{bx}),\bdelta^1))$}}
+        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^1}(y|\q^1(\glssymbol{bx}),\bdelta^1))$\hspace*{-0.2cm}}}
           edge from parent node [below] {Renters} }
         child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^2}(y|\q^2(\glssymbol{bx}),\bdelta^2)$}}
           edge from parent node [above] {Salaried} }
@@ -77,7 +77,9 @@ The next Section illustrates how such a structure is achieved using \gls{cacf}'s
 
 \subsection{In-house \textit{ad hoc} practice}
 
-\textit{Credit Scoring} practitioners are often asked by the management to study ``locally'' the decision process displayed on Figure~\ref{fig:arbre} by \textit{e.g.}\ merging branches (Standard loans and Leasing for Fiat) or conversely to spread sub-populations (Kawasaki into Standard loans and Leasing).
+\textit{Credit Scoring} practitioners are often asked by the management to study ``locally'' the decision process displayed on Figure~\ref{fig:arbre} by \textit{e.g.}\ merging branches (for example Standard loans and Leasing for Fiat) or conversely to spread sub-populations (for example Kawasaki into Standard loans and Leasing). The same is applicable when one or several scorecards are deemed too old or a new market / product is added to the portfolio: the analyst has to detail how many scorecards have to be built and why.
+
+To do so, the in-house practice .
 
 \paragraph{\gls{pca}}
 
