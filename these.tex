@@ -4,8 +4,6 @@
 % arara: pdflatex: {shell: yes}
 % arara: biber 
 % arara: pdflatex: {shell: yes}
-% arara: clean
-% arara: lmkclean
 
 % Document de classe yathesis
 \documentclass[english]{yathesis}
@@ -17,6 +15,7 @@
 \usepackage{booktabs}
 \usepackage{siunitx}
 \usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
 \usepackage{caption}
 \usepackage{microtype}
 \usepackage{varioref}

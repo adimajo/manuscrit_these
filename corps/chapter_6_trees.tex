@@ -239,19 +239,27 @@ In the preceding Section, examples of classical unsupervised clustering methods 
 
 \subsection{Direct approaches: logistic regression trees}
 
-\paragraph{LOTUS}
+\paragraph{\gls{lotus}}
 
-The first research work focusing on a similar problem than the present one seems to be~\cite{}, where logistic regression trees are constructed so as to select features to split the data into sub-populations which break the linearity assumption of logistic regression and with an applicationcase similar to ours, namely the insurance market. The algorithm is detailed in Appendix~\ref{app1:lotus}.
+The first research work focusing on a similar problem than the present one seems to be \gls{lotus}~\cite{chan2004lotus}, where logistic regression trees are constructed so as to select features to split the data into sub-populations which break the linearity assumption of \gls{lr} and with an application case similar to ours, namely the insurance market. The algorithm is detailed in Appendix~\ref{app1:lotus}.
 
-Their motivation is that \gls{lr} has a fixed parameter space, defined by the number of input features, whereas trees adapt their flexibility (\textit{i.e.}\ depth) to the sample size $n$; however, trees perform well for classification (\textit{i.e.}\ $\hat{y} = \argmax_y p(y | \glssymbol{bx})$) but poorly in assessing the probability of the event (\textit{i.e.}\ $p(y\glssymbol{bx})$)as it is piecewise constant; if the true decision boundary separating the two classes of $y$ given $\glssymbol{bx}$ is linear, they need an infinite depth to estimate it as well as \gls{lr}. Thus, they search for trees which leaves are \gls{lr} with few, continuous only, features and which intermediate nodes split based on categorical or continuous features which relationship to the log-odd ratio of $y$ is not linear (\textit{i.e.}\ features that would perform poorly in a \gls{lr}).
+Their motivation is that \gls{lr} has a fixed parameter space, defined by the number of input features, whereas trees adapt their flexibility (\textit{i.e.}\ depth) to the sample size $n$; however, trees perform well for classification (\textit{i.e.}\ by setting $\hat{y} = \argmax_y p(y | \glssymbol{bx})$ they can achieve low classification error) but poorly in assessing the probability of the event (\textit{i.e.}\ the estimate of $p(y\glssymbol{bx})$ is the proportion of the event $y$ among observations $\glssymbol{bx}$ at each leaf) as it is piecewise constant; if the true decision boundary separating the two classes of $y$ given $\glssymbol{bx}$ is linear, they need an infinite depth to estimate it as well as \gls{lr}. Thus, they search for trees which leaves are \gls{lr} with few, continuous only, features and which intermediate nodes split the population based on categorical or continuous features which relationship to the log-odd ratio of $y$ is not linear (\textit{i.e.}\ features that would perform poorly in a \gls{lr}).
 
-They propose a split selection method that is bias-free: as seen in Chapters~\ref{chap4} and~\ref{chap5}, the number of partitions of $l_j$ lavelled factor levels into $m_j$ unlabelled categories (which would here be the tree split criterion) is huge which yields overfitting; thus, their approach relies on a $\chi^2$ test which degrees of freedom is linked to the number of potential splits. Their optimizes criterion is the sum of the log-likelihoods of the \Gls{lr} on the tree's leaves. Of course, this leads also to overfitting which requires the tree to be pruned (as is classical for classification trees). Lastly, their proposed method is not directly applicable to missing values: these observations are not used during training (in the \textit{Credit Scoring} industry, there would most likely be at least one missing value for each observation) and during test, their missing values are imputed by the mean or median.
+They propose a feature selection method for node splits that is bias-free: as seen in Chapters~\ref{chap4} and~\ref{chap5}, the number of partitions of $l_j$ labelled factor levels into $m_j$ unlabelled categories (which would here be the tree split criterion) is huge which yields overfitting; thus, their approach relies on a $\chi^2$ test which degrees of freedom is linked to the number of potential rearrangements of $l_j$ into 2 bins. Their optimized criterion is the sum of the log-likelihoods of the \gls{lr} on the tree's leaves. Of course, this leads also to overfitting which requires the tree to be pruned (as is classical for classification trees). Lastly, their proposed method is not directly applicable to missing values: these observations are not used during training (in the \textit{Credit Scoring} industry, there would most likely be at least one missing value for each observation) and during test, their missing values are imputed by the mean or median.
 
-\paragraph{LMT}
+To sum up, although their intent is similar to ours, LOTUS is not directly usable since only continuous features are used as predictive features in the \gls{lr} of the tree's leaves, it does not handle missing values gracefully, and there are currently no implementation available in \textsf{R} or Python.
+
+\paragraph{\gls{lmt}}
+
+The second approach very close to our industrial problem is named \gls{lmt}~\ref{landwehr2005logistic}.
 
 utilise toutes les observations via une sorte de boosting
 
 proche de notre paramétrisation en variables latentes
+
+variables catégorielles en binaire dont seules certaines valeurs peuvent entrer le modèle
+
+variables manquantes imputée par mean ou mode
 
 
 
@@ -282,6 +290,24 @@ Note sur les variables catégorielles dans C4.5
 
 
 \subsection{Logistic regression tree selection}
+
+\[ \forall \glssymbol{bx}, y, \exists c^\star \in \glssymbol{N}_{K^\star}, \glssymbol{bth}^{\star,c^\star}, p(y | \glssymbol{bx}) = p_{\glssymbol{bth}^{\star,c^\star}}(y | \glssymbol{bx}, c^\star) \]
+
+For $c \in \glssymbol{N}_{K^\star}$, we denote by $(\glssymbol{bbx}^c, \glssymbol{bby}^c)$ the subset of observations of $(\glssymbol{bbx}, \glssymbol{bby})$ for which $c^\star = c$.
+
+The above mentioned \gls{lotus}, \gls{lmt} and \gls{mob}
+
+\begin{align*}
+p(\glssymbol{bby}, \glssymbol{bbx}) & =  \sum_{c=1}^{K^\star} p(\glssymbol{bby} | \glssymbol{bbx}, c) p(c | \glssymbol{bbx}) p(\glssymbol{bbx}) & \text{(only $c = c^\star$ is non-zero)} \\
+ & = \prod_{c=1}^{K^\star} p(\glssymbol{bby}^c | \glssymbol{bbx}^c, c) p(\glssymbol{bbx}) \\
+ & = \prod_{c=1}^{K^\star} \int_{\Theta_c} p_{\glssymbol{bth}^{c}}(\glssymbol{bby}^c | \glssymbol{bbx}^c, c) p(\glssymbol{bth}^c) d\glssymbol{bth}^c p(\glssymbol{bbx}) \\
+\ln p(\glssymbol{bby}, \glssymbol{bbx}) & = \sum_{c=1}^{K^\star} \exp \left( \frac{-\text{BIC}(\hat{\glssymbol{bth}^c}) + O(1)}{2} \right) + \ln p(\glssymbol{bbx})
+\end{align*}
+
+
+\begin{equation} \label{eq:BICc}
+(K^\star, c^\star, \glssymbol{bth}^{\star,c^\star}) = \argmin_{K,c,\glssymbol{bth}} \sum_{c=1}^{K} \text{BIC}(\hat{\glssymbol{bth}^c})
+\end{equation}
 
 
 
