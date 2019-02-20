@@ -87,7 +87,7 @@ However, the \textit{Credit Scoring} data is of mixed type and \textit{Credit Sc
 
 \paragraph{\gls{mca}}
 
-In presence of only categorical features (or following quantization), the \gls{mca} algorithm is more appropriate. It extends the \gls{pca} approach to categorical features by using the disjunctive table (dummy / one-hot encoding of $\glssymbol{bbx}$). For a thorough introduction to \gls{mca}, see \textit{e.g.}~\cite{lebart1995statistique}. What is most interesting in this method is that both categorical features' levels and observations can be simultaneously displayed on the first principal components axes, as is the case on Figure~\ref{fig:mca}. The method is described in Appendix~\ref{app1:mca}. This is of high practical interest in \textit{Credit Scoring} because clouds of points are directly characterized by the categorical levels that are displayed nearest, contrary to \gls{pca} where groups correspond to surfaces like $\glssymbol{bx} ' \bm{u}_1 + \glssymbol{bx} ' \bm{u}_2 \geq \alpha$ where $alpha$ encodes the decision of separation of resulting clusters, which would yield a decision system, as on Figure~\ref{fig:arbre}, arguably less interpretable.
+In presence of only categorical features (or following quantization), the \gls{mca} algorithm is more appropriate: it extends the \gls{pca} approach to categorical features by using the disjunctive table (dummy / one-hot encoding of $\glssymbol{bbx}$). For a thorough introduction to \gls{mca}, see \textit{e.g.}~\cite{lebart1995statistique}. What is most interesting in this method is that both categorical features' levels and observations can be simultaneously displayed on the first principal components axes, as is the case on Figure~\ref{fig:mca}. The method is described in Appendix~\ref{app1:mca}. This is of high practical interest in \textit{Credit Scoring} because clouds of points are directly characterized by the categorical levels that are displayed nearest, contrary to \gls{pca} where groups correspond to surfaces of equation $\glssymbol{bx} ' \bm{u}_1 + \glssymbol{bx} ' \bm{u}_2 \geq \alpha$ where $alpha$ encodes the separation boundary of resulting clusters, which would be the edges of our decision system, as on Figure~\ref{fig:arbre}, and make it arguably less interpretable.
 
 Nevertheless, a method applicable to mixed data exists as well and could directly be applied to ``raw'' features.
 
@@ -95,7 +95,10 @@ Nevertheless, a method applicable to mixed data exists as well and could directl
 
 The \gls{famd} algorithm~\cite{pages2014multiple} aims at performing both \gls{mca} on categorical features and \gls{pca} on continuous features in a simultaneous fashion. Resulting principal component axes depend on both data types, as can be seen from Figure~\ref{fi:famd}. The method is described in Appendix~\ref{app1:famd}. This method has the advantage of not requiring the \textit{Credit Scoring} practitioner to preprocess the ``raw'' data by quantizing it, which could have a huge impact on the results of the subsequent method employed, as argumented in Chapter~\ref{chap4}. Moreover, the practitioner would fine-tune the quantization of each sub-population which, if fed back to the \gls{mca}, would potentially yield completely different results!
 
-It appears clearly that all these methods do not directly optimize a predictive goal such as the one optimized by \gls{lr}. Moreover, the \textit{ad hoc} preprocessing step of quantization might influence the structure of the retained segmentation.
+It appears clearly that all these methods do not directly optimize a predictive goal such as the one optimized by \gls{lr}. Moreover, the \textit{ad hoc} preprocessing step of quantization might influence the structure of the retained segmentation. 
+
+For numerical experiments of Section~\ref{sec:num_exp}, we will use, among others, the \gls{famd} approach.
+
 
 \subsection{These practices can fail}
 
@@ -103,7 +106,7 @@ Of course, like all \textit{ad hoc} methods that rely on ``two-stages'' procedur
 
 This Chapter has no intent in filling that gap as was ambitioned in Chapters~\ref{chap4} and~\ref{chap5} but rather to give insights on more elaborate, readily usable methods that will be covered in Section~\ref{sec:literature} and to propose a few ideas for future research. That is why, in the present, we show two data generating mechanisms where current in-house methods fail. In Section~\ref{sec:model_selec_tree}, we will propose an \gls{sem} algorithm that shares similitude with the one proposed for quantization in Section~\ref{sec:sem} that performs well where current methods fail.
 
-The first of these failing situations is when the density of covariates (suppose for simplicity that all of them are continuous) $p(\glssymbol{bx})$ is multi-modal as on Figure~\ref{fig:xdiff} where we distinguish the lower, middle and upper-classes of respective low, average and high wages and indebtedness. An unsupervised generative approach like PCA would urge the practitioner to construct 3 scorecards (one for each of the aforementioned classes). However, displaying $y$ as \textcolor{red}{red} (resp.\ \textcolor{green}{green}) for bad borrowers (resp.\ good borrowers), we can see that perfect separation can be achieved: it depends solely on the indebtedness level (the ratio of wages over indebtedness). Thus, the resulting scorecards would be asymptotically the same, but they use three times more parameters! In a finite sample setting, and following remarks in Chapters~\ref{chap1}, \ref{chap4} and~\ref{chap5} on model bias and model choice consistency, it will imply lower performance since each of these coefficients have three times less samples to train on, which amounts to increasing the variance by the same factor. On a practical note, one could argue that it reduces interpretability by adding an avoidable complexity to the decision system.
+The first of these failing situations is when the density of covariates (suppose for simplicity that all of them are continuous) $p(\glssymbol{bx})$ is multi-modal as on Figure~\ref{fig:xdiff} where we distinguish the lower, middle and upper-classes of respective low, average and high wages and indebtedness. An unsupervised generative approach like PCA would urge the practitioner to construct 3 scorecards (one for each of the aforementioned classes). However, displaying $y$ as \textcolor{red}{red} (resp.\ \textcolor{green}{green}) for bad borrowers (resp.\ good borrowers), we can see that perfect separation can be achieved: it depends solely on the indebtedness level (the ratio of wages over indebtedness). Thus, the resulting scorecards would be asymptotically the same, but they use three times more parameters! In a finite sample setting, and following remarks in Chapters~\ref{chap1}, \ref{chap4} and~\ref{chap5} on model bias and model choice consistency, it will imply lower performance since each of these coefficients have three times less samples to train on, which amounts to increasing the variance by the same factor. On a practical note, one could argue that it reduces interpretability by adding an avoidable complexity to the decision system. This particular data generating mechanism is revisited in the Experiments of Section~\ref{subsec:num_sim}.
 
 
 \begin{figure}
@@ -135,16 +138,7 @@ The first of these failing situations is when the density of covariates (suppose
 \caption{\label{fig:xdiff} Multi-modal wages and indebtedness data generating mechanism with $y = \{0,1\}$ classes displayed in \textcolor{red}{red} and \textcolor{green}{green} respectively.}
 \end{figure}
 
-
-\textcolor{red}{lien avec les expériences}
-
-
-The second failing situation is the counterpart of the first tailored data generating mechanism. This time, suppose the covariates wages and indebtedness are uniformly sampled. Suppose there is a third categorical feature ``wages source'' which is drawn uniformly from three levels: renters, salaried workers and self-employed. One could argue that renters' risk level do not depend on their indebtedness, which is typically low (and a higher one is a major red flag), salaried workers' risk level is positively correlated with their indebtedness ratio as was the case for the first introductory example (see Figure~\ref{fig:xdiff}) and self-employed people's risk level is negatively correlated with this indebtedness ratio (say, the higher their personal engagement, the higher the chances of success of their business). This example data generating mechanism is illustrated on Figure~\ref{fig:ydiff}. In this situation, and contrary to the first example, an unsupervised generative clustering algorithm like \gls{pca} would not partition the data and the \textit{Credit Scoring} practitioner would construct only one scorecard. This scorecard would have high model bias since it is too simple to accommodate for the variety of the data generating mechanism and consequently perform poorly.
-
-
-
-\textcolor{red}{lien avec les expériences}
-
+The second failing situation is the counterpart of the first tailored data generating mechanism. This time, suppose the covariates wages and indebtedness are uniformly sampled. Suppose there is a third categorical feature ``wages source'' which is drawn uniformly from three levels: renters, salaried workers and self-employed. One could argue that renters' risk level do not depend on their indebtedness, which is typically low (and a higher one is a major red flag), salaried workers' risk level is positively correlated with their indebtedness ratio as was the case for the first introductory example (see Figure~\ref{fig:xdiff}) and self-employed people's risk level is negatively correlated with this indebtedness ratio (say, the higher their personal engagement, the higher the chances of success of their business). This example data generating mechanism is illustrated on Figure~\ref{fig:ydiff}. In this situation, and contrary to the first example, an unsupervised generative clustering algorithm like \gls{pca} would not partition the data and the \textit{Credit Scoring} practitioner would construct only one scorecard. This scorecard would have high model bias since it is too simple to accommodate for the variety of the data generating mechanism and consequently perform poorly. This particular data generating mechanism is also revisited in the Experiments of Section~\ref{subsec:num_sim}.
 
 
 \begin{figure}
@@ -227,60 +221,50 @@ In the preceding Section, examples of classical unsupervised clustering methods 
 
 \paragraph{\gls{pls}}
 
+~\cite{wold1984collinearity}. The \gls{pls} algorithm seeks to combine the strengths, in its original proposal, of \gls{pca} in explaining the variance of the features $\glssymbol{bx}$ and regression in predicting $y$ with the resulting principal components. In a classification setting, it is termed PLS-DA where DA stands for discriminant analysis.
 
-
-\paragraph{\gls{satimix}}
-
+The .
 
 
 \paragraph{\gls{spc}}
 
+~\cite{bair2006prediction}. It is motivated by genomics applications where $d > n$ but is applicable to our current setting as well, and by the fact that, in a predictive setting, variance of the features $\glssymbol{bx}$ is only interesting of correlated with $y$. The inner-workings of the algorithm are relatively simple: the correlation between each feature $x_j$ and $y$ is computed. Only the features for which this correlation exceeds a user-defined threshold are retained, and the first few principal components of these features are calculated and used to predict $y$.
 
+There is a close link between \gls{pls} and \gls{spc} that is thoroughly explained in~\cite{friedman2001elements} Section .
+
+For numerical experiments of Section~\ref{sec:num_exp}, we will use, among others, the \gls{pls} approach.
 
 \subsection{Direct approaches: logistic regression trees}
 
 \paragraph{\gls{lotus}}
 
-The first research work focusing on a similar problem than the present one seems to be \gls{lotus}~\cite{chan2004lotus}, where logistic regression trees are constructed so as to select features to split the data into sub-populations which break the linearity assumption of \gls{lr} and with an application case similar to ours, namely the insurance market. The algorithm is detailed in Appendix~\ref{app1:lotus}.
+The first research work focusing on a similar problem than the present one seems to be \gls{lotus}~\cite{chan2004lotus}, where logistic regression trees are constructed so as to select features to split the data into sub-populations which break the linearity assumption of \gls{lr} and with an application case similar to ours, namely the insurance market.
 
 Their motivation is that \gls{lr} has a fixed parameter space, defined by the number of input features, whereas trees adapt their flexibility (\textit{i.e.}\ depth) to the sample size $n$; however, trees perform well for classification (\textit{i.e.}\ by setting $\hat{y} = \argmax_y p(y | \glssymbol{bx})$ they can achieve low classification error) but poorly in assessing the probability of the event (\textit{i.e.}\ the estimate of $p(y\glssymbol{bx})$ is the proportion of the event $y$ among observations $\glssymbol{bx}$ at each leaf) as it is piecewise constant; if the true decision boundary separating the two classes of $y$ given $\glssymbol{bx}$ is linear, they need an infinite depth to estimate it as well as \gls{lr}. Thus, they search for trees which leaves are \gls{lr} with few, continuous only, features and which intermediate nodes split the population based on categorical or continuous features which relationship to the log-odd ratio of $y$ is not linear (\textit{i.e.}\ features that would perform poorly in a \gls{lr}).
 
-They propose a feature selection method for node splits that is bias-free: as seen in Chapters~\ref{chap4} and~\ref{chap5}, the number of partitions of $l_j$ labelled factor levels into $m_j$ unlabelled categories (which would here be the tree split criterion) is huge which yields overfitting; thus, their approach relies on a $\chi^2$ test which degrees of freedom is linked to the number of potential rearrangements of $l_j$ into 2 bins. Their optimized criterion is the sum of the log-likelihoods of the \gls{lr} on the tree's leaves. Of course, this leads also to overfitting which requires the tree to be pruned (as is classical for classification trees). Lastly, their proposed method is not directly applicable to missing values: these observations are not used during training (in the \textit{Credit Scoring} industry, there would most likely be at least one missing value for each observation) and during test, their missing values are imputed by the mean or median.
+They propose a feature selection method for node splits that is bias-free: as seen in Chapters~\ref{chap4} and~\ref{chap5}, the number of partitions of $l_j$ labelled factor levels into $m_j$ unlabelled categories (which would here be the tree split criterion) is huge which yields overfitting; thus, their approach relies on a $\chi^2$ test which degrees of freedom is linked to the number of potential rearrangements of $l_j$ into 2 bins. Their optimized criterion is the sum of the log-likelihoods of the \gls{lr} on the tree's leaves. Of course, this leads also to overfitting which requires the tree to be pruned (as is classical for classification trees) using a method closely related to the one developed in the classical CART~\cite{cart84} algorithm. Lastly, their proposed method is not directly applicable to missing values: these observations are not used during training (in the \textit{Credit Scoring} industry, there would most likely be at least one missing value for each observation) and during test, their missing values are imputed by the mean or median.
 
-To sum up, although their intent is similar to ours, LOTUS is not directly usable since only continuous features are used as predictive features in the \gls{lr} of the tree's leaves, it does not handle missing values gracefully, and there are currently no implementation available in \textsf{R} or Python.
+To sum up, although their intent is similar to ours, \gls{lotus} is not directly usable since only continuous features are used as predictive features in the \gls{lr} of the tree's leaves, it does not handle missing values gracefully, and there are currently no implementation available in \textsf{R} or Python.
 
 \paragraph{\gls{lmt}}
 
-The second approach very close to our industrial problem is named \gls{lmt}~\ref{landwehr2005logistic}.
+The second approach very close to our industrial problem is named \gls{lmt}~\cite{landwehr2005logistic}. As for~\gls{lotus}, the result is a tree of \gls{lr} at its leaves and the motivation is very similar. Their introductory example, reproduced here with permission on Figure~\ref{fig:lmt} is enlightening: a quadratic boundary cannot be well approximated by trees or \gls{lr} alone, but a combination of both achieves good performance and interpretation.
 
-utilise toutes les observations via une sorte de boosting
+Their approach differs however drastically from~ \gls{lotus} in that they rely on a particular boosting approach derived from the LogitBoost algorithm~\cite{friedman2000additive} to adjust the \gls{lr} and the classical C4.5 algorithm to grow the tree. The two central ideas behind their usage of the LogitBoost algorithm are simple: it allows to have a stagewise-like process where one feature enters the model at each step and to ``refine'' recursively the \gls{lr} by boosting the \gls{lr} fitted at a node's parent. This most probably induces less parameter estimation variance in each leaves since they partly benefit from samples not in their leaves but used to fit the parents' \gls{lr}. One if its main advantages compared to other approaches is that it is fast. Here again, the resulting tree must be pruned and a tactic similar to CART~\cite{cart84} is used.
 
-proche de notre paramétrisation en variables latentes
+However, categorical features are dummy / one-hot encoded so that only a few factor levels might be selected at each leaf, which amount to merging the not selected levels into a reference value. Conversely, when used as a split feature, each level yields a distinct branch. Moreover, missing values are imputed by the mean or mode.
 
-variables catégorielles en binaire dont seules certaines valeurs peuvent entrer le modèle
+Its original implementation is in Weka but \textsf{R} packages \rinline{party} and \rinline{partykit} provide interfaces and wrappers to it.
 
-variables manquantes imputée par mean ou mode
+\paragraph{\gls{mob}}
 
+Lastly, a third approach closely related to our problem is \gls{mob}~\cite{zeileis2008model} which is an adaptation of a better-known paper~\cite{hothorn2006unbiased} to parametric models in the leaves of a recursively partitioned dataset (hence the name).
 
+Their algorithm consists in fitting the chosen model (in our case, \gls{lr}) for all observations $(\glssymbol{bbx},\glssymbol{bby})$ at the current node and decide to split these into subsets based on a correlation measure of the residuals of the current model and splitting features $V_1, \dots, V_p$ which are not included in $\glssymbol{bbx}$. The procedure is repeated until no significant ``correlation'' is detected. Similarly to \gls{lotus} and contrary to the C4.5 algorithm, which for categorical features and a binary outcome order their levels by their proportion of events $y$ and split as if the feature were ordinal (it can be shown that it is optimal, see~\cite{friedman2001elements} Section 9.2.4), splitting with categorical features require $2^{l_j}$ tests for binary splits. Moreover, there is no mention to eventual treatment of missing values. The number of segments per split is searched exhaustively.
 
-\paragraph{MOB}
+Its implementation is available through the \textsf{R} packages \rinline{party} and \rinline{partykit}.
 
-features at leaves different from splits
-
-criterion optimized is sum of criteria optimized on the leaves
-
-partitioning feature is the one to which the residuals are most correlated
-
-no mention to missing values
-
-number of segments per split is searched exhaustively
-
-splitting with categorical features require $2^{l_j}$ tests for binary splits
-
-
-Note sur les variables catégorielles dans C4.5
-
-
+In the next Section, we formalize the problem as a model selection problem, similarly to the three approaches presented here, with our own notations introduced in the previous Section and Chapters.
 
 
 \section{Logistic regression trees as a combinatorial model selection problem} \label{sec:model_selec_tree}
@@ -290,6 +274,8 @@ Note sur les variables catégorielles dans C4.5
 
 
 \subsection{Logistic regression tree selection}
+
+Forme de l'arbre en proba ?
 
 \[ \forall \glssymbol{bx}, y, \exists c^\star \in \glssymbol{N}_{K^\star}, \glssymbol{bth}^{\star,c^\star}, p(y | \glssymbol{bx}) = p_{\glssymbol{bth}^{\star,c^\star}}(y | \glssymbol{bx}, c^\star) \]
 
@@ -305,24 +291,48 @@ p(\glssymbol{bby}, \glssymbol{bbx}) & =  \sum_{c=1}^{K^\star} p(\glssymbol{bby} 
 \end{align*}
 
 
+
+
 \begin{equation} \label{eq:BICc}
-(K^\star, c^\star, \glssymbol{bth}^{\star,c^\star}) = \argmin_{K,c,\glssymbol{bth}} \sum_{c=1}^{K} \text{BIC}(\hat{\glssymbol{bth}^c})
+(K^\star, c^\star) = \argmin_{K,c} \sum_{c=1}^{K} \text{BIC}(\hat{\glssymbol{bth}}^c)
 \end{equation}
 
+
+In the next Section, we propose to relax the constraint of Equation~\eqref{eq:def_c}, exactly as was done for quantizations in Chapter~\ref{chap4}, by using a continuous approximation of this discrete (and thus highly difficult to directly optimize) problem.
 
 
 \section{A mixture and latent feature-based relaxation}
 
+\begin{align*}
+p(y | \glssymbol{bx}) & = \sum_{c = 1}^K p(y | \glssymbol{bx}, c) p(c | \glssymbol{bx})
+\end{align*}
 
+
+\begin{align*}
+p(c | \glssymbol{bx}, y) & \appropto p_{\glssymbol{bth}^c}(y | \glssymbol{bx}, c) p(c | \glssymbol{bx})
+\end{align*}
 
 
 \section{A stochastic estimation strategy}
 
 
-\section{Numerical experiments}
 
 
-\subsection{Empirical consistency on simulated data}
+\section{Extension to quantization and interactions}
+
+
+
+\section{Numerical experiments} \label{sec:num_exp}
+
+
+
+\subsection{Empirical consistency on simulated data} \label{subsec:num_sim}
+
+
+\begin{enumerate}[(a)]
+\item 
+\item 
+\end{enumerate}
 
 \subsection{Benchmark on \textit{Credit Scoring} data}
 
