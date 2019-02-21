@@ -5,8 +5,7 @@
 Modèles prédictifs pour données volumineuses et biaisées  
 Application à l’amélioration du scoring en risque de crédit
 
-Thèse de Doctorat en Mathématiques et leurs interactions de l'Université de Lille, Spécialité Statistique
-
+Thèse de Doctorat en Mathématiques et leurs interactions de l'Université de Lille, Spécialité Statistique  
 Soutenue le ...  
 Préparée au sein du Laboratoire Paul Painlevé, de l'Inria Lille  
 Nord-Europe et de Crédit Agricole Consumer Finance.  
@@ -38,8 +37,7 @@ Prepared at Laboratoire Paul Painlevé, Inria Lille Nord-Europe and Crédit Agri
 Doctoral School Sciences pour l’Ingénieur  
 University Department Équipe-projet MODAL
 
-The code to obtain all results on simulated / UCI data are made available in this repo.
-
+The code to obtain all results on simulated / UCI data are made available in this repo.  
 To compile the manuscript, [git](https://git-scm.com/), [arara](https://github.com/cereda/arara) (included in lots of TeX distributions) and a [TeX distribution](https://www.latex-project.org/get/) are needed.
 
 ```bash
@@ -53,4 +51,6 @@ The file `these.pdf` should be visible in the `manuscrit_these` folder.
 ## Credits
 
 This PhD is built on the [yathesis LaTeX class](https://ctan.org/pkg/yathesis) (under license LPPL Ver­sion 1.3c).  
+To build the pdf file, [arara](https://github.com/cereda/arara) is used (BSD Licence).
+To make sure LaTeX packages are not loaded but not used, I used the Python [LaTeXpkges script](https://github.com/TarasKuzyo/LaTeXpkges) (MIT Licence).  
 Feel free to clone / fork / star for your own work!
