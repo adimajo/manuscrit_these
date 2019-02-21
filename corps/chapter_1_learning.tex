@@ -1,6 +1,5 @@
 \chapter{Apprendre des demandes de crédit à la consommation} \label{chap1}
 
-
 \epigraph{Les hommes mentent mais pas les chiffres.}{Kaaris}
 
 \adjustmtc
@@ -555,7 +554,7 @@ Toutes les observations entrent au sommet de l'arbre qui dispose d'un seul noeud
 
 \paragraph{Algorithmes}
 
-Ainsi posé, l'arbre de décision semble à la fois simple dans sa formulation, et complexe dans la mise en oeuvre de son apprentissage : comment choisir les règles de chaque noeud, le nombre de noeuds fils à chaque noeud, le critère d'arrêt, etc. En pratique, de nombreux algorithmes ont été proposés. Dans les expériences du chapitre~\ref{chap1}, on utilise l'algorithme C4.5~\cite{quinlan2014c4} qui repose sur la divergence de Kullback-Leibler pour choisir une variable $x_j$ à chaque noeud et un ensemble $C_j$ tel que les observations vérifiant $x_j \in C_j$ (resp.\ $x_j \not\in C_j$) soient orientés vers le noeud fils gauche (resp.\ droit), où $C_j = ]- \infty ; c_j]$, $c_j \in \mathcal{R}$ pour les variables continues et $C_j \subset \glssymbol{NO}$ pour les variables catégorielles. L'algorithme s'arrête lorsque les feuilles ne contiennent qu'une seule classe, et des techniques d'``élagage'' permettent ensuite de réduire la complexité de l'arbre résultant.
+Ainsi posé, l'arbre de décision semble à la fois simple dans sa formulation, et complexe dans la mise en oeuvre de son apprentissage : comment choisir les règles de chaque noeud, le nombre de noeuds fils à chaque noeud, le critère d'arrêt, etc. En pratique, de nombreux algorithmes ont été proposés. Dans les expériences du chapitre~\ref{chap1}, on utilise l'algorithme C4.5~\cite{quinlan2014c4} qui repose sur la divergence de Kullback-Leibler pour choisir une variable $x_j$ à chaque noeud et un ensemble $C_j$ tel que les observations vérifiant $x_j \in C_j$ (resp.\ $x_j \not\in C_j$) soient orientés vers le noeud fils gauche (resp.\ droit), où $C_j = ]- \infty ; c_j]$, $c_j \in \glssymbol{R}$ pour les variables continues et $C_j \subset \glssymbol{NO}$ pour les variables catégorielles. L'algorithme s'arrête lorsque les feuilles ne contiennent qu'une seule classe, et des techniques d'``élagage'' permettent ensuite de réduire la complexité de l'arbre résultant.
 %Dans les expériences du chapitre~\ref{chap1}, on utilise cet algorithme.
 
 \paragraph{Faiblesses}

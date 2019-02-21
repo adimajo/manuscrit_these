@@ -1,6 +1,6 @@
 \chapter{Supervised multivariate quantization} \label{chap4}
 
-\epigraph{.}{.}
+\epigraph{All models are wrong, but some are useful.}{Georges Box, ``Empirical Model-Building and Response Surfaces'', 1978.}
 
 \minitoc
 
@@ -134,7 +134,7 @@ Let $\q^1$ and $\q^2$ in $\Q$ such that $\boldsymbol{f} \mathcal{R}_{\mathcal{T}
 \subparagraph{Lemma} Relation $\mathcal{R}_{\mathcal{T}_n}$ defines an equivalence relation on $\Q$.
 
 \begin{proof}
-Relation $\mathcal{R}_{\mathcal{T}_n}$ is trivially reflexive and symmetric because of the reflexive and symmetric nature of the equality relation in $\mathbb{R}$: $\forall i,j \; \q^1_j(x_i) = \q^1_j(x_i)$ and $\forall i,j \; \q^1(x_i) = \q^2(x_i)$. Similarly, let $\q^3 \in \Q$ such that $\q^1 \mathcal{R}_{\mathcal{T}_n} \q^3  \equiv \forall i,j \; \q^1_j(x_i) = \q^3_j(x_i)$. Again, we immediately get $\forall i,j \; \q^2_j(x_i) = \q^3_j(x_i)$, \textit{i.e.}\ $\q^2 \mathcal{R}_{\mathcal{T}_n} \q^3$ which proves the transitivity of $\mathcal{R}_{\mathcal{T}_n}$.
+Relation $\mathcal{R}_{\mathcal{T}_n}$ is trivially reflexive and symmetric because of the reflexive and symmetric nature of the equality relation in $\glssymbol{R}$: $\forall i,j \; \q^1_j(x_i) = \q^1_j(x_i)$ and $\forall i,j \; \q^1(x_i) = \q^2(x_i)$. Similarly, let $\q^3 \in \Q$ such that $\q^1 \mathcal{R}_{\mathcal{T}_n} \q^3  \equiv \forall i,j \; \q^1_j(x_i) = \q^3_j(x_i)$. Again, we immediately get $\forall i,j \; \q^2_j(x_i) = \q^3_j(x_i)$, \textit{i.e.}\ $\q^2 \mathcal{R}_{\mathcal{T}_n} \q^3$ which proves the transitivity of $\mathcal{R}_{\mathcal{T}_n}$.
 \end{proof}
 
  \begin{figure}
@@ -212,7 +212,7 @@ Quantization is a widespread preprocessing step to perform a learning task consi
     \label{eq:reglogq}
 \ln \left( \dfrac{p_{\glssymbol{bth}}(1|\q(\glssymbol{bx}))}{1 - p_{\glssymbol{bth}}(1|\q(\glssymbol{bx}))} \right) = \theta_0 + \sum_{j=1}^d \glssymbol{bth}_j' \cdot \q_j(\glssymbol{x}_j),
 \end{equation}
-where $\glssymbol{bth} = (\theta_{0},(\glssymbol{bth}_j)_1^d) \in \mathbb{R}^{|\q|+1}$ and $\glssymbol{bth}_j = (\theta_{j}^{1},\dots,\theta_{j}^{m_j})$ with $\theta_{j}^{m_j} = 0$, $j=1 \ldots d$, for identifiability reasons.
+where $\glssymbol{bth} = (\theta_{0},(\glssymbol{bth}_j)_1^d) \in \glssymbol{R}^{|\q|+1}$ and $\glssymbol{bth}_j = (\theta_{j}^{1},\dots,\theta_{j}^{m_j})$ with $\theta_{j}^{m_j} = 0$, $j=1 \ldots d$, for identifiability reasons.
 Second, at the practitioner level, the previous tuning of $|\q|$ through each feature's quantization order $m_j$, especially when it is quite low, allows an easier interpretation of the most important predictor values involved in the predictive process. Denoting the dataset by $(\glssymbol{bbx},\glssymbol{bby})$, with $\glssymbol{bbx}=(\glssymbol{bx}_1,\ldots,\glssymbol{bx}_n)$ and $\glssymbol{bby}=(\glssymbol{y}_1,\ldots,\glssymbol{y}_n)$, the log-likelihood 
 \begin{equation}
 \label{eq:lq}
@@ -334,7 +334,7 @@ In addition, in this setting, the BIC criterion relies on the Laplace approximat
 
 Lastly, for the asymptotic properties of BIC to hold in the case of nested models (which is not \textit{stricto sensu} the case here since for any global quantization order $|\q|$ there are a lot of possible univariate quantization orders $|\q_j|$), any multiplicative constant to the number of parameters is appropriate. Indeed, suppose two nested models $M_i$, $M_t$ have parameters $|\q|_i > |\q|_t$ respectively; then, we have:
 \[ \text{BIC}_i - \text{BIC}_t \approx - \chi^2_{|\q|_i - |\q|_t} + C(|\q|_i - |\q|_t)\ln n, \]
-where $C=1$ for the BIC criterion but could be replaced by any other $C \in \mathbb{R}^+_\star$ since for $n \to + \infty$, $C(|\q|_i - |\q|_t)\ln n$ will dominate and reject the overly parametrized model $M_i$.
+where $C=1$ for the BIC criterion but could be replaced by any other $C \in \glssymbol{R}^+_\star$ since for $n \to + \infty$, $C(|\q|_i - |\q|_t)\ln n$ will dominate and reject the overly parametrized model $M_i$.
 
 For all these reasons, the BIC criterion which penalizes only on the logistic regression parameters $\glssymbol{bth}$ is used in the remainder of this manuscript.
 
@@ -358,7 +358,7 @@ where functions $q_{\ag_{j,h}}(\cdot)$, properly defined hereafter for both cont
 
 
 
- {\bf For continuous features}, we set for $\ag_{j,h} = (\alpha^0_{j,h},\alpha^1_{j,h}) \in \mathbb{R}^2$
+ {\bf For continuous features}, we set for $\ag_{j,h} = (\alpha^0_{j,h},\alpha^1_{j,h}) \in \glssymbol{R}^2$
 \begin{equation} \label{eq:softmax}
 q_{\ag_{j,h}}(\cdot) = \frac{\exp(\alpha^0_{j,h} + \alpha^1_{j,h}  \cdot)}{\sum_{g=1}^{m_j} \exp(\alpha^0_{j,g} + \alpha^1_{j,g}  \cdot)}
 \end{equation}
@@ -367,7 +367,7 @@ where $\ag_{j,m_j}$ is set to $(0,0)$ for identifiability reasons.
 
 
 
-{\bf For categorical features}, we set for $\ag_{j,h}=\left(\alpha_{j,h}(1),\ldots, \alpha_{j,h}(l_j)\right) \in \mathbb{R}^{l_j}$
+{\bf For categorical features}, we set for $\ag_{j,h}=\left(\alpha_{j,h}(1),\ldots, \alpha_{j,h}(l_j)\right) \in \glssymbol{R}^{l_j}$
 \[q_{\ag_{j,h}}(\cdot) = \frac{\exp\left(\alpha_{j,h}(\cdot)\right)}{\sum_{g=1}^{m_j} \exp\left(\alpha_{j,g}(\cdot)\right)}\]
 where $l_j$ is the number of levels of the categorical feature $\glssymbol{x}_j$.
 

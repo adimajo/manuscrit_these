@@ -775,10 +775,77 @@ Let $X \sim \chi^2$ and $\alpha_{\max} = \max_{h_1,h_2} p(X \geq \chi^2_{h_1,h_2
 \section{Logistic regression-based trees}
 
 
-\subsection{\Gls{lmt}}
+\subsection{\gls{pca}} \label{app1:sec_pca}
+
+\begin{algorithm}[H]
+ \KwData{$n,\glssymbol{bbx},\alpha$}
+ \KwResult{$\hat{\q}$}
+
+ \caption{\label{alg:pca} \gls{pca} algorithm.}
+\end{algorithm}
+
+\subsection{\gls{mca}} \label{app1:sec_mca}
+
+\begin{algorithm}[H]
+ \KwData{$n,\glssymbol{bbx},\alpha$}
+ \KwResult{$\hat{\q}$}
+
+ \caption{\label{alg:mca} \gls{mca} algorithm.}
+\end{algorithm}
 
 
-\subsection{\Gls{mob}}
+\subsection{\gls{famd}} \label{app1:sec_famd}
+
+\begin{algorithm}[H]
+ \KwData{$n,\glssymbol{bbx},\alpha$}
+ \KwResult{$\hat{\q}$}
+
+ \caption{\label{alg:famd} \gls{famd} algorithm.}
+\end{algorithm}
+
+\subsection{\gls{pls}} \label{app1:sec_pls}
+
+The \gls{pls} algorithm given in~\eqref{alg:pls} has been proposed in~\cite{wold1984collinearity}. This version is adapted from~\cite{friedman2001elements} (Algorithm 3.3 in Section 3.5.2 p.\ 81).
+
+\begin{algorithm}[H]
+ \KwData{$\glssymbol{bbx},\glssymbol{bby}$}
+ \KwResult{$\mathbf{z}$}
+Standardize each $\glssymbol{bbx}_j$ to have mean zero and variance one (which implies that categorical features have been one-hot encoded prior to this step) \;
+Set $\hat{glssymbol{bby}}^{(0)} = |\glssymbol{bby}| \mathbf{1}$\;
+Set $\glssymbol{bbx}_j^{(0)} = \glssymbol{bbx}_j$\;
+\For{$j=1$ to $d$}{
+Let $\mathbf{z}_j = \sum_{j {'} = 1}^d \hat{\phi}_{j,j {'} } \glssymbol{bbx}_{j {'} }^{(j-1)}$ where $\hat{\phi}_{j,j {'} } = \glssymbol{bbx}_{j {'} }^{(j-1)} {'} \glssymbol{bby}$ \;
+Let $\theta_j = \frac{\mathbf{z}_j {'} \glssymbol{bby}}{\mathbf{z}_j {'} \mathbf{z}_j}$\;
+Let $\hat{glssymbol{bby}}^{(j)} = \hat{glssymbol{bby}}^{(j-1)} + \theta_j \mathbf{z}_j$\;
+Orthogonalize each $\glssymbol{bbx}_{j{'}}^{(j-1)}$ w.r.t.\ $\mathbf{z}_j$: $\glssymbol{bbx}_{j{'}}^{(j)} = \glssymbol{bbx}_{j{'}}^{(j-1)} - \frac{\mathbf{z}_j {'} \glssymbol{bbx}_{j{'}}^{(j-1)}}{\mathbf{z}_{j} {'} \mathbf{z}_j} \mathbf{z}_j$ for $1 \leq j{'} \leq d$\;
+}
+ \caption{\label{alg:pls} \gls{pls} algorithm (adapted from~\cite{friedman2001elements}).}
+\end{algorithm}
+
+
+\subsection{\gls{spc}} \label{app1:sec_spc}
+
+The \gls{spc} algorithm given in~\eqref{alg:spc} has been proposed in~\cite{bair2006prediction}. This version is adapted from~\cite{friedman2001elements} (Algorithm 18.1 in Section 18.6. p.\ 678).
+
+\begin{algorithm}[H]
+ \KwData{$\glssymbol{bbx},\glssymbol{bby},\{ T_1, \dots, T_K \}, \{ m_1, \dots, m_L \}$}
+ \KwResult{$\mathbf{z}$}
+Standardize each $\glssymbol{bbx}_j$ to have mean zero and variance one (which implies that categorical features have been one-hot encoded prior to this step) \;
+Compute the univariate regression coefficients for the outcomes $\glssymbol{bby}$ as a function of each features $\glssymbol{bbx}_j$\;
+\For{Threshold $m \in \{ m_1, \dots, m_L \}$}{
+\For{Threshold $T \in \{ T_1, \dots, T_K \}$}{
+Form a reduced data matrix consisting of only those features whose univariate coefficient exceeds $T$ in absolute value, and compute the first $m$ principal components of this matrix\;
+Use these principal components in a \gls{lr} model to predict the outcomes $\glssymbol{bby}$\;
+} 
+}
+Pick $(T^\star, m^\star)$ by cross-validation.
+ \caption{\label{alg:spc} \gls{spc} algorithm (adapted from~\cite{friedman2001elements}).}
+\end{algorithm}
+
+\subsection{\gls{lmt}} \label{app1:sec_lmt}
+
+
+\subsection{\gls{mob}} \label{app1:sec_mob}
 
 
 

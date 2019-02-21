@@ -4,6 +4,7 @@
 % arara: pdflatex: {shell: yes}
 % arara: biber 
 % arara: pdflatex: {shell: yes}
+% arara: remove: { patterns: [ '*.aux', '*.log', '*.acn', '*.acr', '*.alg', '*.bbl', '*.bcf', '*.blg', '*.glg', '*.glo', '*.gls', '*.loa', '*.lof', '*.log', '*.lot', '*.maf', '*.mtc*', '*.mw', '*.run.xml', '*.slg', '*.slo', '*.sls', '*.toc', '*.xdy'], recursive: yes }
 
 % Document de classe yathesis
 \documentclass[english]{yathesis}
@@ -15,7 +16,7 @@
 \usepackage{booktabs}
 \usepackage{siunitx}
 \usepackage{pgfplots}
-%\pgfplotsset{compat=1.16}
+\pgfplotsset{compat=1.16}
 \usepackage{caption}
 \usepackage{microtype}
 \usepackage{varioref}
@@ -147,14 +148,15 @@
 %
 % (Facultatif) Table des listings (nécessite que le package « listings » soit
 % chargé)
-% \lstlistoflistings
+%\lstlistoflistings
 % (Facultatif) Glossaire (si souhaité distinct de la liste des acronymes) :
 \printglossary
 % (Facultatif) Liste des symboles
 \printsymbols
-
-%\printglossary[type=symbols,style=long,title={Liste des symboles}]
-
+% (Facultatif) Liste des acronymes
+\printacronyms
+% (Facultatif) Liste des algorithmes
+\listofalgorithms
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Début de la partie principale (du « corps ») de la thèse
