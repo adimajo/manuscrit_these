@@ -775,23 +775,23 @@ Let $X \sim \chi^2$ and $\alpha_{\max} = \max_{h_1,h_2} p(X \geq \chi^2_{h_1,h_2
 \section{Logistic regression-based trees}
 
 
-\subsection{\gls{pca}} \label{app1:sec_pca}
+%\subsection{\gls{pca}} \label{app1:sec_pca}
+%
+%\begin{algorithm}[H]
+% \KwData{$\glssymbol{bbx}$}
+% \KwResult{$\glssymbol{bbx}$}
+%
+% \caption{\label{alg:pca} \gls{pca} algorithm.}
+%\end{algorithm}
 
-\begin{algorithm}[H]
- \KwData{$n,\glssymbol{bbx},\alpha$}
- \KwResult{$\hat{\q}$}
-
- \caption{\label{alg:pca} \gls{pca} algorithm.}
-\end{algorithm}
-
-\subsection{\gls{mca}} \label{app1:sec_mca}
-
-\begin{algorithm}[H]
- \KwData{$n,\glssymbol{bbx},\alpha$}
- \KwResult{$\hat{\q}$}
-
- \caption{\label{alg:mca} \gls{mca} algorithm.}
-\end{algorithm}
+%\subsection{\gls{mca}} \label{app1:sec_mca}
+%
+%\begin{algorithm}[H]
+% \KwData{$n,\glssymbol{bbx},\alpha$}
+% \KwResult{$\hat{\q}$}
+%
+% \caption{\label{alg:mca} \gls{mca} algorithm.}
+%\end{algorithm}
 
 
 \subsection{\gls{famd}} \label{app1:sec_famd}
@@ -802,6 +802,28 @@ Let $X \sim \chi^2$ and $\alpha_{\max} = \max_{h_1,h_2} p(X \geq \chi^2_{h_1,h_2
 
  \caption{\label{alg:famd} \gls{famd} algorithm.}
 \end{algorithm}
+
+
+\subsection{LogitBoost} \label{LogitBoost}
+
+The LogitBoost algorithm~\cite{friedman2000additive} for 2 classes is equivalent to the Iterative Reweighted Least Squares method~\cite{friedman2001elements}. However, in \gls{lmt}, in order to perform feature selection, a slight modification is brought to the algorithm so as to fit univariate regressions and pick the best. It is given in Algorithm~\ref{alg:logitboost}.
+
+\begin{algorithm}[H]
+ \KwData{$n,\glssymbol{bbx},\glssymbol{bby}, \max\_{\text{iter}}$}
+ \KwResult{$F(\glssymbol{bx})$}
+Let weights $w_i = 1 / n$, $F(x) = 0$, $p(1 | \glssymbol{bx}) = \frac{\exp(F(\glssymbol{bx})}{\exp(F(\glssymbol{bx}) + \exp(-F(\glssymbol{bx})}$\;
+\For{$s = 1$ to $\max\_{\text{iter}}$}{
+Compute weights $\mathbf{w} = p(1 | \glssymbol{bbx}) \odot (\mathbf{1} - p(1 | \glssymbol{bbx}))$\;
+Compute response $z_{i} = \frac{y_i - p(1 | \glssymbol{bx})}{w_i}$\;
+\For{$j = 1$ to $d$}{
+Fit the univariate reweighted regression coefficient $\hat{\theta}_{s,j} = \argmin_\theta \sum_{i=1}^n w_i \cdot (z_i - \theta x_{i,j})^2 $\;
+}
+Retrieve the best univariate coefficient $j^{\star} = \argmin_{1 \leq j \leq d} \sum_{i=1}^n w_i \cdot (z_i - \hat{\theta}_{s,j} x_{i,j})^2 $\;
+Update $F(\glssymbol{bx}) = F(\glssymbol{bx}) + \frac{1}{2} \hat{\theta}_{s,j^\star} x_j$\;
+}
+ \caption{\label{alg:famd} \gls{famd} algorithm.}
+\end{algorithm}
+
 
 \subsection{\gls{pls}} \label{app1:sec_pls}
 

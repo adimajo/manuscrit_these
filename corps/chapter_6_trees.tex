@@ -44,25 +44,25 @@ The next Section illustrates how such a structure is achieved using \gls{cacf}'s
   \node [root] {\textcolor{black}{Applicants}}
     child { node [dummy] {}
       child { node [dummy] {}
-        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^1}(y|\q^1(\glssymbol{bx}),\bdelta^1))$}}
+        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^1}(y|\q^1(\glssymbol{bx}),\bdelta^1)$ \hspace*{-0.4cm}}}
           edge from parent node [below] {Renters} }
-        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^2}(y|\q^2(\glssymbol{bx}),\bdelta^2)$}}
+        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^2}(y|\q^2(\glssymbol{bx}),\bdelta^2)$ \hspace*{-0.4cm}}}
           edge from parent node [above] {Salaried} }
-        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^3}(y|\q^3(\glssymbol{bx}),\bdelta^3)$}}
+        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^3}(y|\q^3(\glssymbol{bx}),\bdelta^3)$ \hspace*{-0.4cm}}}
                 edge from parent node [above] {Others} }
         edge from parent node [above] {Revolving} }
-      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^4}(y|\q^4(\glssymbol{bx}),\bdelta^4)$}}
+      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^4}(y|\q^4(\glssymbol{bx}),\bdelta^4)$ \hspace*{-0.4cm}}}
               edge from parent node [above, align=center]
                 {Standard loan} }
               edge from parent node [above] {Home Appliances} }
     child { node [dummy] {}
       child { node [dummy] {}
-        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^5}(y|\q^5(\glssymbol{bx}),\bdelta^5)$}}
+        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^5}(y|\q^5(\glssymbol{bx}),\bdelta^5)$ \hspace*{-0.4cm}}}
           edge from parent node [above] {Leasing} }
-        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^6}(y|\q^6(\glssymbol{bx}),\bdelta^6)$}}
+        child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^6}(y|\q^6(\glssymbol{bx}),\bdelta^6)$ \hspace*{-0.4cm}}}
                 edge from parent node [above] {Standard loan} }
         edge from parent node [above] {Fiat} }
-      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^7}(y|\q^7(\glssymbol{bx}),\bdelta^7)$}}
+      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^7}(y|\q^7(\glssymbol{bx}),\bdelta^7)$ \hspace*{-0.4cm}}}
               edge from parent node [above, align=center]
                 {Kawasaki} }
               edge from parent node [above] {Automobile} };
@@ -81,24 +81,91 @@ The next Section illustrates how such a structure is achieved using \gls{cacf}'s
 
 \paragraph{\gls{pca}}
 
-The goal of \gls{pca}~\cite{pages2014multiple} is to represent observations graphically in a way that exhibits most efficiently their similitude and differences by combining input features in so-called orthogonal ``principal components'' $\bm{u} = (\bm{u}_1,\dots,\bm{u}_d)$ such that the inertia $\glssymbol{x}_i' \bm{u}_j$ of each axis $j$ is maximized. It can be shown that it is equivalent to seeking the ordering of the eigenvalues $\bm{\lambda} = (\lambda_1,\dots,\lambda_d)$ of the covariance matrix $\Sigma = \glssymbol{bbx}'\glssymbol{bbx}$. The explained variance of each axis $j$ is given by $\frac{\lambda_j}{\sum_{j'=1}^d \lambda_j'}$. Classically, only the two first axes $(\bm{u}_1,\bm{u}_2)$ are used to represent graphically the data in this new space and the \textit{Credit Scoring} practitioner decide if, visually, clusters are formed (\textit{i.e.}\ clouds with little intra-class variance) which would be used to build separate scorecards $(p_{\glssymbol{bth}^{1}},p_{\glssymbol{bth}^{2}})$, as is the case on Figure~\ref{fig:pca}. The method is described in Appendix~\ref{app1:pca}.
+The goal of \gls{pca}~\cite{pages2014multiple} is to represent observations graphically in a way that exhibits most efficiently their similitude and differences by combining input features in so-called orthogonal ``principal components'' $\bm{u} = (\bm{u}_1,\dots,\bm{u}_d)$ such that the inertia $\glssymbol{x}_i' \bm{u}_j$ of each axis $j$ is maximized. It can be shown that it is equivalent to seeking the ordering of the eigenvalues $\bm{\lambda} = (\lambda_1,\dots,\lambda_d)$ of the covariance matrix $\Sigma = \glssymbol{bbx}'\glssymbol{bbx}$. The explained variance of each axis $j$ is given by $\frac{\lambda_j}{\sum_{j'=1}^d \lambda_j'}$. Classically, only the two first axes $(\bm{u}_1,\bm{u}_2)$ are used to represent graphically the data in this new space and the \textit{Credit Scoring} practitioner decide if, visually, clusters are formed (\textit{i.e.}\ clouds with little intra-class variance) which would be used to build separate scorecards $(p_{\glssymbol{bth}^{1}},p_{\glssymbol{bth}^{2}})$, as is the case on Figure~\ref{fig:pca}.
+%The method is described in Appendix~\ref{app1:pca}.
 
 However, the \textit{Credit Scoring} data is of mixed type and \textit{Credit Scoring} practitioners are used to quantizing the data as in Chapter~\ref{chap4} before testing for homogeneous clusters by using \textit{e.g.\ equal-freq} or $\chi^2$ tests (see Appendix~\ref{app1}).
 
+\begin{figure}[!htb]
+{\setlength{\parindent}{0cm}}
+
+\begin{multicols}{2}
+\centering
+\begin{subfigure}[t]{0.45\textwidth}
+\centering
+\resizebox{\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/pca_axes_definition.tex}}
+\caption{\label{fig:pca1} bla}
+\end{subfigure}%
+\columnbreak
+\hspace*{1cm} \begin{subfigure}[t]{0.45\textwidth}
+\centering
+\resizebox{\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/pca_points.tex}}
+\caption{\label{fig:pca2} bla.}
+\end{subfigure}
+\end{multicols}
+
+\caption{\label{fig:pca} bla.}
+\end{figure}
+
 \paragraph{\gls{mca}}
 
-In presence of only categorical features (or following quantization), the \gls{mca} algorithm is more appropriate: it extends the \gls{pca} approach to categorical features by using the disjunctive table (dummy / one-hot encoding of $\glssymbol{bbx}$). For a thorough introduction to \gls{mca}, see \textit{e.g.}~\cite{lebart1995statistique}. What is most interesting in this method is that both categorical features' levels and observations can be simultaneously displayed on the first principal components axes, as is the case on Figure~\ref{fig:mca}. The method is described in Appendix~\ref{app1:mca}. This is of high practical interest in \textit{Credit Scoring} because clouds of points are directly characterized by the categorical levels that are displayed nearest, contrary to \gls{pca} where groups correspond to surfaces of equation $\glssymbol{bx} ' \bm{u}_1 + \glssymbol{bx} ' \bm{u}_2 \geq \alpha$ where $alpha$ encodes the separation boundary of resulting clusters, which would be the edges of our decision system, as on Figure~\ref{fig:arbre}, and make it arguably less interpretable.
+In presence of only categorical features (or following quantization), the \gls{mca} algorithm is more appropriate: it extends the \gls{pca} approach to categorical features by using the disjunctive table (dummy / one-hot encoding of $\glssymbol{bbx}$ described in Section~\ref{subsec:apprentissage}). For a thorough introduction to \gls{mca}, see \textit{e.g.}~\cite{lebart1995statistique}. What is most interesting in this method is that both categorical features' levels and observations can be simultaneously displayed on the first principal components axes, as is the case on Figure~\ref{fig:mca}.
+%The method is described in Appendix~\ref{app1:mca}.
+This is of high practical interest in \textit{Credit Scoring} because clouds of points are directly characterized by the categorical levels that are displayed nearest, contrary to \gls{pca} where groups correspond to surfaces of equation $\glssymbol{bx} ' \bm{u}_1 + \glssymbol{bx} ' \bm{u}_2 \geq \alpha$ where $alpha$ encodes the separation boundary of resulting clusters, which would be the edges of our decision system, as on Figure~\ref{fig:arbre}, and make it arguably less interpretable.
 
 Nevertheless, a method applicable to mixed data exists as well and could directly be applied to ``raw'' features.
 
+\begin{figure}[!htb]
+{\setlength{\parindent}{0cm}}
+
+\begin{multicols}{2}
+\centering
+\begin{subfigure}[t]{0.45\textwidth}
+\centering
+\resizebox{\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/mca_levels.tex}}
+\caption{\label{fig:mca1} bla}
+\end{subfigure}%
+\columnbreak
+\hspace*{1cm} \begin{subfigure}[t]{0.45\textwidth}
+\centering
+\resizebox{\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/mca_features.tex}}
+\caption{\label{fig:mca2} bla.}
+\end{subfigure}
+\end{multicols}
+
+\caption{\label{fig:mca} bla.}
+\end{figure}
+
 \paragraph{\gls{famd}}
 
-The \gls{famd} algorithm~\cite{pages2014multiple} aims at performing both \gls{mca} on categorical features and \gls{pca} on continuous features in a simultaneous fashion. Resulting principal component axes depend on both data types, as can be seen from Figure~\ref{fi:famd}. The method is described in Appendix~\ref{app1:famd}. This method has the advantage of not requiring the \textit{Credit Scoring} practitioner to preprocess the ``raw'' data by quantizing it, which could have a huge impact on the results of the subsequent method employed, as argumented in Chapter~\ref{chap4}. Moreover, the practitioner would fine-tune the quantization of each sub-population which, if fed back to the \gls{mca}, would potentially yield completely different results!
+The \gls{famd} algorithm~\cite{pages2014multiple} aims at performing both \gls{mca} on categorical features and \gls{pca} on continuous features in a simultaneous fashion. Resulting principal component axes depend on both data types, as can be seen from Figure~\ref{fi:famd}.
+%The method is described in Appendix~\ref{app1:famd}.
+This method has the advantage of not requiring the \textit{Credit Scoring} practitioner to preprocess the ``raw'' data by quantizing it, which could have a huge impact on the results of the subsequent method employed, as argumented in Chapter~\ref{chap4}. Moreover, the practitioner would fine-tune the quantization of each sub-population which, if fed back to the \gls{mca}, would potentially yield completely different results!
 
 It appears clearly that all these methods do not directly optimize a predictive goal such as the one optimized by \gls{lr}. Moreover, the \textit{ad hoc} preprocessing step of quantization might influence the structure of the retained segmentation. 
 
 For numerical experiments of Section~\ref{sec:num_exp}, we will use, among others, the \gls{famd} approach.
 
+\begin{figure}[!htb]
+{\setlength{\parindent}{0cm}}
+
+\begin{multicols}{2}
+\centering
+\begin{subfigure}[t]{0.45\textwidth}
+\centering
+\resizebox{\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/famd_levels.tex}}
+\caption{\label{fig:famd1} bla}
+\end{subfigure}%
+\columnbreak
+\hspace*{1cm} \begin{subfigure}[t]{0.45\textwidth}
+\centering
+\resizebox{\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/famd_features.tex}}
+\caption{\label{fig:famd2} bla.}
+\end{subfigure}
+\end{multicols}
+
+\caption{\label{fig:famd} bla.}
+\end{figure}
 
 \subsection{These practices can fail}
 
@@ -253,11 +320,61 @@ To sum up, although their motivation is similar to the present problem, \gls{lot
 
 The second approach very close to our industrial problem is named \gls{lmt}~\cite{landwehr2005logistic}. As for~\gls{lotus}, the result is a tree of \gls{lr} at its leaves and the motivation is very similar. Their introductory example, reproduced here with permission on Figure~\ref{fig:lmt} is enlightening: a quadratic boundary cannot be well approximated by trees or \gls{lr} alone, but a combination of both achieves good performance and interpretation.
 
-Their approach differs however drastically from \gls{lotus} in that they rely on a particular boosting approach derived from the LogitBoost algorithm~\cite{friedman2000additive} to adjust the \gls{lr}, and an adaptation of the classical C4.5 algorithm to grow the tree. The two central ideas behind their usage of the LogitBoost algorithm are simple: it allows to perform feature selection \textit{via} a stagewise-like process where one feature enters the model at each step and to ``refine'' recursively the \gls{lr} by boosting the \gls{lr} fitted at a node's parent. Indeed, a first \gls{lr} is fitted at the tree's root via LogitBoost using all observations $(\glssymbol{bbx},\glssymbol{bby})$, which is further boosted separatly at its subsequent children nodes on sub-populations, say $((\glssymbol{bbx}^1,\glssymbol{bby}^1), (\glssymbol{bbx}^2,\glssymbol{bby}^2))$ and so on. This most probably induces less parameter estimation variance in each leaf since they partly benefit from samples not in their leaf but used to fit the parents' \gls{lr}. One if its main advantages compared to other approaches is that it is fast. Here again, the resulting tree must be pruned and a tactic similar to CART~\cite{cart84} is used.
+Their approach differs however drastically from \gls{lotus} in that they rely on a particular boosting approach derived from the LogitBoost algorithm~\cite{friedman2000additive} to adjust the \gls{lr}, and an adaptation of the classical C4.5 algorithm to grow the tree. The two central ideas behind their usage of the LogitBoost algorithm are simple: it allows to perform feature selection \textit{via} a stagewise-like process where one feature enters the model at each step and to ``refine'' recursively the \gls{lr} by boosting the \gls{lr} fitted at a node's parent. Indeed, a first \gls{lr} is fitted at the tree's root via LogitBoost using all observations $(\glssymbol{bbx},\glssymbol{bby})$, which is further boosted separatly at its subsequent children nodes on sub-populations, say $((\glssymbol{bbx}^1,\glssymbol{bby}^1), (\glssymbol{bbx}^2,\glssymbol{bby}^2))$ and so on. This most probably induces less parameter estimation variance in each leaf since they partly benefit from samples not in their leaf but used to fit the parents' \gls{lr}. One if its main advantages compared to other approaches is that it is fast. Here again, the resulting tree must be pruned and a tactic similar to CART~\cite{cart84}, or cross-validation, or the AIC criterion (in a refinement proposed in~\cite{sumner2005speeding}) are used.
 
 However, categorical features are dummy / one-hot encoded so that only a few factor levels might be selected at each leaf, which amounts to merging the not selected levels into a reference value. Conversely, when used as a split feature, each level yields a distinct branch. Moreover, missing values are imputed by the mean or mode.
 
 Its original implementation is in Weka but \textsf{R} packages \rinline{party} and \rinline{partykit} provide interfaces and wrappers to it.
+
+\begin{figure}[!htb]
+{\setlength{\parindent}{0cm}}
+\begin{center}
+%\begin{multicols}{3}
+\centering
+\begin{subfigure}[t]{0.25\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/chapitre6/lmt_generation.png}
+\caption{\label{fig:lmt1} Quadratic data generation process: the true boundary depends on the square of input features.}
+\end{subfigure}%
+%\columnbreak
+\hspace*{1cm}
+\begin{subfigure}[t]{0.25\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/chapitre6/lmt_tree_1.png}
+\caption{\label{fig:lmt2} The first split of a classification tree like is way too simplistic.}
+\end{subfigure}
+%\columnbreak
+\hspace*{1cm}
+\begin{subfigure}[t]{0.25\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/chapitre6/lmt_tree_2.png}
+\caption{\label{fig:lmt3}  The second split is more helpful.}
+\end{subfigure}
+%\end{multicols}
+\end{center}
+
+\begin{center}
+%\begin{multicols}{2}
+\centering
+\begin{subfigure}[t]{0.32\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/chapitre6/lmt_tree_3.png}
+\caption{\label{fig:lmt4} The third split yields overfitting: these nodes shall be pruned.}
+\end{subfigure}%
+%\columnbreak
+\hspace*{1cm} \begin{subfigure}[t]{0.32\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/chapitre6/lmt_logistic.png}
+\caption{\label{fig:lmt5} A \gls{lr} tree with only two leaves (and consequently two \gls{lr}) yields the best result.}
+\end{subfigure}
+%\end{multicols}
+\end{center}
+
+\caption{\label{fig:lmt} LMT motivational example.}
+\end{figure}
+
+
+
 
 \paragraph{\gls{mob}} \label{par:mob}
 
@@ -274,15 +391,50 @@ In the next Section, we formalize the problem as a model selection problem, simi
 
 \section{Logistic regression trees as a combinatorial model selection problem} \label{sec:model_selec_tree}
 
-In this Section, it is supposed the well-specified model is indeed a \gls{lr} tree, which amounts to assuming there $K^\star$ segments. The membership of an observation $\glssymbol{bx}$ to a segment $c$ is given by a tree, such that:
+In this Section, it is supposed the well-specified model is indeed a \gls{lr} tree, which amounts to assuming there $K^\star$ segments. The membership of an observation $\glssymbol{bx}$ to a segment $c$ is given by a tree (we restrict to binary trees for simplicity), such that:
 \begin{equation} \label{eq:tree}
-p( c | \glssymbol{bx}) = 
+p( c | \glssymbol{bx}) = \prod_{r = 1}^{K-1} \mathds{1}_{C_{r,c}} (x_{\sigma(r)})
 \end{equation}
+where $r$ denotes the depth of each rule ($r=1$ gives the root rule, and so on) and $\sigma(r)$ gives the antirank of the feature used in rule $r$, $C_{r,c} = \begin{cases} ]-\infty ; \lambda_r] \\ \text{or} \\ ] \lambda_r ; +\infty[ \end{cases}$ for a continuous feature and $C_{r,c} = \begin{cases} \lambda_{r,1} \\ \text{or} \\ \lambda_{r,2} \end{cases}$ such that $ \lambda_{r,1} \bigsqcup \lambda_{r,2} = \glssymbol{N}_{l_{\sigma(r)}}$ for a categorical feature depending on the ``side'' of the segment $c$ w.r.t.\ the rule $r$. An example is given on Figure~\ref{fig_arbre_ex_notations}.
 In each segment, the well-specified assumption is equivalent to a \gls{lr}:
 \begin{equation} \label{eq:lr_tree}
 \forall \glssymbol{bx}, y, \exists c^\star \in \glssymbol{N}_{K^\star}, \glssymbol{bth}^{\star,c^\star}, p(y | \glssymbol{bx}) = p_{\glssymbol{bth}^{\star,c^\star}}(y | \glssymbol{bx}, c^\star)
 \end{equation}
 For $c \in \glssymbol{N}_{K^\star}$, $(\glssymbol{bbx}^c, \glssymbol{bby}^c)$ denotes the subset of observations of $(\glssymbol{bbx}, \glssymbol{bby})$ for which $c^\star = c$.
+
+\tikzstyle{level 1}=[level distance=2.2cm, sibling distance=8cm]
+\tikzstyle{level 2}=[level distance=2cm, sibling distance=4cm]
+
+
+\begin{figure}
+\resizebox{\textwidth}{!}{
+\centering
+\begin{tikzpicture}
+  [
+    sibling distance        = 15em,
+    level distance          = 5em,
+    edge from parent/.style = {draw, -latex},
+    every node/.style       = {font=\footnotesize},
+    sloped
+  ]
+  \node [root] {\textcolor{black}{$r = 1$}}
+    child { node [dummy] {$r=2$}
+      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^1}(y|\q^1(\glssymbol{bx}),\bdelta^1)$ \hspace*{-0.4cm}}}
+          edge from parent node [below] {Renters} }
+      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^4}(y|\q^4(\glssymbol{bx}),\bdelta^4)$ \hspace*{-0.4cm}}}
+              edge from parent node [above, align=center] {Standard loan} }
+              edge from parent node [above] {$\glssymbol{bx} \in C_{1,1}$} }
+    child { node [dummy] {$r=3$}
+      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^5}(y|\q^5(\glssymbol{bx}),\bdelta^5)$ \hspace*{-0.4cm}}}
+          edge from parent node [above] {$\glssymbol{bx} \in C_{3,1}$} }
+      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^7}(y|\q^7(\glssymbol{bx}),\bdelta^7)$ \hspace*{-0.4cm}}}
+              edge from parent node [above, align=center] {$\glssymbol{bx} \in C_{2,2}$} }
+              edge from parent node [above] {$\glssymbol{bx} \in C_{1,2}$} };
+\end{tikzpicture}
+}
+\caption{Notations by an example.}
+\label{fig_arbre_ex_notations}
+\end{figure}
 
 The above mentioned \gls{lotus}, \gls{lmt} and \gls{mob} optimized the sum of the segments' log-likelihoods, then needed pruning since it leads to obvious overfitting (infinite log-likelihood is achievable by putting each sample into its own segment, provided there is at least one continuous feature of combinations of categorical features' levels that separate classes perfectly).
 
@@ -300,7 +452,7 @@ Consequently, the following criterion can be used to select a segmentation:
 As was thoroughly explained for quantizations and interactions in Sections~\ref{par:consistency} and~\ref{sec:pairwise} respectively, it is unclear how many parameters should be accounted for in this BIC criterion since the tree of Equation~\eqref{eq:tree} has parameters \textcolor{red}{à compléter} which have to be estimated (this is somewhat reflected in Equation~\eqref{eq:likelihood_segment} by the $p(\glssymbol{bth}^c | c)$ term); some are continuous (when the split is done on a continuous feature), some are discrete (when it concerns a categorical feature). As discussed in Section~\ref{par:consistency}, discrete parameters are usually not counted, but here, following the C4.5 approach of considering the levels of categorical features as ordered (w.r.t.\ the proportion of events $y$ associated to them - see Section~\ref{subsec:sup_gen}, Paragraph~\nameref{par:mob}), a split on categorical features can count as one continuous parameter. This yields the $K-1$ term in Criterion~\eqref{eq:BICc}.
 
 
-In the next Section, we propose to relax the constraint of Equation~\eqref{eq:def_c}, exactly as was done for quantizations in Chapter~\ref{chap4}, by using a continuous approximation of this discrete (and thus highly difficult to directly optimize) problem.
+In the next Section, we propose to relax the constraint of Equation~\eqref{eq:tree}, exactly as was done for quantizations in Chapter~\ref{chap4}, by using a continuous approximation of this discrete (and thus highly difficult to directly optimize) problem.
 
 
 \section{A mixture and latent feature-based relaxation}
