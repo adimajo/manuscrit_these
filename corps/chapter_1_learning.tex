@@ -163,7 +163,7 @@ $y$ & 1 & Manquant - Non-financé& 0 & Manquant - Indéterminé & 0 & 1 \\
 
 On en conclut que la performance de remboursement n'est observable que pour les clients financés non indéterminés, que l'on va assimiler dans la suite à ceux pour lesquels $Z=\f$, problème qui fait l'objet du chapitre~\ref{chap2}. Toujours-est-il qu'à présent, on dispose de données $(\glssymbol{bbx},\glssymbol{bby})$ complètes grâce auxquelles on souhaite apprendre une règle de décision, appelée \gls{score} et discernant, parmi les futurs demandeurs de crédit, les ``bons'' des ``mauvais'' clients.
 
-\subsection{L'apprentissage d'une règle de décision}
+\subsection{L'apprentissage d'une règle de décision} \label{subsec:apprentissage}
 
 Malgré l'existence de nombreux modèles statistiques permettant de prédire $\glssymbol{Y}$ connaissant les caractéristiques $\glssymbol{bX}$ d'un client et que nous discuterons en partie~\ref{chap1:sec3}, la régression logistique est très largement utilisée en \textit{Credit Scoring}~\cite{thomas2000survey}. Plusieurs travaux empiriques ont suggéré que du fait de la nature des données ``classiques'' en \textit{Credit Scoring}, \textit{i.e.}\ faible nombre de covariables et classes très mélangées (en particulier, absence de frontière de séparation linéaire entre ``bons'' et ``mauvais'' clients), aucun autre modèle de classification supervisée ne produit de résultats significativement supérieurs à la régression logistique sur les données à disposition de leurs auteurs respectifs (se référer par exemple à~\cite{hand1997statistical,baesens2003benchmarking,brown2012experimental}).
 
