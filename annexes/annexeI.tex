@@ -1,6 +1,8 @@
+\selectlanguage{english}
+
 \chapter{Algorithms} \label{app1}
 
-\selectlanguage{english}
+\minitoc
 
 \section{Reject Inference methods} \label{app1:reject}
 
@@ -821,7 +823,7 @@ Fit the univariate reweighted regression coefficient $\hat{\theta}_{s,j} = \argm
 Retrieve the best univariate coefficient $j^{\star} = \argmin_{1 \leq j \leq d} \sum_{i=1}^n w_i \cdot (z_i - \hat{\theta}_{s,j} x_{i,j})^2 $\;
 Update $F(\glssymbol{bx}) = F(\glssymbol{bx}) + \frac{1}{2} \hat{\theta}_{s,j^\star} x_j$\;
 }
- \caption{\label{alg:famd} \gls{famd} algorithm.}
+ \caption{\label{alg:logitboost} LogitBoost algorithm.}
 \end{algorithm}
 
 
@@ -833,12 +835,12 @@ The \gls{pls} algorithm given in~\eqref{alg:pls} has been proposed in~\cite{wold
  \KwData{$\glssymbol{bbx},\glssymbol{bby}$}
  \KwResult{$\mathbf{z}$}
 Standardize each $\glssymbol{bbx}_j$ to have mean zero and variance one (which implies that categorical features have been one-hot encoded prior to this step) \;
-Set $\hat{glssymbol{bby}}^{(0)} = |\glssymbol{bby}| \mathbf{1}$\;
+Set $\hat{\glssymbol{bby}}^{(0)} = |\glssymbol{bby}| \mathbf{1}$\;
 Set $\glssymbol{bbx}_j^{(0)} = \glssymbol{bbx}_j$\;
 \For{$j=1$ to $d$}{
 Let $\mathbf{z}_j = \sum_{j {'} = 1}^d \hat{\phi}_{j,j {'} } \glssymbol{bbx}_{j {'} }^{(j-1)}$ where $\hat{\phi}_{j,j {'} } = \glssymbol{bbx}_{j {'} }^{(j-1)} {'} \glssymbol{bby}$ \;
 Let $\theta_j = \frac{\mathbf{z}_j {'} \glssymbol{bby}}{\mathbf{z}_j {'} \mathbf{z}_j}$\;
-Let $\hat{glssymbol{bby}}^{(j)} = \hat{glssymbol{bby}}^{(j-1)} + \theta_j \mathbf{z}_j$\;
+Let $\hat{\glssymbol{bby}}^{(j)} = \hat{\glssymbol{bby}}^{(j-1)} + \theta_j \mathbf{z}_j$\;
 Orthogonalize each $\glssymbol{bbx}_{j{'}}^{(j-1)}$ w.r.t.\ $\mathbf{z}_j$: $\glssymbol{bbx}_{j{'}}^{(j)} = \glssymbol{bbx}_{j{'}}^{(j-1)} - \frac{\mathbf{z}_j {'} \glssymbol{bbx}_{j{'}}^{(j-1)}}{\mathbf{z}_{j} {'} \mathbf{z}_j} \mathbf{z}_j$ for $1 \leq j{'} \leq d$\;
 }
  \caption{\label{alg:pls} \gls{pls} algorithm (adapted from~\cite{friedman2001elements}).}
@@ -854,7 +856,7 @@ The \gls{spc} algorithm given in~\eqref{alg:spc} has been proposed in~\cite{bair
  \KwResult{$\mathbf{z}$}
 Standardize each $\glssymbol{bbx}_j$ to have mean zero and variance one (which implies that categorical features have been one-hot encoded prior to this step) \;
 Compute the univariate regression coefficients for the outcomes $\glssymbol{bby}$ as a function of each features $\glssymbol{bbx}_j$\;
-\For{Threshold $m \in \{ m_1, \dots, m_L \}$}{
+\For{Principal components $m \in \{ m_1, \dots, m_L \}$}{
 \For{Threshold $T \in \{ T_1, \dots, T_K \}$}{
 Form a reduced data matrix consisting of only those features whose univariate coefficient exceeds $T$ in absolute value, and compute the first $m$ principal components of this matrix\;
 Use these principal components in a \gls{lr} model to predict the outcomes $\glssymbol{bby}$\;
