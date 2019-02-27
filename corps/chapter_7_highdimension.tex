@@ -1,23 +1,129 @@
 \chapter{High dimensional data in \textit{Credit Scoring}} \label{chap7}
 
+\selectlanguage{english}
+
 \epigraph{All [problems due to high dimension] may be subsumed under the heading “the curse of dimensionality”. Since this is a curse, [...], there is no need to feel discouraged about the possibility of obtaining significant results despite it.}{R. Bellman, ``Dynamic programming'', 1957}
 
 \minitoc
 
-
+Various sources estimate the growth of created data to be exponential. However, the difficulty of processing these data has superseded the difficulty of storing them: ``data is the new oil'' is the catch-phrase often repeated in industry. While this oil has been extensively extracted and stored in a lot of application contexts, including \textit{Credit Scoring}, there is not always a motor capable of burning it. \textit{Scalability} refers to the problem of applying an existing method to increasingly more data. It turns out that, either by lack of computing power and / or by statistical properties or assumptions not met, not all methods are scalable.
+Consequently, the statistics and machine learning communities have already tackled lots of problems stemming specifically from large $n$ and / or large $d$ settings.
+These problems form a vast literature and are out of the scope of the present work.
+The aim of this Chapter is to give a concise context of high-dimensional data w.r.t.\ the \textit{Credit Scoring} industry, what problems does it give rise to, and some simple existing solutions from an eluded literature review.
 
 \section{Motivation}
 
+This first Section aims at presenting this well-known paradigm in the context of \textit{Credit Scoring} and the two sub-problems that were identified and tackled in this Chapter.
+
 \subsection{Industrial context}
 
+Being a CIFRE PhD, .
 
-\subsection{Two identified subproblems}
+\subsubsection{Traditional longitudinal data}
+
+
+\subsubsection{Transactional data}
+
+\paragraph{Payment data}
+
+\begin{table}[ht]
+    \centering
+    \caption{Payment data.}
+    \label{tab:payment_data}
+\begin{tabular}{lllllll}
+Client & Date & Should pay & Has paid & Type & Outstanding & Status \\
+ \hline
+1 & 05/01/2019:10:00:00 & 50 & 0 & Automatic debit & 5{,}000 & Refused \\
+1 & 08/01/2019:10:00:00 & 50 & 50 & Automatic debit & 4{,}950 & Accepted \\
+1 & 05/02/2019:10:00:00 & 50 & 0 & Automatic debit & 5{,}000 & Refused \\
+1 & 08/02/2019:10:00:00 & 50 & 0 & Automatic debit & 4{,}950 & Refused
+\end{tabular}
+\end{table}
+
+
+\paragraph{Recovery data}
+
+\begin{table}[ht]
+    \centering
+    \caption{Monthly per-client recovery data.}
+    \label{tab:recovery_data}
+\begin{tabular}{lllllll}
+Client & Date & Should pay & Fees & Has paid & Type & Status \\
+ \hline
+1 & 09/02/2019:11:24:12 & 50 & 10 & 0 & 4{,}960 & Manual recovery by phone \\
+1 & 09/02/2019:11:26:09 & 60 & 0 & 60 & 4{,}900 & Credit card payment \\
+\end{tabular}
+\end{table}
+
+\paragraph{Credit card data}
+
+\begin{table}[ht]
+    \centering
+    \caption{Daily per-client credit card data.}
+    \label{tab:credit_card_data}
+\begin{tabular}{lllllll}
+Client & Date & Amount & Company & Location & Category & \dots \\
+ \hline
+1 & 01/01/2019:09:05:18 & 10.9 & Amazon & Online & Online retail & \dots \\
+1 & 01/01/2019:12:50:25 & 14.5 & Les 3 Brasseurs & 22 Place de la Gare, 59800 LILLE & Restaurant & \dots \\
+1 & 02/01/2019:19:10:20 & 78.9 & Carrefour & 1 Avenue Willy Brandt, 59000 LILLE & Retail consumer goods & \dots 
+\end{tabular}
+\end{table}
+
+
+\subsubsection{Log data}
+
+\begin{table}[ht]
+    \centering
+    \caption{Log data.}
+    \label{tab:log_data}
+\begin{tabular}{lllllll}
+Client & Platform & Device & Date & URL \\
+ \hline
+1 & Leboncoin & MAC OS & 10/01/2019:22:33:50 &  \\
+1 & Main site & MAC OS & 10/01/2019:22:34:10 &  \\
+1 & Main site & MAC OS & 10/01/2019:22:34:30 &  \\
+1 & Main site & MAC OS & 10/01/2019:22:34:10 &  \\
+\end{tabular}
+\end{table}
+
+
+
+
+
+\subsubsection{Marketing data}
+
+
+\begin{table}[ht]
+    \centering
+    \caption{Marketing data.}
+    \label{tab:marketing_data}
+\begin{tabular}{lllllll}
+Client & Marketing lever & Date & Device & Opened & Visited & URL \\
+ \hline
+1 & email & 02/03/2019:15:02:54 & Android & Yes & No & /media/new\_credit\_ad/car\_loan\&id=1\&\dots \\
+1 & mail & 02/04/2019:10:00:00 & NA & NA & NA & NA \\
+1 & Google Adword & 15/04/2019:12:10:10 & Windows & NA & Yes & /adword/personal\_credit\&id=1\&\dots \\
+\end{tabular}
+\end{table}
+
+
+
+\subsection{Two identified sub-problems}
+
+\subsubsection{Using big $n$, big $d$ data}
+
+\subsubsection{Using unstructured and / or fine-grained data}
+
 
 
 \section{Longitudinal data in high dimension}
 
+This Section is an eluded literature review of problems that arise in high dimension for ``classical'' longitudinal data. It was first tackled by bio-statisticians working with omics data, such as DNA that can span over thousands of features for each patient, which yields a situation where more features than observations are available!
+
 \subsection{The $d > n$ setting}
 
+In the next Section, 
 
 \subsection{The curse of dimensionality}
 
@@ -27,6 +133,7 @@
 
 \subsection{Dimension reduction}
 
+A straightforward way of 
 
 \subsubsection{By combining input features}
 
@@ -40,7 +147,7 @@
 
 \bigskip
 
-Ce chapitre.
+This last Chapter closes my journey of some shortcomings of current practices of \textit{Credit Scoring}. It opens .
 
 
-\printbibliography[heading=subbibliography, title=Références du chapitre 6]
+\printbibliography[heading=subbibliography, title=References of Chapter 6]

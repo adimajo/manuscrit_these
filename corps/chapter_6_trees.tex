@@ -1,5 +1,7 @@
 \chapter{Tree-structure segmentation for logistic regression} \label{chap6}
 
+\selectlanguage{english}
+
 \epigraph{.}{.}
 
 \minitoc
@@ -8,8 +10,6 @@
 \textit{Nota Bene :} Ce chapitre s'inspire fortement ... \textcolor{red}{à adapter au moment de l'envoi du manuscrit}
 
 \bigskip
-
-\selectlanguage{english}
 
 In Chapter~\ref{chap1}, and parallel to quantization, it was argued in Section~\ref{subsec:segmentation} that, what is referred to as ``segmentation'' in the \textit{Credit Scoring} industry, could also be a straightforward solution to deal with missing values and outliers. The more theoretical justification of quantization, sketched in Section~\ref{sec:bias_variance_quant}, was to achieve a good bias-variance tradeoff of the predictive task. This goal was embedded in the proposed quantization algorithm. Here again, the resulting segmentation and scorecards therein can be viewed as a single model for the whole population. In the next Section, we give some industrial context to the problem which is followed in Section~\ref{sec:literature} by a literature review. Section~\ref{sec:model_selec_tree} reinterprets this problem, as promised, as a model selection problem for which a specific approach is designed in subsequent Sections.
 
@@ -400,7 +400,7 @@ In each segment, the well-specified assumption is equivalent to a \gls{lr}:
 \begin{equation} \label{eq:lr_tree}
 \forall \glssymbol{bx}, y, \exists c^\star \in \glssymbol{N}_{K^\star}, \glssymbol{bth}^{\star,c^\star}, p(y | \glssymbol{bx}) = p_{\glssymbol{bth}^{\star,c^\star}}(y | \glssymbol{bx}, c^\star)
 \end{equation}
-For $c \in \glssymbol{N}_{K^\star}$, $(\glssymbol{bbx}^c, \glssymbol{bby}^c)$ denotes the subset of observations of $(\glssymbol{bbx}, \glssymbol{bby})$ for which $c^\star = c$.
+For $c \in \glssymbol{N}_{K^\star}$, $(\glssymbol{bbx}^c, \glssymbol{bby}^c)$ denotes the subset of observations of $(\glssymbol{bbx}, \glssymbol{bby})$ for which $c^\star = c$, such that $ \bigsqcup_{c=1}^{K} (\glssymbol{bbx}^c, \glssymbol{bby}^c) = (\glssymbol{bbx}, \glssymbol{bby})$.
 
 \tikzstyle{level 1}=[level distance=2.2cm, sibling distance=8cm]
 \tikzstyle{level 2}=[level distance=2cm, sibling distance=4cm]
@@ -436,11 +436,11 @@ For $c \in \glssymbol{N}_{K^\star}$, $(\glssymbol{bbx}^c, \glssymbol{bby}^c)$ de
 \label{fig_arbre_ex_notations}
 \end{figure}
 
-The above mentioned \gls{lotus}, \gls{lmt} and \gls{mob} optimized the sum of the segments' log-likelihoods, then needed pruning since it leads to obvious overfitting (infinite log-likelihood is achievable by putting each sample into its own segment, provided there is at least one continuous feature of combinations of categorical features' levels that separate classes perfectly).
+The above mentioned \gls{lotus}, \gls{lmt} and \gls{mob} optimized the sum of the segments' log-likelihoods, then needed pruning since it leads to obvious overfitting: infinite log-likelihood is achievable by putting each sample into its own segment, provided there is at least one continuous feature and no identical examples with different labels, or combinations of categorical features' levels that separate classes perfectly.
 
 Another approach can be taken by considering the segment $c$ as a latent random feature:
 \begin{align}
-p(\glssymbol{bby}, \glssymbol{bbx}) & =  \sum_{c=1}^{K^\star} p(\glssymbol{bby} | \glssymbol{bbx}, c) p(c | \glssymbol{bbx}) p(\glssymbol{bbx}) & \text{(only $c = c^\star$ is non-zero)} \nonumber \\
+p(\glssymbol{bbx},\glssymbol{bby}) & =  \sum_{c=1}^{K^\star} p(\glssymbol{bby} | \glssymbol{bbx}, c) p(c | \glssymbol{bbx}) p(\glssymbol{bbx}) & \text{(only $c = c^\star$ is non-zero)} \nonumber \\
  & = \prod_{c=1}^{K^\star} p(\glssymbol{bby}^c | \glssymbol{bbx}^c, c) p(\glssymbol{bbx}) \nonumber \\
  & = \prod_{c=1}^{K^\star} \int_{\Theta_c} p_{\glssymbol{bth}^{c}}(\glssymbol{bby}^c | \glssymbol{bbx}^c, c) p(\glssymbol{bth}^c | c) d\glssymbol{bth}^c p(\glssymbol{bbx}) \label{eq:likelihood_segment}
 %\ln p(\glssymbol{bby}, \glssymbol{bbx}) & = \sum_{c=1}^{K^\star} \exp \left( \frac{-\text{BIC}(\hat{\glssymbol{bth}^c}) + O(1)}{2} \right) + \ln p(\glssymbol{bbx}) 
