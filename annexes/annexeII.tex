@@ -33,7 +33,7 @@ Once installed, the \textsf{R} help and vignette detail the functioning of the p
 \item Its main arguments are \rinline{predictors} and \rinline{labels} where \rinline{predictors} are assumed to be of type \rinline{num} or \rinline{factor}.
 \item An option to seek for interactions (see Chapter~\ref{chap5}) is given as \rinline{interact = TRUE}.
 \item For the moment, it is not possible to do Cross-Validation or to use a user-defined validation / test dataset(s).
-\item However, arguments \rinline{validation}, \rinline{test} and \rinline{proportions} lets the user choose if the quantization / interactions are optimized on the validation set, if a test performance has to be reported, and what proportion(s) of the original data has to be used for each of these datasets, \textit{e.g.}\ \rinline{proportions = c(0.2,0.2)} splits \rinline{predictors} and \rinline{labels} into 60 \% training, 20 \% validation and 20 \% test.
+\item However, arguments \rinline{validation}, \rinline{test} and \rinline{proportions} lets the user choose if the quantization / interactions are optimized on the validation set, if a test performance has to be reported, and what proportion(s) of the original data has to be used for each of these datasets, \textit{e.g.}\ \rinline{proportions = c(0.2,0.2)} splits \rinline{predictors} and \rinline{labels} into 60~\% training, 20~\% validation and 20~\% test.
 \item To use a learnt quantization, and its associated \gls{lr} on a new set, the \rinline{predict} and \rinline{discretize} functions are provided.
 \item If a presumable bug is encountered, an issue may be raised on the Github page of the package.
 \end{itemize}
