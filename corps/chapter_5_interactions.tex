@@ -35,7 +35,7 @@ Moreover, the number of coefficients is nevertheless kept low by having few leve
 
 Criterion~\eqref{eq:BICq} developed in the context of quantization can be adapted to take into account interactions:
 \begin{equation} \label{eq:criterion_inter}
-\q^\star,\bdelta^\star = \argmin_{\q,\bdelta} \text{BIC}(\hat{\glssymbol{bth}}_{\q,\bdelta}),
+(\q^\star,\bdelta^\star) = \argmin_{(\q,\bdelta)} \text{BIC}(\hat{\glssymbol{bth}}_{\q,\bdelta}),
 \end{equation}
 where $\hat{\glssymbol{bth}}_{\q,\bdelta}$ is the MLE of $\glssymbol{bth}$ given $(\glssymbol{bbx},\glssymbol{bby})$, $\q$ and $\bdelta$. Supplemental to the \nameref{par:consistency} of Section~\ref{par:consistency}, $\delta_{k,\ell}$ is an estimated parameter of the model and an additional $\frac{d(d-1)}{2}$ term shall be added to the penalization term $\nu_\q$ of the BIC criterion~\eqref{eq:BICq}. The combinatorics involved in this problem are much higher than those of criterion~\eqref{eq:BICq}, which already lead to an untractable greedy approach. For each feasible quantization scheme of Section~\ref{par:cardinality}'s ~\nameref{par:cardinality}, there is now $2^{\frac{d(d-1)}{2}}$ models to test! In this section, we will first consider the discretization fixed and develop a stochastic approach similar to the one proposed for discretization and grouping of factor levels.
 
@@ -320,12 +320,12 @@ We complement Table~\ref{tab:banchmark} (see Section~\ref{subsec:exp_benchmark} 
 \begin{tabular}{llllll}
 Dataset & ALLR & \textit{ad hoc} methods & \makecell{Our proposal:\\ \textit{glmdisc}-NN} & \makecell{Our proposal:\\ \textit{glmdisc}-SEM} & \makecell{\textit{glmdisc}-SEM\\ w.\ interactions} \\
 \hline
-Adult & 81.4 (1.0) & \textbf{85.3} (0.9) & 80.4 (1.0) & 0 & \\
-Australian & 72.1 (10.4) & 84.1 (7.5) & \textbf{92.5} (4.5) & 0 & \\
-Bands & 48.3 (17.8) & 47.3 (17.6) & \textbf{58.5} (12.0) & 0 & \\
-Credit & 81.3 (9.6) & 88.7 (6.4) & \textbf{92.0} (4.7) & 0 & \\
+Adult & 81.4 (1.0) & \textbf{85.3} (0.9) & 80.4 (1.0) & 81.5 (1.0) & 81.5 (1.0 - no interaction) \\
+Australian & 72.1 (10.4) & 84.1 (7.5) & 92.5 (4.5) & \textbf{100} (0) & \\
+Bands & 48.3 (17.8) & 47.3 (17.6) & 58.5 (12.0) & \textbf{58.7} (12.0) & \\
+Credit & 81.3 (9.6) & 88.7 (6.4) & \textbf{92.0} (4.7) & 87.7 (6.4) & \\
 German & 52.0 (11.3) & 54.6 (11.2) & \textbf{69.2} (9.1) & 0 & \\
-Heart & 80.3 (12.1) & 78.7 (13.1) & \textbf{86.3} (10.6) & 0 & 
+Heart & 80.3 (12.1) & 78.7 (13.1) & \textbf{86.3} (10.6) & 82.2 (11.2) & 82.2 (11.2 - no interaction)
 \end{tabular}
 \end{small}
 \end{table}

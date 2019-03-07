@@ -6,9 +6,6 @@
 
 \minitoc
 
-
-\textit{Nota Bene :} Ce chapitre s'inspire fortement ... \textcolor{red}{à adapter au moment de l'envoi du manuscrit}
-
 \bigskip
 
 In Chapter~\ref{chap1}, and parallel to quantization, it was argued in Section~\ref{subsec:segmentation} that, what is referred to as ``segmentation'' in the \textit{Credit Scoring} industry, could also be a straightforward solution to deal with missing values and outliers. The more theoretical justification of quantization, sketched in Section~\ref{sec:bias_variance_quant}, was to achieve a good bias-variance tradeoff of the predictive task. This goal was embedded in the proposed quantization algorithm. Here again, the resulting segmentation and scorecards therein can be viewed as a single model for the whole population. In the next Section, we give some industrial context to the problem which is followed in Section~\ref{sec:literature} by a literature review. Section~\ref{sec:model_selec_tree} reinterprets this problem, as promised, as a model selection problem for which a specific approach is designed in subsequent Sections.
@@ -94,17 +91,17 @@ However, the \textit{Credit Scoring} data is of mixed type and \textit{Credit Sc
 \begin{subfigure}[t]{0.45\textwidth}
 \centering
 \resizebox{\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/pca_axes_definition.tex}}
-\caption{\label{fig:pca1} bla}
+\caption{\label{fig:pca1} The first axis is dominated by features linked to the financed good and characteristics of the loan while the second axis is composed of characteristics of the client and durations (age of the client, his / her partner, age of the car, number of children, \dots).}
 \end{subfigure}%
 \columnbreak
 \hspace*{1cm} \begin{subfigure}[t]{0.45\textwidth}
 \centering
 \resizebox{\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/pca_points.tex}}
-\caption{\label{fig:pca2} bla.}
+\caption{\label{fig:pca2} However, no clear segments appear on the new representation of data along these two axes.}
 \end{subfigure}
 \end{multicols}
 
-\caption{\label{fig:pca} bla.}
+\caption{\label{fig:pca} The result of a \gls{pca} applied to continuous features of \gls{cacf} data from the car loan market.}
 \end{figure}
 
 \paragraph{\gls{mca}}
@@ -123,22 +120,22 @@ Nevertheless, a method applicable to mixed data exists as well and could directl
 \begin{subfigure}[t]{0.45\textwidth}
 \centering
 \resizebox{\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/mca_levels.tex}}
-\caption{\label{fig:mca1} bla}
+\caption{\label{fig:mca1} The factor map contains all levels of all categorical features, making it hard to read. Note that very little of the total variance is explained by the two first axes.}
 \end{subfigure}%
 \columnbreak
 \hspace*{1cm} \begin{subfigure}[t]{0.45\textwidth}
 \centering
 \resizebox{\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/mca_features.tex}}
-\caption{\label{fig:mca2} bla.}
+\caption{\label{fig:mca2} The barycenter of a categorical feature is obtained by weighting the contribution of each level in Figure~\ref{fig:famd1}.}
 \end{subfigure}
 \end{multicols}
 
-\caption{\label{fig:mca} bla.}
+\caption{\label{fig:mca} The result of an \gls{mca} applied to categorical data of \gls{cacf} data from the car loan market.}
 \end{figure}
 
 \paragraph{\gls{famd}}
 
-The \gls{famd} algorithm~\cite{pages2014multiple} aims at performing both \gls{mca} on categorical features and \gls{pca} on continuous features in a simultaneous fashion. Resulting principal component axes depend on both data types, as can be seen from Figure~\ref{fi:famd}.
+The \gls{famd} algorithm~\cite{pages2014multiple} aims at performing both \gls{mca} on categorical features and \gls{pca} on continuous features in a simultaneous fashion. Resulting principal component axes depend on both data types, as can be seen from Figure~\ref{fig:famd}.
 %The method is described in Appendix~\ref{app1:famd}.
 This method has the advantage of not requiring the \textit{Credit Scoring} practitioner to preprocess the ``raw'' data by quantizing it, which could have a huge impact on the results of the subsequent method employed, as argumented in Chapter~\ref{chap4}. Moreover, the practitioner would fine-tune the quantization of each sub-population which, if fed back to the \gls{mca}, would potentially yield completely different results!
 
@@ -154,17 +151,17 @@ For numerical experiments of Section~\ref{sec:num_exp}, we will use, among other
 \begin{subfigure}[t]{0.45\textwidth}
 \centering
 \resizebox{\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/famd_levels.tex}}
-\caption{\label{fig:famd1} bla}
+\caption{\label{fig:famd1} Analogous of Figure~\ref{fig:mca1}, categorical features' levels involved in the \gls{famd} can be plotted but not much can be drawn from the graph.}
 \end{subfigure}%
 \columnbreak
 \hspace*{1cm} \begin{subfigure}[t]{0.45\textwidth}
 \centering
 \resizebox{\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/famd_features.tex}}
-\caption{\label{fig:famd2} bla.}
+\caption{\label{fig:famd2} Categorical features can be represented as the barycenter of their levels as on Figure~\ref{fig:mca2} alongside the contribution of continuous features. The interpretation of the axes is switched: the first one is composed of clients' characteristics, \textit{e.g.}\ age and job, while the second relates to the financed good and the characteristics of the loan, \textit{e.g.}\ its brand or the down payment.}
 \end{subfigure}
 \end{multicols}
 
-\caption{\label{fig:famd} bla.}
+\caption{\label{fig:famd} The result of a \gls{famd} applied to categorical data of \gls{cacf} data from the car loan market.}
 \end{figure}
 
 \subsection{These practices can fail}
@@ -391,11 +388,12 @@ In the next Section, we formalize the problem as a model selection problem, simi
 
 \section{Logistic regression trees as a combinatorial model selection problem} \label{sec:model_selec_tree}
 
-In this Section, it is supposed the well-specified model is indeed a \gls{lr} tree, which amounts to assuming there $K^\star$ segments. The membership of an observation $\glssymbol{bx}$ to a segment $c$ is given by a tree (we restrict to binary trees for simplicity), such that:
+In this Section, it is supposed the well-specified model is indeed a \gls{lr} tree, which amounts to assuming there $K^\star$ segments. The membership of an observation $\glssymbol{bx}$ to a segment $c$ is given by a tree. We restrict to binary trees for simplicity, such that a segment $c$ has $r = 1, \dots, \mathcal{D}(c)$ parents successively denoted by $\mathcal{P}a^r(c)$. At these parent nodes, a binary rule is taken. This rule is univariate: it depends on only one feature $x_{\sigma(r,c)}$ where $\sigma(r,c)$ denotes the anti-rank of the feature used in rule $r$ for segment $c$. Being a binary rule, the membership of $x_{\sigma(r,c)}$ is tested between $C_{\mathcal{P}a^r(c),1}$ and $C_{\mathcal{P}a^r(c),2}$ such that $C_{\mathcal{P}a^r(c),1} \bigsqcup C_{\mathcal{P}a^r(c),2} =\glssymbol{R}$ for continuous features (half-spaces), or $\glssymbol{N}_{l_{\sigma(r,c)}}$ for categorical features respectively. The `unique `side'' $1$ or $2$ of rule $r$ that yields eventually to $c$ is denoted by $\lambda(r,c)$. With all these newly introduced notations, the probability of a segment $c$ given covariates $\glssymbol{bx}$ can be expressed as:
 \begin{equation} \label{eq:tree}
-p( c | \glssymbol{bx}) = \prod_{r = 1}^{K-1} \mathds{1}_{C_{r,c}} (x_{\sigma(r)})
+p( c | \glssymbol{bx}) = \prod_{r = 1}^{\mathcal{D}(c)} \mathds{1}_{C_{\mathcal{P}a^r(c),\lambda(r,c)}} (x_{\sigma(r,c)})
 \end{equation}
-where $r$ denotes the depth of each rule ($r=1$ gives the root rule, and so on) and $\sigma(r)$ gives the antirank of the feature used in rule $r$, $C_{r,c} = \begin{cases} ]-\infty ; \lambda_r] \\ \text{or} \\ ] \lambda_r ; +\infty[ \end{cases}$ for a continuous feature and $C_{r,c} = \begin{cases} \lambda_{r,1} \\ \text{or} \\ \lambda_{r,2} \end{cases}$ such that $ \lambda_{r,1} \bigsqcup \lambda_{r,2} = \glssymbol{N}_{l_{\sigma(r)}}$ for a categorical feature depending on the ``side'' of the segment $c$ w.r.t.\ the rule $r$. An example is given on Figure~\ref{fig_arbre_ex_notations}.
+%where $r$ denotes the inverse depth of each rule relative to $c$ ($r=\ln_2 K$ gives the root rule, and so on) and $\sigma(r,c)$ gives the anti-rank of the feature used in rule $r$, at node $\mathcal{P}a^r(c)$, $C_{\mathcal{P}a^r(c),\lambda(r,c)} = \begin{cases} ]-\infty ; \lambda_r] \\ \text{or} \\ ] \lambda_r ; +\infty[ \end{cases}$ for a continuous feature and $C_{r,c} = \begin{cases} \lambda_{r,1} \\ \text{or} \\ \lambda_{r,2} \end{cases}$ such that $ \lambda_{r,1} \bigsqcup \lambda_{r,2} = \glssymbol{N}_{l_{\sigma(r)}}$ for a categorical feature depending on the ``side'' of the segment $c$ w.r.t.\ the rule $r$.
+An example is given on Figure~\ref{fig_arbre_ex_notations}.
 In each segment, the well-specified assumption is equivalent to a \gls{lr}:
 \begin{equation} \label{eq:lr_tree}
 \forall \glssymbol{bx}, y, \exists c^\star \in \glssymbol{N}_{K^\star}, \glssymbol{bth}^{\star,c^\star}, p(y | \glssymbol{bx}) = p_{\glssymbol{bth}^{\star,c^\star}}(y | \glssymbol{bx}, c^\star)
@@ -417,19 +415,19 @@ For $c \in \glssymbol{N}_{K^\star}$, $(\glssymbol{bbx}^c, \glssymbol{bby}^c)$ de
     every node/.style       = {font=\footnotesize},
     sloped
   ]
-  \node [root] {\textcolor{black}{$r = 1$}}
-    child { node [dummy] {$r=2$}
-      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^1}(y|\q^1(\glssymbol{bx}),\bdelta^1)$ \hspace*{-0.4cm}}}
-          edge from parent node [below] {Renters} }
-      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^4}(y|\q^4(\glssymbol{bx}),\bdelta^4)$ \hspace*{-0.4cm}}}
-              edge from parent node [above, align=center] {Standard loan} }
-              edge from parent node [above] {$\glssymbol{bx} \in C_{1,1}$} }
-    child { node [dummy] {$r=3$}
-      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^5}(y|\q^5(\glssymbol{bx}),\bdelta^5)$ \hspace*{-0.4cm}}}
-          edge from parent node [above] {$\glssymbol{bx} \in C_{3,1}$} }
-      child { node [env] {\textcolor{black}{$p_{\glssymbol{bth}^7}(y|\q^7(\glssymbol{bx}),\bdelta^7)$ \hspace*{-0.4cm}}}
-              edge from parent node [above, align=center] {$\glssymbol{bx} \in C_{2,2}$} }
-              edge from parent node [above] {$\glssymbol{bx} \in C_{1,2}$} };
+  \node [root] {\textcolor{black}{$r = 2$}}
+    child { node [dummy] {$r=1$}
+      child { node [env] {\textcolor{black}{$c=1$ \hspace*{-0.4cm}}}
+          edge from parent node [below] {$\glssymbol{x}_{\sigma(1,1)} \in C_{1,1}$} }
+      child { node [env] {\textcolor{black}{$c=2$ \hspace*{-0.4cm}}}
+              edge from parent node [above, align=center] {$\glssymbol{x}_{\sigma(1,1)} \not\in C_{1,2}$} }
+              edge from parent node [above] {$\glssymbol{x}_{\sigma(2,1)} \in C_{2,1}$} }
+    child { node [dummy] {$\cdot$}
+      child { node [env] {\textcolor{black}{$c=3$ \hspace*{-0.4cm}}}
+          edge from parent node [above] {$\cdot$} }
+      child { node [env] {\textcolor{black}{$c=4$ \hspace*{-0.4cm}}}
+              edge from parent node [above, align=center] {$\cdot$} }
+              edge from parent node [above] {$\glssymbol{x}_{\sigma(2,1)} \not\in C_{2,2}$} };
 \end{tikzpicture}
 }
 \caption{Notations by an example.}
@@ -449,7 +447,7 @@ Consequently, the following criterion can be used to select a segmentation:
 \begin{equation} \label{eq:BICc}
 (K^\star, c^\star) = \argmin_{K,c} \sum_{c=1}^{K} \text{BIC}(\hat{\glssymbol{bth}}^c) + K - 1
 \end{equation}
-As was thoroughly explained for quantizations and interactions in Sections~\ref{par:consistency} and~\ref{sec:pairwise} respectively, it is unclear how many parameters should be accounted for in this BIC criterion since the tree of Equation~\eqref{eq:tree} has parameters \textcolor{red}{à compléter} which have to be estimated (this is somewhat reflected in Equation~\eqref{eq:likelihood_segment} by the $p(\glssymbol{bth}^c | c)$ term); some are continuous (when the split is done on a continuous feature), some are discrete (when it concerns a categorical feature). As discussed in Section~\ref{par:consistency}, discrete parameters are usually not counted, but here, following the C4.5 approach of considering the levels of categorical features as ordered (w.r.t.\ the proportion of events $y$ associated to them - see Section~\ref{subsec:sup_gen}, Paragraph~\nameref{par:mob}), a split on categorical features can count as one continuous parameter. This yields the $K-1$ term in Criterion~\eqref{eq:BICc}.
+As was thoroughly explained for quantizations and interactions in Sections~\ref{par:consistency} and~\ref{sec:pairwise} respectively, it is unclear how many parameters should be accounted for in this BIC criterion since the tree of Equation~\eqref{eq:tree} has parameters $C_{\cdot,\cdot}$ which have to be estimated (this is somewhat reflected in Equation~\eqref{eq:likelihood_segment} by the $p(\glssymbol{bth}^c | c)$ term); some are continuous (when the split is done on a continuous feature), some are discrete (when it concerns a categorical feature). As discussed in Section~\ref{par:consistency}, discrete parameters are usually not counted, but here, following the C4.5 approach of considering the levels of categorical features as ordered (w.r.t.\ the proportion of events $y$ associated to them - see Section~\ref{subsec:sup_gen}, Paragraph~\nameref{par:mob}), a split on categorical features can count as one continuous parameter. This yields the $K-1$ term in Criterion~\eqref{eq:BICc}. However, when there are more than two classes $c$ (typically, a financial institution of moderate to big size would have $K = 4$ to $30$ scorecards), this ``ordering'' simplification about the search for discrete parameters does not apply. We still stick with criterion~\ref{eq:BICc} as it will show good empirical properties in Section~\ref{sec:num_exp}.
 
 
 In the next Section, we propose to relax the constraint of Equation~\eqref{eq:tree}, exactly as was done for quantizations in Chapter~\ref{chap4}, by using a continuous approximation of this discrete (and thus highly difficult to directly optimize) problem.
@@ -457,24 +455,68 @@ In the next Section, we propose to relax the constraint of Equation~\eqref{eq:tr
 
 \section{A mixture and latent feature-based relaxation}
 
+The difficulty in optimising Criterion~\eqref{eq:BICc} directly lies in the discrete nature of $c$ given $\glssymbol{bx}$, illustrated by the profusion of indicator functions in Equation~\eqref{eq:tree}, which is very similar to the problems of quantization (see Chapter~\ref{chap4} and in particular Section~\ref{subsec:relaxation}) and interaction screening (see Chapter~\ref{chap5} and in particular Section~\ref{subsec:mcmc}). In both cases, highly-combinatorial discrete problems were relaxed, either by approaching door functions by softmax or . Unsurprisingly, a similar approach can be taken here for having a smooth approximation of $p(c | \glssymbol{bx})$ which will be denoted by $p_{\betag}(c | \glssymbol{bx})$.
+
+\subsection{The proposed relaxation: tree structure and piecewise constant membership probability}
+
+As emphasized in Section~\ref{subsec:sup_gen}, classification trees aim at predicting $c$ by making their leaves as ``pure'' (hence the use of the term impurity measure) as possible, \textit{i.e.}\ where one class strongly dominates the others by being the labels of most observations that fall into it. However, as for \gls{lr}, they can be viewed as ``statistical'' classifiers by substituting their classical majority vote by the proportion of each class in each leaf:
+\begin{equation}
+p_{\betag}(c | \glssymbol{bx}) = \frac{|\mathbf{c}^{\mathcal{L}(\glssymbol{bx})}|}{|\glssymbol{bbx}^{\mathcal{L}(\glssymbol{bx})}|},
+\end{equation}
+where $\mathcal{L}(\glssymbol{bx})$ denotes the leaf where $\glssymbol{bx}$ falls. Indeed, in this soft assignment, $\mathcal{L}(\glssymbol{bbx})$ and its segment $c$ are not identifiable. An example of such behaviour is given on Figure~\ref{fig:titanic_tree} where there are two classes: ``survived'' and ``not survived'' for Titanic passengers given their age, sex and passenger class. The proportion of each class in each leaf is given in parentheses.
+
+\begin{figure}
+\resizebox{\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/titanic_tree.tex}}
+\caption{A C4.5 decision tree applied to the famous Titanic dataset containing the fate of 1309 passengers alongside their class, age and sex.}
+\label{fig:titanic_tree}
+\end{figure}
+
+This ``soft'' assignment will be useful to design an algorithm that does not greedily evaluate all possible segmentations of the form of Equation~\eqref{eq:tree} and its subsequent \gls{lr}. A softmax could have been used similarly as in Chapter~\ref{chap4} but would have yielded a major drawback: the assignment decisions would have been multivariate, thus losing the interpretability of the tree structure. Using this new parametrization, we get a mixture model:
 \begin{align*}
-p(y | \glssymbol{bx}) & = \sum_{c = 1}^K p(y | \glssymbol{bx}, c) p(c | \glssymbol{bx})
+p(y | \glssymbol{bx}) & = \sum_{c = 1}^K p_{\glssymbol{bth}^c}(y | \glssymbol{bx}) p_{\betag}(c | \glssymbol{bx}),
 \end{align*}
-
-
+where feature $c$ is latent and which makes immediately think of a straightforward estimation strategy: the \gls{em} algorithm. Indeed, it can be easily remarked that:
 \begin{align*}
-p(c | \glssymbol{bx}, y) & \appropto p_{\glssymbol{bth}^c}(y | \glssymbol{bx}, c) p(c | \glssymbol{bx})
+p(c | \glssymbol{bx}, y) & \propto p_{\glssymbol{bth}^c}(y | \glssymbol{bx}, c) p(c | \glssymbol{bx}),
 \end{align*}
+which will be at the basis of the \gls{em}'s fuzzy assignment among segments, detailed in the next Section.
 
+\subsection{A classical \gls{em} estimation strategy}
 
-\section{A stochastic estimation strategy}
+The \gls{em} algorithm~\cite{dempster1977maximum} is an iterative method that can be used to estimate the \textit{maximum a posteriori} of $p(c | \glssymbol{bx}, y)$, since $c$ is latent, and alternates between the expectation (E-)step, which computes the relative membership of the observations into each segment, and a maximization (M-)step, which computes the MLE of the parameters of the log-likelihoods of each segment's \gls{lr} parameters and the tree structure. These new \gls{lr} and tree estimates are then used to determine the distribution of the latent variables in the next E-step. Considering the number of segments $K$ fixed, the E and Q steps of the \gls{em} can be derived as follows.
 
+\paragraph{E-step}
+At iteration $(s+1)$, the membership of an observation $i$ to segment $c$ can be computed as:
+\[ t_{i,c}^{(s)} = \frac{p_{\glssymbol{bth}^{c(s)}}(y_i | \glssymbol{bx}_i) p_{\betag^{(s)}}(c | \glssymbol{bx}_i) }{ \sum_{c'=1}^K p_{\glssymbol{bth}^{c{'}{(s)}}}(y_i | \glssymbol{bx}_i) p_{\betag^{(s)}}(c{'} | \glssymbol{bx}_i) }.\]
 
+\paragraph{Q1-step}
+The previous E-step allows to derive the new MLE of the \gls{lr} parameters of each segment $c$ as:
+\[ \glssymbol{bth}^{c(s+1)} = \argmax_{\glssymbol{bth}} \sum_{i=1}^n t_{i,c} \ln p_{\glssymbol{bth}^c}(y_i | \glssymbol{bx}_i). \]
+
+\paragraph{Q2-step}
+Similarly, a new tree structure can be derived by the new MLE of its parameters $\betag$:
+\[ \betag^{(s)} = \argmax_{\betag} \sum_{i=1}^n \sum_{c=1}^K t_{i,c} \ln p_{\betag}( c | \glssymbol{bx}_i). \]
+Unfortunately, tree induction methods like CART or C4.5 do not follow a maximum likelihood approach, so that they rather try to minimize the Gini index or the entropy, respectively. However, since it is hoped that segments $c^\star$ are ``peaks'' of the distribution $p_{\betag}( c | \glssymbol{bx})$, the log-likelihood can be well approximated by the entropy, such that:
+\[ \betag^{(s)} \approx \argmax_{\betag} \sum_{i=1}^n \sum_{c=1}^K t_{i,c} \underbrace{p_{\betag}( c | \glssymbol{bx}_i)}_{\approx 1 \text{ for } c = c^\star, 0 \text{ otherwise.}} \ln p_{\betag}( c | \glssymbol{bx}_i). \]
+This last formulation allows to obtain $\betag^{(s)}$ from a simple application of the C4.5 algorithm, with observations properly weighted by $t_{i,c}$.
+
+bla
+
+However, this approach suffers from several drawbacks. 
+Consequently, .
+
+\subsection{An \gls{sem} estimation strategy}
+
+In a similar fashion as the MCMC approaches developed in Chapters~\ref{chap4} and~\ref{chap5} where a ``clever'' quantization (resp.\ interaction matrix) was drawn and evaluated at each step, refining it for the subsequent steps, a straightforward way of building logistic regression trees is to propose a tree structure, fit \gls{lr} at its leaves, and evaluate the goodness-of-fit using Criterion~\ref{eq:BICc} of the resulting logistic regression tree. This is somehow the way \gls{lmt} works: a tree structure is proposed based on C4.5, \gls{lr} are fitted using the LogitBoost algorithm, and the tree is pruned back using a goodness-of-fit criterion.
+
+Similarly to the quantization and the interaction screening problems, doing so for all possible tree structures is intractable, so that a way of generating ``good'' candidates should be designed. These good candidates are given by the segments' latent feature distribution $p(c | \glssymbol{bx}, y)$.
 
 
 \section{Extension to quantization and interactions}
 
+The \gls{sem} estimation strategy proposed in the previous Section has one clear advantage: it could easily be used in the conjunction with the \textit{glmdisc}-SEM algorithm proposed in Chapters~\ref{chap4} and~\ref{chap5} for quantization and interaction screening.
 
+The following modifications would have to be performed:
 
 \section{Numerical experiments} \label{sec:num_exp}
 
@@ -485,7 +527,7 @@ p(c | \glssymbol{bx}, y) & \appropto p_{\glssymbol{bth}^c}(y | \glssymbol{bx}, c
 
 \begin{enumerate}[(a)]
 \item 
-\item 
+\item é
 \end{enumerate}
 
 \subsection{Benchmark on \textit{Credit Scoring} data}

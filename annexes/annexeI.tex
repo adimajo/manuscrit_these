@@ -672,13 +672,19 @@ Let $X \sim \chi^2$ and $\alpha_{\max} = \max_h p(X \geq \chi^2_h) = p(X \geq \m
 
 The \textit{MDLP} algorithm~\cite{fayyad1993multi} is an entropy-based discretization method. Contrary to ChiMerge, where at the beginning all distinct values are put into separate categories and thereafter merged (bottom-up method), MDLP recursively calculates the entropy produced by each candidate cutpoint on their subsequent binary splits.
 
-\textcolor{red}{mettre une sorte d'arbre ici}
-
 \begin{algorithm}[H]
- \KwData{$n,\glssymbol{bbx}$}
- \KwResult{$\hat{\q}$}
- \For{$j=1$ to $d$}{
-}
+ \KwData{A continuous feature $\glssymbol{bbx}_j$ which subscript $j$ is dropped in what follows; targets $\glssymbol{bby}$.}
+ \KwResult{Cutpoints $\mathcal{C}_\star$}
+ Initialize $\mathcal{C}_\star = \varnothing$\;
+Order $\glssymbol{bbx}$\;
+Compute the set $\mathcal{I}$ of indices $i$ such that $y_i \neq y_{i+1}$ (contiguous observations which are not of the same class)\;
+Compute the set of candidate cutpoints $\mathcal{C}$ as the mean between these points, \textit{i.e.}\ $\mathcal{C} = \{\frac{x_i + x_{i+1}}{2} | i \in \mathcal{I} \}$\;
+Compute the class entropy of each candidate cutpoint $c \in \mathcal{C}$ as:
+\[ \text{E}(c) = \frac{|\glssymbol{bbx} < c|}{|\glssymbol{bbx}|} \text{Ent}(\glssymbol{bbx} < c) + \frac{|\glssymbol{bbx} > c|}{|\glssymbol{bbx}|} \text{Ent}(\glssymbol{bbx} > c), \]
+where $\text{Ent}(\glssymbol{bbx} < c) = - \sum_{y=0}^1 p(y,\glssymbol{bbx} < c) \ln p(y,\glssymbol{bbx} < c)$ and $p$ is estimated \textit{via} class proportions, \textit{i.e.}\ $p(y,\glssymbol{bbx} < c) = \frac{|\{i | y_i = y \& x_i < c \}|}{|\glssymbol{bbx} < c|}$\;
+Select $c_\star$ which minimizes $\text{E}(c)$ and append it to $\mathcal{C}_\star$\;
+Repeat steps for $\{\glssymbol{bbx}< c\}$ and $\{\glssymbol{bbx} > c\}$\;
+Stop when $\text{Gain}(c,\glssymbol{bbx}) = \text{E}(c) - \text{Ent}(\glssymbol{bbx}) \leq \frac{\ln_2 (|\glssymbol{bbx}|-1)}{|\glssymbol{bbx}|} + \frac{\Delta(c,\glssymbol{bbx}) }{|\glssymbol{bbx}|}$ where $\Delta(c,\glssymbol{bbx}) = \ln_2 7 - (k \text{Ent}(\glssymbol{bbx}) - k_{<c}\text{Ent}(\glssymbol{bbx} < c) - k_{>c}\text{Ent}(\glssymbol{bbx} < c))$ and $k$, $k_{<c}$, $k_{>c}$ represent the number of classes (1 or 2 in the binary setting) in their respective sample $\glssymbol{bbx}$, $\glssymbol{bbx} < c$ and $\glssymbol{bbx} > c$\;
  \caption{\label{mdlp} MDLP algorithm recursively perform discretization with an information gain criterion.}
 \end{algorithm}
 
@@ -691,16 +697,27 @@ The \textit{MDLP} algorithm~\cite{fayyad1993multi} is an entropy-based discretiz
 This section describes the \textit{glmdisc}-NN algorithm developed in Chapter~\ref{chap4} and examplifies it on simulated data in Figure~\ref{fig:animNN}
 
 \begin{algorithm}[H]
- \KwData{$(\bm{x},\bm{y})$}
- \KwResult{$\bm{e},(\beta_k)_1^{d_1}$,(T$^k)_{d_1}^{d_1+d_2}$}
+ \KwData{$((\glssymbol{bbx}_j)_1^{d}, \glssymbol{bby}),\max\_\text{iter},\bm{m}_\text{start}$}
+ \KwResult{$\hat{\q}^{(s_\star)}$}
+ Initialization of the network: for each feature feature $j$, add a softmax with $m_{j,\text{start}}$ outputs which are themselves combined in a sigmoid neuron\;
+ Initialization of the network's weights at random\;
+ $s = 0$\;
+ \While{$s < \max\_\text{iter}$}{
+Perform feed-forward pass of the data: calculate $p_{\glssymbol{bth}^{(s)}}(\glssymbol{bby} | \q_{\ag^{(s)}}(\glssymbol{bbx}))$\;
+Perform back-propagation of the error via Stochastic Gradient Descent which yields parameters $(\glssymbol{bth}^{(s+1)},\ag^{(s+1)})$\;
+ Compute the \textit{maximum a posteriori} of the hidden layer's representations $\hat{\q}^{(s)}(\glssymbol{bbx})$ such that $\hat{q}_{j,h}(x_j) = 1 \text{ if } h = \argmax_{1 \leq h' \leq m_j} q_{\hat{\ag}_{j,h'}}, 0 \text{ otherwise.}$\;
+ Compute the associated \gls{lr} parameters $\hat{\glssymbol{bth}}^{(s)} = \argmax_{\glssymbol{bth}} \ell(\glssymbol{bth} ; {\hat{\q}_j^{(s)}}, \glssymbol{bby})$\;
+    $s \leftarrow s+1$\;
+}
+ Choose the best quantization $\hat{\q}^{(s_\star)}$, which associated \gls{lr} parameters yield the lowest BIC criterion\;
  \caption{\label{NN-disc} \textit{glmdisc}-NN: supervised multivariate discretization for logistic regression with neural networks.}
 \end{algorithm}
 
 %\begin{figure}[!h]
-%\begin{animateinline}[poster=first, controls=all, palindrome, autopause, autoresume, width=\textwidth, height=7cm]{3}
+%\begin{animateinline}[poster=first, controls=all, palindrome, autopause, autoresume, width=\textwidth, height=6cm]{3}
 %\multiframe{200}{i=1+1}{\input{R_CODE_FIGURES/appendix/animation_disc_tensorflow/False_simulated_data/feature_0_iteration_\i.tex}}%
 %\end{animateinline}
-%\caption{\label{fig:animNN} bla.}
+%\caption{\label{fig:animNN} Animation of the softmax activation functions $\q_{\ag^{(s)}}$ over the epoch $(s)$.}
 %\end{figure}
 
 
@@ -711,31 +728,26 @@ This section describes the \textit{glmdisc}-NN algorithm developed in Chapter~\r
 This section describes the \textit{glmdisc}-SEM algorithm developed in Chapter~\ref{chap4} and examplifies it on simulated data in Figure~\ref{fig:animSEM}
 
 \begin{algorithm}[H]
- \KwData{$((\glssymbol{bbx}_j)_1^{d_1} \text{ (continuous features)},(\glssymbol{bbx}_j)_{d_1}^{d_1 + d_2} \text{ (categorical features)}, \glssymbol{bby}),\max\_\text{iter},\bm{m}_\text{start}$}
- \KwResult{$\hat{\q}$}
- Initialization of $\bm{q}^{(0)}$ at random\;
+ \KwData{$((\glssymbol{bbx}_j)_1^{d}, \glssymbol{bby}),\max\_\text{iter},\bm{m}_\text{start}$}
+ \KwResult{$\hat{\bbqk}^{(s_\star)}$}
+ Initialization of $\bbqk_j^{(0)}$ at random in $\{1, \dots, m_{j,\text{start}}\}$ and one-hot encode the resulting vector\;
  $s = 0$\;
  \While{$s < \max\_\text{iter}$}{
-  Adjust logistic regression $\hat{\gamma}^{(s)} = \argmax_\gamma \ell(\gamma;\q^{(s)}, \bm{y})$\;
-  ${\q^{(s+1)}} \leftarrow {\q^{(s)}}$\;
-  \For{$k \leftarrow 1$ \KwTo $d_1$}{
-   Adjust multinomial logistic regression $\hat{\beta}_k^{(s)} = \argmax_\beta \ell(\beta;\glssymbol{bbx}_k,\q_k^{(s)})$\;
-   ${\q_k^{(s+1)}} \leftarrow$ Mult$\left( p_{\hat{\gamma}^{(s)}}(\bm{y}|\q^{(s+1)}) p_{\hat{\beta}^{k(s)}}(\q_{k} | \glssymbol{bx}_k) \right)$\;
-   ${\q_k^{\text{MAP}(s+1)}} \leftarrow \argmax_j p_{\hat{\beta}^{k(s)}}(\q_{k}=j | \bm{x}^k)$\;
+  Adjust logistic regression $\glssymbol{bth}^{(s)} = \argmax_{\glssymbol{bth}} \ell(\glssymbol{bth};\bbqk^{(s)}, \glssymbol{bby})$\;
+  \For{$j = 1$ \KwTo $d$}{
+   Adjust multinomial logistic regression or contingency tables $\ag_j^{(s)} = \argmax_{\ag_j} \ell(\ag_j;\glssymbol{bbx}_j,\bbqk_j^{(s)})$\;
+Draw new latent features ${\bqk_j^{(s+1)}} \sim \text{ Mult} \left( p_{\glssymbol{bth}^{(s)}}(y | \bqk^{(s)}_{-\{ j \}}, \cdot) p_{\ag_j^{(s)}}(\cdot | \glssymbol{bx}_j) \right)$ for each observation (the subscript $i$ is voluntarily omitted)\;
+ Compute the \textit{maximum a posteriori} of these latent features for all observations ${\hat{\bqk}_j^{(s)}} = \argmax_{\bqk_j} p_{\ag_j^{(s)}}(\bqk_j | \glssymbol{bx}_j)$\;
+ Compute the associated \gls{lr} parameters $\hat{\glssymbol{bth}}^{(s)} = \argmax_{\glssymbol{bth}} \ell(\glssymbol{bth} ; {\hat{\bbqk}_j^{(s)}}, \glssymbol{bby})$\;
    }
-  \For{$k \leftarrow d_1+1$ \KwTo $d_1+d_2$}{
-   Form the contingency table T$_k^{(s)}$ of $\q_k^{(s)}$ against $\glssymbol{bbx}_k$, calculate the frequencies of each value of $({q}_{k},x_k)$\;
-	${\q_k^{(s+1)}} \leftarrow$ Mult$\left( p_{\hat{\gamma}^{(s)}}(\bm{y}|\q^{(s+1)}) p_{T_k^{(s)}}(\q_{k} | \glssymbol{bx}^k) \right)$\;
-	${\q_k^{MAP(s+1)}} \leftarrow \argmax_j p_{T_k^{(s)}}(\q_{k}=j | \glssymbol{bx}_k)$\;
-	}
    $s \leftarrow s+1$\;
  }
- Choose the best quantization and logistic regression model from $ $ where $(p_{\hat{\eta}^{(r)}}(\bm{y} | \bm{e}_{MAP}^{(r)}))_1^{Max}$.
+ Choose the best quantization $\hat{\bbqk}^{(s_\star)}$, which associated \gls{lr} parameters $\hat{\glssymbol{bth}}^{(s_\star)}$ yield the lowest BIC criterion.
  \caption{\label{SEM-disc} \textit{glmdisc}-SEM: supervised multivariate discretization for logistic regression with an \gls{sem} algorithm.}
 \end{algorithm}
 
 %\begin{figure}[!h]
-%\begin{animateinline}[poster=first, controls=all, palindrome, autopause, autoresume, width=\textwidth, height=7cm]{5}
+%\begin{animateinline}[poster=first, controls=all, palindrome, autopause, autoresume, width=\textwidth, height=10cm]{5}
 %\multiframe{200}{i=1+1}{\input{R_CODE_FIGURES/appendix/animation_disc_SEM/sem_simulated_data/sem_feature_1_iter_\i.tex}}%
 %\end{animateinline}
 %\caption{\label{fig:animSEM} bla.}
@@ -770,7 +782,7 @@ Let $X \sim \chi^2$ and $\alpha_{\max} = \max_{h_1,h_2} p(X \geq \chi^2_{h_1,h_2
 \end{algorithm}
 
 
-\section{Interaction discovery methods}
+%\section{Interaction discovery methods}
 
 
 
@@ -796,14 +808,14 @@ Let $X \sim \chi^2$ and $\alpha_{\max} = \max_{h_1,h_2} p(X \geq \chi^2_{h_1,h_2
 %\end{algorithm}
 
 
-\subsection{\gls{famd}} \label{app1:sec_famd}
-
-\begin{algorithm}[H]
- \KwData{$n,\glssymbol{bbx},\alpha$}
- \KwResult{$\hat{\q}$}
-
- \caption{\label{alg:famd} \gls{famd} algorithm.}
-\end{algorithm}
+%\subsection{\gls{famd}} \label{app1:sec_famd}
+%
+%\begin{algorithm}[H]
+% \KwData{$n,\glssymbol{bbx},\alpha$}
+% \KwResult{$\hat{\q}$}
+%
+% \caption{\label{alg:famd} \gls{famd} algorithm.}
+%\end{algorithm}
 
 
 \subsection{LogitBoost} \label{LogitBoost}
@@ -868,10 +880,30 @@ Pick $(T^\star, m^\star)$ by cross-validation.
 
 \subsection{\gls{lmt}} \label{app1:sec_lmt}
 
+The \gls{lmt} algorithm given in~\eqref{alg:lmt} has been proposed in~\cite{landwehr2005logistic}.
+
+\begin{algorithm}[H]
+ \KwData{$\glssymbol{bbx}, \glssymbol{bby}$}
+ \KwResult{$ $}
+ Fit a classification tree using the C4.5 algorithm\;
+ Fit a \gls{lr} at the root node by using the LogitBoost algorithm~\ref{alg:logitboost} (the number of iterations is determined by cross-validation)\;
+ Fit a \gls{lr} at the children nodes by resuming the LogitBoost algorithm~\ref{alg:logitboost} on the respective sub-populations\;
+ Prune the tree based on the CART algorithm's pruning criterion (composed of misclassification error and complexity penalization)\;
+ \caption{\label{alg:lmt} \gls{mob} algorithm (adapted from~\cite{landwehr2005logistic}).}
+\end{algorithm}
 
 \subsection{\gls{mob}} \label{app1:sec_mob}
 
+The \gls{mob} algorithm given in~\eqref{alg:mob} has been proposed in~\cite{zeileis2008model}.
 
-
+\begin{algorithm}[H]
+ \KwData{$\glssymbol{bbx}, \glssymbol{bby}$}
+ \KwResult{$ $}
+ Fit a \gls{lr} to all observations in current node\;
+ Test for parameters instability by calculating \textit{e.g.}\ $ $ for all features $x_j \in \glssymbol{bx}$\;
+ If $\min_{} \leq  $, the process is recursively repeated on the children nodes\;
+ The splitting criterion is given by \;
+ \caption{\label{alg:mob} \gls{mob} algorithm (adapted from~\cite{zeileis2008model}).}
+\end{algorithm}
 
 \printbibliography[heading=subbibliography, title=References of Appendix A]

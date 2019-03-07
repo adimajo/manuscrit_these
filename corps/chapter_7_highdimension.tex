@@ -26,10 +26,13 @@ Being a CIFRE PhD, .
 
 \paragraph{Payment data}
 
+Once a loan has been , monthly payments due by clients are most of the time debited from their main bank account. These debit might be accepted or refused by their bank depending on their balance. This is exactly the basis of the approximate . Such data are presented on Table~\ref{tab:payment_data}.
+
 \begin{table}[ht]
     \centering
     \caption{Payment data.}
     \label{tab:payment_data}
+    \begin{small}
 \begin{tabular}{lllllll}
 Client & Date & Should pay & Has paid & Type & Outstanding & Status \\
  \hline
@@ -38,29 +41,37 @@ Client & Date & Should pay & Has paid & Type & Outstanding & Status \\
 1 & 05/02/2019:10:00:00 & 50 & 0 & Automatic debit & 5{,}000 & Refused \\
 1 & 08/02/2019:10:00:00 & 50 & 0 & Automatic debit & 4{,}950 & Refused
 \end{tabular}
+    \end{small}
 \end{table}
 
 
 \paragraph{Recovery data}
 
+In the case of Client 1 from the previous example in Table~\ref{tab:payment_data}, once the automatic debit is refused, it enters a recovery process that can be long and complex and is way out of the scope of the present manuscript. It creates however tremendous amounts of data, that could be used in the context of \textit{Credit Scoring}, \textit{e.g.}\ for better assessment of the class good / bad borrower or as predictive features for a known client that would apply for another loan.
+
 \begin{table}[ht]
     \centering
     \caption{Monthly per-client recovery data.}
     \label{tab:recovery_data}
+    \begin{small}
 \begin{tabular}{lllllll}
 Client & Date & Should pay & Fees & Has paid & Type & Status \\
  \hline
 1 & 09/02/2019:11:24:12 & 50 & 10 & 0 & 4{,}960 & Manual recovery by phone \\
 1 & 09/02/2019:11:26:09 & 60 & 0 & 60 & 4{,}900 & Credit card payment \\
 \end{tabular}
+    \end{small}
 \end{table}
 
 \paragraph{Credit card data}
+
+Transactions from credit card holders are recorded and can easily be retrieved. They are well-structured but contain lots of text fields, as exemplified on Table~\ref{tab:credit_card_data}.
 
 \begin{table}[ht]
     \centering
     \caption{Daily per-client credit card data.}
     \label{tab:credit_card_data}
+    \begin{tiny}
 \begin{tabular}{lllllll}
 Client & Date & Amount & Company & Location & Category & \dots \\
  \hline
@@ -68,15 +79,19 @@ Client & Date & Amount & Company & Location & Category & \dots \\
 1 & 01/01/2019:12:50:25 & 14.5 & Les 3 Brasseurs & 22 Place de la Gare, 59800 LILLE & Restaurant & \dots \\
 1 & 02/01/2019:19:10:20 & 78.9 & Carrefour & 1 Avenue Willy Brandt, 59000 LILLE & Retail consumer goods & \dots 
 \end{tabular}
+    \end{tiny}
 \end{table}
 
 
-\subsubsection{Log data}
+\paragraph{Log data}
+
+In the same fashion as online retailers adjust the layout of their products given the information gathered on the potential customer through its visitation pattern, .
 
 \begin{table}[ht]
     \centering
     \caption{Log data.}
     \label{tab:log_data}
+    \begin{small}
 \begin{tabular}{lllllll}
 Client & Platform & Device & Date & URL \\
  \hline
@@ -85,19 +100,22 @@ Client & Platform & Device & Date & URL \\
 1 & Main site & MAC OS & 10/01/2019:22:34:30 &  \\
 1 & Main site & MAC OS & 10/01/2019:22:34:10 &  \\
 \end{tabular}
+    \end{small}
 \end{table}
 
 
 
 
 
-\subsubsection{Marketing data}
+\paragraph{Marketing data}
 
+Finally, clients often apply to loans after having been exposed to diverse forms of adverts, some of which can be properly recorded and affected to a client, \textit{e.g.}\ mailing or e-mailing campaigns, Google AdWords, etc. An example of such data is visible on Table~\ref{tab:marketing_data}. These data can be very informative of the target good / bad borrower of each client: a prospective client coming from AdWords in the middle of the night might be riskier than a targeted prospect via an opened email on a week-end afternoon for example.
 
 \begin{table}[ht]
     \centering
     \caption{Marketing data.}
     \label{tab:marketing_data}
+    \begin{tiny}
 \begin{tabular}{lllllll}
 Client & Marketing lever & Date & Device & Opened & Visited & URL \\
  \hline
@@ -105,15 +123,37 @@ Client & Marketing lever & Date & Device & Opened & Visited & URL \\
 1 & mail & 02/04/2019:10:00:00 & NA & NA & NA & NA \\
 1 & Google Adword & 15/04/2019:12:10:10 & Windows & NA & Yes & /adword/personal\_credit\&id=1\&\dots \\
 \end{tabular}
+    \end{tiny}
 \end{table}
 
+All these kinds of data are not directly used by \gls{cacf} in its \textit{Credit Scoring} practices, although by simply looking at the exemplary Tables, one is able to draw simple intuitions of signals of low / high risk of default. In the subsequent Section, two problems pertaining the usage of these data, justifying in a sense why they were not used to this day, are identified and formalized.
 
 
 \subsection{Two identified sub-problems}
 
-\subsubsection{Using big $n$, big $d$ data}
+A very simple way of dealing with all examples of additional data of the preceding Section is to add them as columns of our ``traditional'' longitudinal data. Taking Table~\ref{tab:credit_card_data} as an example, each credit card transaction can be reshaped so as to fit in separate columns relative to payment \#1, payment \#2, etc. This would yield Table~\ref{tab:example_longitudinal}.
 
-\subsubsection{Using unstructured and / or fine-grained data}
+
+\begin{table}[ht]
+    \centering
+    \caption{Long data.}
+    \label{tab:example_longitudinal}
+    \begin{tiny}
+\begin{tabular}{lllllll}
+Client & Marketing lever & Date & Device & Opened & Visited & URL \\
+ \hline
+1 & email & 02/03/2019:15:02:54 & Android & Yes & No & /media/new\_credit\_ad/car\_loan\&id=1\&\dots \\
+1 & mail & 02/04/2019:10:00:00 & NA & NA & NA & NA \\
+1 & Google Adword & 15/04/2019:12:10:10 & Windows & NA & Yes & /adword/personal\_credit\&id=1\&\dots \\
+\end{tabular}
+    \end{tiny}
+\end{table}
+
+As a consequence, we are artificially back to a traditional longitudinal setting with a very high number of covariates $d$.
+
+%\subsubsection{Using big $n$, big $d$ data}
+%
+%\subsubsection{Using unstructured and / or fine-grained data}
 
 
 
@@ -123,7 +163,7 @@ This Section is an eluded literature review of problems that arise in high dimen
 
 \subsection{The $d > n$ setting}
 
-In the next Section, 
+In the next Section, we review the statistical properties associated with the curse of dimensionality mentioned in the epigraph of this Chapter and attributed to .
 
 \subsection{The curse of dimensionality}
 
@@ -133,7 +173,7 @@ In the next Section,
 
 \subsection{Dimension reduction}
 
-A straightforward way of 
+A straightforward way of avoiding the curse(s) of dimensionality is to get back to a small dimension $d'$ relative to $n$ by pre-processing the $d$ features. In Chapter~\ref{chap4}, and particularly Section~\ref{}, it was argued that quantization could be thought of dimensionality reduction, because information was compressed in intervals and ``meta''-groups for continuous and categorical features respectively without affecting predictive power (on the contrary!). Two way more classical ways of performing dimensionality reduction are presented here: combining original features in principal components, which was already discussed in Chapter~\ref{chap6} when building segments of clients, and feature selection, which are the subjects of the two subsequent Section respectively.
 
 \subsubsection{By combining input features}
 

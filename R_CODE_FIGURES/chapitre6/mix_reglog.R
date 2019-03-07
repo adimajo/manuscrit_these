@@ -88,7 +88,7 @@ for (i in 1:max_iter) {
      }
      
      # Apprentissage du lien p(c_hat | x)
-     link = rpart(c_hat ~ ., data = data[,c("c_hat","x1","x2","x3")])
+     link = rpart(c_hat ~ ., data = data[,c("c_hat","x1","x2","x3")], method = "class")
      link = prune(link,cp= link$cptable[which.min(link$cptable[,"xerror"]),"CP"])
      #link=multinom(c_hat ~ ., data = data[,c("c_hat","x1")])
      

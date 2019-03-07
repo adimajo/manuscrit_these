@@ -37,6 +37,8 @@ Feature & Level & Points \\
 
 Discretization is also an opportunity for reducing the (possibly large) modeling bias which can appear in logistic regression as a result of the linearity assumption on the continuous predictors in the model which was discussed in Section~\ref{chap1:sec3}. Indeed, this restriction can be overcome by approximating the true predictive mapping with a step function where the tuning of the steps and their sizes allows more flexibility. However, the resulting increase of the number of parameters can lead to an increase in variance (overfitting) as shown in \cite{yang2009discretization}. Thus, a precise tuning of the discretization procedure is required. Likewise when dealing with categorical features which take numerous levels, their respective regression coefficients suffer from high variance. A straightforward solution formalized by \cite{maj2015delete} is to merge their factor levels which leads to less coefficients and therefore less variance. I showcase this phenomenon on simple simulated data in the next Section.
 
+Another potential motivation for quantization is optimal data compression: as will be shown rigorously in subsequent Sections, quantization aims at ``squeezing'' as much predictive information in the original features about the class as possible. Taking an informatics point of view, quantization of a continuous feature is equivalent to discarding a float column (taking \textit{e.g.}\ 32 bits per observation) by overwriting it with its quantized version (which would either be one column of unsigned 8 bits integers - ``interval'' encoding without order - or several 1 bit columns - one-hot / dummy encoding). The same thought process is applicable to quantizations of categorical features. In the end, the ``raw'' data can be compressed by a factor of $32 / 8 = 4$ without losing its predictive power, which, in an era of Big Data, is useful both in terms of data storage and of computational power to process these data since by 2040, the energy needs for calculations will exceed the global energy production (see~\cite{villani2018donner} p.\ 123).
+
 From now on, the generic term quantization will stand for both discretization of continuous features and level grouping of categorical ones. Its aim is to improve the prediction accuracy. Such a quantization can be seen as a special case of \textit{representation learning}, but suffers from a highly combinatorial optimization problem whatever the predictive criterion used to select the best quantization. The present work proposes a strategy to overcome these combinatorial issues by invoking a relaxed alternative of the initial quantization problem leading to a simpler estimation problem since it can be easily optimized by either a specific neural network or an \gls{sem} algorithm. These relaxed versions serve as a plausible quantization provider related to the initial criterion after a classical thresholding (\textit{maximum a posteriori}) procedure.
 
 The outline of this chapter is the following. After some introductory examples, I illustrate cases where quantization is either beneficial or detrimental depending on the data generating mechanism. In the subsequent section, I formalize both continuous and categorical quantization. Selecting the best quantization in a predictive setting is reformulated as a model selection problem on a huge discrete space which size is precisely derived. In Section~\ref{sec:proposal}, a particular neural network architecture is used to optimize a relaxed version of this criterion and propose good quantization candidates. At first, an \gls{sem} procedure was proposed to solve the quantization problem and is reported in section~\ref{sec:sem}. Section~\ref{sec:experiments} is dedicated to numerical experiments on both simulated and real data from the field of Credit Scoring, highlightening the good results offered by the use of the two new methods without any human intervention. A final section concludes the work by stating also new challenges.
@@ -199,8 +201,15 @@ For a continuous feature $x_j$, let $\q_j \in \Q_j$ with $m_j$ groups. The numbe
 \paragraph{Literature review}
 
 The current practice of quantization is prior to any predictive task, thus ignoring its consequences on the final predictive ability. It consists in optimizing a heuristic criterion, often totally unrelated (unsupervised methods) or at least explicitly (supervised methods) to prediction, and mostly univariate (each feature is quantized irrespective of other features' values). The cardinality of the quantization space $\Q$ can be calculated explicitely w.r.t.\ $d$, $(m_j)_1^d$ and, for categorical features, $l_j$. It is huge, so that a greedy approach is intractable and such heuristics are needed, as will be detailed in the next Section.
-Many algorithms have thus been designed and a review of approximatively 200 discretization strategies, gathering both criteria and related algorithms, can be found in~\cite{ramirez2016data}. They classify discretization methods by distinguishing, among other criteria and as said previously, unsupervised and supervised methods ($\bm{y}$ is used to discretize $\bm{x}$), for which model-specific (assumptions on $p_{\glssymbol{bth}}$) or model-free approaches are distinguished, univariate and multivariate methods (features $X_{-\{j\}} = (X_{1},\ldots,X_{j-1},X_{j+1},\ldots,X_{d})$ may influence the quantization scheme). For factor levels grouping, I found no such taxonomy, but some discretization methods, \textit{e.g.}\ $\chi^2$ independence test-based methods can be naturally extended to this type of quantization, which is for example what the CHAID algorithm, proposed in~\cite{kass1980exploratory} and applied to each categorical feature, relies on.
+Many algorithms have thus been designed and a review of approximatively 200 discretization strategies, gathering both criteria and related algorithms, can be found in~\cite{ramirez2016data}. They classify discretization methods by distinguishing, among other criteria and as said previously, unsupervised and supervised methods ($\bm{y}$ is used to discretize $\bm{x}$), for which model-specific (assumptions on $p_{\glssymbol{bth}}$) or model-free approaches are distinguished, univariate and multivariate methods (features $X_{-\{j\}} = (X_{1},\ldots,X_{j-1},X_{j+1},\ldots,X_{d})$ may influence the quantization scheme) and other criteria as can be seen from Figure~\ref{fig:taxonomy} reproduced with permission. For factor levels grouping, I found no such taxonomy, but some discretization methods, \textit{e.g.}\ $\chi^2$ independence test-based methods can be naturally extended to this type of quantization, which is for example what the CHAID algorithm, proposed in~\cite{kass1980exploratory} and applied to each categorical feature, relies on.
 For benchmarking purposes, and following results found in the taxonomy of~\cite{ramirez2016data}, I used the MDLP~\cite{fayyad1993multi} discretization method, described in-depth in Appendix~\ref{app1:mdlp}, which is a popular supervised univariate method, and I implemented an extension of ChiMerge to categorical features, performing pairwise $\chi^2$ independence tests rather than only pairs of contiguous intervals, which I called ChiCollapse and describe in-depth in Appendix~\ref{app1:chicollapse}. Note that various refinements of ChiMerge have been proposed in the literature, Chi2~\cite{liu1995chi2}, ConMerge~\cite{wang1998concurrent}, ModifiedChi2~\cite{tay2002modified}, and ExtendedChi2~\cite{su2005extended}, which seek to correct for multiple hypothesis testing~\cite{shaffer1995multiple} and automize the choice of the confidence parameter $\alpha$ in the $\chi^2$ tests, but adapting them to categorical features for benchmarking purposes would have been too time-consuming.
+
+\begin{figure}
+\includegraphics[width=\textwidth]{figures/chapitre4/taxonomy.PNG}
+\caption{Taxonomy of discretization methods.}
+\label{fig:taxonomy}
+\end{figure}
+
 
 
 \subsection{Quantization embedded in a predictive process}
@@ -485,11 +494,11 @@ For a continuous feature $\glssymbol{x}_j$ of $\glssymbol{bx}$, the combined use
 
 \paragraph{Stochastic gradient descent as a quantization provider}
 
-By relying on a stochastic gradient descent, the smoothed likelihood (\ref{eq:lqa}) can be maximized over $\left(\ag, \glssymbol{bth} \right)$. The results should be close to the maximizers of the original likelihood (\ref{eq:lq}) if the model is well-specified, when there is a true underlying quantization. In the mis-specified model case, there is no such guarantee. Therefore, to be more conservative, I evaluate at each training epoch $(t)$ the quantization $\hat{\q}^{(t)}$ resulting from the \textit{maximum a posteriori} procedure explicited in Equation~(\ref{eq:ht}), then classicaly estimate the \gls{lr} parameter \textit{via} maximum likelihood, as done in Equation~(\ref{eq:lq}):
-\[\hat{\glssymbol{bth}}^{(t)} = \argmin_{\glssymbol{bth}} \ell_{\hat{q}^{(t)}}(\glssymbol{bth}; (\glssymbol{bbx},\glssymbol{bby}))\]
-and the resulting $\mbox{BIC}(\hat{\glssymbol{bth}}^{(t)})$ as in (\ref{eq:BICq}). If $T$ is a given maximum number of iterations of the stochastic gradient descent algorithm, the quantization retained at the end is then determined by the optimal epoch
+By relying on a stochastic gradient descent, the smoothed likelihood (\ref{eq:lqa}) can be maximized over $\left(\ag, \glssymbol{bth} \right)$. The results should be close to the maximizers of the original likelihood (\ref{eq:lq}) if the model is well-specified, when there is a true underlying quantization. In the mis-specified model case, there is no such guarantee. Therefore, to be more conservative, I evaluate at each training epoch $(s)$ the quantization $\hat{\q}^{(s)}$ resulting from the \textit{maximum a posteriori} procedure explicited in Equation~(\ref{eq:ht}), then classicaly estimate the \gls{lr} parameter \textit{via} maximum likelihood, as done in Equation~(\ref{eq:lq}):
+\[\hat{\glssymbol{bth}}^{(s)} = \argmax_{\glssymbol{bth}} \ell_{\hat{q}^{(s)}}(\glssymbol{bth}; (\glssymbol{bbx},\glssymbol{bby}))\]
+and the resulting $\mbox{BIC}(\hat{\glssymbol{bth}}^{(s)})$ as in (\ref{eq:BICq}). If $T$ is a given maximum number of iterations of the stochastic gradient descent algorithm, the quantization retained at the end is then determined by the optimal epoch
 \begin{equation} \label{eq:opt_epoch}
-t_*=\argmin_{t\in \{1,\ldots, T\}} \mbox{BIC}(\hat{\glssymbol{bth}}^{(t)}).
+s_\star=\argmin_{t\in \{1,\ldots, T\}} \mbox{BIC}(\hat{\glssymbol{bth}}^{(s)}).
 \end{equation}
  
 \paragraph{Choosing an appropriate number of levels}
@@ -545,7 +554,7 @@ p(\glssymbol{bby} | \glssymbol{bbx}) & = \prod_{i=1}^n p(y_i | \glssymbol{bx}_i)
 \end{align*}
 Thus, we have :
 \[ \bqk^\star = \argmax_{\bqk \in \Q} \prod_{i=1}^n p(y_i | \bqk_i ) \prod_{j=1}^d p(\bqk_{i,j} | x_{i,j}). \]
-This new formulation of the best quantization is still untractable since it requires to evaluate all quantizations in $\Q$, although all terms except $\bqk^\star$ contribute to $0$ in the above $\argmax$. In the misspecfied model-case however, there is no such garantee but it can still be claimed that the best candidate $\bqk^\star$ in terms of criterion~\eqref{eq:BICq} dominates the sum.
+This new formulation of the best quantization is still untractable since it requires to evaluate all quantizations in $\Q$, although all terms except $\bqk^\star$ contribute to $0$ in the above $\argmax$. In the misspecfied model-case however, there is no such guarantee but it can still be claimed that the best candidate $\bqk^\star$ in terms of criterion~\eqref{eq:BICq} dominates the sum.
 
 Our goal in the next Section is to generate good candidates $\bbqk$ as in Section~\ref{sec:estim}. Among other things detailed later on, models for $p(\glssymbol{bby} | \bqk)$ and $p(\bqk_j | x_j)$ shall be proposed. If the resulting MCMC is efficient, $\q_\star$ will be the mode of the empirical distribution of generated candidates, which, as in Section~\ref{sec:proposal} with the neural network approach, can be selected with the BIC criterion~\eqref{eq:BICq}. Using \eqref{hyp:true}, it seems most natural to use a \gls{lr} for $p( y | \bqk_j)$. Following Section~\ref{sec:proposal} and as was empirically argumented in Section~\ref{subsec:relaxation}, $p(\bqk_j | x_j)$ will be parametrized by $\ag_j$. 
 
@@ -651,7 +660,7 @@ From a statistical point of view, experiment (a) assesses the empirical consiste
 Algorithm & $n$ & (a) $\hat{c}_{j,2}$ & (b) & $\hat{m}_1$ & (c) & $\hat{m}_3$ \\
 \hline
 \textit{glmdisc}-NN & $1{,}000$ & $[0.656,0.666]$ & \myobar{9}{90}{1} & \mybar{60}{32}{8} \\
-\textit{glmdisc}-SEM & $1{,}000$ & $[0.656,0.666]$ & \myobar{9}{90}{1} & \mybar{60}{32}{8} \\
+\textit{glmdisc}-SEM & $1{,}000$ & $[0.656,0.666]$ & \myobar{2}{53}{44} & \mybar{60}{32}{8} \\
 \textit{glmdisc}-NN & $10{,}000$ & $[0.666,0.666]$ & \myobar{0}{100}{0} & \mybar{88}{12}{0} \\
 \textit{glmdisc}-SEM & $10{,}000$ & $[0.666,0.666]$ & \myobar{0}{100}{0} & \mybar{88}{12}{0}
 \end{tabular}
@@ -669,17 +678,17 @@ Algorithm & $n$ & (a) $\hat{c}_{j,2}$ & (b) & $\hat{m}_1$ & (c) & $\hat{m}_3$ \\
         \centering
         \input{figures/chapitre4/True_simulated_data/feature_0_iteration_5.tex}
         \vspace{-0.5cm}
-        \caption{Quantization $\hat{\q}^{(t)}_1(x_1)$ resulting from the thresholding (\ref{eq:ht}) at iterations $t = 5$ and $m_{\text{start}} = 3$.}
+        \caption{Quantization $\hat{\q}^{(s)}_1(x_1)$ resulting from the thresholding (\ref{eq:ht}) at iterations $t = 5$ and $m_{\text{start}} = 3$.}
     \end{subfigure}%
     
     \begin{subfigure}[t]{\textwidth}
         \centering
         \input{figures/chapitre4/True_simulated_data/feature_0_iteration_300.tex}
         \vspace{-0.5cm}
-        \caption{Quantizations $\hat{\q}^{(t)}_1(x_1)$ resulting from the thresholding (\ref{eq:ht}) at iterations $t = 300$ and $m_{\text{start}} = 3$.}
+        \caption{Quantizations $\hat{\q}^{(s)}_1(x_1)$ resulting from the thresholding (\ref{eq:ht}) at iterations $t = 300$ and $m_{\text{start}} = 3$.}
     \end{subfigure}
     
-    \caption{\label{fig:MAP} Quantizations $\hat{\q}^{(t)}_1(\glssymbol{x}_1)$ of experiment (a) resulting from the thresholding (\ref{eq:ht}).}
+    \caption{\label{fig:MAP} Quantizations $\hat{\q}^{(s)}_1(\glssymbol{x}_1)$ of experiment (a) resulting from the thresholding (\ref{eq:ht}).}
 \end{figure}
 
 \subsection{Benchmark data} \label{subsec:exp_benchmark}
@@ -697,19 +706,14 @@ Now that the proposed approach was shown empirically consistent, \textit{i.e.}\ 
 Dataset & ALLR & \textit{ad hoc} methods & \makecell{Our proposal:\\ \textit{glmdisc}-NN} & \makecell{Our proposal:\\ \textit{glmdisc}-SEM} \\
 \hline
 Adult & 81.4 (1.0) & \textbf{85.3} (0.9) & 80.4 (1.0) & 81.5 (1.0) \\
-Australian & 72.1 (10.4) & 84.1 (7.5) & \textbf{92.5} (4.5) & 100 (0) \\
-Bands & 48.3 (17.8) & 47.3 (17.6) & \textbf{58.5} (12.0) & 0 \\
-Credit & 81.3 (9.6) & 88.7 (6.4) & \textbf{92.0} (4.7) & 0 \\
-German & 52.0 (11.3) & 54.6 (11.2) & \textbf{69.2} (9.1) & 0 \\
-Heart & 80.3 (12.1) & 78.7 (13.1) & \textbf{86.3} (10.6) & 0 
+Australian & 72.1 (10.4) & 84.1 (7.5) & 92.5 (4.5) & \textbf{100} (0) \\
+Bands & 48.3 (17.8) & 47.3 (17.6) & 58.5 (12.0) & \textbf{58.7} (12.0) \\
+Credit & 81.3 (9.6) & 88.7 (6.4) & \textbf{92.0} (4.7) & 87.7 (6.4) \\
+German & 52.0 (11.3) & 54.6 (11.2) & \textbf{69.2} (9.1) & 54.5 (10) \\
+Heart & 80.3 (12.1) & 78.7 (13.1) & \textbf{86.3} (10.6) & 82.2 (11.2) 
 \end{tabular}
 \end{small}
 \end{table}
-
-\textcolor{red}{ajouter SEM}
-
-
-
 
 \subsection{\textit{Credit Scoring} data} \label{subsec:exp_real}
 
