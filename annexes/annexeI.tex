@@ -300,7 +300,7 @@ K & 1.1 \\
 
 \subsection{Twins} \label{Twins}
 
-The Twins Method is an internal method at Crédit Agricole documented in~\cite{groupe} (confidential); it consists in the following procedure:
+The Twins Method is an internal method at Crédit Agricole documented in~\cite{groupe} (confidential) where Figure~\ref{fig:twins} is given; it consists in the following procedure:
 \begin{enumerate}
 \item Develop KGB (Known Good/Bad) scorecard $S^{\text{f}}$ on financed clients' data predicting $Y$; this gives us $\hat{\theta}^{\text{f}}$ (Figure~\ref{twins:sfig1})
 \item Develop ACRJ (Accept/Reject) scorecard $S_Z$ on all applicants predicting $Z$; this gives us $\hat{\zeta}$ (Figure~\ref{twins:sfig2})
@@ -308,6 +308,13 @@ The Twins Method is an internal method at Crédit Agricole documented in~\cite{g
 \item Calculate $S$ on rejected applicants and reintegrate them twice in the training dataset like we did with Fuzzy Augmentation in Section \ref{fuzzy} (Figure~\ref{twins:sfig4})
 \item Develop scorecard $S_{\text{twins}}$ on all applicants' data
 \end{enumerate}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{figures/appendix/processusTwins.png}
+\caption{The accompanying Figure of the Twins method in~\cite{groupe}.}
+\label{fig:twins}
+\end{figure}
 
 \begin{table}
 \caption{\label{twins} Example of implementation of the Twins method on a small dataset}
@@ -418,7 +425,7 @@ NA & -2.0 & -2.5 \\
 
 \subsection{Parceling} \label{Parceling}
 
-Parcelling is a process of reweighing according to the probability of default by score-band that is adjusted by the credit modeler. It has been documented in \cite{saporta,banasik,RI6}.
+Parcelling is a process of reweighing according to the probability of default by score-band that is adjusted by the credit modeler. It has been documented in \cite{saporta,banasik,RI6}, as well as in~\cite{groupe} where Figure~\ref{fig:parceling} is given.
 
 \begin{enumerate}
 \item Construct Scorecard "Known Good Bad" (KGB) $S^{\text{f}}$ with financed clients' data (Figure~\ref{parcel:sfig1})
@@ -428,6 +435,14 @@ Parcelling is a process of reweighing according to the probability of default by
 \item Reintegrate 2 times each rejected applicant from $B_k$ with weight $U(k)$ as bad and weight $1-U(k)$ as good, like the Fuzzy Augmentation method in Section \ref{fuzzy} (Figure~\ref{parcel:sfig3}).
 \item Construct final Scorecard.
 \end{enumerate}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{figures/appendix/processusParcelling.png}
+\caption{The accompanying Figure of the Parceling method in~\cite{groupe}.}
+\label{fig:parceling}
+\end{figure}
+
 
 \begin{table}
 \caption{\label{parcel} Example of implementation of the Parcelling method on a small dataset}
@@ -504,6 +519,72 @@ K & 0.01 & 0.04 \\
 
 
 
+\subsection{Simulation of } \label{subsec:app_reject_real}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/appendix/rejectinferencesimulation4var.png}
+\caption{.}
+\label{fig:simu_4var}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/appendix/rejectinferencesimulation30var.png}
+\caption{.}
+\label{fig:simu_30var}
+\end{figure}
+
+
+\subsection{Reject Inference methods applied to real data: previous experiments} \label{subsec:app_reject_real}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/appendix/rejectinferencedarty3.png}
+\caption{Performance resulting from the use of Reject Inference methods in terms of Gini on an Electronics loans dataset from \gls{cacf}.}
+\label{fig:darty_reject}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/appendix/rejectinferencedecathlon.png}
+\caption{Performance resulting from the use of Reject Inference methods in terms of Gini on a Sports goods loans dataset from \gls{cacf}.}
+\label{fig:decathlon_reject}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/appendix/rejectinferenceM3.png}
+\caption{Performance resulting from the use of Reject Inference methods in terms of Gini on a Standard loans dataset from \gls{cacf}.}
+\label{fig:M3_reject}
+\end{figure}
+
+
+\subsection{Performance of other predictive models w.r.t.\ the acceptance level} \label{subsec:app_reject_real}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/appendix/newmodelsdarty.png}
+\caption{Performance resulting from the use of other predictive methods in terms of Gini on an Electronics loans dataset from \gls{cacf}.}
+\label{fig:darty_othermodels}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/appendix/newmodelsdecathlon.png}
+\caption{Performance resulting from the use of other predictive methods in terms of Gini on a Sports good loans dataset from \gls{cacf}.}
+\label{fig:decathlon_othermodels}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/appendix/newmodelsm3web.png}
+\caption{Performance resulting from the use of other predictive methods in terms of Gini on a Standard loans dataset from \gls{cacf}.}
+\label{fig:M3_othermodels}
+\end{figure}
+
+
 \section{Discretization methods}
 
 \subsection{Unsupervised methods}
@@ -512,7 +593,7 @@ K & 0.01 & 0.04 \\
 
 The \textit{equal-freq} algorithm~\ref{equal-freq-disc} is illustrated on Figure~\ref{fig:disc_equal_freq}. 
 
-\begin{figure}[!h]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}[scale=0.2,every node/.style={scale=1}]
 \draw[->,line width=0.08cm] (-12,0)--(38,0) node[right]{$\glssymbol{x}$};
@@ -567,7 +648,7 @@ Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
 
 The \textit{equal-length} algorithm~\ref{equal-length-disc} is illustrated on Figure~\ref{fig:disc_equal_length}. 
 
-\begin{figure}[!h]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}[scale=0.2,every node/.style={scale=1}]
 \draw[->,line width=0.08cm] (-12,0)--(38,0) node[right]{$\glssymbol{x}$};

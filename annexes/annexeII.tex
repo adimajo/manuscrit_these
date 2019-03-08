@@ -71,6 +71,32 @@ Once installed, the Python help can be browsed with the \pyinline{help} function
 
 As mentioned in Chapter~\ref{chap4}, the implementation of \textit{glmdisc}-NN is straightforward in terms of neural network architecture. Therefore, all experiments involving \textit{glmdisc}-NN were performed in Jupyter Notebooks. The Notebooks for experiments on simulated data can be found in the \verb|PYTHON_NOTEBOOKS| folder of the repository.
 
+Prior to this work, a quick proof of concept for discretizing continuous features was performed and the following snippet shows how simple it is with standard deep learning libraries ($x_1$, $x_2$ and $y$ are drawn from the running example of Section~\ref{sec:experiments}):
+
+\begin{pylisting}
+from keras import *
+from keras.layers import *
+
+input1 = Input((1,))
+hidden1 = Dense(3, activation = 'softmax')
+
+input2 = Input((1,))
+hidden2 = Dense(3, activation = 'softmax')
+
+full_hidden = merge([hidden1(input1), hidden2(input2)], mode = 'concat')
+output = Dense(1,activation = 'sigmoid')(full_hidden)
+
+model = Model([input1,input2],[output])
+model.compile(loss='binary_crossentropy', optimizer='adam')
+model.fit([x[:,0],x[:,1]],y, nb_epoch = 300)
+\end{pylisting}
+
+%\begin{figure}[H]
+%\includegraphics[width = 0.5\textwidth]{capture_keras2.png}
+%\caption{Plot of the resulting discretization of x[:,0].}
+%\label{fig:keras}
+%\end{figure}
+
 The following snippet illustrates how straightforward the implementation of \textit{glmdisc}-NN is, as seen as a computational graph on Figure~\ref{fig:nn}.
 
 \begin{pylisting}
