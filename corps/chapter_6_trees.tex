@@ -295,7 +295,13 @@ The \gls{pls}~\cite{wold1984collinearity} algorithm seeks to combine the strengt
 
 The main idea is to construct a first component from the sum of the univariate regressions of $\glssymbol{bbx}_j$ on $\glssymbol{bby}$, then a second component from the sum of the univariate regressions of $\glssymbol{bbx}_j$ subtracted by the first component on $\glssymbol{bby}$, and so on. In a sense, a trade-off between reconstruction quality of $\glssymbol{bbx}$ and $\glssymbol{bby}$ with as few components as possible is achieved.
 
-The \gls{pls} algorithm is given in Section~\ref{app1:sec_pls} of the Appendix, Algorithm~\ref{alg:pls}.
+The \gls{pls} algorithm is given in Section~\ref{app1:sec_pls} of the Appendix, Algorithm~\ref{alg:pls}. It was used in~\cite{schwartz2009human} in a classification setting which results in Figure~\ref{fig:pca_vs_pls} reproduced with permission\footnote{\copyright 2009 IEEE}. It is striking how classes are better separated when using \gls{pls}. However, this does not guarantee that the resulting inferred segments' \gls{lr} will yield better predictive performance.
+
+\begin{figure}
+\includegraphics[width = \textwidth]{figures/chapitre6/pca_vs_pls.png}
+\caption{PCA vs PLS}
+\label{fig:pca_vs_pls}
+\end{figure}
 
 \paragraph{\glsfirst{spc}}
 
