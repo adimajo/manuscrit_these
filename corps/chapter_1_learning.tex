@@ -147,6 +147,7 @@ Il convient de noter ici que les différents processus qui conduisent à un non 
 En essence, il est souhaitable de mesurer la profitabilité de chaque crédit, par exemple en actualisant les remboursements et les pertes générés par chaque client à la date de déblocage des fonds, et en déduisant l'ensemble des coûts (financement, traitement, recouvrement, \dots). En pratique, peu d'institutions procèdent ainsi malgré quelques travaux récents~\cite{finlay2010credit}. Par ailleurs, les caractéristiques du client sont elles-mêmes évolutives~: les informations collectées à $t=0$ au moment de la demande peuvent avoir changées au moment du financement du bien à $t = \{text{fin}$ (qui peut intervenir plusieurs mois après pour un véhicule sur commande par exemple), tout comme les moments de vie ultérieurs éventuels comme les divorces, les pertes d'emploi, \dots qui ne peuvent être collectées ultérieurement par les organismes financiers, comme schématisé sur la figure~\ref{fig:moments}.
 
 \begin{figure}[!ht]
+\begin{center}
 \begin{tikzpicture}[scale=0.3,node distance=5cm, on grid, auto]
 \draw[->,line width=0.1cm] (-5,0)--(24,0) node[right]{$t$};
 
@@ -158,17 +159,18 @@ En essence, il est souhaitable de mesurer la profitabilité de chaque crédit, p
 \node [green,circle, fill] at (20,0) {};
 
 
-\node [scale=0.5,align=center] at (-2,-1.5) {Demande de\\crÃ©dit $X_0$};
-\node [scale=0.5,align=center] at (2,-2.5) {Financement du\\crÃ©dit $X_{\text{fin}}$};
+\node [scale=0.5,align=center] at (-2,-1.5) {Demande de \\ crédit $X_0$};
+\node [scale=0.5,align=center] at (2,-2.5) {Financement du \\ crédit $X_{\text{fin}}$};
 \node [scale=0.5,align=center] at (10,-1.5) {Divorce\\$X_{\text{divorce}}$};
 
 
 \node [scale=0.5,align=center] at (2,1) {$Y_0$};
-\node [scale=0.5,align=center] at (7,1.5) {MensualitÃ© i\\$Y_i$};
-\node [scale=0.5,align=center] at (15,1.5) {MensualitÃ©\\impayÃ©e};
-\node [scale=0.5,align=center] at (20,1.5) {CrÃ©dit\\terminÃ© $Y_T$};
+\node [scale=0.5,align=center] at (7,1.5) {Mensualité i\\$Y_i$};
+\node [scale=0.5,align=center] at (15,1.5) {Mensualité \\ impayée};
+\node [scale=0.5,align=center] at (20,1.5) {Crédit \\ terminé $Y_T$};
 
 \end{tikzpicture}
+\end{center}
 \caption{Temporalité du crédit~: évolution des covariables.}
 \label{fig:moments}
 \end{figure}
