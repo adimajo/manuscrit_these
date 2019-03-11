@@ -18,8 +18,8 @@ list_levels = array(0,dim=100)
 list_c1 = array(0,dim=100)
 list_c2 = array(0,dim=100)
 
-for (b in 12:20) {
-    list2env(generate_data(b+100,1000),env=environment())
+for (b in 1:100) {
+    list2env(generate_data(b,10000),env=environment())
     
     sem_disc = glmdisc(x,y,iter=200,m_start=3,test=FALSE,validation=FALSE,criterion="bic",interact=FALSE)
     
