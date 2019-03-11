@@ -17,10 +17,6 @@ In Chapter~\ref{chap1}, it was argued in Section~\ref{subsec:segmentation} that,
 
 As was emphasized in all previous Chapters, \gls{lr} is the building block of a scorecard predicting the creditworthiness of an applicant and partly automating the acceptance / rejection mechanism. However, estimating \gls{lr} coefficients means that training data $(\glssymbol{bbx},\glssymbol{bby})$ is available. This is not the case when a new product, \textit{e.g.}\ smartphone leasing, is added to the acceptance system. On a practical note, some other previously learnt scorecard may not be applicable on this new market because the same information is not asked to applicants, \textit{e.g.}\ marital status, because given the low amounts at stake, it was decided to collect the fewest data possible, to make the process as simple and quick as possible. On a more theoretical note, it is probable that applicants to smartphone leasing are not stemming from the same data generating mechanism $p(\glssymbol{bX},Y)$ as any other previous applicants (\textit{i.e.}\ on other markets). Put it another way, the possibility of having several \gls{lr} scorecards on sub-populations of the total portfolio allows to have more flexibility, and thus it potentially reduces model bias discussed in Chapter~\ref{chap1}.
 
-
-
-%We assume there are $K$ ``clusters'' which form the leaves of this tree and which assigning latent random feature is denoted by $C$ (lower-case for observations). The other notations employed inspire from the preceding Chapters: the superscript notation is used to insist on the fact that available features $\glssymbol{bx}^c$ differ potentially in each of the scorecards. It follows that quantizations $\q^c$ and interactions $\bdelta^c$, discussed in Chapters~\ref{chap4} and~\ref{chap5} respectively are also different. Consequently, the \gls{lr} coefficients $\glssymbol{bth}^c$ are also obviously different.
-
 For these reasons, several industries, among which \textit{Credit Scoring}, rely on several ``weak learners'' such as \gls{lr}, arranged in a tree. Such decision process is illustrated on Figure~\ref{fig:arbre}. This tree structure and the vocabulary of ``weak learners'' would indicate a use-case of Mixtures of Experts~\cite{jordan1994hierarchical} or aggregation / ensemble methods~\cite{opitz1999popular} respectively. However, these fuzzy methods imply that all applicants are scored by all scorecards, which is obviously neither desirable (for interpretation purposes) nor feasible (since available features differ).
 
 The next Section illustrates how such a structure is achieved using \gls{cacf}'s in-house practices.
@@ -168,7 +164,7 @@ For numerical experiments of Section~\ref{sec:num_exp}, we will use, among other
 \caption{\label{fig:famd} The result of a \gls{famd} applied to categorical data of \gls{cacf} data from the car loan market.}
 \end{figure}
 
-\subsection{These practices can fail}
+\subsection{These practices can fail} \label{subsec:fail}
 
 Of course, like all \textit{ad hoc} methods that rely on ``two-stages'' procedures (find segments using an \gls{mca} algorithm and learn separate \gls{lr} scorecards on them) which do not share a common objective, the aforementioned in-house practice can fail. \textit{Credit Scoring} practitioners are probably aware that their methods are not bullet-proof, but like most industries, unless provided to them with easily usable software replacing these methods, these practices remain.
 
@@ -400,17 +396,25 @@ In the next Section, we formalize the problem as a model selection problem, simi
 
 \section{Logistic regression trees as a combinatorial model selection problem} \label{sec:model_selec_tree}
 
-In this Section, it is supposed the well-specified model is indeed a \gls{lr} tree, which amounts to assuming there $K^\star$ segments. The membership of an observation $\glssymbol{bx}$ to a segment $c$ is given by a tree. We restrict to binary trees for simplicity, such that a segment $c$ has $r = 1, \dots, \mathcal{D}(c)$ parents successively denoted by $\mathcal{P}a^r(c)$. At these parent nodes, a binary rule is taken. This rule is univariate: it depends on only one feature $x_{\sigma(r,c)}$ where $\sigma(r,c)$ denotes the anti-rank of the feature used in rule $r$ for segment $c$. Being a binary rule, the membership of $x_{\sigma(r,c)}$ is tested between $C_{\mathcal{P}a^r(c),1}$ and $C_{\mathcal{P}a^r(c),2}$ such that $C_{\mathcal{P}a^r(c),1} \bigsqcup C_{\mathcal{P}a^r(c),2} =\glssymbol{R}$ for continuous features (half-spaces), or $\glssymbol{N}_{l_{\sigma(r,c)}}$ for categorical features respectively. The `unique `side'' $1$ or $2$ of rule $r$ that yields eventually to $c$ is denoted by $\lambda(r,c)$. With all these newly introduced notations, the probability of a segment $c$ given covariates $\glssymbol{bx}$ can be expressed as:
+We assume there are $K^\star$ ``clusters'' which form the leaves of a tree similar to Figure~\ref{fig:arbre} and which assigning latent random feature is denoted by $C^\star$ (lower-case for observations). The other notations employed inspire from the preceding Chapters: the superscript notation is used to insist on the fact that available features $\glssymbol{bx}^{c^\star}$ differ potentially in each of the scorecards. For $c^\star \in \glssymbol{N}_{K^\star}$, $(\glssymbol{bbx}^{c^\star}, \glssymbol{bby}^{c^\star})$ denotes the subset of observations of $(\glssymbol{bbx}, \glssymbol{bby})$ for which $C^\star = c^\star$, such that $ \bigsqcup_{c^\star=1}^{K^\star} (\glssymbol{bbx}^{c^\star}, \glssymbol{bby}^{c^\star}) = (\glssymbol{bbx}, \glssymbol{bby})$. It follows that quantizations $\q^{c^\star}$ and interactions $\bdelta^{c^\star}$, discussed in Chapters~\ref{chap4} and~\ref{chap5} respectively are also different. Consequently, the \gls{lr} coefficients $\glssymbol{bth}^{c^\star}$ are also obviously different. In this Section, we drop the quantization requirement, such that:
+\begin{equation} \label{eq:lr_tree}
+\forall \glssymbol{bx}, y, \exists c^\star \in \glssymbol{N}_{K^\star}, \glssymbol{bth}^{\star,c^\star}, p(y | \glssymbol{bx}) = p_{\glssymbol{bth}^{\star,c^\star}}(y | \glssymbol{bx})
+\end{equation}
+%In this Section, it is supposed the well-specified model is indeed a \gls{lr} tree, which amounts to assuming there $K^\star$ segments. 
+The membership of an observation $\glssymbol{bx}$ to a segment $c$ is given by a tree. We restrict to binary trees for simplicity, such that a segment $c$ with depth $\mathcal{D}(c)$ has $r = 1, \dots, \mathcal{D}(c)$ parents successively denoted by $\mathcal{P}a^r(c)$. At these parent nodes, a binary rule is taken. This rule is univariate: it depends on only one feature $x_{\sigma(r,c)}$ where $\sigma(r,c)$ denotes the anti-rank of the feature used in rule $r$ for segment $c$. Being a binary rule, the membership of $x_{\sigma(r,c)}$ is tested between $C_{\mathcal{P}a^r(c),1}$ and $C_{\mathcal{P}a^r(c),2}$ such that $C_{\mathcal{P}a^r(c),1} \bigsqcup C_{\mathcal{P}a^r(c),2} =\glssymbol{R}$ for continuous features (half-spaces), or $\glssymbol{N}_{l_{\sigma(r,c)}}$ for categorical features respectively. 
+%The `unique `side'' $1$ or $2$ of rule $r$ that yields eventually to $c$ is denoted by $\lambda(r,c)$. 
+This membership is denoted by $\lambda(r,c)$ such that $x_{\sigma(r,c)} \in C_{\mathcal{P}a^r(c),\lambda(r,c)}$.
+With all these newly introduced notations, the probability of a segment $c$ given covariates $\glssymbol{bx}$ can be expressed as:
 \begin{equation} \label{eq:tree}
 p( c | \glssymbol{bx}) = \prod_{r = 1}^{\mathcal{D}(c)} \mathds{1}_{C_{\mathcal{P}a^r(c),\lambda(r,c)}} (x_{\sigma(r,c)})
 \end{equation}
 %where $r$ denotes the inverse depth of each rule relative to $c$ ($r=\ln_2 K$ gives the root rule, and so on) and $\sigma(r,c)$ gives the anti-rank of the feature used in rule $r$, at node $\mathcal{P}a^r(c)$, $C_{\mathcal{P}a^r(c),\lambda(r,c)} = \begin{cases} ]-\infty ; \lambda_r] \\ \text{or} \\ ] \lambda_r ; +\infty[ \end{cases}$ for a continuous feature and $C_{r,c} = \begin{cases} \lambda_{r,1} \\ \text{or} \\ \lambda_{r,2} \end{cases}$ such that $ \lambda_{r,1} \bigsqcup \lambda_{r,2} = \glssymbol{N}_{l_{\sigma(r)}}$ for a categorical feature depending on the ``side'' of the segment $c$ w.r.t.\ the rule $r$.
 An example is given on Figure~\ref{fig_arbre_ex_notations}.
-In each segment, the well-specified assumption is equivalent to a \gls{lr}:
-\begin{equation} \label{eq:lr_tree}
-\forall \glssymbol{bx}, y, \exists c^\star \in \glssymbol{N}_{K^\star}, \glssymbol{bth}^{\star,c^\star}, p(y | \glssymbol{bx}) = p_{\glssymbol{bth}^{\star,c^\star}}(y | \glssymbol{bx}, c^\star)
-\end{equation}
-For $c \in \glssymbol{N}_{K^\star}$, $(\glssymbol{bbx}^c, \glssymbol{bby}^c)$ denotes the subset of observations of $(\glssymbol{bbx}, \glssymbol{bby})$ for which $c^\star = c$, such that $ \bigsqcup_{c=1}^{K} (\glssymbol{bbx}^c, \glssymbol{bby}^c) = (\glssymbol{bbx}, \glssymbol{bby})$.
+%In each segment, the well-specified assumption is equivalent to a \gls{lr}:
+%\begin{equation} \label{eq:lr_tree}
+%\forall \glssymbol{bx}, y, \exists c^\star \in \glssymbol{N}_{K^\star}, \glssymbol{bth}^{\star,c^\star}, p(y | \glssymbol{bx}) = p_{\glssymbol{bth}^{\star,c^\star}}(y | \glssymbol{bx}, c^\star)
+%\end{equation}
+%For $c \in \glssymbol{N}_{K^\star}$, $(\glssymbol{bbx}^c, \glssymbol{bby}^c)$ denotes the subset of observations of $(\glssymbol{bbx}, \glssymbol{bby})$ for which $c^\star = c$, such that $ \bigsqcup_{c=1}^{K} (\glssymbol{bbx}^c, \glssymbol{bby}^c) = (\glssymbol{bbx}, \glssymbol{bby})$.
 
 \tikzstyle{level 1}=[level distance=2.2cm, sibling distance=8cm]
 \tikzstyle{level 2}=[level distance=2cm, sibling distance=4cm]
@@ -427,18 +431,18 @@ For $c \in \glssymbol{N}_{K^\star}$, $(\glssymbol{bbx}^c, \glssymbol{bby}^c)$ de
     every node/.style       = {font=\footnotesize},
     sloped
   ]
-  \node [root] {\textcolor{black}{$r = 2$}}
-    child { node [dummy] {$r=1$}
+  \node [root] {\textcolor{black}{\small $\begin{array}{c} r = 2 \\ \lambda(2,1) = 1 \end{array}$}}
+    child { node [dummy] {\small $\begin{array}{c} r = 1 \\ \lambda(1,1) = 1 \end{array}$}
       child { node [env] {\textcolor{black}{$c=1$ \hspace*{-0.4cm}}}
           edge from parent node [below] {$\glssymbol{x}_{\sigma(1,1)} \in C_{1,1}$} }
       child { node [env] {\textcolor{black}{$c=2$ \hspace*{-0.4cm}}}
               edge from parent node [above, align=center] {$\glssymbol{x}_{\sigma(1,1)} \not\in C_{1,2}$} }
               edge from parent node [above] {$\glssymbol{x}_{\sigma(2,1)} \in C_{2,1}$} }
     child { node [dummy] {$\cdot$}
-      child { node [env] {\textcolor{black}{$c=3$ \hspace*{-0.4cm}}}
-          edge from parent node [above] {$\cdot$} }
-      child { node [env] {\textcolor{black}{$c=4$ \hspace*{-0.4cm}}}
-              edge from parent node [above, align=center] {$\cdot$} }
+%      child { node [env] {\textcolor{black}{$c=3$ \hspace*{-0.4cm}}}
+%          edge from parent node [above] {$\cdot$} }
+%      child { node [env] {\textcolor{black}{$c=4$ \hspace*{-0.4cm}}}
+%              edge from parent node [above, align=center] {$\cdot$} }
               edge from parent node [above] {$\glssymbol{x}_{\sigma(2,1)} \not\in C_{2,2}$} };
 \end{tikzpicture}
 }
@@ -451,8 +455,8 @@ The above mentioned \gls{lotus}, \gls{lmt} and \gls{mob} optimized the sum of th
 Another approach can be taken by considering the segment $c$ as a latent random feature:
 \begin{align}
 p(\glssymbol{bbx},\glssymbol{bby}) & =  \sum_{c=1}^{K^\star} p(\glssymbol{bby} | \glssymbol{bbx}, c) p(c | \glssymbol{bbx}) p(\glssymbol{bbx}) & \text{($p(c | \glssymbol{bx})$ is non-zero only for $c = c^\star$)} \nonumber \\
- & = \prod_{c=1}^{K^\star} p(\glssymbol{bby}^c | \glssymbol{bbx}^c, c) p(\glssymbol{bbx}) \nonumber \\
- & = \prod_{c=1}^{K^\star} \int_{\Theta_c} p_{\glssymbol{bth}^{c}}(\glssymbol{bby}^c | \glssymbol{bbx}^c) p(\glssymbol{bth}^c | c) d\glssymbol{bth}^c p(\glssymbol{bbx}) \label{eq:likelihood_segment}
+ & = \prod_{c^\star=1}^{K^\star} p(\glssymbol{bby}^{c^\star} | \glssymbol{bbx}^{c^\star}, c^\star) p(\glssymbol{bbx}) \nonumber \\
+ & = \prod_{c^\star=1}^{K^\star} \int_{\Theta_{c^\star}} p_{\glssymbol{bth}^{c^\star}}(\glssymbol{bby}^{c^\star} | \glssymbol{bbx}^{c^\star}) p(\glssymbol{bth}^{c^\star} | c^\star) d\glssymbol{bth}^{c^\star} p(\glssymbol{bbx}) \label{eq:likelihood_segment}
 %\ln p(\glssymbol{bby}, \glssymbol{bbx}) & = \sum_{c=1}^{K^\star} \exp \left( \frac{-\text{BIC}(\hat{\glssymbol{bth}^c}) + O(1)}{2} \right) + \ln p(\glssymbol{bbx}) 
 \end{align}
 Consequently, the following criterion can be used to select a segmentation:
@@ -497,51 +501,71 @@ which will be at the basis of the \gls{em}'s fuzzy assignment among segments, de
 
 \subsection{A classical \gls{em} estimation strategy}
 
-The \gls{em} algorithm~\cite{dempster1977maximum} is an iterative method that can be used to estimate the \textit{maximum a posteriori} of $p(c | \glssymbol{bx}, y)$, since $c$ is latent, and alternates between the expectation (E-)step, which computes the relative membership of the observations into each segment, and a maximization (M-)step, which computes the MLE of the parameters of the log-likelihoods of each segment's \gls{lr} and the tree structure. These new \gls{lr} and tree estimates are then used to determine the distribution of the latent variables in the next E-step. Considering the number of segments $K$ fixed, the E and Q steps of the \gls{em} can be derived as follows.
+The \gls{em} algorithm~\cite{dempster1977maximum} is an iterative method that can be used to estimate the \textit{maximum a posteriori} of $p(c | \glssymbol{bx}, y)$, since $c$ is latent, and alternates between the expectation (E-)step, which computes the relative membership of the observations into each segment, and a maximization (M-)step, which computes the MLE of the parameters of the log-likelihoods of each segment's \gls{lr} and the tree structure. These new \gls{lr} and tree estimates are then used to determine the distribution of the latent variables in the next E-step. Considering the number of segments $K$ fixed, the E- and M-steps of the \gls{em} can be derived as follows.
 
 \paragraph{E-step}
 At iteration $(s+1)$, the membership of an observation $i$ to segment $c$ can be computed as:
 \[ t_{i,c}^{(s+1)} = \frac{p_{\glssymbol{bth}^{c(s)}}(y_i | \glssymbol{bx}_i) p_{\betag^{(s)}}(c | \glssymbol{bx}_i) }{ \sum_{c'=1}^K p_{\glssymbol{bth}^{c{'}{(s)}}}(y_i | \glssymbol{bx}_i) p_{\betag^{(s)}}(c{'} | \glssymbol{bx}_i) }.\]
 
-\paragraph{Q1-step}
+\paragraph{M1-step}
 The previous E-step allows to derive the new MLE of the \gls{lr} parameters of each segment $c$ as:
 \[ \glssymbol{bth}^{c(s+1)} = \argmax_{\glssymbol{bth}} \sum_{i=1}^n t_{i,c}^{(s+1)} \ln p_{\glssymbol{bth}^c}(y_i | \glssymbol{bx}_i). \]
 
-\paragraph{Q2-step}
+\paragraph{M2-step}
 Similarly, a new tree structure can be derived by the new MLE of its parameters $\betag$:
 \[ \betag^{(s)} = \argmax_{\betag} \sum_{i=1}^n \sum_{c=1}^K t_{i,c} \ln p_{\betag}( c | \glssymbol{bx}_i). \]
 Unfortunately, tree induction methods like CART or C4.5 do not follow a maximum likelihood approach, so that they rather try to minimize a so-called impurity measure, the Gini index or the entropy, respectively. However, since it is hoped that segments $c^\star$ are ``peaks'' of the distribution $p_{\betag}( c | \glssymbol{bx})$, just as it was supposed that the best quantization $\bqk^\star$ dominated its posterior \gls{pdf} in the \gls{sem} algorithm proposed in Section~\ref{subsec:fuzzy}, the log-likelihood can be well approximated by the entropy, such that:
-\[ \betag^{(s)} \approx \argmax_{\betag} \sum_{i=1}^n \sum_{c=1}^K t_{i,c} \underbrace{p_{\betag}( c | \glssymbol{bx}_i)}_{\begin{cases} \approx 1 \text{ for } c = c^\star, \\ 0 \text{ otherwise.} \end{cases}} \ln p_{\betag}( c | \glssymbol{bx}_i). \]
+\[ \betag^{(s+1)} \approx \argmax_{\betag} \sum_{i=1}^n \sum_{c=1}^K t_{i,c}^{(s+1)} \underbrace{p_{\betag}( c | \glssymbol{bx}_i)}_{\begin{cases} \approx 1 \text{ for } c = c^\star, \\ 0 \text{ otherwise.} \end{cases}} \ln p_{\betag}( c | \glssymbol{bx}_i). \]
 This last formulation allows to obtain $\betag^{(s)}$ from a simple application of the C4.5 algorithm, with observations properly weighted by $t_{i,c}$.
 
-bla
-
-However, this approach suffers from several drawbacks. 
-Consequently, .
+However, this approach suffers from two main drawbacks: first, all observations are used in all \gls{lr} $p_{\glssymbol{bth}^c}$ which might be problematic with real data since there will be ``blocks'' of available features (\textit{e.g.}\ vehicle information); second, all possible values of $K$ must be iterated through since the \gls{em} algorithm does not allow for the disappearance of a segment $c$ contrary to the \gls{sem} approach developed hereafter.
 
 \subsection{An \gls{sem} estimation strategy}
 
 In a similar fashion as the MCMC approaches developed in Chapters~\ref{chap4} and~\ref{chap5} where a ``clever'' quantization (resp.\ interaction matrix) was drawn and evaluated at each step, refining it for the subsequent steps, a straightforward way of building logistic regression trees is to propose a tree structure, fit \gls{lr} at its leaves, and evaluate the goodness-of-fit using Criterion~\ref{eq:BICc} of the resulting logistic regression tree. This is somehow the way \gls{lmt} works: a tree structure is proposed based on C4.5, \gls{lr} are fitted using the LogitBoost algorithm, and the tree is pruned back using a goodness-of-fit criterion.
 
-Similarly to the quantization and the interaction screening problems, doing so for all possible tree structures is intractable, so that a way of generating ``good'' candidates should be designed. These good candidates are given by the segments' latent feature distribution $p(c | \glssymbol{bx}, y)$.
+Similarly to the quantization and the interaction screening problems, doing so for all possible tree structures is intractable, so that a way of generating ``good'' candidates can be designed by relying on an \gls{sem} algorithm. The E-step of the previous Section is thus replaced by a Stochastic (S-) step which has some consequences on the M-steps.
+\paragraph{S-step}
+\[ c_i^{(s+1)} \sim p_{\glssymbol{bth}^{\cdot(s)}}(y_i | \glssymbol{bx}_i) p_{\betag^{(s)}}(\cdot | \glssymbol{bx}_i). \]
+\paragraph{M1-step} Thanks to the previous step, the segments are now ``hardly'' assigned such that the \gls{lr} are estimated using only observations affected to their segment:
+\[ \glssymbol{bth}^{c(s+1)} = \argmax_{\glssymbol{bth}} \ell(\glssymbol{bth};\glssymbol{bbx}^{c(s+1)},\glssymbol{bby}^{c(s+1)}). \]
+\paragraph{M2-step} Similarly, a new tree structure is given by:
+\[ \betag^{(s)} = \argmax_{\betag} \ell(\betag, \glssymbol{bbx}, \mathbf{\bm{c}}). \]
+
+
+%These good candidates are given by the segments' latent feature distribution $p(c | \glssymbol{bx}, y)$.
 
 
 \section{Extension to quantization and interactions}
 
-The \gls{sem} estimation strategy proposed in the previous Section has one clear advantage: it could easily be used in the conjunction with the \textit{glmdisc}-SEM algorithm proposed in Chapters~\ref{chap4} and~\ref{chap5} for quantization and interaction screening.
+The \gls{sem} estimation strategy proposed in the previous Section has one clear advantage: it could easily be used in conjunction with the \textit{glmdisc}-SEM algorithm proposed in Chapters~\ref{chap4} and~\ref{chap5} for quantization and interaction screening.
 
 The following modifications would have to be performed:
+\paragraph{S1-step} The segment is drawn, for an observation $i$ such that $\glssymbol{bx}_i$ belongs to segment $c$, according to:
+\[ c_i^{(s+1)} \sim p_{\glssymbol{bth}^{\cdot(s)}}(y_i | \bqk^{\cdot(s)},\bdelta^{\cdot(s)}) p_{\betag^{(s)}}(\cdot | \glssymbol{bx}_i). \]
+\paragraph{S2-step} The \textit{glmdisc}-SEM performs the subsequent S-steps. The quantization is drawn according to:
+\[ \bqk_{i,j}^{c(s+1)} \sim p_{}(y_i | \bqk_{i,-\{j\}}, \cdot, \bdelta^{c(s)}) p_{\ag_j^{c(s)}}(\cdot | x_{i,j}). \]
+\paragraph{S3-step} The interaction matrix is drawn following the Metropolis-Hastings approach developed in the preceding Chapter and denoted for simplicity as MH here:
+\[ \bdelta^{c(s+1)} \sim \text{MH}(\bdelta^{c(s)}, \bbqk^{c(s+1)}, \glssymbol{bby}^{c(s+1)}). \]
+\paragraph{M1-step}
+\[ \glssymbol{bth}^{c(s+1)} = \argmax_{\glssymbol{bth}} \ell(\glssymbol{bth};\glssymbol{bbx}^{c(s+1)},\glssymbol{bby}^{c(s+1)}, \bdelta^{c(s+1)}). \]
+\paragraph{M2-step}
+\[ \ag_j^{c(s+1)} = \argmax_{\ag_j} \ell(\ag_j;\glssymbol{bbx}_j^{c(s+1)},\bbqk_j^{c(s+1)}). \]
+\paragraph{M3-step}
+\[ \betag^{(s)} = \argmax_{\betag} \ell(\betag, \glssymbol{bbx}, \mathbf{\bm{c}}). \]
+
+Although this extension seems straightforward, it is relatively computationally expensive since at each step (s), $K$ Metropolis-Hastings steps have to be performed and a tree, $K$ \gls{lr} and $K \times d$ polytomous logistic regressions are fitted. With a relatively small number of segments, \textit{i.e.}\ 4 to 30 as proposed earlier, it seems nevertheless feasible but it will require more work.
 
 \section{Numerical experiments} \label{sec:num_exp}
 
-
+This Chapter is based on more recent work which consequently limits the exhaustiveness of the numerical experiments. The next Section aims at comparing the proposed approach to other methods on simulated data from the proposed model, and in particular the failing situations discussed in Section~\ref{subsec:fail}.
 
 \subsection{Empirical consistency on simulated data} \label{subsec:num_sim}
 
 
 \begin{enumerate}[(a)]
 \item 
-\item é
+\item 
 \end{enumerate}
 
 
