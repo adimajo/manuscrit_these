@@ -1,11 +1,6 @@
-
-
-
 library(glmdisc)
 
 d=3
-
-contr.ltfr = caret::contr.ltfr
 
 generate_data <- function(k,n) {
     set.seed(k)
@@ -24,7 +19,7 @@ list_levels = array(0,dim=100)
 for (b in 1:100) {
     list2env(generate_data(b,1000),env=environment())
     
-    sem_disc = glmdisc(x,y,iter=100,m_start=10,test=FALSE,validation=FALSE,criterion="bic",interact=FALSE)
+    sem_disc = glmdisc(x,y,iter=300,m_start=3,test=FALSE,validation=FALSE,criterion="bic",interact=FALSE)
     
     list_levels[b] = nlevels(factor(sem_disc@disc.data[,3]))
 }

@@ -6,7 +6,8 @@
 % arara: pdflatex: {shell: yes}
 % arara: remove: { patterns: [ '*.aux', '*.log', '*.acn', '*.acr', '*.alg', '*.bbl', '*.bcf', '*.blg', '*.glg', '*.glo', '*.gls', '*.loa', '*.lof', '*.log', '*.lot', '*.maf', '*.mtc*', '*.mw', '*.run.xml', '*.slg', '*.slo', '*.sls', '*.toc', '*.xdy'], recursive: yes }
 
-% Document de classe yathesis
+
+%Document de classe yathesis
 \documentclass[english]{yathesis}
 %
 % Chargement manuel de packages (pas déjà chargés par la classe yathesis)
@@ -22,6 +23,7 @@
 \usepackage{varioref}
 \usepackage[backend=biber,safeinputenc,refsection=chapter]{biblatex}
 \usepackage{hyperref}
+\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
 \usepackage{csquotes}
 \usepackage{textcomp}
 \usepackage{bm}
@@ -41,6 +43,8 @@
 \usetikzlibrary{arrows,intersections,positioning,shapes.arrows,babel}
 \usepackage[xindy,acronyms,symbols]{glossaries}
 \usepackage[english]{algorithm2e}
+\usepackage{float}
+\usepackage{hf-tikz}
 %
 % (Facultatif) Génération de l'index (obligatoire si un package d'index, par
 % exemple « imakeidx », est chargé)

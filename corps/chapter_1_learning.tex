@@ -53,7 +53,45 @@ Cette partie vise à présenter la pratique actuelle en matière de \textit{Cred
 
 \subsection{Collecte des données}
 
-La partie précédente a mis en exergue la pluralité des sources de données. La figure~\ref{fig:souscription} présente par exemple le formulaire de souscription en vigueur pour un crédit automobile auprès de Sofinco \textit{via} son site web. Dans cet exemple, des données socio-démographiques et du véhicule à financer sont demandées. Pour un client, elles sont notées $\glssymbol{bx} = (\glssymbol{x}_j)_1^d$ dans la suite. Ces informations sont de nature continue, c'est-à-dire $\glssymbol{x}_j \in \glssymbol{R}$, ou catégorielle, c'est-à-dire que l'on se donne, à titre d'exemple, un encodage ``Métier = technicien'' $\rightarrow \glssymbol{x}_j = 1$, ``Métier = ouvrier'' $\rightarrow \glssymbol{x}_j = 2$, \dots de telle sorte que l'on considère que $\glssymbol{x}_j \in \glssymbol{NO}$, où $l_j$ représente le nombre de modalités de $x_j$ et sans notion d'ordre. Cela permettra d'alléger les notations en lieu et place de noter le support de chaque variable catégorielle différemment.
+La partie précédente a mis en exergue la pluralité des sources de données, schématisées en figure~\ref{fig:marque}~: Crédit Agricole, à travers sa filiale dédiée aux crédits à la consommation Crédit Agricole Consumer Finance, finance des crédits en France à travers sa marque Sofinco (B2C), ou en magasins / concessions chez des partenaires (B2B) où les données du demandeur de crédit sont collectées. La figure~\ref{fig:souscription} présente par exemple le formulaire de souscription en vigueur pour un crédit automobile auprès de Sofinco \textit{via} son site web. Dans cet exemple, des données socio-démographiques et du véhicule à financer sont demandées. Pour un client, elles sont notées $\glssymbol{bx} = (\glssymbol{x}_j)_1^d$ dans la suite. Ces informations sont de nature continue, c'est-à-dire $\glssymbol{x}_j \in \glssymbol{R}$, ou catégorielle, c'est-à-dire que l'on se donne, à titre d'exemple, un encodage ``Métier = technicien'' $\rightarrow \glssymbol{x}_j = 1$, ``Métier = ouvrier'' $\rightarrow \glssymbol{x}_j = 2$, \dots de telle sorte que l'on considère que $\glssymbol{x}_j \in \glssymbol{NO}$, où $l_j$ représente le nombre de modalités de $x_j$ et sans notion d'ordre. Cela permettra d'alléger les notations en lieu et place de noter le support de chaque variable catégorielle différemment.
+
+\begin{figure}
+
+\centering\includegraphics[width=2cm]{figures/chapitre1/casa.png}
+
+\centering \tikz [baseline=-1ex]{\node [myarrow,rotate=-90] {};}
+
+\centering\includegraphics[width=5cm]{figures/chapitre1/logo.png}
+
+\centering \tikz [baseline=-1ex]{\node [myarrow,rotate=-90] {};}
+
+\hspace{2cm} \centering\includegraphics[width=3.5cm]{figures/chapitre1/sofinco.png} \hspace{0.3cm} \tikz [baseline=-2ex]{\node [myarrow] {};} \includegraphics[width=1.1cm]{figures/chapitre1/client.png}
+
+
+\centering \tikz [baseline=-1ex]{\node [myarrow,rotate=-135] {};} \tikz [baseline=-1ex]{\node [myarrow,rotate=-45] {};}
+
+
+\begin{multicols}{4}
+
+\centering\includegraphics[width=2cm]{figures/chapitre1/orchestra.jpg}
+
+\columnbreak
+
+\centering\includegraphics[width=1cm]{figures/chapitre1/darty.png}
+
+\columnbreak
+
+\centering\includegraphics[width=1.5cm]{figures/chapitre1/redoute.png}
+
+\columnbreak
+
+\centering\includegraphics[width=1cm]{figures/chapitre1/fnac.png} \hspace{0.3cm} \tikz [baseline=-2ex]{\node [myarrow] {};} \includegraphics[width=1.1cm]{figures/chapitre1/client.png}
+
+\end{multicols}
+\caption{Schéma des interactions entre les entreprises / marques et la collecte de demandes de crédits.}
+\label{fig:marque}
+\end{figure}
+
 
 \begin{figure}
 \centering \includegraphics[width=15cm]{figures/chapitre1/souscription.png}
@@ -106,7 +144,34 @@ L'institut financier emprunte de l'argent sur les marchés à un taux relativeme
 
 Il convient de noter ici que les différents processus qui conduisent à un non financement du dossier sont très nombreux : interruption / rétractation du demandeur, refus automatique (endettement, \gls{score} existant, \dots) ou refus d'un conseiller clientèle. On y reviendra très brièvement au chapitre~\ref{chap2}.
 
-En essence, il est souhaitable de mesurer la profitabilité de chaque crédit, par exemple en actualisant les remboursements et les pertes générés par chaque client à la date de déblocage des fonds, et en déduisant l'ensemble des coûts (financement, traitement, recouvrement, \dots). En pratique, peu d'institutions procèdent ainsi malgré quelques travaux récents~\cite{finlay2010credit}.
+En essence, il est souhaitable de mesurer la profitabilité de chaque crédit, par exemple en actualisant les remboursements et les pertes générés par chaque client à la date de déblocage des fonds, et en déduisant l'ensemble des coûts (financement, traitement, recouvrement, \dots). En pratique, peu d'institutions procèdent ainsi malgré quelques travaux récents~\cite{finlay2010credit}. Par ailleurs, les caractéristiques du client sont elles-mêmes évolutives~: les informations collectées à $t=0$ au moment de la demande peuvent avoir changées au moment du financement du bien à $t = \{text{fin}$ (qui peut intervenir plusieurs mois après pour un véhicule sur commande par exemple), tout comme les moments de vie ultérieurs éventuels comme les divorces, les pertes d'emploi, \dots qui ne peuvent être collectées ultérieurement par les organismes financiers, comme schématisé sur la figure~\ref{fig:moments}.
+
+\begin{figure}[!ht]
+\begin{tikzpicture}[scale=0.3,node distance=5cm, on grid, auto]
+\draw[->,line width=0.1cm] (-5,0)--(24,0) node[right]{$t$};
+
+\node [red,circle, fill] at (-2,0) {};
+\node [red,circle, fill] at (2,0) {};
+\node [green,circle, fill] at (7,0) {};
+\node [red,circle, fill] at (10,0) {};
+\node [red,circle, fill] at (15,0) {};
+\node [green,circle, fill] at (20,0) {};
+
+
+\node [scale=0.5,align=center] at (-2,-1.5) {Demande de\\crÃ©dit $X_0$};
+\node [scale=0.5,align=center] at (2,-2.5) {Financement du\\crÃ©dit $X_{\text{fin}}$};
+\node [scale=0.5,align=center] at (10,-1.5) {Divorce\\$X_{\text{divorce}}$};
+
+
+\node [scale=0.5,align=center] at (2,1) {$Y_0$};
+\node [scale=0.5,align=center] at (7,1.5) {MensualitÃ© i\\$Y_i$};
+\node [scale=0.5,align=center] at (15,1.5) {MensualitÃ©\\impayÃ©e};
+\node [scale=0.5,align=center] at (20,1.5) {CrÃ©dit\\terminÃ© $Y_T$};
+
+\end{tikzpicture}
+\caption{Temporalité du crédit~: évolution des covariables.}
+\label{fig:moments}
+\end{figure}
 
 En conséquence, on sélectionne généralement 12 mois de dossiers de demandes de crédit pour s'affranchir de phénomènes de saisonnalité et on observe le mois suivant la date de financement de chaque dossier si la mensualité a été remboursée. On répète le processus jusqu'à un horizon de 12 à 24 mois selon la disponibilité des données. On dispose alors pour chaque client d'une série temporelle qui indique si le remboursement mensuel a été effectué ou non. On cherche ensuite à se ramener à une seule variable aléatoire cible $\glssymbol{Y} \in \{0,1\}$ qualifiant un client ``bon'' par $Y=1$ ou ``mauvais'' par $Y=0$. L'heuristique actuellement utilisée est la suivante :
 \begin{itemize}
@@ -145,12 +210,6 @@ Impayés consécutifs & Amélioration & Stabilité & Dégradation \\
 \end{tabular}
 \end{table}
 
-%% schéma temporel
-
-% listing ?
-
-% figure horizon risque exemple
-
 Pour des raisons pratiques et historiques, on choisit généralement $T=12$ mois et $I = 2$ impayés consécutifs. On considère donc comme ``mauvais'' ($Y=0$) les dossiers financés ayant eu plus de 2 mensualités impayées consécutives dans les 12 mois qui ont suivi leur financement, comme ``bons'' ($Y=1$) les dossiers n'ayant pas eu d'impayés, comme ``indéterminés'' les dossiers ayant eu 1 impayé, et on exclut tous les dossiers non financés ($Z=\nf$). On a alors le vecteur de réponse $\glssymbol{bby}$ dont un exemple est donné en tableau~\ref{tab:rep_ex}.
 
 \begin{table}
@@ -158,7 +217,7 @@ Pour des raisons pratiques et historiques, on choisit généralement $T=12$ mois
 \caption{\label{tab:rep_ex} Exemple de vecteur $\glssymbol{bby}$ de qualification du risque des clients.}
 \begin{tabular}{|c|c|c|c|c|c|c|}
 \hline
-$y$ & 1 & Manquant - Non-financé& 0 & Manquant - Indéterminé & 0 & 1 \\
+$y$ & 1 & Manquant - Non-financé & 0 & Manquant - Indéterminé & 0 & 1 \\
 \hline
 \end{tabular}
 \end{table}
@@ -583,76 +642,6 @@ Ce chapitre a permis de montrer les méthodes statistiques industrielles du \tex
 
 
 
-\begin{columns}[c]
-\column{.52\textwidth}
-
-\centering\includegraphics[width=2cm]{figures/chapitre1/casa.png}
-
-\centering \tikz [baseline=-1ex]{\node [myarrow,rotate=-90] {};}
-
-\centering\includegraphics[width=5cm]{figures/chapitre1/logo.png}
-
-\centering \tikz [baseline=-1ex]{\node [myarrow,rotate=-135] {};} \tikz [baseline=-1ex]{\node [myarrow,rotate=-45] {};}
-
-\begin{columns}[c]
-\column{.40\textwidth}
-
-\centering\includegraphics[width=3.5cm]{figures/chapitre1/sofinco.png}
-
-\centering \tikz [baseline=-1ex]{\node [myarrow,rotate=-135] {};} \tikz [baseline=-1ex]{\node [myarrow,rotate=-45] {};}
-
-\column{.55\textwidth}
-
-\centering \tikz [baseline=-1ex]{\node [myarrow,rotate=180] {};} \includegraphics[width=2.5cm]{figures/chapitre1/finaref.jpg}
-
-\centering \tikz [baseline=-1ex]{\node [myarrow,rotate=-135] {};} \tikz [baseline=-1ex]{\node [myarrow,rotate=-45] {};}
-
-
-\end{columns}
-
-\begin{columns}[c]
-\column{.25\textwidth}
-
-\centering\includegraphics[width=2cm]{figures/chapitre1/orchestra.jpg}
-
-\column{.25\textwidth}
-\centering\includegraphics[width=1cm]{figures/chapitre1/darty.png}
-
-\column{.25\textwidth}
-\centering\includegraphics[width=1.5cm]{figures/chapitre1/redoute.png}
-
-\column{.25\textwidth}
-\centering\includegraphics[width=1cm]{figures/chapitre1/fnac.png}
-
-\end{columns}
-
-\column{.45\textwidth}
-
-\bigskip
-
-\bigskip
-
-\bigskip
-
-\bigskip
-
-\bigskip
-
-\bigskip
-
-\bigskip
-
-\bigskip
-
-\bigskip
-
-\hspace{0.3cm} \tikz [baseline=-1ex]{\node [myarrow] {};} \includegraphics[width=1.1cm]{figures/chapitre1/client.png}
-
-\bigskip
-
-\hspace{0.3cm} \tikz [baseline=-1ex]{\node [myarrow] {};} \includegraphics[width=1.1cm]{figures/chapitre1/client.png}
-
-\end{columns}
 
 
 

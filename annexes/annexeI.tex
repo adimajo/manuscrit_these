@@ -519,24 +519,29 @@ K & 0.01 & 0.04 \\
 
 
 
-\subsection{Simulation of } \label{subsec:app_reject_real}
+\subsection{Simulation of Reject Inference methods applied to multivariate gaussian data} \label{subsec:app_reject_real}
+
+This early work aimed at comparing several Reject Inference methods in the well-specified model-case for 4 multivariate gaussian features on Figure~\ref{fig:simu_4var} and 30 features on Figure~\ref{fig:simu_30var} in terms of error rate. The horizontal axis represents the cut-off value of a \gls{lr} that simulates the acceptance / rejection mechanism, such that it roughly corresponds to the fraction of missing labels $\glssymbol{bby}^{\mathcal{N}\mathcal{F}}$. In this setting, the semi-supervised generative approach obviously yields better results since the data lies in its restricted hypothesis space and it is able to use the predictors with missing labels $\glssymbol{bbx}^{\mathcal{N}\mathcal{F}}$. As explained thoroughly in Chapter~\ref{chap2}, standard \gls{lr} and Augmentation perform similarly (since they are both well-specified models and we are in a \gls{mar} setting). Parcelling does not work well since it is designed for a \gls{mnar} setting. In presence of well-separated data, Reclassification works well with 30 features since the true decision boundary is ``sharp'' (see the very small error rate) such that by assigning $\argmax_y \hat{p}(y | x)$ and $\max_y \hat{p}(y | x)$ are very close, which is less apparent with 4 features.
+
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.4\textwidth]{figures/appendix/rejectinferencesimulation4var.png}
-\caption{.}
+\caption{Simulation of multivariate 4-dimensional gaussian features and performance of various Reject Inference methods including the proposed generative approach.}
 \label{fig:simu_4var}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.4\textwidth]{figures/appendix/rejectinferencesimulation30var.png}
-\caption{.}
+\caption{Simulation of multivariate 30-dimensional gaussian features and performance of various Reject Inference methods including the proposed generative approach.}
 \label{fig:simu_30var}
 \end{figure}
 
 
 \subsection{Reject Inference methods applied to real data: previous experiments} \label{subsec:app_reject_real}
+
+This early work shows all Reject Inference methods based on \gls{lr} applied to various \gls{cacf} datasets: Electronics loans, Sports goods and Standard loans in Figure~\ref{fig:darty_reject},~\ref{fig:decathlon_reject} and~\ref{fig:M3_reject} respectively (beware: the colors / symbols do not correspond to the same methods in each graph). The acceptation / rejection mechanism is again simulated using a \gls{lr}. Two things are striking in these figures: first, all methods perform relatively similarly and suffer a big performance drop once the acceptance rate is below 50 \% (at which point there are very few ``bad borrower'' events; second, the multivariate generative model that performed best on simulated data in the previous Section performs worst with real data, since it makes more hypotheses and is thus less flexible.
 
 \begin{figure}[H]
 \centering
@@ -562,6 +567,7 @@ K & 0.01 & 0.04 \\
 
 \subsection{Performance of other predictive models w.r.t.\ the acceptance level} \label{subsec:app_reject_real}
 
+Also part of an earlier work, this Section's aim was to compare the performance of other ``machine learning'' models than simple \gls{lr} (although we sticked to this ) to see if, when presented with the same data and in presence of a simulated acceptance / rejection mechanism as earlier showcased, it would not be of better interest to switch to a different model, although it was argued in Chapter~\ref{chap2} that these models would not perform good under a \gls{mar} setting. The same datasets as in the previous Section are used: the proposed models all perform poorer than \gls{lr} but most importantly their performance drops significantly with the proportion of simulated accepted clients.
 
 \begin{figure}[H]
 \centering

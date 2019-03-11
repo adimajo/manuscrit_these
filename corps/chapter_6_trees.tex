@@ -87,7 +87,6 @@ However, the \textit{Credit Scoring} data is of mixed type and \textit{Credit Sc
 
 \begin{figure}[!htb]
 {\setlength{\parindent}{0cm}}
-
 \begin{multicols}{2}
 \centering
 \begin{subfigure}[t]{0.45\textwidth}
@@ -102,7 +101,6 @@ However, the \textit{Credit Scoring} data is of mixed type and \textit{Credit Sc
 \caption{\label{fig:pca2} However, no clear segments appear on the new representation of data along these two axes.}
 \end{subfigure}
 \end{multicols}
-
 \caption{\label{fig:pca} The result of a \gls{pca} applied to continuous features of \gls{cacf} data from the car loan market.}
 \end{figure}
 
@@ -548,16 +546,13 @@ The following modifications would have to be performed:
 
 
 \begin{table}[t]
-\begin{center}
-\begin{adjustbox}{max width=0.99\textwidth}
-
-\begin{tabular}{c|c|c|c|c|c}
-   & Naif & Oracle & Nvl.\ approche & FAMD & PLS \\
-\hline Gini & 25.8 & 69.7 & 68.7 & 17.7 & 48.4 \\
+\caption{\label{tab:num_exp_tree} bla.}
+\centering
+\begin{tabular}{ll|llll}
+ & Oracle & Naif& \textit{glmtree}-SEM & \gls{famd} & \gls{pls} \\
+\hline
+Gini & 69.7 & 25.8 & \textbf{68.7} & 17.7 & 48.4 \\
 \end{tabular}
-
-\end{adjustbox}
-\end{center}
 \end{table}
 
 

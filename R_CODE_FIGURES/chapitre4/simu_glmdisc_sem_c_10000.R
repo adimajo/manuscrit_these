@@ -5,8 +5,6 @@ library(glmdisc)
 
 d=3
 
-contr.ltfr = caret::contr.ltfr
-
 generate_data <- function(k,n) {
     set.seed(k)
     x = matrix(runif(d*n), nrow = n, ncol = d)
@@ -21,15 +19,15 @@ generate_data <- function(k,n) {
 
 list_levels = array(0,dim=100)
 
-for (b in 4:100) {
+for (b in 1:100) {
     list2env(generate_data(b,10000),env=environment())
     
-    sem_disc = glmdisc(x,y,iter=600,m_start=10,test=FALSE,validation=FALSE,criterion="bic",interact=FALSE)
+    sem_disc = tryCatch(glmdisc(x,y,iter=500,m_start=3,test=FALSE,validation=FALSE,criterion="bic",interact=FALSE), error = function(e) 0, finally = print("error"))
     
     list_levels[b] = nlevels(factor(sem_disc@disc.data[,3]))
 }
 
 summary(factor(list_levels))
 
-# 1 :  // 2 :  // 3 : 
+# 1 : 30 // 2 : 48 // 3 : 22
 
