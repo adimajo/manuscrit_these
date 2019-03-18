@@ -21,7 +21,7 @@ generate_data <- function(k,n) {
 
 list_levels = array(0,dim=100)
 
-for (b in 66:100) {
+for (b in 77:100) {
     list2env(generate_data(b,10000),env=environment())
     
     sem_disc = glmdisc(x,y,iter=800,m_start=10,test=FALSE,validation=FALSE,criterion="bic",interact=FALSE)
@@ -31,4 +31,4 @@ for (b in 66:100) {
 
 summary(factor(list_levels))
 
-# 2 :  // 3 :  // 4 : 
+# 2 : 1 // 3 : 69 // 4 : 30
