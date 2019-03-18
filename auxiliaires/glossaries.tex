@@ -94,132 +94,286 @@
         name={nombres réels},
         description={},
         symbol={\ensuremath{\mathbb{R}}},
-        type=symbols
+        type=symbols,
+  	   sort={aa},  
 }
 
 \newglossaryentry{N}{
         name={entiers naturels},
         description={},
 	   symbol={\ensuremath{\mathbb{N}}},
-        type=symbols
+        type=symbols,
+  	   sort={ab},  
 }
 
 \newglossaryentry{NO}{
         name={entiers naturels de $1$ à $l_j$},
         description={},
         symbol={\ensuremath{\mathbb{N}_{l_j}}},
-        type=symbols
+        type=symbols,
+  	   sort={ac},  
 }
 
 \newglossaryentry{X}{
         name={variable aléatoire},
         description={},
         symbol={\ensuremath{X}},
-        type=symbols
+        type=symbols,
+  	   sort={ad},  
 }
 
 \newglossaryentry{x}{
         name={réalisation de $X$},
         description={},
         symbol={\ensuremath{{x}}},
-        type=symbols
+        type=symbols,
+  	   sort={ae},  
 }
 
 \newglossaryentry{bX}{
-        name={vecteur aléatoire de caractéristiques},
+        name={vecteur aléatoire de caractéristiques à $d$ composantes continues ou catégorielles},
         description={},
         symbol={\ensuremath{\bm{X}}},
-        type=symbols
+        type=symbols,
+  	   sort={af},  
 }
 
-\newglossaryentry{Xj}{
-        name={$j^{\text{ème}}$ variable aléatoire de $\bm{X}$},
+\newglossaryentry{Xspace}{
+        name={espace du vecteur de caractéristiques (on se limite au produit de l'ensemble des réelles -variables continues- et des entiers naturels -variables catégorielles)},
         description={},
-        symbol={\ensuremath{X_j}},
-        type=symbols
-}
-
-\newglossaryentry{xij}{
-        name={réalisation de $X_j$ pour le $i^{\text{ème}}$ client},
-        description={},
-        symbol={\ensuremath{x_{i,j}}},
-        type=symbols
+        symbol={\ensuremath{\mathcal{X}}},
+        type=symbols,
+  	   sort={afa},  
 }
 
 \newglossaryentry{bx}{
         name={vecteur de caractéristiques d'un client},
         description={},
         symbol={\ensuremath{\bm{x}}},
-        type=symbols
+        type=symbols,
+  	   sort={ag},  
+}
+
+\newglossaryentry{Xj}{
+        name={$j^{\text{ème}}$ variable aléatoire de $\bm{X}$},
+        description={},
+        symbol={\ensuremath{X_j}},
+        type=symbols,
+  	   sort={ag},  
+}
+
+\newglossaryentry{lj}{
+        name={nombre de modalités associés à la variable qualitative $X_j$},
+        description={},
+        symbol={\ensuremath{{{l_j}}}},
+        type=symbols,
+  	   sort={aga},  
+}
+
+\newglossaryentry{Xnotj}{
+        name={$j^{\text{ème}}$ variable aléatoire de $\bm{X}$},
+        description={},
+        symbol={\ensuremath{X_j}},
+        type=symbols,
+  	   sort={ag},  
+}
+
+\newglossaryentry{xij}{
+        name={réalisation de $X_j$ pour le $i^{\text{ème}}$ client},
+        description={},
+        symbol={\ensuremath{x_{i,j}}},
+        type=symbols,
+  	   sort={ah},  
 }
 
 \newglossaryentry{bbx}{
-        name={matrice de design de caractéristiques d'un ensemble de clients},
+        name={matrice de design de caractéristiques d'un ensemble de $n$ clients},
         description={},
         symbol={\ensuremath{\mathbf{x}}},
-        type=symbols
+        type=symbols,
+  	   sort={ai},  
 }
 
 \newglossaryentry{bxi}{
         name={Ligne de caractéristiques du client $i$ dans la matrice de design $\mathbf{x}$},
         description={},
         symbol={\ensuremath{\bm{x}_i}},
-        type=symbols
+        type=symbols,
+  	   sort={aj},  
 }
 
 \newglossaryentry{bbxj}{
         name={Colonne d'observations de la caractéristique $j$ de la matrice de design $\mathbf{x}$},
         description={},
         symbol={\ensuremath{\bm{x}_i}},
-        type=symbols
-}
-
-
-\newglossaryentry{Z}{
-        name={vecteur aléatoire de caractéristiques discrètes / groupées},
-        description={},
-        symbol={\ensuremath{{Z}}},
-        type=symbols
-}
-
-\newglossaryentry{z}{
-        name={vecteur de caractéristiques discrètes / groupées d'un client},
-        description={},
-        symbol={\ensuremath{z}},
-        type=symbols
+        type=symbols,
+  	   sort={ak},  
 }
 
 \newglossaryentry{Y}{
         name={variable aléatoire binaire dissociant ‘‘bons'' et ‘‘mauvais'' clients},
         description={},
         symbol={\ensuremath{Y}},
-        type=symbols
+        type=symbols,
+  	   sort={al},  
 }
 
 \newglossaryentry{y}{
         name={observation du caractère ‘‘bon'' ($0$) ou ‘‘mauvais'' ($1$) d'un client},
         description={},
         symbol={\ensuremath{y}},
-        type=symbols
+        type=symbols,
+  	   sort={am},  
 }
 
 \newglossaryentry{bby}{
         name={colonne de réponses associées à la matrice de design $\mathbf{x}$},
         description={},
         symbol={\ensuremath{\mathbf{y}}},
-        type=symbols
+        type=symbols,
+  	   sort={an},  
+}
+
+\newglossaryentry{Z}{
+        name={vecteur aléatoire de caractéristiques discrètes / groupées},
+        description={},
+        symbol={\ensuremath{{Z}}},
+        type=symbols,
+  	   sort={ao},  
+}
+
+\newglossaryentry{z}{
+        name={vecteur de caractéristiques discrètes / groupées d'un client},
+        description={},
+        symbol={\ensuremath{z}},
+        type=symbols,
+  	   sort={ap},  
+}
+
+\newglossaryentry{bbz}{
+        name={vecteur de caractéristiques discrètes / groupées d'un client},
+        description={},
+        symbol={\ensuremath{\mathbf{z}}},
+        type=symbols,
+  	   sort={aq},
+}
+
+\newglossaryentry{bq}{
+        name={fonction de quantification multivariée},
+        description={},
+        symbol={\ensuremath{{\bm{q}}}},
+        type=symbols,
+  	   sort={aqa},  
+}
+
+\newglossaryentry{bQ}{
+        name={espace des quantifications multivariées},
+        description={},
+        symbol={\ensuremath{{\bm{q}}}},
+        type=symbols,
+  	   sort={aqa},  
+}
+
+\newglossaryentry{bm}{
+        name={vecteur du nombre de modalités associés à chaque quantification},
+        description={},
+        symbol={\ensuremath{{\bm{m}}}},
+        type=symbols,
+  	   sort={aqaa},  
+}
+
+\newglossaryentry{bQm}{
+        name={espace des quantifications multivariées à $\bm{m}$ modalités},
+        description={},
+        symbol={\ensuremath{{\mathcal{Q}_{\bm{m}}}}},
+        type=symbols,
+  	   sort={aqab},  
+}
+
+\newglossaryentry{qj}{
+        name={fonction de discrétisation univariée de la $j^{\text{ème}}$ composante},
+        description={},
+        symbol={\ensuremath{{\bm{q}_j}}},
+        type=symbols,
+  	   sort={aqb},
+}
+
+\newglossaryentry{bQj}{
+        name={espace des quantifications univariées de la variable $j$},
+        description={},
+        symbol={\ensuremath{{\mathcal{Q}_{j}}}},
+        type=symbols,
+  	   sort={aqba},  
+}
+
+\newglossaryentry{mj}{
+        name={nombre de modalités associés à la quantification de la $j^{\text{ème}}$ composante},
+        description={},
+        symbol={\ensuremath{{{m_j}}}},
+        type=symbols,
+  	   sort={aqbb},  
+}
+
+\newglossaryentry{bQjmj}{
+        name={espace des quantifications univariées à $m_j$ modalités},
+        description={},
+        symbol={\ensuremath{{\mathcal{Q}_{j,m_j}}}},
+        type=symbols,
+  	   sort={aqc},  
+}
+
+\newglossaryentry{ehmj}{
+        name={$h^{\text{ième}}$ vecteur de base de $\mathbb{R}^{m_j}$: $(0,\dots,0,1,0,\dots,0)$},
+        description={},
+        symbol={\ensuremath{\bm{e}_h^{m_j}}},
+        type=symbols,
+  	   sort={aqd},
+}
+
+\newglossaryentry{bdelta}{
+        name={matrice d'interactions dont l'entrée $\delta_{k,\ell}$ encode l'interaction (1) ou l'absence d'interaction (0) entre les variables $k$ et $\ell$},
+        description={},
+        symbol={\ensuremath{{\bm{\delta}}}},
+        type=symbols,
+  	   sort={aqe},  
 }
 
 \newglossaryentry{bth}{
         name={vecteur de paramètres},
         description={},
         symbol={\ensuremath{\bm{\theta}}},
-        type=symbols
+        type=symbols,
+  	   sort={ar},  
+}
+
+\newglossaryentry{bthstar}{
+        name={vrai (bon modèle) ou ``meilleur'' (mauvais modèle) vecteur de paramètres au sens de la divergence de Kullback-Leibler},
+        description={},
+        symbol={\ensuremath{\bm{\theta}^\star}},
+        type=symbols,
+  	   sort={ara},  
+}
+
+\newglossaryentry{ag}{
+        name={paramètre de relaxation du problème de quantification},
+        description={},
+        symbol={\ensuremath{\bm{\alpha}}},
+        type=symbols,
+  	   sort={arb},
+}
+
+\newglossaryentry{beta}{
+        name={paramètre de relaxation du problème de segmentation},
+        description={},
+        symbol={\ensuremath{\bm{\beta}}},
+        type=symbols,
+  	   sort={arc},
 }
 
 \newglossaryentry{KL}{
         name={divergence de Kullback-Leibler},
         description={},
         symbol={\ensuremath{\text{KL}}},
-        type=symbols
+        type=symbols,
+  	   sort={as},  
 }
