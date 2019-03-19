@@ -16,22 +16,20 @@ setwd("~/overleaf/13215824whymrvkrsdsv/figures")
 
 generate_data <- function(k,n) {
      set.seed(k)
-     x = matrix(runif(3*n), nrow = n, ncol = 3)
+     x = matrix(runif(2*n), nrow = n, ncol = 2)
      cuts = seq(0,1,length.out=4)
      xd = apply(x,2, function(col) as.numeric(cut(col,cuts)))
-     theta = t(matrix(c(0,0,0,2,2,2,-2,-2,-2),ncol=3,nrow=3))
+     theta = t(matrix(c(0,0,2,2,-2,-2),ncol=3,nrow=3))
      log_odd = matrix(0,n,1)
      for (i in 1:n) {
        log_odd[i] = 2*(xd[i,1]==1)+
          (-2)*(xd[i,1]==2)+
          2*(xd[i,2]==1)+
          (-2)*(xd[i,2]==2)+
-         2*(xd[i,3]==1)+
-         (-2)*(xd[i,3]==2)+
          
-         2*(xd[i,1]==1)*(xd[i,2]==1)+
+         4*(xd[i,1]==1)*(xd[i,2]==1)+
          4*(xd[i,1]==2)*(xd[i,2]==2)+
-         -2*(xd[i,1]==1)*(xd[i,2]==2)+
+         -4*(xd[i,1]==1)*(xd[i,2]==2)+
          -4*(xd[i,1]==2)*(xd[i,2]==1)
          
      }
@@ -43,9 +41,9 @@ generate_data <- function(k,n) {
 
 all_formula <- list()
 
-for (l in 1:200) {
+for (l in 1:100) {
   list2env(generate_data(l,1000),env=environment())
-  discretization = tryCatch(glmdisc(predictors = x, labels = y, interact=T, test=F, validation=F, iter=500, m_start=5, criterion = "bic"), error = function(e) FALSE)
+  discretization = tryCatch(glmdisc(predictors = x, labels = y, interact=T, test=F, validation=T, iter=50, m_start=3, criterion = "aic"), error = function(e) FALSE)
   
   if (!mode(discretization)=="logical") {
     all_formula[[l]] <- discretization@best.disc$formulaOfBestLogisticRegression

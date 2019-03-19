@@ -10,7 +10,7 @@ library(glmdisc)
 library(tikzDevice)
 library(xtable)
 library(dplyr)
-setwd("~/overleaf/13215824whymrvkrsdsv/figures")
+setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 
 # Simulation des données
 
@@ -169,15 +169,15 @@ print(xtable(tableau,caption="95 \\% confidence intervals around the estimated c
 ##### Nombre intervalles #####
 ##############################
 
-# 100 simulations consécutives à 3 discrétisations pour n=100 - m_start = 10
+# 100 simulations consécutives à 3 discrétisations pour n=1000 - m_start = 10
 nb_intervalles_big = list()
 intervalles_big = list()
 
 for (l in 1:100) {
      x_test = matrix(runif(2*10000), nrow = 10000, ncol = 2)
      
-     list2env(generate_data(l,100),env=environment())
-     x = cbind(x,matrix(runif(3*100), nrow = 100, ncol = 3))
+     list2env(generate_data(l,1000),env=environment())
+     x = cbind(x,matrix(runif(3*1000), nrow = 1000, ncol = 3))
      
      MCMC = tryCatch(glmdisc(predictors = x, labels = y, interact=F, test=F, validation=F, iter=100, m_start=10, criterion = "bic"), error = function(e) FALSE)
      
@@ -207,9 +207,7 @@ for (l in 1:100) {
      }
 }
 
-
-# 100 simulations consécutives à 3 discrétisations pour n=1000 - m_start = 10
-
+nb_intervalles_big
 
 ##############################
 ### Elimination variables ####

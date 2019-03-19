@@ -10,22 +10,22 @@
 
 \bigskip
 
-Continuing my pursuit of interpretable representation learning algorithms for \gls{lr}, I tackle in this chapter a common problem in \textit{Credit Scoring} and other application contexts relying either on \gls{lr} or additive models of the form $f(y) = \sum_{j=1}^d \glssymbol{bth}_j' \q_j(x_j)$. To further reduce the model bias discussed in Section~\ref{chap1:sec3} and thus obtain better predictive performance while maintaining interpretability, \textit{Credit Scoring} practitioners are used to introducing pairwise interactions.
+Continuing my pursuit of interpretable representation learning algorithms for \gls{lr}, I tackle in this Chapter a common problem in \textit{Credit Scoring} and other application contexts relying either on \gls{lr} or additive models of the form $f(y) = \sum_{j=1}^d \glssymbol{bth}_j' \glssymbol{qj}(\glssymbol{x}_j)$. To further reduce the model bias discussed in Section~\ref{chap1:sec3} and thus obtain better predictive performance while maintaining interpretability, \textit{Credit Scoring} practitioners are used to introducing pairwise interactions.
 
 
 \section{Motivation: XOR function}
 
 As described in the introduction, \gls{lr} is linear in its inputs which does not allow to take into account conditional dependency: the change of slope of a feature's log-odds given another (moderator) feature (see~\cite{berry2010testing}). This problem is often dealt with by sparsely introducing ``interactions'', \textit{i.e.}\ products of two features. Unfortunately, this leads again to a model selection challenge as the number of pairs of features is $\dfrac{d(d-1)}{2}$. We denote by $\bdelta$ the triangular inferior matrix with $\delta_{k,\ell} = 1$ if $k < \ell$ and features $k$ and $\ell$ ``interact'' in the \gls{lr} in the sense of~\cite{berry2010testing}. The \gls{lr} with interactions $\bdelta$ is thus:
 \begin{equation} \label{eq:reglog_sans}
-\text{logit}[p_{\glssymbol{bth}}(1|\q(\glssymbol{bx}),\bdelta)] = \theta_{0} + \sum_{j=1}^d \glssymbol{bth}_j' \q_j(x_j) + \sum_{1 \leq k < \ell \leq d} \delta_{k,\ell} \sigma( \glssymbol{bth}_{k,\ell} \odot \q_k(x_k) \q_\ell(x_\ell)' ),
+\text{logit}[p_{\glssymbol{bth}}(1|\q(\glssymbol{bx}),\bdelta)] = \theta_{0} + \sum_{j=1}^d \glssymbol{bth}_j' \glssymbol{qj}(\glssymbol{x}_j) + \sum_{1 \leq k < \ell \leq d} \delta_{k,\ell} \sigma( \glssymbol{bth}_{k,\ell} \odot \q_k(\glssymbol{x}_k) \q_\ell(\glssymbol{x}_\ell)' ),
 \end{equation}
-where $\odot$ denotes the element-wise (Hadamard) matrix multiplication (already used in Chapter~\ref{chap1}), $\sigma(\cdot)$ the sum of all elements of a matrix (used here only for notational convenience since all matrices of coefficients of pairwise interactions have varying dimensions), $\glssymbol{bth}_{k,\ell} = (\theta_{k,\ell}^{r,s})_{1 \leq r \leq m_k, 1 \leq s \leq m_\ell}$ and for all features $j$, $m_j$ is set as the ``reference'' value and consequently for all $j$, $\theta_{j}^{m_j}=0$ and for all $1 \leq k < \ell \leq d$, $\theta_{k,\ell}^{m_k,m_{\ell}}=0$. Since, in presence of an interaction between $k$ and $\ell$, $\theta_{k}$ already encodes the log-odd ratio of feature $k$ conditionally to $\ell$ being at its reference value $m_\ell$, $\theta_{k,\ell}^{1,m_\ell},\dots,\theta_{k,\ell}^{m_k-1,m_\ell}$ are redundant and thus set to $0$. Note that we could have removed the ``main effect'' $\theta_k$ altogether instead (which is the classical, in-house formulation of interactions at \gls{cacf}) but since we will be adding / removing interactions back and forth, the present formulation seems more adequate.
+where $\odot$ denotes the element-wise (Hadamard) matrix multiplication (already used in Chapter~\ref{chap1}), $\sigma(\cdot)$ the sum of all elements of a matrix (used here only for notational convenience since all matrices of coefficients of pairwise interactions have varying dimensions), $\glssymbol{bth}_{k,\ell} = (\theta_{k,\ell}^{r,s})_{1 \leq r \leq m_k, 1 \leq s \leq m_\ell}$ and for all features $j$, $\glssymbol{mj}$ is set as the ``reference'' value and consequently for all $j$, $\theta_{j}^{\glssymbol{mj}}=0$ and for all $1 \leq k < \ell \leq d$, $\theta_{k,\ell}^{m_k,m_{\ell}}=0$. Since, in presence of an interaction between $k$ and $\ell$, $\theta_{k}$ already encodes the log-odd ratio of feature $k$ conditionally to $\ell$ being at its reference value $m_\ell$, $\theta_{k,\ell}^{1,m_\ell},\dots,\theta_{k,\ell}^{m_k-1,m_\ell}$ are redundant and thus set to $0$. Note that we could have removed the ``main effect'' $\theta_k$ altogether instead (which is the classical, in-house formulation of interactions at \gls{cacf}) but since we will be adding / removing interactions back and forth, the present formulation seems more adequate.
 
 This formulation seems rather complicated visually and in terms of parameter dimension: a single interaction between two quantized features (or more broadly speaking, categorical features) amounts to adding $(m_k - 1) \cdot (m_\ell - 1)$ coefficients. Since we advocated ``interpretable'', \textit{i.e.}\ sparse, simple models to yield scorecards as in Table~\ref{tab:ex_scorecard}, and we witnessed a high variance when estimating numerous coefficients on Figure~\ref{fig:sinus_fin}, it does not seem like a good idea. As a side note, interpretation of the resulting parameters can be rather tricky. The monographs~\cite{jaccard2003interaction,james2001interaction} were really helpful and are sincerely recommended to the interested reader.
 
 Nevertheless, as thoroughly explained in~\cite{berry2010testing}, there are situations where interactions terms are unavoidable. A simple (but quite extreme) example is the XOR (exclusive or) function $f(x_1,x_2) = (x_1 + x_2)\cdot(2 - x_1 - x_2)$ where $x_1,x_2 \in \{0,1\}$. Such functions cannot be learnt by a standard \gls{lr}. For a more illustrative example, the broad field of medicine is often interested in knowing the factors of risks of a given disease and if these factors have additive or cumulative effects (see~\cite{morgan2014adversity} for an example), \textit{e.g.}\ risk of contracting disease A is doubled with factors B and C individually, but 6 times more when both factors are present. This is precisely what is observed in the \textit{Credit Scoring} industry: we observe higher risk among workers than executives but when associated with the time spent in the current job position, workers with ``stability'' of employment may appear less risky than less ``stable'' executives in a non-additive way.
 
-Moreover, the number of coefficients is nevertheless kept low by having few levels, as emphasized in Chapter~\ref{chap4}, and few interactions, as emphasized by the $\bdelta$ notation. Additionally and traditionally in \textit{Credit Scoring}, so-called ``main-effects'', \textit{i.e.}\ features $\q_k(x_k)$ and $\q_\ell(x_\ell)$ are removed when their interaction term is present ($\delta_{k,\ell} = 1$). In biostatistics, it is usually the contrary (interactions are only considered when main effects are present), as will be seen in the following Section, where a literature review is given, alongside a reformulation of the problem.
+Moreover, the number of coefficients is nevertheless kept low by having few levels, as emphasized in Chapter~\ref{chap4}, and few interactions, as emphasized by the $\bdelta$ notation. Additionally and traditionally in \textit{Credit Scoring}, so-called ``main-effects'', \textit{i.e.}\ features $\q_k(\glssymbol{x}_k)$ and $\q_\ell(\glssymbol{x}_\ell)$ are removed when their interaction term is present ($\delta_{k,\ell} = 1$) because as stated earlier, on categorical features, it is strictly equivalent, which is not true in the general case (mixed data). In biostatistics for example, it is usually the contrary (interactions are only considered when main effects are present), as will be seen in the following Section, where a literature review is given, alongside a reformulation of the problem.
 
 
 \section{Pairwise interaction screening as a feature selection problem} \label{sec:pairwise}
@@ -34,9 +34,9 @@ Criterion~\eqref{eq:BICq} developed in the context of quantization can be adapte
 \begin{equation} \label{eq:criterion_inter}
 (\q^\star,\bdelta^\star) = \argmin_{(\q,\bdelta)} \text{BIC}(\hat{\glssymbol{bth}}_{\q,\bdelta}),
 \end{equation}
-where $\hat{\glssymbol{bth}}_{\q,\bdelta}$ is the MLE of $\glssymbol{bth}$ given $(\glssymbol{bbx},\glssymbol{bby})$, $\q$ and $\bdelta$. Supplemental to the \nameref{par:consistency} of Section~\ref{par:consistency}, $\delta_{k,\ell}$ is an estimated parameter of the model and an additional $\frac{d(d-1)}{2}$ term shall be added to the penalization term $\nu_\q$ of the BIC criterion~\eqref{eq:BICq}. The combinatorics involved in this problem are much higher than those of criterion~\eqref{eq:BICq}, which already lead to an untractable greedy approach. For each feasible quantization scheme of Section~\ref{par:cardinality}'s ~\nameref{par:cardinality}, there is now $2^{\frac{d(d-1)}{2}}$ models to test! In this section, we will first consider the discretization fixed and develop a stochastic approach similar to the one proposed for discretization and grouping of factor levels.
+where $\hat{\glssymbol{bth}}_{\q,\bdelta}$ is the MLE of $\glssymbol{bth}$ given $(\glssymbol{bbx},\glssymbol{bby})$, $\q$ and $\bdelta$. Supplemental to the \nameref{par:consistency} of Section~\ref{par:consistency}, $\delta_{k,\ell}$ is an estimated parameter of the model and an additional $\frac{d(d-1)}{2}$ term shall be added to the penalization term $\nu_{\q}$ of the BIC criterion~\eqref{eq:BICq}. The combinatorics involved in this problem are much higher than those of criterion~\eqref{eq:BICq}, which already lead to an untractable greedy approach. For each feasible quantization scheme of Section~\ref{par:cardinality}'s ~\nameref{par:cardinality}, there is now $2^{\frac{d(d-1)}{2}}$ models to test! In this Section, we will first consider the discretization fixed and develop a stochastic approach similar to the one proposed for quantization.
 
-With a fixed discretization scheme $\q$, criterion~\ref{eq:criterion_inter} amounts to $\bdelta^\star = \argmin_{\bdelta} \text{BIC}(\hat{\glssymbol{bth}}_{\q,\bdelta})$ which optimization through a greedy approach is untractable with more than a few features ($d > 10$). The first approach that seems straightforward in this setting is to simply see all $\frac{d(d-1)}{2}$ interactions as features to select from. It is worth mentioning that software to do so is available, for example in the \textsf{R} package \textit{glmulti}~\cite{calcagno2010glmulti} which is not restricted to interaction screening but aims at selecting features based on \textit{e.g.}\ the BIC criterion. It can build all subset models of the hypothesis space or, optionnally, conduct a random search using a genetic algorithm. However, with interactions, the search space is too vast to do such a brute force algorithm. In this potentially high-dimensional parameter space, the most computationnaly-effective approach is to resort to penalization. Various penalization approaches have been developed recently, among which LASSO~\cite{tibshirani1996regression} and its derivatives can effectively perform feature selection. A CIFRE PhD has even been dedicated to the subject with application to \textit{Credit Scoring}~\cite{vital2016} as was explained in Chapter~\ref{chap1}.
+With a fixed quantization scheme $\q$, criterion~\ref{eq:criterion_inter} amounts to $\bdelta^\star = \argmin_{\bdelta} \text{BIC}(\hat{\glssymbol{bth}}_{\q,\bdelta})$ which optimization through a greedy approach is untractable with more than a few features ($d > 10$). The first approach that seems straightforward in this setting is to simply see all $\frac{d(d-1)}{2}$ interactions as features to select from. It is worth mentioning that software to do so is available, for example in the \textsf{R} package \textit{glmulti}~\cite{calcagno2010glmulti} which is not restricted to interaction screening but aims at selecting features based on \textit{e.g.}\ the BIC criterion. It can build all subset models of the hypothesis space or, optionnally, conduct a random search using a genetic algorithm. However, with interactions, the search space is too vast to do such a brute force algorithm. In this potentially high-dimensional parameter space, the most computationnaly-effective approach is to resort to penalization. Various penalization approaches have been developed recently, among which LASSO~\cite{tibshirani1996regression} and its derivatives can effectively perform feature selection. A CIFRE PhD has even been dedicated to the subject with application to \textit{Credit Scoring}~\cite{vital2016} as was explained in Chapter~\ref{chap1}.
 
 The penalization approach has been applied to the interaction screening problem, very often in biostatistics-related problems, \textit{e.g.}\ gene-gene interactions. Its first use~\cite{park2007penalized} relies on $L^2$ regularization, for stability of estimation of the large number of coefficients, and forward stagewise selection of features to avoid a phenomenon where an interaction between a meaningful feature and a meaningless one would remain in the model: it would imply that the main effect coefficient of the meaningful feature could be lower, and thus preferable w.r.t.\ the $L^2$ penalty. The LASSO has been applied to this problem as well~\cite{wu2009genome} by first selecting features with the LASSO based solely on main effects, then selecting pairwise interactions among the selected main effects, again with the LASSO, which requires all main effects of the considered interactions to be present in the model. Rather than conducting such a two-stage procedure, which might greatly influence the considered interactions and does not work under the ``weak hierarchy'' hypothesis (only one of the features of a pairwise interaction need to be present as a main effect), a set of convex constraints is added to the LASSO in~\cite{bien2013lasso} such that main effects and pairwise interactions are selected in a one-shot procedure with the hierarchy constraint. Other stepwise methods have been proposed, \textit{e.g.} relying on $\chi^2$ tests~\cite{wang2012interaction} or on a Reversible-Jump MCMC method~\cite{kooperberg2005identifying,schwender2007identification} which resembles what is proposed in this Chapter but is not limited to pairwise interactions at the cost of added computational complexity. In a different setting, with much stricter hypotheses on the data, namely that they are Gaussian for each class, a statistical test involving the sample pairwise correlations is derived in~\cite{simon} to characterize the probability of an interaction. Other works~\cite{fan2015innovated,li2018robust} focus on this setting and propose a stepwise procedure and a dimensionality reduction technique respectively. Finally, a much simpler intuition found in~\cite{berry2010testing}, on which we rely in subsequent Sections, is that testing for the presence of interaction in bivariate \gls{lr} (for all pairs of features) is roughly equivalent to the full multivariate \gls{lr} (in absence of correlation) but is much simpler since it amounts to construct $2^{d(d-1)/2}$ bivariate \gls{lr} and conduct a t-test for each interaction coefficient.
 
@@ -65,6 +65,7 @@ Replacing the features $\glssymbol{bbx}$ by their (fixed) quantized version $\q(
 p(\bdelta | \q(\glssymbol{bbx}),\glssymbol{bby}) & \propto p(\glssymbol{bby} | \q(\glssymbol{bbx}), \bdelta) p(\bdelta) \\
 & \approx \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\q,\bdelta})/2) p(\bdelta)
 \end{align*}
+This last expression will be useful to design a stochastic algorithm proposing clever interaction matrices: the Metropolis-Hastings algorithm described hereafter.
 
 \subsection{Metropolis-Hastings sampling algorithm}
 
@@ -77,18 +78,18 @@ Now suppose we have at our disposal a proposal distribution of the form:
 \tr: \; & ({\{0,1\}}^{\frac{d(d-1)}{2}},{\{0,1\}}^{\frac{d(d-1)}{2}}) && \mapsto \glssymbol{R} \nonumber \\ 
 & (\bdelta,\bdelta') && \to \tr(\bdelta,\bdelta') = \tr(\bdelta' | \bdelta) \nonumber
 \end{alignat}
-This instrumental conditional distribution will be used to design an MCMC which empirical distribution of drawn matrices $\bdelta^{(0)}, \dots, \bdelta^{(\text{iter})}$ approaches $\pi(\bdelta)$. The \gls{sem} algorithm in Section~\ref{sec:sem} followed the same strategy. The algorithm is the following:
+This instrumental conditional distribution will be used to design a Markov Chain which empirical distribution of drawn matrices $\bdelta^{(0)}, \dots, \bdelta^{(\text{iter})}$ approaches $\pi(\bdelta)$. The \gls{sem} algorithm in Section~\ref{sec:sem} followed the same strategy. The algorithm is the following:
 
 \begin{algorithm}[H]
- \KwData{$f, \tr, \text{max\_iter}$}
- \KwResult{$ \bdelta^{(0)}, \dots, \bdelta^{(\max\_\text{iter})} $}
+ \KwData{$f, \tr, S$}
+ \KwResult{$ \bdelta^{(0)}, \dots, \bdelta^{(S)} $}
  Initialization of $ \bdelta^{(0)} \sim p(\bdelta)$\;
  $s = 0$\;
- \While{$s < \text{max\_iter} $}{
+ \While{$s < S $}{
 
 Draw $\bdelta' \sim \tr(\cdot | \bdelta^{(s)})$\;
 
-Calculate the acceptance probability $\alpha = \max \left( 0, \min \left( 1, \frac{f(\bdelta')}{f(\bdelta^{(s)})} \frac{\tr(\bdelta' | \bdelta^{(s)})}{\tr(\bdelta^{(s)} | \bdelta')} \right) \right) $\;
+Calculate the acceptance probability $\alpha = \min \left( 1, \frac{f(\bdelta')}{f(\bdelta^{(s)})} \frac{\tr(\bdelta' | \bdelta^{(s)})}{\tr(\bdelta^{(s)} | \bdelta')} \right) $\;
 
 %\uIf{$\alpha \geq 1$}{
 %Let $\bdelta^{(s+1)} \leftarrow \bdelta'$\;
@@ -98,7 +99,7 @@ Calculate the acceptance probability $\alpha = \max \left( 0, \min \left( 1, \fr
 %}
 Let $\bdelta^{(s+1)} \leftarrow \begin{cases} \bdelta' \text{ with probability } \alpha, \\ \bdelta^{(s)} \text{ with probability } 1-\alpha.  \end{cases}$\;
 }
-\caption{\label{metropolis} Metropolis-Hastings (the $\max$ and $\min$ functions enforce $0 \leq \alpha \leq 1$).}
+\caption{\label{metropolis} Metropolis-Hastings (the $\min$ function enforce $0 \leq \alpha \leq 1$).}
 \label{alg:metro}
 \end{algorithm}
 
@@ -106,9 +107,9 @@ This algorithm reaches asymptotically the target distribution $\pi(\bdelta)$ if 
 
 It is also important to notice that, apart from verifying the above assumptions, there are no guidelines about how to choose the proposal distribution or the number of iterations necessary for proper estimation. These are ``hyperparameters'' that may influence greatly the effectiveness of the method.
 
-\subsection{Designing an MCMC sampling of good interactions} \label{subsec:mcmc}
+\subsection{Designing a Markov Chain of good interactions} \label{subsec:mcmc}
 
-It follows from the preceding Section that one can design an MCMC algorithm like Metropolis-Hastings~\eqref{alg:metro} which draws ``good'' interaction matrices $\bdelta$ from the target posterior distribution $p(\bdelta | \glssymbol{bbx},\glssymbol{bby})$.
+It follows from the preceding Section that one can design a Metropolis-Hastings algorithm~\eqref{alg:metro} which draws ``good'' interaction matrices $\bdelta$ from the target posterior distribution $p(\bdelta | \q(\glssymbol{bbx}),\glssymbol{bby})$.
 
 \subsubsection{Transition probability}
 
@@ -128,14 +129,15 @@ Only $\frac{d(d-1)}{2}$ coefficients are now needed, which can be reinterpreted 
 & \approx \exp(-\text{BIC}(\hat{\glssymbol{bth}}_{\q_k,\q_\ell,\delta_{k,\ell}})/2) p(\delta_{k,\ell}).
 \end{align*}
 
-Setting a uniform prior $p(\delta_{k,\ell}=1) =\begin{cases} 0 \text{ if } k \geq \ell \\ \frac{1}{2} \text{ otherwise} \end{cases}$ and denoting by $p_{k,\ell}$ the probability of an interaction given features $\q_k(x_k)$ and $\q_\ell(x_\ell)$:
+Setting a uniform prior $p(\delta_{k,\ell}=1) =\begin{cases} 0 \text{ if } k \geq \ell \\ \frac{1}{2} \text{ otherwise} \end{cases}$ and denoting by $p_{k,\ell}$ the probability of an interaction given features $\q_k(\glssymbol{x}_k)$ and $\q_\ell(\glssymbol{x}_\ell)$:
 \begin{equation} \label{eq:pkl}
 p_{k,\ell} = p(\delta_{k,\ell} = 1 | \q_k(\glssymbol{bbx}_k), \q_\ell(\glssymbol{bbx}_\ell), \glssymbol{bby}) \appropto \exp \left( \frac{\text{BIC}(\hat{\glssymbol{bth}}_{\q_k,\q_\ell,\delta_{k,\ell}=0}) - \text{BIC}(\hat{\glssymbol{bth}}_{\q_k,\q_\ell,\delta_{k,\ell}=1})}{2} \right)
 \end{equation}
-We normalize $p_{k,\ell}$ s.t.\ $\sum_{1 \leq k < \ell \leq d} p_{k,\ell} = 1$ and denote their triangular inferior matrix arrangement by $P$. Note that in this setting, we have nested models that were discussed in Section~\nameref{par:consistency} such that 
+We normalize $p_{k,\ell}$ s.t.\ $\sum_{1 \leq k < \ell \leq d} p_{k,\ell} = 1$ and denote their triangular inferior matrix arrangement by $P$. Note that in this setting, we have nested models that were discussed in Paragraph~\nameref{par:consistency} such that the approximation in \eqref{eq:pkl} is consistent in $n$.
 We claim that if $p_{k,\ell}$ is close to $1$ (resp. $0$), then there is a strong chance that $\delta_{k,\ell}^\star = 1$ (resp. $\delta_{k,\ell}^\star = 0$) even in the full multivariate model, which amounts to:
 \[ p_{k,\ell} \approx p(\delta_{k,\ell} = 1 | \q(\glssymbol{bbx}),\glssymbol{bby}) \]
 This holds in particular if features $\q_k(\glssymbol{bbx}_k)$ and $\q_\ell(\glssymbol{bbx}_\ell)$ are independent to other features $\q_{-\{k,\ell\}}(\glssymbol{bbx}_{-\{k,\ell\}})$:
+\begin{proof}
 \begin{align*}
 p(\delta_{k,\ell} | \q(\glssymbol{bx}),y) & = \frac{p(y , \q(\glssymbol{bx}), \delta_{k,\ell})}{p(y , \q(\glssymbol{bx}))} \\
  & = \frac{p(y | \q(\glssymbol{bx}),\delta_{k,\ell}) p(\delta_{k,\ell}, \q(\glssymbol{bx}))}{p(y,\q(\glssymbol{bx}))} \\
@@ -144,9 +146,10 @@ p(\delta_{k,\ell} | \q(\glssymbol{bx}),y) & = \frac{p(y , \q(\glssymbol{bx}), \d
  & = \frac{p(y | \q_{k,\ell}(\glssymbol{bx}_{k,\ell}),\delta_{k,\ell}) p(\delta_{k,\ell},\q_{k,\ell}(\glssymbol{bx}_{k,\ell}))}{p(y , \q_{k,\ell}(\glssymbol{bx}_{k,\ell}))} \\
  & = p(\delta_{k,\ell} | \q_{k,\ell}(\glssymbol{bx}_{k,\ell}), y)
 \end{align*}
+\end{proof}
 Note also that in this setting and for $n \to +\infty$, the first step of the Metropolis-Hastings described hereafter suffices since the $p_{k,\ell}$ converge to $\delta_{k,\ell}^\star$ thanks to the properties of the BIC criterion.
 
-Consequently, if at step $(s)$ of the Markov chain, $\delta_{k,\ell}^{(s)} = 1$ (resp. $0$) and $p_{k,\ell}$ is close to $0$ (resp. $1$), a good candidate for $\bdelta^{(s+1)}$ should be to change $\delta_{k,\ell}$ to $\delta_{k,\ell}^{(s+1)} = 0$ (resp. $\delta_{k,\ell}^{(s+1)} = 1$). Our proposal is thus to calculate the difference between the current interaction matrix and $P$ which we denote by $\tr^{(s)} = |\bdelta^{(s)} - P|$ and normalize.
+Consequently, if at step $(s)$ of the Markov chain, $\delta_{k,\ell}^{(s)} = 1$ (resp. $0$) and $p_{k,\ell}$ is close to $0$ (resp. $1$), a good candidate for $\bdelta^{(s+1)}$ should be to change $\delta_{k,\ell}$ to $\delta_{k,\ell}^{(s+1)} = 0$ (resp. $\delta_{k,\ell}^{(s+1)} = 1$). My proposal is thus to calculate the difference between the current interaction matrix and $P$ which is denoted by $\tr^{(s)} = |\bdelta^{(s)} - P|$ and normalized.
 
 This defines a proper transition probability between two interaction matrices:
 \[ \tr(\bdelta^{(s)},\bdelta') = \begin{cases} 0 \text{ if } ||\bdelta^{(s)} - \bdelta'||_{1,1} \neq 1, \\ \tr^{(s)} \odot |\bdelta^{(s)} - \bdelta'|. \end{cases} \]
@@ -156,8 +159,8 @@ This defines a proper transition probability between two interaction matrices:
 
 Following Algorithm~\eqref{alg:metro}, a Metropolis-Hastings step can now be conducted by drawing $\bdelta' \sim \tr(\bdelta^{(s)},\cdot)$. The acceptance probability of this candidate is given by:
 \begin{align*}
-\alpha & = \max \left( 0, \min \left( 1, \frac{p(\bdelta' | \q(\glssymbol{bbx}), \glssymbol{bby})}{p(\bdelta^{(s)} | \q(\glssymbol{bbx}), \glssymbol{bby})} \frac{1-\tr(\bdelta^{(s)},\bdelta')}{\tr(\bdelta^{(s)},\bdelta')} \right) \right) \\
-& \approx \max \left( 0, \min \left( 1, \exp \left( \frac{\text{BIC}(\hat{\glssymbol{bth}}_{\q(\glssymbol{bbx}),\delta_{k,\ell}=0}) - \text{BIC}(\hat{\glssymbol{bth}}_{\q(\glssymbol{bbx}),\delta_{k,\ell}=1})}{2} \right) \frac{1-\tr(\bdelta^{(s)},\bdelta')}{\tr(\bdelta^{(s)},\bdelta')} \right) \right).
+\alpha & = \min \left( 1, \frac{p(\bdelta' | \q(\glssymbol{bbx}), \glssymbol{bby})}{p(\bdelta^{(s)} | \q(\glssymbol{bbx}), \glssymbol{bby})} \frac{1-\tr(\bdelta^{(s)},\bdelta')}{\tr(\bdelta^{(s)},\bdelta')} \right) \\
+& \approx \min \left( 1, \exp \left( \frac{\text{BIC}(\hat{\glssymbol{bth}}_{\q(\glssymbol{bbx}),\delta_{k,\ell}=0}) - \text{BIC}(\hat{\glssymbol{bth}}_{\q(\glssymbol{bbx}),\delta_{k,\ell}=1})}{2} \right) \frac{1-\tr(\bdelta^{(s)},\bdelta')}{\tr(\bdelta^{(s)},\bdelta')} \right).
 \end{align*}
 It must here be remarked that by construction of $\tr^{(s)}$ and the transition probability $\tr(\bdelta^{(s)},\bdelta')$, we have $\tr(\bdelta',\bdelta^{(s)}) = 1 - \tr(\bdelta^{(s)},\bdelta')$. Still following Algorithm~\eqref{alg:metro}, the candidate $\bdelta'$ is accepted with probability $\alpha$ s.t.\ $\bdelta^{(s+1)} = \begin{cases} \bdelta' \text{ with probability } \alpha, \\ \bdelta^{(s)} \text{ with probability } 1-\alpha. \end{cases}$
 
@@ -170,39 +173,42 @@ In practice with a fixed discretization scheme, this stochastic approach is prob
 
 \section{Interaction screening and quantization}
 
-We return to our original objective~\ref{eq:criterion_inter} and consider optimizing the BIC criterion both in terms of quantization and pairwise interactions, as varying the quantization $\q$ might influence the ``best'' interactions $\bdelta^\star$ and vice versa.
+We return to our original objective~\eqref{eq:criterion_inter} and consider optimizing the BIC criterion both in terms of quantization and pairwise interactions, as varying the quantization $\q$ might influence the ``best'' interactions $\bdelta^\star$ and vice versa.
 
-We can mix the MCMC approach proposed in the previous Section with the \textit{glmdisc} algorithm proposed in the previous Chapter. A brute force way of doing this is to conduct a full MCMC search, as proposed in the previous Section, for each proposed quantization $\hat{\q}^{(t)}$ from Chapter~\ref{chap4} (either with the SEM or NN approach). Of course, this is too computationally intensive: our proposed Metropolis-Hastings algorithm necessitates the calculation of 2 univariate \gls{lr} per $p_{k,\ell}$ \textit{i.e.}\ $d(d-1)$ \gls{lr} and one \gls{lr} per step $s$. These $O(d^2 + \max\_{\text{iter}})$ \gls{lr} shall be estimated for each proposed quantization which itself requires the estimation of $O(d)$ softmax (see Section~\ref{subsec:relaxation}) or polytomous \gls{lr} and contingency table (see Section~\ref{subsec:fuzzy}).
+We can mix the MCMC approach proposed in the previous Section with the \textit{glmdisc} algorithm proposed in the previous Chapter. A brute force way of doing this is to conduct a full Metropolis-Hastings algorithm, as proposed in the previous Section, for each proposed quantization $\hat{\q}^{(t)}$ from Chapter~\ref{chap4} (either with the SEM or NN approach). Of course, this is too computationally intensive: our proposed Metropolis-Hastings algorithm necessitates the calculation of 2 bivariate \gls{lr} per $p_{k,\ell}$ \textit{i.e.}\ $d(d-1)$ \gls{lr} and one \gls{lr} per step $(s)$. These $O(d^2 + S)$ \gls{lr} shall be estimated for each proposed quantization which itself requires the estimation of $O(d)$ softmax (see Section~\ref{subsec:relaxation}) or polytomous \gls{lr} and contingency tables (see Section~\ref{subsec:fuzzy}). Focus is given to the \textit{glmdisc}-SEM approach in what follows.
 
-The foremost bottleneck lies in the aforementioned initialization of the Metropolis-Hastings algorithm. In essence, the proposed initialization is not required: the closer the proposal distribution to the target distribution, the quicker the convergence, which was our aim with the formulation of $p_{k,\ell}$ in Equation~\eqref{eq:pkl}. However, the asymptotic convergence in distribution is nevertheless maintained whatever proposal distribution is used, provided the resulting Markov Chain has a unique stationary distribution. We will consequently design a proposal distribution of $\bdelta$ for all quantizations $\bqk \in \Q$. To still put ``\textit{prior}'' information (to the MCMC, it is not \textit{a priori} in the Bayesian sense) about potential interactions into it, we will rely on the ``raw'' features instead:
+The foremost bottleneck lies in the aforementioned initialization of the Metropolis-Hastings algorithm. In essence, the proposed initialization is not required: the closer the proposal distribution to the target distribution, the quicker the convergence, which was our aim with the formulation of $p_{k,\ell}$ in Equation~\eqref{eq:pkl}. However, the asymptotic convergence in distribution is nevertheless maintained whatever proposal distribution is used, provided the resulting Markov Chain has a unique stationary distribution. We will consequently design a proposal distribution of $\bdelta$ for all quantizations $\bqk \in \Q$. To still put ``\textit{prior}'' information (to the Markov Chain, it is not \textit{a priori} in the Bayesian sense) about potential interactions into it, we will rely on the ``raw'' features instead:
 \begin{equation} \label{eq:pklnew}
-p_{k,\ell} = p(\delta_{k,\ell} = 1 | \glssymbol{bbx}_k, \glssymbol{bbx}_\ell, \glssymbol{bby}) \appropto \exp \left( \frac{\text{BIC}(\hat{\glssymbol{bth}}_{x_k,x_\ell,\delta_{k,\ell}=0}) - \text{BIC}(\hat{\glssymbol{bth}}_{x_k,x_\ell,\delta_{k,\ell}=1})}{2} \right).
+p_{k,\ell} = p(\delta_{k,\ell} = 1 | \glssymbol{bbx}_k, \glssymbol{bbx}_\ell, \glssymbol{bby}) \appropto \exp \left( \frac{\text{BIC}(\hat{\glssymbol{bth}}_{\glssymbol{x}_k,\glssymbol{x}_\ell,\delta_{k,\ell}=0}) - \text{BIC}(\hat{\glssymbol{bth}}_{\glssymbol{x}_k,\glssymbol{x}_\ell,\delta_{k,\ell}=1})}{2} \right).
 \end{equation}
-The second bottleneck is the number of Metropolis-Hastings steps per \gls{sem} step. It must be remembered that these two MCMC algorithms are meant to be used for their asymptotic properties. The target distribution of $\q$ in the \gls{sem} algorithm is thought to be extremely dominated by $\q^\star$ as argumented in Section~\ref{subsec:fuzzy}, such that after some step $(s)$, proposed quantizations are very close to $\q^\star$ (and consequently very similar to each others) at which point the interaction screening algorithm while performing the quantization steps is somewhat similar to its ``static'' counterpart developed in the preceding Section.
+The second bottleneck is the number of Metropolis-Hastings steps per \gls{sem} step. It must be remembered that these two stochastic algorithms are meant to be used for their asymptotic properties. The target distribution of $\q$ in the \gls{sem} algorithm is thought to be extremely dominated by $\q^\star$ as argumented in Section~\ref{subsec:fuzzy}, such that after some step $(s)$, proposed quantizations are very close to $\q^\star$ (and consequently very similar to each others) at which point the interaction screening algorithm while performing the quantization steps is somewhat similar to its ``static'' counterpart developed in the preceding Section.
 
 As a consequence, a single interaction matrix can be proposed at each step of the \gls{sem}-Gibbs algorithm proposed in Section~\ref{sec:sem}. Apart from the initialization defined above, nothing changes in the \textit{glmdisc}-SEM algorithm: the \gls{sem}-Gibbs sampler allowed us to ``hold'' latent features $\bqk_{-\{j\}}^{(s)}$ while drawing $\bqk_{j}^{(s+1)}$ for all features, resulting in the latent features of all features and observations $\bbqk^{(s+1)}$. Here, the same applies with the interaction matrix $\bdelta$ that is drawn holding $\bbqk^{(s+1)}$. The formal algorithm is detailed in Appendix~\ref{app1:glmdiscSEM} and is reproduced partially hereafter.
 
 First, $P$ is computed according to the formulation of $p_{k,\ell}$ given above in Equation~\eqref{eq:pklnew}.
 
 Second, related to the Metropolis-Hastings algorithm, we need to initialize the interaction matrix $\bdelta^{(0)}$ following a uniform distribution, as hypothesized earlier. Related to the \gls{sem} algorithm, $\bbqk^{(0)}$ is also initialized randomly:
-\begin{align*}
-\bdelta^{(0)} & = \left( \delta^{(0)}_{k,\ell} \right)_{1 \leq k < \ell \leq d} \text{ where } \delta^{(0)}_{k,\ell} \sim \mathcal{B} \left( \frac{1}{2} \right) \\
-\bbqk^{(0)} & = \left( \bqk^{(0)}_{i,j} \right)_{1 \leq i \leq n, 1 \leq j \leq d} \text{ where } \bqk^{(0)}_{i,j} \sim \mathcal{M} \left( \frac{1}{m_j} \right),
-\end{align*}
-where $\mathcal{B}$ denotes a Bernoulli law and $\mathcal{M}$ a Multinoulli law (here, the prior probability of each level $1, \dots, m_j$ is the same).
+\begin{alignat*}{5}
+\bdelta^{(0)} & = \left( \delta^{(0)}_{k,\ell} \right)_{1 \leq k < \ell \leq d} && \text{ where } && \delta^{(0)}_{k,\ell} && \sim && \mathcal{B} \left( \frac{1}{2} \right), \\
+\bbqk^{(0)} & = \left( \bqk^{(0)}_{i,j} \right)_{1 \leq i \leq n, 1 \leq j \leq d} && \text{ where } && \bqk^{(0)}_{i,j} && \sim && \mathcal{M} \left( \frac{1}{\glssymbol{mj}} \right),
+\end{alignat*}
+where $\mathcal{B}$ denotes a Bernoulli law and $\mathcal{M}$ a Multinoulli law.
+% (here, the prior probability of each level $1, \dots, \glssymbol{mj}$ is the same).
 
-Then, the \gls{sem} algorithm begins: following Section~\ref{sec:sem}, the \gls{lr} parameters are estimated first:
+Then, the \gls{sem} algorithm begins: following Section~\ref{sec:sem}, the \gls{lr} parameters are estimated first (M-steps):
 \begin{align*}
-\hat{\glssymbol{bth}}^{(s)} & = \argmax_{\glssymbol{bth}} \ell(\glssymbol{bth} ; \bbqk^{(s)}, \glssymbol{bby}) \\
-\hat{\ag}_j^{(s)} & = \argmax_{\ag_j} \ell(\ag_j ; \glssymbol{bbx}_j, \bbqk^{(s)}_j) \text{ for } 1 \leq j \leq d.
+{\glssymbol{bth}}^{(s)} & = \argmax_{\glssymbol{bth}} \ell(\glssymbol{bth} ; \bbqk^{(s)}, \glssymbol{bby}, \bdelta^{(s)}) \\
+{\ag}_j^{(s)} & = \argmax_{\ag_j} \ell(\ag_j ; \glssymbol{bbx}_j, \bbqk^{(s)}_j) \text{ for } 1 \leq j \leq d.
 \end{align*}
 Note the presence of $\bdelta$ here, which is the only difference with what was proposed in Chapter~\ref{chap4}.
 
-The \gls{sem}-Gibbs sampler is also still applicable and $\bqk_j^{(s+1)}$ can be drawn according to: 
+The \gls{sem}-Gibbs sampler is also still applicable and $\bqk_j^{(s+1)}$ can be drawn according to (S-step): 
 \begin{align*}
-p(\cdot | bqk_{-\{j\}}^{(s)}, \glssymbol{bx}, y) & \sim p_{\hat{\glssymbol{bth}}^{(s)}}(y | \bqk_{-\{j\}}^{(s)}, \cdot, \bdelta^{(s)}) p_{\hat{\ag}^{(s)}}(\cdot | x_j).
+p(\cdot | \bqk_{-\{j\}}^{(s)}, \glssymbol{bx}, y) & \sim p_{\hat{\glssymbol{bth}}^{(s)}}(y | \bqk_{-\{j\}}^{(s)}, \cdot, \bdelta^{(s)}) p_{\hat{\ag}^{(s)}}(\cdot | \glssymbol{x}_j).
 \end{align*}
-At this point, $\bdelta^{(s+1)}$ can be computed from the Metropolis-Hastings algorithm similarly to the preceding Section. We iterate this procedure for a user-defined number of steps.
+At this point, $\bdelta^{(s+1)}$ can be computed from the Metropolis-Hastings algorithm similarly to the preceding Section. We iterate this procedure for a user-defined number of steps. Parallel to these steps, ``hard'' quantizations $\hat{\q}^{(s)}$ are derived from the MAP rule~\eqref{eq:ht} and their associated \gls{lr} coefficients $\hat{\glssymbol{bth}}^{(s)}$ follows form the MLE:
+\[  .\]
+The best quantization and interaction matrix can then be selected via BIC as in~\eqref{eq:opt_epoch} and~\eqref{eq:criterion_inter}, or any other model selection tool as emphasized earlier.
 
 This procedure is much less costly than what could originally be thought of: the $d(d-1)$ \gls{lr} necessary to initialize the Metropolis-Hastings algorithm are still needed, but only once, and at each step, only one \gls{lr}, supplementary to the complexity of the original \textit{glmdisc}-SEM approach, is needed.
 
@@ -271,7 +277,7 @@ The code used for numerical experiments is available as packages, see Appendix~\
 
 \subsection{Simulated data}
 
-In this first part, focus is given on showing empirically the consistency of the approach. The same data generation process as in Chapter~\ref{chap4} is employed: two continuous features $x_1$ and $x_2$ are sampled from the uniform distribution on $[0,1]$ and discretized as exemplified on Figure~\ref{fig:exp_sim} by using
+In this first part, focus is given on showing empirically the consistency of the approach. The same data generation process as in Chapter~\ref{chap4} is employed: two continuous features $\glssymbol{x}_1$ and $\glssymbol{x}_2$ are sampled from the uniform distribution on $[0,1]$ and discretized as exemplified on Figure~\ref{fig:exp_sim} by using
 \[\q_1(\cdot)=\q_2(\cdot) = (\mathds{1}_{]-\infty,1/3]}(\cdot),\mathds{1}_{]1/3,2/3]}(\cdot),\mathds{1}_{]2/3,\infty[}(\cdot)).\]
 Here, following (\ref{eq:Cjhcont}), we have $d=2$ and $m_1=m_2=3$ and the cutpoints are $c_{j,1}=1/3$ and $c_{j,2}=2/3$ for $j=1,2$. Setting $\glssymbol{bth}^{1}=(0,-2,2,0,-2,2,0)$, $\bdelta^{1} = 0$, $\glssymbol{bth}^{2} = (\glssymbol{bth}^{1},)$, $\bdelta^{2} = 1$ the target feature $y$ is then sampled from $p_{\glssymbol{bth}^{o}}(\cdot | \q(\glssymbol{bbx}), \bdelta^{o}), o = \{1,2\}$ via the logistic model (\ref{eq:reglogq}). Two cases are first studied:
 \begin{enumerate}[(a)]
@@ -292,9 +298,9 @@ Note that the interaction screening procedure is also applicable to continuous f
 \begin{tabular}{lllllll}
 Algorithm & $n$ & (a) & $\hat{\bdelta}$ & (b) & $\hat{\bdelta}$ \\
 \hline
-\textit{glmdisc} w. provided quantization & $1{,}000$ & \myobar{9}{90}{1} & \mybar{60}{32}{8} \\
+%\textit{glmdisc} w. provided quantization & $1{,}000$ & \myobar{9}{90}{1} & \mybar{60}{32}{8} \\
 \textit{glmdisc} w.o. provided quantization & $1{,}000$ & \myobar{9}{90}{1} & \mybar{60}{32}{8} \\
-\textit{glmdisc} w. provided quantization & $10{,}000$ & \myobar{0}{100}{0} & \mybar{88}{12}{0} \\
+%\textit{glmdisc} w. provided quantization & $10{,}000$ & \myobar{0}{100}{0} & \mybar{88}{12}{0} \\
 \textit{glmdisc} w.o. provided quantization & $10{,}000$ & \myobar{0}{100}{0} & \mybar{88}{12}{0}
 \end{tabular}
 \end{table}
@@ -318,11 +324,11 @@ We complement Table~\ref{tab:banchmark} (see Section~\ref{subsec:exp_benchmark} 
 Dataset & ALLR & \textit{ad hoc} methods & \makecell{Our proposal:\\ \textit{glmdisc}-NN} & \makecell{Our proposal:\\ \textit{glmdisc}-SEM} & \makecell{\textit{glmdisc}-SEM\\ w.\ interactions} \\
 \hline
 Adult & 81.4 (1.0) & \textbf{85.3} (0.9) & 80.4 (1.0) & 81.5 (1.0) & 81.5 (1.0 - no interaction) \\
-Australian & 72.1 (10.4) & 84.1 (7.5) & 92.5 (4.5) & \textbf{100} (0) & \\
+Australian & 72.1 (10.4) & 84.1 (7.5) & 92.5 (4.5) & \textbf{100} (0) & \textbf{100} (0 - no interaction) \\
 Bands & 48.3 (17.8) & 47.3 (17.6) & 58.5 (12.0) & \textbf{58.7} (12.0) & \\
-Credit & 81.3 (9.6) & 88.7 (6.4) & \textbf{92.0} (4.7) & 87.7 (6.4) & \\
+Credit & 81.3 (9.6) & 88.7 (6.4) & \textbf{92.0} (4.7) & 87.7 (6.4) & 87.7 (6.4 - no interaction) \\
 German & 52.0 (11.3) & 54.6 (11.2) & \textbf{69.2} (9.1) & 54.5 (10) & \\
-Heart & 80.3 (12.1) & 78.7 (13.1) & \textbf{86.3} (10.6) & 82.2 (11.2) & 82.2 (11.2 - no interaction)
+Heart & 80.3 (12.1) & 78.7 (13.1) & \textbf{86.3} (10.6) & 82.2 (11.2) & 84.5 (10.8)
 \end{tabular}
 \end{small}
 \end{table}
@@ -352,24 +358,22 @@ glmdisc w. interactions & 62.0 & {\textbf{95.0}} & {\textbf{54.0}} \\
 
 We complement Table~\ref{tab:real_data} (see Section~\ref{subsec:exp_real} for details about the datasets) with the \textit{glmdisc}-SEM approach with interactions in the last column of Table~\ref{tab:real_data_inter}.
 
-\textcolor{red}{commenter les résultats exclusivement des interactions}
+The enriched model space allows obviously for better predictive performance, provided this space can be effectively visited by the Metropolis-Hastings algorithm, itself very dependent of the propositional transition probability. It seems effective on real data since it yields the best performance on most datasets, significantly above all other methods, at the price of higher computational cost.
 
 \begin{table}
     \centering
         \caption{Gini indices (the greater the value, the better the performance) of our proposed quantization algorithm \textit{glmdisc}, the two baselines of Table~\ref{tab:banchmark} and the current scorecard (manual / expert representation) obtained on several portfolios of Cr\'edit Agricole Consumer Finance.}
     \label{tab:real_data_inter}
 \begin{footnotesize}
-%\begin{tabular}{lp{0.1\linewidth}p{0.138\linewidth}p{0.13\linewidth}p{0.15\linewidth}p{0.15\linewidth}l}
 \begin{tabular}{lllllll}
 Portfolio & ALLR & \makecell{Current\\performance} & \makecell{\textit{ad hoc}\\methods} & \makecell{Our proposal:\\ \textit{glmdisc}-NN} & \makecell{Our proposal:\\ \textit{glmdisc}-SEM} & \makecell{\textit{glmdisc}-SEM\\ w.\ interactions} \\
 \hline
-Automobile & \bf{59.3} (3.1) & 55.6 (3.4) & \bf{59.3} (3.0) & 58.9 (2.6) & 54.7 (3.1) & 64.8 (2.0) \\
-Renovation & 52.3 (5.5) & 50.9 (5.6) & 54.0 (5.1) & \bf{56.7} (4.8) & &  \\
-Standard & 39.7 (3.3) & 37.1 (3.8) & \bf{45.3} (3.1) & 43.8 (3.2) & & 47.2 \\
-Revolving & 62.7 (2.8) & 58.5 (3.2) & \bf{63.2} (2.8) & 62.3 (2.8) & & 67.2 \\
-Mass retail & 52.8 (5.3) & 48.7 (6.0) & 61.4 (4.7) & \bf{61.8} (4.6) & &  \\
-Electronics & 52.9 (11.9) & 55.8 (10.8) & 56.3 (10.2)  & \bf{72.6} (7.4) & 52.3 (11.3) & 63.7 (9.0) \\
-Behavioural &  &  &  &  &  & 71.3
+Automobile & \bf{59.3} (3.1) & 55.6 (3.4) & 59.3 (3.0) & 58.9 (2.6) & 57.8 (2.9) & \bf{64.8} (2.0) \\
+Renovation & 52.3 (5.5) & 50.9 (5.6) & 54.0 (5.1) & \bf{56.7} (4.8) & 55.5 (5.2) & 55.5 (5.2 - no interaction) \\
+Standard & 39.7 (3.3) & 37.1 (3.8) & 45.3 (3.1) & 43.8 (3.2) & 36.7 (3.7) & \bf{47.2} (2.8) \\
+Revolving & 62.7 (2.8) & 58.5 (3.2) & 63.2 (2.8) & 62.3 (2.8) & 60.7 (2.8) & \bf{67.2} (2.5) \\
+Mass retail & 52.8 (5.3) & 48.7 (6.0) & 61.4 (4.7) & \bf{61.8} (4.6) & 61.0 (4.7) & 60.3 (4.8) \\
+Electronics & 52.9 (11.9) & 55.8 (10.8) & 56.3 (10.2)  & \bf{72.6} (7.4) & 62.0 (9.5) & 63.7 (9.0) \\
 \end{tabular}
 \end{footnotesize}
 \end{table}
@@ -379,12 +383,12 @@ Behavioural &  &  &  &  &  & 71.3
 
 \section{Conclusion} \label{sec:ccl}
 
-The essentially industrial problem of introducing pairwise interactions in a supervised multivariate classification setting was formalized and a new approach, relying on a Metropolis-Hastings algorithm has been proposed. This algorithm relies on the use of \gls{lr}, although other predictive models can be plugged in place of $p_{\glssymbol{bth}}$.
+The essentially industrial problem of introducing pairwise interactions in a supervised multivariate classification setting was formalized and a new approach, relying on a Metropolis-Hastings algorithm has been proposed. This algorithm relies on the use of \gls{lr}, although other predictive models can be plugged in place of $p_{\glssymbol{bth}}$ as argued in the preceding Chapter.
 
 The true underlying motivation was to perform interaction screening while quantizing data using the approach developed in the preceding Chapter: \textit{glmdisc}.
 The experiments showed that, as was sensed empirically by statisticians in the field of \textit{Credit Scoring}, interactions between quantized features can indeed provide better models than without interactions, or standard \gls{lr}. This novel approach allows practitioners to have a fully automized and statistically well-grounded tool that achieves better performance than both \textit{ad hoc} industrial practices and academic discretization heuristics at the price of decent computing time but much less of the practitioner's valuable time.
 
-Moreover, in Section~\ref{subsec:mcmc}, we set a uniform prior on the interaction matrix to simplify subsequent calculations and because it made sense for the \textit{Credit Scoring} industry. However, without much modifications nor difficulty, it can be re-introduced which is of particular interest to \textit{e.g.}\ biostatistics applications where a lot more features are considered and expert-knowledge is available to ``guide'' the MCMC by choosing an appropriate prior over the interaction matrix.
+Moreover, in Section~\ref{subsec:mcmc}, we set a uniform prior on the interaction matrix to simplify subsequent calculations and because it made sense for the \textit{Credit Scoring} industry. However, without much modifications nor difficulty, it can be re-introduced which is of particular interest to \textit{e.g.}\ biostatistics applications where a lot more features are considered and expert-knowledge is available to ``guide'' the Markov Chain by choosing an appropriate prior over the interaction matrix.
 
 \bigskip
 

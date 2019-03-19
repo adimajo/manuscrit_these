@@ -35,7 +35,7 @@ Feature & Level & Points \\
 \end{table}
 
 
-Discretization is also an opportunity for reducing the (possibly large) modeling bias which can appear in logistic regression as a result of the linearity assumption on the continuous predictors in the model which was discussed in Section~\ref{chap1:sec3}. Indeed, this restriction can be overcome by approximating the true predictive mapping with a step function where the tuning of the steps and their sizes allows more flexibility. However, the resulting increase of the number of parameters can lead to an increase in variance (overfitting) as shown in \cite{yang2009discretization}. Thus, a precise tuning of the discretization procedure is required. Likewise when dealing with categorical features which take numerous levels, their respective regression coefficients suffer from high variance. A straightforward solution formalized by \cite{maj2015delete} is to merge their factor levels which leads to less coefficients and therefore less variance. I showcase this phenomenon on simple simulated data in the next Section. On \textit{Credit Scoring} data, a typical example is the number of children (although not continuous strictly speaking). The log-odd ratio of clients' creditworthiness w.r.t.\ their number of children is often visually ``quadratic'', \textit{i.e.}\ the risk is lower for clients having 1 to 3 children, a bit higher for 0 child, and then it grows steadily with the number of children above 4. This can be visually represented by a spline, see~\ref{fig:nbenf_spline}. As using a spline is not very interpretable, this is not done in practice. Without quantizing the number of children, a linear relationship is assumed as displayed on Figure~\ref{fig:nbenf_cont}. When quantizing this feature, a piecewise constant relationship is assumed, see Figure~\ref{fig:nbenf_disc}. In this example, it is visually unclear which is best, such that there is a need to formalize the problem.
+Discretization is also an opportunity for reducing the (possibly large) modeling bias which can appear in \gls{lr} as a result of the linearity assumption on the continuous predictors in the model which was discussed in Section~\ref{chap1:sec3}. Indeed, this restriction can be overcome by approximating the true predictive mapping with a step function where the tuning of the steps and their sizes allows more flexibility. However, the resulting increase of the number of parameters can lead to an increase in variance (overfitting) as shown in \cite{yang2009discretization}. Thus, a precise tuning of the discretization procedure is required. Likewise when dealing with categorical features which take numerous levels, their respective regression coefficients suffer from high variance. A straightforward solution formalized by \cite{maj2015delete} is to merge their factor levels which leads to less coefficients and therefore less variance. I showcase this phenomenon on simple simulated data in the next Section. On \textit{Credit Scoring} data, a typical example is the number of children (although not continuous strictly speaking). The log-odd ratio of clients' creditworthiness w.r.t.\ their number of children is often visually ``quadratic'', \textit{i.e.}\ the risk is lower for clients having 1 to 3 children, a bit higher for 0 child, and then it grows steadily with the number of children above 4. This can be visually represented by a spline, see~\ref{fig:nbenf_spline}. As using a spline is not very interpretable, this is not done in practice. Without quantizing the number of children, a linear relationship is assumed as displayed on Figure~\ref{fig:nbenf_cont}. When quantizing this feature, a piecewise constant relationship is assumed, see Figure~\ref{fig:nbenf_disc}. In this example, it is visually unclear which is best, such that there is a need to formalize the problem.
 
 Another potential motivation for quantization is optimal data compression: as will be shown rigorously in subsequent Sections, quantization aims at ``squeezing'' as much predictive information in the original features about the class as possible. Taking an informatics point of view, quantization of a continuous feature is equivalent to discarding a float column (taking \textit{e.g.}\ 32 bits per observation) by overwriting it with its quantized version (which would either be one column of unsigned 8 bits integers - ``interval'' encoding without order - or several 1 bit columns - one-hot / dummy encoding). The same thought process is applicable to quantizations of categorical features. In the end, the ``raw'' data can be compressed by a factor of $32 / 8 = 4$ without losing its predictive power, which, in an era of Big Data, is useful both in terms of data storage and of computational power to process these data since by 2040, the energy needs for calculations will exceed the global energy production (see~\cite{villani2018donner} p.\ 123).
 
@@ -72,6 +72,8 @@ The outline of this chapter is the following. After some introductory examples, 
 \caption{By grouping levels, fewer coefficients are obtained, which variance is significantly smaller and are thus significant.}
 \label{fig:csp_estim_disc}
 \end{subfigure}
+\caption{\gls{lr} coefficients of the levels of the job of borrowers.}
+\label{fig:csp}
 \end{figure}
 
 \section{Illustration of the bias-variance quantization tradeoff} \label{sec:bias_variance_quant}
@@ -81,7 +83,7 @@ The previous section motivated the use of quantization on a practical level. On 
 
 However, two things must appear clearly: first, we are in a ``statistical'' setting, \textit{i.e.}\ finite-dimensional setting, where variance of estimation can play a big role, as was developed in Section~\ref{subsec:gradient}, which partly justifies the need to regroup categorical levels. Second, we are in a predictive setting, with an imposed classification model $p_{\glssymbol{bth}}$. I focus on logistic regression, for which continuous features get a single coefficient: their relationship with the logit transform of the probability of an event (bad borrower) is assumed to be linear which can yield model bias. Thus, having several coefficients per feature, which can be achieved with a  variety of techniques (\textit{e.g.}\ splines), can yield a lower model bias (when the true model is not linear, which is generally the case for \textit{Credit Scoring} data) at the cost of increased variance of estimation.
 
-This phenomenon can be very simply captured by a small simulation: in the misspecified model setting, where the logit transform is assumed to stem from a sinusoidal transformation of $x$ on $[0;1]$, it can clearly be seen from Figure~\ref{fig:sinus_lin} that a standard linear logistic regression does poorly. Discretizing the feature $x$ results, using a very simple unsupervised heuristic named \textit{equal-length} (described in-depth in Appendix~\ref{app1:equal_length}), in good results (\textit{i.e.}\ visually mild bias / low variance) so long as the number of intervals, and subsequently of logistic regression coefficients, is low (see Animation on Figure~\ref{fig:anim_sinus} or still on Figure~\ref{fig:sinus_deb}). When the number of intervals gets large, the bias gets low (the sinus is well approximated by the little step functions), but the variance gets bigger (see Animation on Figure~\ref{fig:anim_sinus} or still on Figure~\ref{fig:sinus_fin}).
+This phenomenon can be very simply captured by a small simulation: in the misspecified model setting, where the logit transform is assumed to stem from a sinusoidal transformation of $\glssymbol{x}$ on $[0;1]$, it can clearly be seen from Figure~\ref{fig:sinus_lin} that a standard linear logistic regression does poorly. Discretizing the feature $\glssymbol{x}$ results, using a very simple unsupervised heuristic named \textit{equal-length} (described in-depth in Appendix~\ref{app1:equal_length}), in good results (\textit{i.e.}\ visually mild bias / low variance) so long as the number of intervals, and subsequently of logistic regression coefficients, is low (see Animation on Figure~\ref{fig:anim_sinus} or still on Figure~\ref{fig:sinus_deb}). When the number of intervals gets large, the bias gets low (the sinus is well approximated by the little step functions), but the variance gets bigger (see Animation on Figure~\ref{fig:anim_sinus} or still on Figure~\ref{fig:sinus_fin}).
 
 
 \textcolor{red}{décommenter animation}
@@ -94,35 +96,37 @@ This phenomenon can be very simply captured by a small simulation: in the misspe
 %\end{figure}
 
 \begin{figure}[!ht]
-\vspace*{-1cm}
+%\vspace*{-1cm}
 \begin{subfigure}[t]{\textwidth}
-\resizebox{\textwidth}{7cm}{\input{R_CODE_FIGURES/chapitre4/linear_plot.tex}}
-\vspace*{-1cm}
+\centering \resizebox{.8\textwidth}{!}{\input{R_CODE_FIGURES/chapitre4/linear_plot.tex}}
+%\vspace*{-1cm}
 \caption{\label{fig:sinus_lin} Linear logistic regression (in \textcolor{red}{red}) fit on data generated by a sinus (in \textcolor{green}{green}).}
 \end{subfigure}
-\vspace*{-1cm}
+%\vspace*{-1cm}
 \begin{subfigure}[t]{\textwidth}
-\resizebox{\textwidth}{7cm}{\input{R_CODE_FIGURES/chapitre4/disc_plot5.tex}}
-\vspace*{-1cm}
+\centering \resizebox{.8\textwidth}{!}{\input{R_CODE_FIGURES/chapitre4/disc_plot5.tex}}
+%\vspace*{-1cm}
 \caption{\label{fig:sinus_deb} Logistic regression fit on data generated by a sinus with 5 discretization steps in the \textit{equal-length} algorithm.}
 \end{subfigure}
-\vspace*{-1cm}
+%\vspace*{-1cm}
 \begin{subfigure}[t]{\textwidth}
-\resizebox{\textwidth}{7cm}{\input{R_CODE_FIGURES/chapitre4/disc_plot100.tex}}
+\centering \resizebox{.8\textwidth}{!}{\input{R_CODE_FIGURES/chapitre4/disc_plot100.tex}}
 %\vspace*{-1cm}
 \caption{\label{fig:sinus_fin} Logistic regression fit on data generated by a sinus with 100 discretization steps in the \textit{equal-length} algorithm.}
 \end{subfigure}
+\caption{Motivational example: achieving a good bias-variance trade-off.}
+\label{fig:sin_trois}
 \end{figure}
  
-As the number of intervals is directly linked to the number of coefficient, and to a notion of ``complexity'' of the resulting logistic regression model, the bias-variance tradeoff (introduced in Chapter~\ref{chap1}) plays a key role in choosing an appropriate step size, and, as will be seen in the next Section which was not possible for the simple \textit{equal-length} algorithm, appropriate step locations (hereafter called cutpoints). Again, this can be witnessed visually by looking at a model selection criterion, \textit{e.g.}\ expected Gini on a test set (which was also introduced in Chapter~\ref{chap1}), for different values of the number of intervals on Figure~\ref{fig:bic_sin}: as was visually concluded from Figure~\ref{fig:anim_sinus}, somewhere around 10-15 intervals seem the most satisfactory. Of course, as the model was misspecified, the flexibility brought by discretization was beneficial. 
+As the number of intervals is directly linked to the number of coefficient, and to a notion of ``complexity'' of the resulting logistic regression model, the bias-variance tradeoff (introduced in Chapter~\ref{chap1}) plays a key role in choosing an appropriate step size, and, as will be seen in the next Section which was not possible for the simple \textit{equal-length} algorithm, appropriate step locations (hereafter called cutpoints). Again, this can be witnessed visually by looking at a model selection criterion, \textit{e.g.}\ expected Gini on a test set (which was also introduced in Chapter~\ref{chap1}), for different values of the number of intervals on Figure~\ref{fig:bic_sin}: as was visually concluded from Figure~\ref{fig:anim_sinus}, somewhere around 10-15 intervals seem the most satisfactory. Of course, as the model was misspecified, the flexibility brought by discretization was beneficial. The same phenomenon can b ewitnessed for categorical features on Figure~\ref{fig:csp} with real data from \gls{cacf}. On Figure~\ref{fig:csp_estim}, the \gls{lr} coefficients of the raw job types are displayed: none are significant and estimation variance is large. Grouping these levels results in narrower confidence intervals and significant \gls{lr} parameters as can be seen in Figure~\ref{fig:csp_estim_disc}.
 %As can be witnessed from Figure~\ref{fig:bic_sin} with a well-specified model (in \textcolor{blue}{blue}). 
 I formalize these empirical findings in the next Section.
 
 
 
 \begin{figure}[!ht]
-\resizebox{\textwidth}{7cm}{\input{R_CODE_FIGURES/chapitre4/gini_well.tex}}
-\caption{\label{fig:bic_sin} Gini of the resulting logistic regression on quantized data in \textcolor{green}{green} with a varying number of bins in the \textit{equal-length} algorithm, the linear logistic regression Gini and the oracle Gini.}
+\centering \resizebox{.8\textwidth}{!}{\input{R_CODE_FIGURES/chapitre4/gini_mis.tex}}
+\caption{\label{fig:bic_sin} BIC of the resulting logistic regression on quantized data in \textcolor{green}{green} with a varying number of bins in the \textit{equal-length} algorithm and the linear logistic regression Gini in \textcolor{red}{red} (both misspecified).}
 \end{figure}
 
 
@@ -133,25 +137,26 @@ I formalize these empirical findings in the next Section.
 
 \paragraph{General principle}
 
-The quantization procedure consists in turning a $d$-dimensional raw vector of continuous and/or categorical features $\glssymbol{bx} = (\glssymbol{x}_1, \ldots, \glssymbol{x}_d)$ into a $d$-dimensional categorical vector via a component wise mapping $\q=(\q_j)_1^d$:
+The quantization procedure consists in turning a $d$-dimensional raw vector of continuous and/or categorical features $\glssymbol{bx} = (\glssymbol{x}_1, \ldots, \glssymbol{x}_d)$ into a $d$-dimensional categorical vector via a component wise mapping $\q=(\glssymbol{qj})_1^d$:
 \[\q(\glssymbol{bx})=(\q_1(\glssymbol{x}_1),\ldots,\q_d(\glssymbol{x}_d)),\]
-where each of the $\q_j$'s is a vector of $m_j$ dummies: 
-\begin{equation}\label{eq:qj}
-q_{j,h}(\cdot) =  1 \text{ if } x_j \in C_{j,h}, 0 \text{ otherwise, } 1 \leq h \leq m_j,
-\end{equation}
-where $m_j$ is an integer and the sets $C_{j,h}$ are defined with respect to each feature type as I describe just below.
-\paragraph{Raw continuous features} If $\glssymbol{x}_j$ is a continuous component of $\glssymbol{bx}$, quantization $\q_j$ has to perform a discretization of $\glssymbol{x}_j$ and the $C_{j,h}$'s, $1\le h\le m_j$, are contiguous intervals  
+where each of the $\glssymbol{qj}$'s is a vector of $\glssymbol{mj}$ dummies: 
+\begin{align*}\label{eq:qj}
+& q_{j,h}(\cdot) =  1 \text{ if } \glssymbol{x}_j \in C_{j,h}, 0 \text{ otherwise, } 1 \leq h \leq \glssymbol{mj}, \\
+\equiv & \glssymbol{qj}(\cdot) = \glssymbol{ehmj} \nonumber
+\end{align*}
+where $\glssymbol{mj}$ is an integer, $\glssymbol{ehmj}$ is the $h^{\text{th}}$ basis vector of $\glssymbol{R}^{\glssymbol{mj}}$ and the sets $C_{j,h}$ are defined with respect to each feature type as I describe just below.
+\paragraph{Raw continuous features} If $\glssymbol{x}_j$ is a continuous component of $\glssymbol{bx}$, quantization $\glssymbol{qj}$ has to perform a discretization of $\glssymbol{x}_j$ and the $C_{j,h}$'s, $1 \leq h \leq \glssymbol{mj}$, are contiguous intervals  
 \begin{equation}\label{eq:Cjhcont}
 C_{j,h}=(c_{j,h-1},c_{j,h}]
 \end{equation}
-where $c_{j,1},\ldots,c_{j,m_j-1}$ are increasing numbers called cutpoints, $c_{j,0}=-\infty$, $c_{j,m_j}=\infty$. For example, the quantization of the unit segment in thirds would be defined as $m_j=3$, $c_{j,1} = 1/3$, $c_{j,2} = 2/3$ and subsequently $\q_j(0.1) = (1,0,0)$. This is visually exemplified on Figure~\ref{fig:disc_cont}.
-\paragraph{Raw categorical features} If $x_j$ is a categorical component of $\glssymbol{bx}$, quantization $\q_j$ consists in grouping levels of $\glssymbol{x}_j$ and the $C_{j,h}$s form a partition of the set $\glssymbol{NO}$.
+where $c_{j,1},\ldots,c_{j,\glssymbol{mj}-1}$ are increasing numbers called cutpoints, $c_{j,0}=-\infty$, $c_{j,\glssymbol{mj}}=\infty$. For example, the quantization of the unit segment in thirds would be defined as $\glssymbol{mj}=3$, $c_{j,1} = 1/3$, $c_{j,2} = 2/3$ and subsequently $\glssymbol{qj}(0.1) = (1,0,0)$. This is visually exemplified on Figure~\ref{fig:disc_cont}.
+\paragraph{Raw categorical features} If $\glssymbol{x}_j$ is a categorical component of $\glssymbol{bx}$, quantization $\glssymbol{qj}$ consists in grouping levels of $\glssymbol{x}_j$ and the $C_{j,h}$s form a partition of the set $\glssymbol{NO}$.
 %, say $\{1,\ldots,l_j\}$, of levels of $\glssymbol{x}_j$: 
 \begin{equation*}
-%\bigsqcup_{h=1}^{m_j}C_{j,h}=\{1,\ldots,l_j\}.
-\bigsqcup_{h=1}^{m_j}C_{j,h}=\glssymbol{NO}.
+%\bigsqcup_{h=1}^{\glssymbol{mj}}C_{j,h}=\{1,\ldots,\glssymbol{lj}\}.
+\bigsqcup_{h=1}^{\glssymbol{mj}}C_{j,h}=\glssymbol{NO}.
 \end{equation*}
-For example, the grouping of levels encoded as ``1'' and ``2'' would yield $C_{j,1} = \{1,2\}$ such that $\q_j(1) = \q_j(2) = (1,0,\ldots,0)$. This is visually exemplified on Figure~\ref{fig:disc_disc}.
+For example, the grouping of levels encoded as ``1'' and ``2'' would yield $C_{j,1} = \{1,2\}$ such that $\glssymbol{qj}(1) = \glssymbol{qj}(2) = (1,0,\ldots,0)$. Note that it is assumed that there are no empty buckets, \textit{i.e.}\ $\nexists j, h$ s.t.\ $C_{j,h} = \varnothing$ and that there is no overlap, \textit{i.e.}\ $\nexists j,h,h'$ s.t.\ $C_{j,h} \cup C_{j,h'} = \varnothing$. This is visually exemplified on Figure~\ref{fig:disc_disc}.
 
 
 \begin{figure}[!ht]
@@ -199,6 +204,13 @@ For example, the grouping of levels encoded as ``1'' and ``2'' would yield $C_{j
 \begin{tikzpicture}[scale=0.2,every node/.style={scale=0.7}]
 \draw[->,line width=0.08cm] (-5,0)--(26,0) node[right]{$\glssymbol{x}$};
 
+\node at (0,-1) {$C_1$};
+\node at (8,-1) {$C_2$};
+\node at (16,-1) {$C_3$};
+
+\node at (4,-1) {$c_1$};
+\node at (12,-1) {$c_2$};
+
 \node [red,circle, fill] at (4,0) {};
 \node [red,circle, fill] at (12,0) {};
 
@@ -229,7 +241,7 @@ For example, the grouping of levels encoded as ``1'' and ``2'' would yield $C_{j
 \node [vertex] (x5) at (24,0) {4};
 
 % Labels
-\node at (-7,2.5) {$\q(x)=$};
+\node at (-7,2.5) {$\q(\glssymbol{x})=$};
 \node at (-7,0.2) {$\glssymbol{x}=$};
 
 % Flèches
@@ -248,24 +260,24 @@ For example, the grouping of levels encoded as ``1'' and ``2'' would yield $C_{j
 
 \paragraph{Notations for the quantization family}
 
-In both continuous and categorical cases, keep in mind that $m_j$ is the dimension of $\q_j$. For notational convenience, the (global) order of the quantization $\q$ is set as 
-\[|\q|=\sum_{j=1}^d m_j.\]
-The space where quantizations $\q$ live (resp. $\q_j$) will be denoted by $\Q$ in the sequel (resp. $\Q_j$).
+In both continuous and categorical cases, keep in mind that $\glssymbol{mj}$ is the dimension of $\glssymbol{qj}$. For notational convenience, the (global) order of the quantization $\q$ is set as 
+\[|\q|=\sum_{j=1}^d \glssymbol{mj}.\]
+The space where quantizations $\q$ live (resp. $\glssymbol{qj}$) will be denoted by $\glssymbol{bQm}$ in the sequel (resp. $\glssymbol{bQjmj}$), when the number of levels $\glssymbol{bm} = (\glssymbol{mj})_1^d$ is fixed. Since it is not known, the full model space is $\Q = \cup_{m \in \glssymbol{N}_\star^{d}} \glssymbol{bQm}$.
 
 \subparagraph{Equivalence of quantizations} \label{par:equiv}
 
-Let $\q^1$ and $\q^2$ in $\Q$ such that $\boldsymbol{f} \mathcal{R}_{\mathcal{T}_n} \boldsymbol{g} \equiv \forall i,j \; \q^1_j(x_i) = \q^2_j(x_i)$. See Figure~\ref{fig:equiv} for an example.
+Let $\q^1$ and $\q^2$ in $\Q$ such that $\q^1 \mathcal{R}_{\mathcal{T}_n} \q^2 \equiv \forall i,j \; \q^1_j(\glssymbol{xij}) = \q^2_j(\glssymbol{xij})$. See Figure~\ref{fig:equiv} for an example.
 
 \subparagraph{Lemma} Relation $\mathcal{R}_{\mathcal{T}_n}$ defines an equivalence relation on $\Q$.
 
 \begin{proof}
-Relation $\mathcal{R}_{\mathcal{T}_n}$ is trivially reflexive and symmetric because of the reflexive and symmetric nature of the equality relation in $\glssymbol{R}$: $\forall i,j \; \q^1_j(x_i) = \q^1_j(x_i)$ and $\forall i,j \; \q^1(x_i) = \q^2(x_i)$. Similarly, let $\q^3 \in \Q$ such that $\q^1 \mathcal{R}_{\mathcal{T}_n} \q^3  \equiv \forall i,j \; \q^1_j(x_i) = \q^3_j(x_i)$. Again, we immediately get $\forall i,j \; \q^2_j(x_i) = \q^3_j(x_i)$, \textit{i.e.}\ $\q^2 \mathcal{R}_{\mathcal{T}_n} \q^3$ which proves the transitivity of $\mathcal{R}_{\mathcal{T}_n}$.
+Relation $\mathcal{R}_{\mathcal{T}_n}$ is trivially reflexive and symmetric because of the reflexive and symmetric nature of the equality relation in $\glssymbol{R}$: $\forall i,j \; \q^1_j(\glssymbol{xij}) = \q^1_j(\glssymbol{xij})$ and $\forall i,j \; \q^1(\glssymbol{xij}) = \q^2(\glssymbol{xij})$. Similarly, let $\q^3 \in \Q$ such that $\q^1 \mathcal{R}_{\mathcal{T}_n} \q^3  \equiv \forall i,j \; \q^1_j(\glssymbol{xij}) = \q^3_j(\glssymbol{xij})$. Again, we immediately get $\forall i,j \; \q^2_j(\glssymbol{xij}) = \q^3_j(\glssymbol{xij})$, \textit{i.e.}\ $\q^2 \mathcal{R}_{\mathcal{T}_n} \q^3$ which proves the transitivity of $\mathcal{R}_{\mathcal{T}_n}$.
 \end{proof}
 
  \begin{figure}[!ht]
      \centering
      \begin{tikzpicture}[scale=0.3]
- \draw[->,line width=0.1cm] (-5,0)--(24,0) node[right]{$x_j$};
+ \draw[->,line width=0.1cm] (-5,0)--(24,0) node[right]{$\glssymbol{x}_j$};
 
  \node [red,circle,fill] at (3,0) {};
 
@@ -278,8 +290,8 @@ Relation $\mathcal{R}_{\mathcal{T}_n}$ is trivially reflexive and symmetric beca
 
  \node at (3,1.5) {$c^1_1$};
 
- \node at (-1.1,1.5) {$\q^1_j(x_j) = (1,0)$};
- \node at (8.3,1.5) {$\q^1_j(x_j) = (0,1)$};
+ \node at (-1.1,1.5) {$\q^1_j(\glssymbol{x}_j) = (1,0)$};
+ \node at (8.3,1.5) {$\q^1_j(\glssymbol{x}_j) = (0,1)$};
  \end{tikzpicture}
 
  \begin{tikzpicture}[scale=0.3]
@@ -308,12 +320,12 @@ Relation $\mathcal{R}_{\mathcal{T}_n}$ is trivially reflexive and symmetric beca
 
 \subparagraph{Cardinality of the quantization family in the continuous case} ~\label{par:cardinality}
 
-For a continuous feature $x_j$, let $\q_j \in \Q_j$ with $m_j$ intervals and cutpoints $\boldsymbol{c}_j$. Without any loss of generality, \textit{i.e.}\ up to a relabelling on individuals $i$, it can be assumed that there are $m_j+1$ observations $x_{1,j},\dots,x_{m_j+1,j}$ s.t.\ $x_{1,j} < c_{j,1} < x_{2,j} < \dots < c_{m_j-1,1} < x_{m_j+1,j}$. Indeed, if for example there exists $k < m_j - 1$ s.t.\ $c_{j,k} < \dots < c_{j,m_j-1}$ and $\max_{1 \leq i \leq n} x_{i,j} < c_{j,k}$, then discretization $\q^{\text{bis}}_j \in \Q_j$ with $k+1$ cutpoints $(-\infty,c_{j,1},\dots,c_{j,k-1},+\infty)$ is equivalent w.r.t.\ $\mathcal{R}_{\mathcal{T}_n}$ to $\q_j$: $\forall i, \; \q_j(x_{i,j}) = \q^{\text{bis}}_j(x_{i,j})$. A similar proof can be conducted with cutpoints below the minimum of $\glssymbol{bx}_j$ or with several cutpoints in-between consecutive values of the observations. Subsequently, there are $\binom{n-1}{m_j-1}$ ways to construct $\bm{c}_j$, \textit{i.e.}\ equivalence classes $[\q_j]$ for a fixed $m_j \leq n$. The number of intervals $m_j$ can range from $2$ (binarization) to $n$ (each $x_{i,j}$ is in its own interval, thus $\q_j(x_{i,j}) \neq \q_j(x_{i',j})$ for $i \neq i'$), so that the number of admissible discretization of $\glssymbol{bbx}_j$ is $|\Q_j| = \sum_{i=2}^{n}$ ${n-1}\choose{i-1}$. Note that $|\Q_j|$ depends on the number of observations $n$; I shall go back to this property in the following Section.
+For a continuous feature $x_j$, let $\glssymbol{qj} \in \glssymbol{bQjmj}$ and cutpoints $\boldsymbol{c}_j$. Without any loss of generality, \textit{i.e.}\ up to a relabelling on individuals $i$, it can be assumed that there are $\glssymbol{mj}+1$ observations $x_{1,j},\dots,x_{\glssymbol{mj}+1,j}$ s.t.\ $x_{1,j} < c_{j,1} < x_{2,j} < \dots < c_{\glssymbol{mj}-1,1} < x_{\glssymbol{mj}+1,j}$. Indeed, if for example there exists $k < \glssymbol{mj} - 1$ s.t.\ $c_{j,k} < \dots < c_{j,\glssymbol{mj}-1}$ and $\max_{1 \leq i \leq n} x_{i,j} < c_{j,k}$, then discretization $\q^{\text{bis}}_j \in \glssymbol{bQj}$ with $k+1$ cutpoints $(-\infty,c_{j,1},\dots,c_{j,k-1},+\infty)$ is equivalent w.r.t.\ $\mathcal{R}_{\mathcal{T}_n}$ to $\glssymbol{qj}$: $\forall i, \; \glssymbol{qj}(x_{i,j}) = \q^{\text{bis}}_j(x_{i,j})$. A similar proof can be conducted with cutpoints below the minimum of $\glssymbol{bx}_j$ or with several cutpoints in-between consecutive values of the observations. Subsequently, there are $\binom{n-1}{\glssymbol{mj}-1}$ ways to construct $\bm{c}_j$, \textit{i.e.}\ equivalence classes $[\glssymbol{qj}]$ for a fixed $\glssymbol{mj} \leq n$. The number of intervals $\glssymbol{mj}$ can range from $2$ (binarization) to $n$ (each $x_{i,j}$ is in its own interval, thus $\glssymbol{qj}(x_{i,j}) \neq \glssymbol{qj}(x_{i',j})$ for $i \neq i'$), so that the number of admissible discretization of $\glssymbol{bbx}_j$ is $|\glssymbol{bQj}| = \sum_{i=2}^{n}$ ${n-1}\choose{i-1}$. Note that $|\glssymbol{bQj}|$ depends on the number of observations $n$; I shall go back to this property in the following Section.
 
 
 \subparagraph{Cardinality of the quantization family in the categorical case}
 
-For a continuous feature $x_j$, let $\q_j \in \Q_j$ with $m_j$ groups. The number of re-arrangements of $l_j$ labelled elements into $m_j$ unlabelled groups is given by the Stirling number of the second kind $S(l_j,m_j) = \frac{1}{m_j!} \sum_{i=0}^{m_j} (-1)^{m_j-i} {m_j \choose i} i^{l_j}$. As $m_j$ is unknown and must be searched over the range $\{1,\dots,l_j\}$. Thus for categorical features, model space $\Q_j$ is also discrete; subsequently, $\Q = \prod_{j=1}^d \Q_j$ is discrete.
+For a continuous feature $x_j$, let $\glssymbol{qj} \in \glssymbol{bQj}$ with $\glssymbol{mj}$ groups. The number of re-arrangements of $\glssymbol{lj}$ labelled elements into $\glssymbol{mj}$ unlabelled groups is given by the Stirling number of the second kind $S(\glssymbol{lj},\glssymbol{mj}) = \frac{1}{\glssymbol{mj}!} \sum_{i=0}^{\glssymbol{mj}} (-1)^{\glssymbol{mj}-i} {\glssymbol{mj} \choose i} i^{\glssymbol{lj}}$. As $\glssymbol{mj}$ is unknown and must be searched over the range $\{1,\dots,\glssymbol{lj}\}$. Thus for categorical features, model space $\glssymbol{bQj}$ is also discrete; subsequently, $\Q = \prod_{j=1}^d \glssymbol{bQj}$ is discrete.
 
 
 
@@ -323,9 +335,9 @@ For a continuous feature $x_j$, let $\q_j \in \Q_j$ with $m_j$ groups. The numbe
 
 \paragraph{Literature review}
 
-The current practice of quantization is prior to any predictive task, thus ignoring its consequences on the final predictive ability. It consists in optimizing a heuristic criterion, often totally unrelated (unsupervised methods) or at least explicitly (supervised methods) to prediction, and mostly univariate (each feature is quantized irrespective of other features' values). The cardinality of the quantization space $\Q$ can be calculated explicitely w.r.t.\ $d$, $(m_j)_1^d$ and, for categorical features, $l_j$. It is huge, so that a greedy approach is intractable and such heuristics are needed, as will be detailed in the next Section.
-Many algorithms have thus been designed and a review of approximatively 200 discretization strategies, gathering both criteria and related algorithms, can be found in~\cite{ramirez2016data}, preceded by other enlightening review articles such as~\cite{dougherty1995supervised,liu2002discretization}. They classify discretization methods by distinguishing, among other criteria and as said previously, unsupervised and supervised methods ($\bm{y}$ is used to discretize $\bm{x}$), for which model-specific (assumptions on $p_{\glssymbol{bth}}$) or model-free approaches are distinguished, univariate and multivariate methods (features $X_{-\{j\}} = (X_{1},\ldots,X_{j-1},X_{j+1},\ldots,X_{d})$ may influence the quantization scheme) and other criteria as can be seen from Figure~\ref{fig:taxonomy} reproduced with permission. For factor levels grouping, I found no such taxonomy, but some discretization methods, \textit{e.g.}\ $\chi^2$ independence test-based methods can be naturally extended to this type of quantization, which is for example what the CHAID algorithm, proposed in~\cite{kass1980exploratory} and applied to each categorical feature, relies on. A simple idea is to use Group LASSO~\cite{meier2008group} which attempts to shrink to zero all coefficients of a categorical feature to avoid situations where a few levels enter the model, which is arguably less interpretable. Another idea would be to use Fused LASSO~\cite{tibshirani2005sparsity}, which seeks to shrink the pairwise absolute difference of selected coefficients, and apply it to all pairs of levels: the levels for which the difference would be shrunk to zero would be grouped. A combination of both approaches would allow both selection and grouping\footnote{See \url{https://stats.stackexchange.com/questions/60100/penalized-methods-for-categorical-data-combining-levels-in-a-factor}}.
-For benchmarking purposes, and following results found in the taxonomy of~\cite{ramirez2016data}, I used the MDLP~\cite{fayyad1993multi} discretization method, described in-depth in Appendix~\ref{app1:mdlp}, which is a popular supervised univariate method, and I implemented an extension of ChiMerge to categorical features, performing pairwise $\chi^2$ independence tests rather than only pairs of contiguous intervals, which I called ChiCollapse and describe in-depth in Appendix~\ref{app1:chicollapse}. Note that various refinements of ChiMerge have been proposed in the literature, Chi2~\cite{liu1995chi2}, ConMerge~\cite{wang1998concurrent}, ModifiedChi2~\cite{tay2002modified}, and ExtendedChi2~\cite{su2005extended}, which seek to correct for multiple hypothesis testing~\cite{shaffer1995multiple} and automize the choice of the confidence parameter $\alpha$ in the $\chi^2$ tests, but adapting them to categorical features for benchmarking purposes would have been too time-consuming. A similar measure, called Zeta, has been proposed in place of $\chi^2$ in~\cite{ho1997zeta} and subsequent refinement~\cite{ho1998efficient}: it is the classification error achievable by using only two contiguous intervals; if it is low, the two intervals are dissimilar w.r.t.\ the prediction task, if not, they can be merged.
+The current practice of quantization is prior to any predictive task, thus ignoring its consequences on the final predictive ability. It consists in optimizing a heuristic criterion, often totally unrelated (unsupervised methods) or at least explicitly (supervised methods) to prediction, and mostly univariate (each feature is quantized irrespective of other features' values). The cardinality of the quantization space $\Q$ can be calculated explicitely w.r.t.\ $d$, $(\glssymbol{mj})_1^d$ and, for categorical features, $\glssymbol{lj}$. It is huge, so that a greedy approach is intractable and such heuristics are needed, as will be detailed in the next Section.
+Many algorithms have thus been designed and a review of approximatively 200 discretization strategies, gathering both criteria and related algorithms, can be found in~\cite{ramirez2016data}, preceded by other enlightening review articles such as~\cite{dougherty1995supervised,liu2002discretization}. They classify discretization methods by distinguishing, among other criteria and as said previously, unsupervised and supervised methods ($\bm{y}$ is used to discretize $\glssymbol{bx}$), for which model-specific (assumptions on $p_{\glssymbol{bth}}$) or model-free approaches are distinguished, univariate and multivariate methods (features $\glssymbol{Xnotj} = (X_{1},\ldots,X_{j-1},X_{j+1},\ldots,X_{d})$ may influence the quantization scheme of $\glssymbol{Xj}$) and other criteria as can be seen from Figure~\ref{fig:taxonomy} reproduced from~\cite{ramirez2016data} with permission. For factor levels grouping, I found no such taxonomy, but some discretization methods, \textit{e.g.}\ $\chi^2$ independence test-based methods can be naturally extended to this type of quantization, which is for example what the CHAID algorithm, proposed in~\cite{kass1980exploratory} and applied to each categorical feature, relies on. A simple idea is to use Group LASSO~\cite{meier2008group} which attempts to shrink to zero all coefficients of a categorical feature to avoid situations where a few levels enter the model, which is arguably less interpretable. Another idea would be to use Fused LASSO~\cite{tibshirani2005sparsity}, which seeks to shrink the pairwise absolute difference of selected coefficients, and apply it to all pairs of levels: the levels for which the difference would be shrunk to zero would be grouped. A combination of both approaches would allow both selection and grouping\footnote{See \url{https://stats.stackexchange.com/questions/60100/penalized-methods-for-categorical-data-combining-levels-in-a-factor}}.
+For benchmarking purposes, and following results found in the taxonomy of~\cite{ramirez2016data}, I used the MDLP~\cite{fayyad1993multi} discretization method, described in-depth in Appendix~\ref{app1:mdlp}, which is a popular supervised univariate discretization method, and I implemented an extension of the discretization method ChiMerge~\cite{kerber1992chimerge} to categorical features, performing pairwise $\chi^2$ independence tests rather than only pairs of contiguous intervals, which I called ChiCollapse and describe in-depth in Appendix~\ref{app1:chicollapse}. Note that various refinements of ChiMerge have been proposed in the literature, Chi2~\cite{liu1995chi2}, ConMerge~\cite{wang1998concurrent}, ModifiedChi2~\cite{tay2002modified}, and ExtendedChi2~\cite{su2005extended}, which seek to correct for multiple hypothesis testing~\cite{shaffer1995multiple} and automize the choice of the confidence parameter $\alpha$ in the $\chi^2$ tests, but adapting them to categorical features for benchmarking purposes would have been too time-consuming. A similar measure, called Zeta, has been proposed in place of $\chi^2$ in~\cite{ho1997zeta} and subsequent refinement~\cite{ho1998efficient}: it is the classification error achievable by using only two contiguous intervals; if it is low, the two intervals are dissimilar w.r.t.\ the prediction task, if not, they can be merged.
 
 \begin{figure}[!ht]
 \includegraphics[width=\textwidth]{figures/chapitre4/taxonomy.PNG}
@@ -337,20 +349,22 @@ For benchmarking purposes, and following results found in the taxonomy of~\cite{
 
 \subsection{Quantization embedded in a predictive process}
 
+In what follows, focus is given to \gls{lr} since it is a requirement from \gls{cacf} but it is applicable to any other supervised (binary) classification model.
+
 \paragraph{Logistic regression on quantized data}
 
-Quantization is a widespread preprocessing step to perform a learning task consisting in predicting, say, a binary variable $\glssymbol{y}\in\{0,1\}$, from a quantized predictor  $\q(\glssymbol{bx})$, through, say, a parametric conditional distribution $p_{\glssymbol{bth}}(\glssymbol{y}|\q(\glssymbol{bx}))$ like logistic regression; the whole process can be visually represented as a dependence structure among $X$, its quantization $Q$ (which notation as a random variable will be made clearer in Section~\ref{sec:sem}) and the target $Y$ on Figure~\ref{fig:dep}. Considering quantized data instead of raw data has a double benefit. First, the quantization order $|\q|$ acts as a tuning parameter for controlling the model's flexibility and thus the bias/variance trade-off of the estimate of the parameter $\glssymbol{bth}$ (or of its predictive accuracy) for a given dataset. This claim becomes clearer with the example of logistic regression I focus on, as a still very popular model for many practitioners. It is classically described by
+Quantization is a widespread preprocessing step to perform a learning task consisting in predicting, say, a binary variable $\glssymbol{y}\in\{0,1\}$, from a quantized predictor  $\q(\glssymbol{bx})$, through, say, a parametric conditional distribution $p_{\glssymbol{bth}}(\glssymbol{y}|\q(\glssymbol{bx}))$ like logistic regression; the whole process can be visually represented as a dependence structure among $\glssymbol{bX}$, its quantization $\bm{Q}$ (which notation as a random variable will be made clearer in Section~\ref{sec:sem}) and the target $\glssymbol{Y}$ on Figure~\ref{fig:dep}. Considering quantized data instead of raw data has a double benefit. First, the quantization order $|\q|$ acts as a tuning parameter for controlling the model's flexibility and thus the bias/variance trade-off of the estimate of the parameter $\glssymbol{bth}$ (or of its predictive accuracy) for a given dataset. This claim becomes clearer with the example of logistic regression I focus on, as a still very popular model for many practitioners. On quantized data, Equation~\eqref{eq:logit} becomes:
 \begin{equation}
     \label{eq:reglogq}
-\ln \left( \dfrac{p_{\glssymbol{bth}}(1|\q(\glssymbol{bx}))}{1 - p_{\glssymbol{bth}}(1|\q(\glssymbol{bx}))} \right) = \theta_0 + \sum_{j=1}^d \glssymbol{bth}_j' \cdot \q_j(\glssymbol{x}_j),
+\ln \left( \dfrac{p_{\glssymbol{bth}}(1|\q(\glssymbol{bx}))}{1 - p_{\glssymbol{bth}}(1|\q(\glssymbol{bx}))} \right) = \theta_0 + \sum_{j=1}^d \glssymbol{bth}_j' \cdot \glssymbol{qj}(\glssymbol{x}_j),
 \end{equation}
-where $\glssymbol{bth} = (\theta_{0},(\glssymbol{bth}_j)_1^d) \in \glssymbol{R}^{|\q|+1}$ and $\glssymbol{bth}_j = (\theta_{j}^{1},\dots,\theta_{j}^{m_j})$ with $\theta_{j}^{m_j} = 0$, $j=1 \ldots d$, for identifiability reasons.
-Second, at the practitioner level, the previous tuning of $|\q|$ through each feature's quantization order $m_j$, especially when it is quite low, allows an easier interpretation of the most important predictor values involved in the predictive process. Denoting the dataset by $(\glssymbol{bbx},\glssymbol{bby})$, with $\glssymbol{bbx}=(\glssymbol{bx}_1,\ldots,\glssymbol{bx}_n)$ and $\glssymbol{bby}=(\glssymbol{y}_1,\ldots,\glssymbol{y}_n)$, the log-likelihood 
+where $\glssymbol{bth} = (\theta_{0},(\glssymbol{bth}_j)_1^d) \in \glssymbol{R}^{|\q|+1}$ and $\glssymbol{bth}_j = (\theta_{j}^{1},\dots,\theta_{j}^{\glssymbol{mj}})$ with $\theta_{j}^{\glssymbol{mj}} = 0$, $j=1 \ldots d$, for identifiability reasons.
+Second, at the practitioner level, the previous tuning of $|\q|$ through each feature's quantization order $\glssymbol{mj}$, especially when it is quite low, allows an easier interpretation of the most important predictor values involved in the predictive process. Denoting the $n$-sample as in previous Chapters by $(\glssymbol{bbx},\glssymbol{bby})$, with $\glssymbol{bbx}=(\glssymbol{bx}_1,\ldots,\glssymbol{bx}_n)$ and $\glssymbol{bby}=(\glssymbol{y}_1,\ldots,\glssymbol{y}_n)$, the log-likelihood 
 \begin{equation}
 \label{eq:lq}
 \ell_{\q}(\glssymbol{bth} ; (\glssymbol{bbx},\glssymbol{bby}))=\sum_{i=1}^n \ln p_{\glssymbol{bth}}(\glssymbol{y}_i|\q(\glssymbol{bx}_i))
 \end{equation}
-provides a Maximum Likelihood estimator $\hat{\glssymbol{bth}}_\q$ of $\glssymbol{bth}$ for a given quantization $\q$. For the rest of the chapter and consistently with the manuscript, the approach is exemplified with logistic regression as $p_{\glssymbol{bth}}$ but it can be applied to any other predictive model, as will be recalled in the concluding section.
+provides a Maximum Likelihood estimator $\hat{\glssymbol{bth}}_{\q}$ of $\glssymbol{bth}$ for a given quantization $\q$. For the rest of the chapter and consistently with the manuscript, the approach is exemplified with \gls{lr} as $p_{\glssymbol{bth}}$ but it can be applied to any other predictive model, as will be recalled in the concluding section.
 
 
 
@@ -359,19 +373,19 @@ provides a Maximum Likelihood estimator $\hat{\glssymbol{bth}}_\q$ of $\glssymbo
 As dicussed in the previous section, and emphasized in the literature review, quantization is often a preprocessing step; however, quantization can be embedded directly in the predictive model. Continuouing our logistic example, a standard information criteria such as the BIC (see Section~\ref{subsubsec:choix_modele}) can be used to select the best quantization $\q$:
 \begin{equation}
     \label{eq:BICq}
-    \hat{\q}=\argmax_{\q \in \Q} \text{BIC}(\hat{\glssymbol{bth}}_\q)
+    \hat{\q}=\argmax_{\q \in \Q} \text{BIC}(\hat{\glssymbol{bth}}_{\q})
 \end{equation}
-where $\nu_\q$ is traditionally the number of continuous parameters to be estimated in the $\glssymbol{bth}$-parameter space. Note however that an exhaustive search of $\hat{\q}\in\Q$ is an intractable task due to its highly combinatorial nature as was explicitly formulated in the previous Section. Anyway, the optimization~(\ref{eq:BICq}) requires a new specific strategy that I describe in the next section.
+where $\nu_{\q}$ is traditionally the number of continuous parameters to be estimated in the $\glssymbol{bth}$-parameter space. I shall insist here on the fact that choosing the BIC as our gold standard to compare quantizations is only a matter of consistency throughout the Chapters. The practitioner can swap this criterion with any other penalized criterion on training data such as AIC~\cite{akaike1973information} or, as \textit{Credit Scoring} people like, the Gini index on a test set. Note however that, regardless of the criterion used, an exhaustive search of $\hat{\q}\in\Q$ is an intractable task due to its highly combinatorial nature as was explicitly formulated in the previous Section. Anyway, the optimization~(\ref{eq:BICq}) requires a new specific strategy that I describe in the next Section.
 
 \paragraph{Remark on model selection consistency} \label{par:consistency}
 
 In high-dimensional spaces and among models with a wildly varying number of parameters, classical model selection tools like BIC can have disappointing asymptotic properties, as emphasized in~\cite{chen2008extended}, where a modified BIC criterion, taking into account the number of models per parameter size, is proposed.
-Moreover in essence, as is apparent from the $\hat{\glssymbol{bth}}_\q$ symbol, and supplemental to the \gls{lr} coefficients $\glssymbol{bth}$, the inherent parameters of $\q$, in the continuous case, which are the $c_{j,h}$ (see Equation~\eqref{eq:Cjhcont}) shall be accounted for in the penalization term $\nu_\q$: they are estimated indirectly in the subsequent Section.
+Moreover in essence, as is apparent from the $\hat{\glssymbol{bth}}_{\q}$ symbol, and supplemental to the \gls{lr} coefficients $\glssymbol{bth}$, the inherent parameters of $\q$, in the continuous case, which are the $c_{j,h}$ (see Equation~\eqref{eq:Cjhcont}) shall be accounted for in the penalization term $\nu_{\q}$: they are estimated indirectly in the subsequent Section.
 In addition, in this setting, the BIC criterion relies on the Laplace approximation~\cite{lebarbier} which requires the likelihood to be twice differentiable in the parameters. However, as $\q$ consists in a collection of step functions of parameters $C_{j,h}$, this is not the case. For continuous features, since it is nevertheless almost everywhere differentiable, for the properties of the BIC criterion to hold, it suffices that there exists a neighbourhood $V_{j,h}$ around true parameters $c_{j,h}^\star$ where there is no observation: $\not\exists i, \: x_{i,j} \in V_{j,h}$.
 
-\textcolor{red}{cas catégoriel : référence de Vincent (on ne peut pas compter les paramètres discrets)}
+For categorical features, the Laplace approximation~\cite{lebarbier} does not work and there is no way, in general, to approximate the integral (\textit{i.e.}\ the sum over the discrete parameter space) by ``counting'' the number of parameters as in the continuous case~\cite{vincent_disc}.
 
-Lastly, for the asymptotic properties of BIC to hold in the case of nested models (which is not \textit{stricto sensu} the case here since for any global quantization order $|\q|$ there are a lot of possible univariate quantization orders $|\q_j|$), any multiplicative constant to the number of parameters is appropriate. Indeed, suppose two nested models $M_i$, $M_t$ have parameters $|\q|_i > |\q|_t$ respectively; then, we have:
+Lastly, for the asymptotic properties of BIC to hold in the case of nested models (which is not \textit{stricto sensu} the case here since for any global quantization order $|\q|$ there are a lot of possible univariate quantization orders $|\glssymbol{qj}|$), any multiplicative constant to the number of parameters is appropriate. Indeed, suppose two nested models $M_i$, $M_t$ have parameters $|\q|_i > |\q|_t$ respectively; then, we have:
 \[ \text{BIC}_i - \text{BIC}_t \approx - \chi^2_{|\q|_i - |\q|_t} + C(|\q|_i - |\q|_t)\ln n, \]
 where $C=1$ for the BIC criterion but could be replaced by any other $C \in \glssymbol{R}^+_\star$ since for $n \to + \infty$, $C(|\q|_i - |\q|_t)\ln n$ will dominate and reject the overly parametrized model $M_i$.
 
@@ -382,15 +396,15 @@ For all these reasons, the BIC criterion which penalizes only on the logistic re
 
 \subsection{A relaxation of the optimization problem} \label{subsec:relaxation}
 
-In this section, I propose to relax the constraints on $\q_j$ to simplify the search of $\hat{\q}$. Indeed, the derivatives of $\q_j$ are zero almost everywhere and consequently a gradient descent cannot be directly applied to find an optimal quantization.
+In this section, I propose to relax the constraints on $\glssymbol{qj}$ to simplify the search of $\hat{\q}$. Indeed, the derivatives of $\glssymbol{qj}$ are zero almost everywhere and consequently a gradient descent cannot be directly applied to find an optimal quantization.
 
 \paragraph{Smooth approximation of the quantization mapping}
 
-A classical approach is to replace the binary functions $q_{j,h}$ (see Equation (\ref{eq:qj}))  by smooth parametric ones  with a simplex condition, namely with $\ag_j=(\ag_{j,1},\ldots, \ag_{j,m_j})$:
+A classical approach is to replace the binary functions $q_{j,h}$ (see Equation (\ref{eq:qj}))  by smooth parametric ones  with a simplex condition, namely with $\ag_j=(\ag_{j,1},\ldots, \ag_{j,\glssymbol{mj}})$:
 %\begin{equation}
 \begin{equation*}
     %\label{eq:qaj}
-    {\q_{\ag_j}(\cdot)=\left(q_{\ag_{j,h}}(\cdot)\right)_{h=1}^{m_j} \text{ with } \sum_{h=1}^{m_j}q_{\ag_{j,h}}(\cdot)=1 \text{ and } 0 \leq q_{\ag_{j,h}}(\cdot) \leq 1,}
+    {\q_{\ag_j}(\cdot)=\left(q_{\ag_{j,h}}(\cdot)\right)_{h=1}^{\glssymbol{mj}} \text{ with } \sum_{h=1}^{\glssymbol{mj}}q_{\ag_{j,h}}(\cdot)=1 \text{ and } 0 \leq q_{\ag_{j,h}}(\cdot) \leq 1,}
 \end{equation*}
 %\end{equation}
 where functions $q_{\ag_{j,h}}(\cdot)$, properly defined hereafter for both continuous and categorical features, represent a fuzzy quantization in that, here, each level $h$ is weighted by $q_{\ag_{j,h}}(\cdot)$ instead of being selected once and for all as in (\ref{eq:qj}). The resulting fuzzy quantization for all components depends on the global parameter $\ag = (\ag_1, \ldots, \ag_d)$ and is denoted by $\q_{\ag}(\cdot)=\left(\q_{\ag_j}(\cdot)\right)_{j=1}^d$. 
@@ -401,31 +415,17 @@ where functions $q_{\ag_{j,h}}(\cdot)$, properly defined hereafter for both cont
 
  {\bf For continuous features}, we set for $\ag_{j,h} = (\alpha^0_{j,h},\alpha^1_{j,h}) \in \glssymbol{R}^2$
 \begin{equation} \label{eq:softmax}
-q_{\ag_{j,h}}(\cdot) = \frac{\exp(\alpha^0_{j,h} + \alpha^1_{j,h}  \cdot)}{\sum_{g=1}^{m_j} \exp(\alpha^0_{j,g} + \alpha^1_{j,g}  \cdot)}
+q_{\ag_{j,h}}(\cdot) = \frac{\exp(\alpha^0_{j,h} + \alpha^1_{j,h}  \cdot)}{\sum_{g=1}^{\glssymbol{mj}} \exp(\alpha^0_{j,g} + \alpha^1_{j,g}  \cdot)}
 \end{equation}
-where $\ag_{j,m_j}$ is set to $(0,0)$ for identifiability reasons.
+where $\ag_{j,\glssymbol{mj}}$ is set to $(0,0)$ for identifiability reasons.
 
 
 
 
-{\bf For categorical features}, we set for $\ag_{j,h}=\left(\alpha_{j,h}(1),\ldots, \alpha_{j,h}(l_j)\right) \in \glssymbol{R}^{l_j}$
-\[q_{\ag_{j,h}}(\cdot) = \frac{\exp\left(\alpha_{j,h}(\cdot)\right)}{\sum_{g=1}^{m_j} \exp\left(\alpha_{j,g}(\cdot)\right)}\]
-where $l_j$ is the number of levels of the categorical feature $\glssymbol{x}_j$.
+{\bf For categorical features}, we set for $\ag_{j,h}=\left(\alpha_{j,h}(1),\ldots, \alpha_{j,h}(\glssymbol{lj})\right) \in \glssymbol{R}^{\glssymbol{lj}}$
+\[q_{\ag_{j,h}}(\cdot) = \frac{\exp\left(\alpha_{j,h}(\cdot)\right)}{\sum_{g=1}^{\glssymbol{mj}} \exp\left(\alpha_{j,g}(\cdot)\right)}\]
+where $\glssymbol{lj}$ is the number of levels of the categorical feature $\glssymbol{x}_j$.
 
-These approximations are justified by the following arguments. 
-
-From a deterministic point of view, denoting by $\tilde{\Q}$ the space of $\q_{\ag}$, we have $\Q \subset \widetilde{\Q}$: First, the \textit{maximum a posteriori} step~(\ref{eq:ht}) produces contiguous intervals (\textit{i.e.}\ there exists $C_{j,h}$; $1 \leq j \leq d$, $1 \leq h \leq m_j$, s.t.\ ${\q}^{\text{MAP}}$ can be written as in~\ref{eq:qj}) \cite{same2011model}. Second, in the continuous case, the higher $\alpha_{j,h}^1$, the less smooth the transition from one quantization $h$ to its ``neighbor''\footnotemark[1] $h+1$, whereas $\dfrac{\alpha_{j,h}^0}{\alpha_{j,h}^1}$ controls the point in $\mathbb{R}$ where the transition occurs \cite{chamroukhi2009regression}. Concerning the categorical case, the rationale is even simpler as $q_{\lambda \alpha_{j,h}}(x_j) \to 1 \text{ if } h = \argmax_{h'} q_{\alpha_{j,h'}}(x_j), 0 \text{ otherwise}$ as $\lambda \to +\infty$~\cite{reverdy2016parameter}.
-
-From a statistical point of view, 
-%as $\ag$ needs to diverge to infinity for $\q_{{\ag}}$ to approximate $\q$, the maximum likelihood estimator of $\ag$ does not converge. However, 
-under standard regularity conditions and with a suitable estimation procedure (see later for the proposed estimation procedure), the maximum likelihood framework ensures the consistency of $(\q_{\hat{\ag}}, \hat{\glssymbol{bth}})$ towards $(\q,\glssymbol{bth})$. This is further ensured by the \textit{maximum a posteriori} step~(\ref{eq:ht}).
-
-However, and as is usual, the log-likelihood $\ell_{\q_{\ag}}(\glssymbol{bth},(\glssymbol{bbx},\glssymbol{bby}))$ cannot be directly maximized w.r.t.\ $(\ag,\glssymbol{bth})$, so that we need an iterative procedure. To this end, the next section introduces a neural network of particular architecture.
-
-From an empirical point of view, we will see in Section~\ref{sec:experiments} and in particular in Figure~\ref{fig:MAP}, that the smooth approximation $\q_{\ag}$ converges towards ``hard'' quantizations\footnotemark[1] $\q$.
-
-
-\footnotetext[1]{Up to a permutation on the labels $h=1 \ldots m_j$ to recover the ordering in $C_{j,h}$ (see Equation (\ref{eq:Cjhcont})).}
 
 
 \paragraph{Parameter estimation}
@@ -433,7 +433,7 @@ From an empirical point of view, we will see in Section~\ref{sec:experiments} an
 With this new fuzzy quantization, the \gls{lr} for the predictive task is then expressed as
 \begin{equation}
     \label{eq:reglogqa}
-    \ln \left( \dfrac{p_{\glssymbol{bth}}(1|\q_{\ag} (\glssymbol{bx}))}{1 - p_{\glssymbol{bth}}(1|\q_{\ag} (\glssymbol{bx}))} \right) = \theta_0 + \sum_{j=1}^d {\glssymbol{bth}_j' \cdot \q_{\ag_{j}}(x_j)},
+    \ln \left( \dfrac{p_{\glssymbol{bth}}(1|\q_{\ag} (\glssymbol{bx}))}{1 - p_{\glssymbol{bth}}(1|\q_{\ag} (\glssymbol{bx}))} \right) = \theta_0 + \sum_{j=1}^d {\glssymbol{bth}_j' \cdot \q_{\ag_{j}}(\glssymbol{x}_j)},
 \end{equation}
 where $\q$ has been replaced by $\q_{\ag}$ from Equation~(\ref{eq:reglogq}).
 Note that as $\q_{\ag}$ is a sound approximation of $\q$ (see above), this \gls{lr} in $\q_{\ag}$ is consequently a good approximation of the \gls{lr} in $\q$ from Equation~(\ref{eq:reglogq}). The relevant log-likelihood is here 
@@ -441,21 +441,30 @@ Note that as $\q_{\ag}$ is a sound approximation of $\q$ (see above), this \gls{
     \label{eq:lqa}
     \ell_{\q_{\ag}}(\glssymbol{bth} ; (\glssymbol{bbx},\glssymbol{bby}))=\sum_{i=1}^n \ln p_{\glssymbol{bth}}(y_i|\q_{\bm{\alpha}}(\bm{x}_i))
 \end{equation}
-and can be used as a tractable substitute for (\ref{eq:lq}) to solve the original optimization problem (\ref{eq:BICq}), where now both $\ag$ and $\glssymbol{bth}$ have to be estimated, which is discussed in the next section. We wish to maximize the log-likelihood (\ref{eq:reglogqa}) which would yield parameters $(\hat{\ag},\hat{\glssymbol{bth}})$; these are consistent if the model is well-specified (\textit{i.e.}\ there is a ``true'' quantization under classical regularity conditions). To ``push'' $\widetilde{\Q}$ further into $\Q$, $\hat{\q}$ is deduced from a \textit{maximum a posteriori} procedure applied to $\q_{\hat{\ag}}$:
+and can be used as a tractable substitute for (\ref{eq:lq}) to solve the original optimization problem (\ref{eq:BICq}), where now both $\ag$ and $\glssymbol{bth}$ have to be estimated, which is discussed in the next section. We wish to maximize the log-likelihood (\ref{eq:reglogqa}) which would yield parameters $(\hat{\ag},\hat{\glssymbol{bth}})$; these are consistent if the model is well-specified (\textit{i.e.}\ there is a ``true'' quantization under classical regularity conditions). Denoting by $A$ the space of $\ag$ and $\Q_A$ the space of $\q_{\ag}$, to ``push'' $\Q_A$ further into $\Q$, $\hat{\q}$ is deduced from a \textit{maximum a posteriori} procedure applied to $\q_{\hat{\ag}}$:
 \begin{equation}
     \label{eq:ht}
-    \hat{q}_{j,h}(x_j) = 1 \text{ if } h = \argmax_{1 \leq h' \leq m_j} q_{\hat{\ag}_{j,h'}}, 0 \text{ otherwise.}
+    \hat{q}_{j,h}(\glssymbol{x}_j) = 1 \text{ if } h = \argmax_{1 \leq h' \leq \glssymbol{mj}} q_{\hat{\ag}_{j,h'}}, 0 \text{ otherwise.}
 \end{equation}
-If there are several levels $h$ that satisfy (\ref{eq:ht}), we simply take the level that corresponds to smaller values of $x_j$ to be in accordance with the definition of $C_{j,h}$ in Equation~(\ref{eq:Cjhcont}). This {\it maximum a posteriori} principle will be exemplified in Figure~\ref{fig:MAP} on simulated data.
+If there are several levels $h$ that satisfy (\ref{eq:ht}), we simply take the level that corresponds to smaller values of $\glssymbol{x}_j$ to be in accordance with the definition of $C_{j,h}$ in Equation~(\ref{eq:Cjhcont}). This {\it maximum a posteriori} principle will be exemplified in Figure~\ref{fig:MAP} on simulated data. These approximations are justified by the following arguments. 
 
+From a deterministic point of view, we have $\Q \subset \Q_A$: First, the \textit{maximum a posteriori} step~(\ref{eq:ht}) produces contiguous intervals (\textit{i.e.}\ there exists $C_{j,h}$; $1 \leq j \leq d$, $1 \leq h \leq \glssymbol{mj}$, s.t.\ ${\hat{\q}}$ can be written as in~\ref{eq:qj}) \cite{same2011model}. Second, in the continuous case, the higher $\alpha_{j,h}^1$, the less smooth the transition from one quantization $h$ to its ``neighbor''\footnotemark[1] $h+1$, whereas $\dfrac{\alpha_{j,h}^0}{\alpha_{j,h}^1}$ controls the point in $\glssymbol{R}$ where the transition occurs \cite{chamroukhi2009regression}. Concerning the categorical case, the rationale is even simpler as $q_{\lambda \ag_j}(\glssymbol{x}_j) \to \glssymbol{ehmj} \text{ if } h = \argmax_{h'} q_{\alpha_{j,h'}}(\glssymbol{x}_j)$ as $\lambda \to +\infty$~\cite{reverdy2016parameter}.
+
+From a statistical point of view, 
+%as $\ag$ needs to diverge to infinity for $\q_{{\ag}}$ to approximate $\q$, the maximum likelihood estimator of $\ag$ does not converge. However, 
+under standard regularity conditions and with a suitable estimation procedure (see later for the proposed estimation procedure), the maximum likelihood framework would ensure the consistency of $(\q_{\hat{\ag}}, \hat{\glssymbol{bth}})$ towards $(\q,\glssymbol{bth})$ if $\ag^\star$ s.t.\ $\q_{\ag^\star} = \q$ was an interior point of the parameter space $A$. However, as emphasized in the previous paragraph, ``$\ag^\star = + \infty$'' such that the ML parameter is on the edge of the parameter space which hinders asymptotic properties (\textit{e.g.}\ normality) in some settings~\cite{10.2307/2289471}, but not ``convergence'' on which we focus here. I did not investigate this issue further since numerical experiments showed consistency: from an empirical point of view, we will see in Section~\ref{sec:experiments} and in particular in Figure~\ref{fig:MAP}, that the smooth approximation $\q_{\ag}$ converges towards ``hard'' quantizations\footnotemark[1] $\q$.
+
+Moreover, and as is usual, the log-likelihood $\ell_{\q_{\ag}}(\glssymbol{bth},(\glssymbol{bbx},\glssymbol{bby}))$ cannot be directly maximized w.r.t.\ $(\ag,\glssymbol{bth})$, so that we need an iterative procedure. To this end, the next section introduces a neural network of particular architecture.
+
+\footnotetext[1]{Up to a permutation on the labels $h=1 \ldots \glssymbol{mj}$ to recover the ordering in $C_{j,h}$ (see Equation (\ref{eq:Cjhcont})).}
 
 \subsection{A neural network-based estimation strategy} \label{sec:estim}
 
 \paragraph{Neural network architecture}
 
-To estimate parameters $\ag$ and $\glssymbol{bth}$ in the model (\ref{eq:reglogqa}), a particular neural network architecture can be used. The most obvious part is the output layer that must produce $p_{\glssymbol{bth}}(1|\q_{\ag}(\glssymbol{bx}))$ which is equivalent to a densely connected layer with a sigmoid activation $\sigma (\cdot)$.
+To estimate parameters $\ag$ and $\glssymbol{bth}$ in the model (\ref{eq:reglogqa}), a particular neural network architecture can be used. I shall insist that this network is only a way to use common deep learning frameworks, namely Tensorflow~\cite{tensorflow2015-whitepaper} through the high-level API Keras~\cite{chollet2015keras} instead of building a gradient ascent algorithm from scratch to optimize~\eqref{eq:lqa}. The most obvious part is the output layer that must produce $p_{\glssymbol{bth}}(1|\q_{\ag}(\glssymbol{bx}))$ which is equivalent to a densely connected layer with a sigmoid activation $\sigma (\cdot)$.
 
-For a continuous feature $\glssymbol{x}_j$ of $\glssymbol{bx}$, the combined use of $m_j$ neurons including affine transformations and softmax activation obviously yields $\q_{\ag_{j}}(x_j)$. Similarly, an input categorical feature $\glssymbol{x}_j$ with $l_j$ levels is equivalent to $l_j$ binary input neurons (presence or absence of the factor level). These $l_j$ neurons are densely connected to $m_j$ neurons without any bias term and a softmax activation. The softmax outputs are next aggregated via the summation in model (\ref{eq:reglogqa}), say $\Sigma_{\glssymbol{bth}}$ for short, and then the sigmoid function $\sigma$ gives the final output. All in all, the proposed model is straightforward to optimize with a simple neural network, as shown in Figure~\ref{fig:nn}.
+For a continuous feature $\glssymbol{x}_j$ of $\glssymbol{bx}$, the combined use of $\glssymbol{mj}$ neurons including affine transformations and softmax activation obviously yields $\q_{\ag_{j}}(\glssymbol{x}_j)$. Similarly, an input categorical feature $\glssymbol{x}_j$ with $\glssymbol{lj}$ levels is equivalent to $\glssymbol{lj}$ binary input neurons (presence or absence of the factor level). These $\glssymbol{lj}$ neurons are densely connected to $\glssymbol{mj}$ neurons without any bias term and a softmax activation. The softmax outputs are next aggregated via the summation in model (\ref{eq:reglogqa}), say $\Sigma_{\glssymbol{bth}}$ for short, and then the sigmoid function $\sigma$ gives the final output. All in all, the proposed model is straightforward to optimize with a simple neural network, as shown in Figure~\ref{fig:nn}.
 
 
 \def\layersep{2.5cm}
@@ -472,11 +481,11 @@ For a continuous feature $\glssymbol{x}_j$ of $\glssymbol{bx}$, the combined use
     \tikzstyle{annotrectangle} = [text width=8em, text centered]
 
 
-        \node[input neuron, pin=left:continuous value $x_j$] (I-1) at (0,-1) {};
+        \node[input neuron, pin=left:continuous value $\glssymbol{x}_j$] (I-1) at (0,-1) {};
         
         \node[input neuron, pin=left:categorical value $1$] (I-2) at (0,-2) {};
         \node[input neuron, pin=left:$\vdots$] (I-3) at (0,-3) {};
-        \node[input neuron, pin=left:categorical value $l_j$] (I-4) at (0,-4) {};
+        \node[input neuron, pin=left:categorical value $\glssymbol{lj}$] (I-4) at (0,-4) {};
 
     % Draw the hidden layer nodes
     \foreach \name / \y in {1,...,2}
@@ -532,7 +541,7 @@ For a continuous feature $\glssymbol{x}_j$ of $\glssymbol{bx}$, the combined use
     \draw [orange] (2,0) rectangle (3,-1.9);
     % \draw [red] (2,-2) rectangle (3,-4);
     
-    \node[annotrectangle,right of=H-1, node distance=1.5cm] {soft outputs $\q_{\ag_j}(x_j)$}; 
+    \node[annotrectangle,right of=H-1, node distance=1.5cm] {soft outputs $\q_{\ag_j}(\glssymbol{x}_j)$}; 
 
 \end{tikzpicture}
 \caption{Proposed shallow architecture to maximize (\ref{eq:lqa}).}
@@ -542,12 +551,15 @@ For a continuous feature $\glssymbol{x}_j$ of $\glssymbol{bx}$, the combined use
 
 \paragraph{Stochastic gradient descent as a quantization provider}
 
-By relying on stochastic gradient ascent, the smoothed likelihood (\ref{eq:lqa}) can be maximized over $\left(\ag, \glssymbol{bth} \right)$. Due to its convergence properties~\cite{bottou2010large}, the results should be close to the maximizers of the original likelihood (\ref{eq:lq}) if the model is well-specified, when there is a true underlying quantization. However, in the mis-specified model case, there is no such guarantee. Therefore, to be more conservative, we evaluate at each training epoch $(t)$ the quantization ${\q}^{\text{MAP}(t)}$ resulting from the \textit{maximum a posteriori} procedure explicited in Equation~(\ref{eq:ht}), then classically estimate the logistic regression parameter \textit{via} maximum likelihood, as done in Equation~(\ref{eq:lq}):
-\[\hat{\glssymbol{bth}}^{(s)} = \argmax_{\glssymbol{bth}} \ell_{\hat{q}^{(s)}}(\glssymbol{bth}; (\glssymbol{bbx},\glssymbol{bby}))\]
-and the resulting $\mbox{BIC}(\hat{\glssymbol{bth}}^{(s)})$ as in (\ref{eq:BICq}). If $T$ is a given maximum number of iterations of the stochastic gradient descent algorithm, the quantization retained at the end is then determined by the optimal epoch
-\begin{equation} \label{eq:opt_epoch}
-s_\star=\argmin_{t\in \{1,\ldots, T\}} \mbox{BIC}(\hat{\glssymbol{bth}}^{(s)}).
+By relying on stochastic gradient ascent, the smoothed likelihood (\ref{eq:lqa}) can be maximized over $\left(\ag, \glssymbol{bth} \right)$. Due to its convergence properties~\cite{bottou2010large}, the results should be close to the maximizers of the original likelihood (\ref{eq:lq}) if the model is well-specified, when there is a true underlying quantization. However, in the mis-specified model case, there is no such guarantee. Therefore, to be more conservative, we evaluate at each training epoch $(s)$ the quantization $\hat{\q}^{(s)}$ resulting from the \textit{maximum a posteriori} procedure explicited in Equation~(\ref{eq:ht}), then classically estimate the \gls{lr} parameter \textit{via} maximum likelihood, as done in Equation~(\ref{eq:lq}):
+\begin{equation} \label{eq:lr_param_q}
+\hat{\glssymbol{bth}}^{(s)} = \argmax_{\glssymbol{bth}} \ell_{\hat{q}^{(s)}}(\glssymbol{bth}; (\glssymbol{bbx},\glssymbol{bby}))
 \end{equation}
+and the resulting $\mbox{BIC}(\hat{\glssymbol{bth}}^{(s)})$ as in (\ref{eq:BICq}). If $S$ is a given maximum number of iterations of the stochastic gradient descent algorithm, the quantization retained at the end is then determined by the optimal epoch
+\begin{equation} \label{eq:opt_epoch}
+s_\star=\argmin_{s\in \{1,\ldots, S\}} \mbox{BIC}(\hat{\glssymbol{bth}}^{(s)}).
+\end{equation}
+You can think of $S$ as a computational budget: contrary to classical early stopping rules (\textit{e.g.}\ based on validation loss) used in neural network fitting, this network only acts as a stochastic quantization provider for~\eqref{eq:opt_epoch} which will naturally prevent overfitting. I reiterate that, in~\eqref{eq:opt_epoch}, the BIC can be swapped for the user's favourite model choice criterion.
 
 Lots of optimization algorithms for neural networks have been proposed, which all come with their hyperparameters. As, in the general case, $\ell_{\q_{\ag}}(\glssymbol{bth} ; (\glssymbol{bbx},\glssymbol{bby}))$ of Equation~\eqref{eq:lqa} is not guaranteed to be convex, there might be several local maxima, such that all these optimization methods might diverge, converge to a different maximum, or at least converge in very different numbers of epochs, as can be examplified in Animation~\ref{fig:anim_sgd}\footnote{Reproduced from \url{https://github.com/wassname/viz_torch_optim}}. I chose the RMSProp method, which showed good results and is one of the standard methods.
 
@@ -561,7 +573,7 @@ Lots of optimization algorithms for neural networks have been proposed, which al
  
 \paragraph{Choosing an appropriate number of levels}
 
-Concerning now the number of intervals or factor levels $\boldsymbol{m} = (m_j)_1^d$, they have also to be estimated since in practice they are unknown. Looping over all candidates $\boldsymbol{m}$ is intractable. But in practice, by relying on the \textit{maximum a posteriori} procedure developed in Equation~(\ref{eq:ht}), a lot of unseen factor levels might be dropped, \textit{e.g.}\ if $q_{\ag_{j,h}}(x_{i,j}) \ll 1$ for all training observations $\glssymbol{xij}$, the level $h$ ``vanishes'', \textit{i.e.}\ $\hat{q}_{j,h} = 0$. In practice, I recommend to start with a user-chosen $\bm{m}=\boldsymbol{m}_{\max}$ and we will see in the experiments of Section~\ref{sec:experiments} that the proposed approach is able to explore small values of $\boldsymbol{m}$ and to select a value $\hat{\boldsymbol{m}}$ drastically smaller than $\boldsymbol{m}_{\max}$. This phenomenon, which reduces the computational burden of the quantization task, is also illustrated in Section~\ref{sec:experiments}.
+Concerning now the number of intervals or factor levels $\boldsymbol{m} = (\glssymbol{mj})_1^d$, they have also to be estimated since in practice they are unknown. Looping over all candidates $\boldsymbol{m}$ is intractable. But in practice, by relying on the \textit{maximum a posteriori} procedure developed in Equation~(\ref{eq:ht}), a lot of unseen factor levels might be dropped, \textit{e.g.}\ if $q_{\ag_{j,h}}(\glssymbol{xij}) \ll 1$ for all training observations $\glssymbol{xij}$, the level $h$ ``vanishes'', \textit{i.e.}\ $\hat{q}_{j,h} = 0$. In practice, I recommend to start with a user-chosen $\glssymbol{bm}=\boldsymbol{m}_{\max}$ and we will see in the experiments of Section~\ref{sec:experiments} that the proposed approach is able to explore small values of $\boldsymbol{m}$ and to select a value $\hat{\boldsymbol{m}}$ drastically smaller than $\boldsymbol{m}_{\max}$. This phenomenon, which reduces the computational burden of the quantization task, is also illustrated in Section~\ref{sec:experiments}.
 
 The full algorithm is described in Appendix~\ref{app1:glmdiscNN}.
 
@@ -569,15 +581,13 @@ The full algorithm is described in Appendix~\ref{app1:glmdiscNN}.
 \section{An \gls{sem} approach} \label{sec:sem}
  
  
-In what follows, the quantization $\q(\glssymbol{bx})$ is seen as a latent feature denoted by $\bm{\mathfrak{Q}}$. The same notations can be introduced for this new feature:  $\bqk$ is an observation of $\bm{\mathfrak{Q}}$, $\bqk_j$ will designate the $j^{\text{th}}$ vectorial component of $\bqk$, $\bbqk$ will designate the $n$-sample where $\bbqk_i$ is its $i^{\text{th}}$ row
-%, corresponding to an observation
-, and so on. In the following Section, I translate earlier assumptions in probabilitics terms. In the subsequent Section, I make good use of these assumptions to provide a continuous relaxation of the quantization problem, as was empirically argumented in Section~\ref{subsec:relaxation}. This relaxation is equivalent to the one proposed in Section~\ref{sec:proposal}, although its use differs drastically, as will be emphasized in Section~\ref{subsec:stoch}.
+In what follows, the quantization $\q(\glssymbol{bx})$ is seen as a latent feature denoted by $\bm{\mathfrak{Q}}$. The same notations can be introduced for this new feature:  $\bqk$ is an observation of $\bm{\mathfrak{Q}}$, $\bqk_j$ will designate the $j^{\text{th}}$ vectorial component of $\bqk$, $\bbqk$ will designate the $n$-sample, and so on. In the following Section, I translate earlier assumptions in probabilitics terms. In the subsequent Section, I make good use of these assumptions to provide a continuous relaxation of the quantization problem, as was empirically argumented in Section~\ref{subsec:relaxation}. This relaxation is equivalent to the one proposed in Section~\ref{sec:proposal}, although its use differs drastically, as will be emphasized in Section~\ref{subsec:stoch}.
 
 \subsection{Probabilistic assumptions regarding the quantization latent feature}
 
 Firstly, only the well-specified model case is considered, which translates, with this new latent feature, as a probabilistic assumption:
 \begin{equation} \label{hyp:true}
-\exists \glssymbol{bth}^\star, \bqk^\star \text{s.t.\ } Y \sim p_{\glssymbol{bth}^\star}(\cdot | \bqk^\star)
+\exists \glssymbol{bthstar}, \bqk^\star \text{s.t.\ } Y \sim p_{\glssymbol{bthstar}}(\cdot | \bqk^\star)
 \end{equation}
 Secondly, the result of the quantization is assumed to be ``self-contained'' w.r.t.\ predictive information in $\glssymbol{bx}$, \textit{i.e.}\ it is assumed all available information about $y$ in $\glssymbol{bx}$ has been ``squeezed'' by quantizing the data:
 \begin{equation} \label{hyp:squeeze}
@@ -585,7 +595,7 @@ Secondly, the result of the quantization is assumed to be ``self-contained'' w.r
 \end{equation}
 Thirdly, the component-wise nature of the quantization can be stated as:
 \begin{equation} \label{hyp:component}
-\forall \glssymbol{bx},\bqk,\: p(\bqk|\glssymbol{bx}) = \prod_{j=1}^d p(\bqk_j | x_j)
+\forall \glssymbol{bx},\bqk,\: p(\bqk|\glssymbol{bx}) = \prod_{j=1}^d p(\bqk_j | \glssymbol{x}_j)
 \end{equation}
 
 
@@ -594,41 +604,44 @@ Thirdly, the component-wise nature of the quantization can be stated as:
 
 If we consider the deterministic discretization scheme defined in Section~\ref{sec:model_selection}, we have, analogous to Equation~\eqref{eq:qj}:
 $$
-p(\bqk_j | x_j) = 1 \text{ if } x_j \in C_{j,h} \text{ and } \qk_{j,h} = 1, 1 \leq h \leq m_j,
+p(\bqk_j = \glssymbol{ehmj} | \glssymbol{x}_j) = 1 \text{ if } \glssymbol{x}_j \in C_{j,h},
 $$
 which is a step function. Rewriting $p(y| \glssymbol{bx})$ by integrating over these new latent features,
 % and using hypotheses~\ref{hyp:true}, \ref{hyp:squeeze} and \ref{hyp:component} respectively, 
 we get:
 \begin{align*}
-p(y | \glssymbol{bx}) & = p_{\glssymbol{bth}^\star}(y | \bqk^\star) & \text{ (using \eqref{hyp:true}) } \\
+p(y | \glssymbol{bx}) & = p_{\glssymbol{bthstar}}(y | \bqk^\star) & \text{ (using \eqref{hyp:true}) } \\
 & = \sum_{\bqk \in \Q} p(y, \bqk | \glssymbol{bx}) \\
 & = \sum_{\bqk \in \Q} p(y | \bqk, \glssymbol{bx}) p(\bqk | \glssymbol{bx}) \\
 & = \sum_{\bqk \in \Q} p(y | \bqk) p(\bqk | \glssymbol{bx}) & \text{ (using \eqref{hyp:squeeze}) } \\
-& = \sum_{\bqk \in \Q} p(y | \bqk) \prod_{j=1}^d p(\bqk_j | x_j) & \text{ (using \eqref{hyp:component}) }
+& = \sum_{\bqk \in \Q} p(y | \bqk) \prod_{j=1}^d p(\bqk_j | \glssymbol{x}_j) & \text{ (using \eqref{hyp:component}) }
 \end{align*}
-The well-specified model hypothesis~\eqref{hyp:true} yields for all $x_j$, $p(\bqk_j^\star | x_j) = 1$. Conversely, for $\bqk \in \Q$ such that $\bqk \cancel{\mathcal{R}_{\mathcal{T}_n}} \bqk^\star$, there exists a feature $j$ and an observation $x_{i,j}$ such that $p(\bqk_j | x_j) = 0$. Consequently, the above sum, over all training observations in $\mathcal{T}_n$, reduces to:
+The well-specified model hypothesis~\eqref{hyp:true} yields for all $\glssymbol{x}_j$, $p(\bqk_j^\star | \glssymbol{x}_j) = 1$. Conversely, for $\bqk \in \Q$ such that $\bqk \cancel{\mathcal{R}_{\mathcal{T}_n}} \bqk^\star$, there exists a feature $j$ and an observation $\glssymbol{xij}$ such that $p(\bqk_j | \glssymbol{x}_j) = 0$. Consequently, the above sum, over all training observations in $\mathcal{T}_n$, reduces to:
 \begin{align*}
 p(\glssymbol{bby} | \glssymbol{bbx}) & = \prod_{i=1}^n p(y_i | \glssymbol{bx}_i) \\
- & = \sum_{\bqk \in \Q} \prod_{i=1}^n p(y_i | \bqk_i) \prod_{j=1}^d p(\bqk_{i,j} | x_{i,j}) \\
- & = \prod_{i=1}^n p(y_i | \bqk_i^\star) \prod_{j=1}^d p(\bqk_{i,j}^\star | x_{i,j})
+ & = \sum_{\bqk \in \Q} \prod_{i=1}^n p(y_i | \bqk_i) \prod_{j=1}^d p(\bqk_{i,j} | \glssymbol{xij}) \\
+ & = \prod_{i=1}^n p(y_i | \bqk_i^\star) \prod_{j=1}^d p(\bqk_{i,j}^\star | \glssymbol{xij})
 \end{align*}
 Thus, we have :
-\[ \bqk^\star = \argmax_{\bqk \in \Q} \prod_{i=1}^n p(y_i | \bqk_i ) \prod_{j=1}^d p(\bqk_{i,j} | x_{i,j}). \]
-This new formulation of the best quantization is still untractable since it requires to evaluate all quantizations in $\Q$, although all terms except $\bqk^\star$ contribute to $0$ in the above $\argmax$. In the misspecfied model-case however, there is no such guarantee but it can still be claimed that the best candidate $\bqk^\star$ in terms of criterion~\eqref{eq:BICq} dominates the sum.
+\[ \bqk^\star = \argmax_{\bqk \in \Q} \prod_{i=1}^n p(y_i | \bqk_i ) \prod_{j=1}^d p(\bqk_{i,j} | \glssymbol{xij}). \]
+This new formulation of the best quantization is still untractable since it requires to evaluate all quantizations in $\Q$ just like in~\eqref{eq:BICq}, although all terms except $\bqk^\star$ contribute to $0$ in the above $\argmax$. In the misspecfied model-case however, there is no such guarantee but it can still be claimed that the best candidate $\bqk^\star$ in terms of criterion~\eqref{eq:BICq} dominates the sum.
 
-Our goal in the next Section is to generate good candidates $\bbqk$ as in Section~\ref{sec:estim}. Among other things detailed later on, models for $p(\glssymbol{bby} | \bqk)$ and $p(\bqk_j | x_j)$ shall be proposed. If the resulting MCMC is efficient, $\q_\star$ will be the mode of the empirical distribution of generated candidates, which, as in Section~\ref{sec:proposal} with the neural network approach, can be selected with the BIC criterion~\eqref{eq:BICq}. Using \eqref{hyp:true}, it seems most natural to use a \gls{lr} for $p( y | \bqk_j)$. Following Section~\ref{sec:proposal} and as was empirically argumented in Section~\ref{subsec:relaxation}, $p(\bqk_j | x_j)$ will be parametrized by $\ag_j$. 
+Our goal in the next Section is to generate good candidates $\bbqk$ as in Section~\ref{sec:estim}. Among other things detailed later on, models for $p(y | \bqk)$ and $p(\bqk_j | \glssymbol{x}_j)$ shall be proposed. 
+A stochastic ``quantization provider'' is designed as in the previous Section. Following arguments of the preceding paragraph, its empirical distribution of generated candidates shall be dominated by $\q^\star$,
+%If the resulting MCMC is efficient, $\q^\star$ will be the mode of the empirical distribution of generated candidates,
+which, as in Section~\ref{sec:proposal} with the neural network approach, can be selected with the BIC criterion~\eqref{eq:BICq}. Using \eqref{hyp:true}, it seems most natural to use a \gls{lr} for $p( y | \bqk_j)$. Following Section~\ref{sec:proposal} and as was empirically argumented in Section~\ref{subsec:relaxation}, the instrumental distribution $p(\bqk_j | \glssymbol{x}_j)$ will take a similar form as $\q_{\ag}$. 
 
-{\bf For a continuous feature}, we resort to a polytomous logistic regression, similar to the softmax function of Equation~\eqref{eq:softmax} without the over-parametrization (one level per feature $j$, say $m_j$, is considered reference):
-\[ p_{\ag_{j,h}}(\bqk_j | x_j) = \begin{cases} \frac{1}{\sum_{h'=1}^{m_j-1} \exp(\alpha_{j,h'}^0 + \alpha_{j,h'}^1 x_j)} \text{ if } h = m_j, \\ \frac{\alpha_{j,h}^0 + \alpha_{j,h}^1 x_j}{\sum_{h'=1}^{m_j-1} \exp(\alpha_{j,h'}^0 + \alpha_{j,h'}^1 x_j)} \text{ otherwise.} \end{cases} \]
+{\bf For a continuous feature}, we resort to a polytomous logistic regression, similar to the softmax function of Equation~\eqref{eq:softmax} without the over-parametrization (one level per feature $j$, say $\glssymbol{mj}$, is considered reference):
+\[ p_{\ag_{j,h}}(\bqk_j = \glssymbol{ehmj} | \glssymbol{x}_j) = \begin{cases} \frac{1}{\sum_{h'=1}^{\glssymbol{mj}-1} \exp(\alpha_{j,h'}^0 + \alpha_{j,h'}^1 \glssymbol{x}_j)} \text{ if } h = \glssymbol{mj}, \\ \frac{\alpha_{j,h}^0 + \alpha_{j,h}^1 \glssymbol{x}_j}{\sum_{h'=1}^{\glssymbol{mj}-1} \exp(\alpha_{j,h'}^0 + \alpha_{j,h'}^1 \glssymbol{x}_j)} \text{ otherwise.} \end{cases} \]
 {\bf For categorical features}, simple contingency tables are employed:
-\[ p_{\ag_{j,h}^o}(\bqk_j | x_j) = \frac{|\bbqk_{j,h}|}{|\{x_j=o\}|} \text{ for } 1 \leq o \leq l_j \]
-Similarly, $p_{\ag_j}(\bqk_j | x_j)$ are no more step functions but smooth functions as in Figure~\ref{fig:MAP}.
+\[ p_{\ag_{j,h}^o}(\bqk_j = \glssymbol{ehmj} | \glssymbol{x}_j) = \frac{|\bbqk_{j,h}|}{|\{\glssymbol{x}_j=o\}|} \text{ for } 1 \leq o \leq \glssymbol{lj} \]
+Similarly, $p_{\ag_j}(\bqk_j | \glssymbol{x}_j)$ are no more step functions but smooth functions as in Figure~\ref{fig:MAP}.
 
 \paragraph{Remark on polytomous logistic regressions}
 
 Since the resulting latent categorical feature can be interpreted as an ordered categorical features (the \textit{maximum a posterior} operation yields contiguous intervals as argued in Section~\ref{subsec:relaxation}), ordinal ``parallel'' logistic regression~\cite{o2006logistic} could be used (provided levels $h$ are reordered). This particular model is of the form:
-\[ \ln \frac{p(\bqk_{j,h+1} = 1 | x_j)}{p(\bqk_{j,h} = 1 | x_j)} = \alpha_{j,h,0} + \alpha_{j,h} x_j, 1 \leq h < m_j, \]
-which restricts the number of parameters since all levels share the same slope. Its advantages lie in the fact that it might lead to sharper door functions quicker, and that it has fewer parameters to estimate, thus reducing \textit{de facto} the estimation variance of each ``soft'' quantization. However, it makes it harder for levels to ``vanish'' which would require to iterate over the number of levels per feature $m_j$ which we wanted to avoid. In practice, it yielded similar results to polytomous logistic regression such that they remain a parameter of the \textsf{R} package \textit{glmdisc} (see Appendix~\ref{app2}).
+\[ \ln \frac{p(\bqk_{j} = = \bm{e}_{h+1}^{\glssymbol{mj}} | \glssymbol{x}_j)}{p(\bqk_{j} = = \bm{e}_h^{\glssymbol{mj}} | \glssymbol{x}_j)} = \alpha_{j,h,0} + \alpha_{j} \glssymbol{x}_j, 1 \leq h < \glssymbol{mj}, \]
+which restricts the number of parameters since all levels $h$ share the same slope $\alpha_j$. Its advantages lie in the fact that it might lead to sharper door functions quicker, and that it has fewer parameters to estimate, thus reducing \textit{de facto} the estimation variance of each ``soft'' quantization $p_{\ag_j}$. However, it makes it harder for levels to ``vanish'' which would require to iterate over the number of levels per feature $\glssymbol{mj}$ which we wanted to avoid (see Paragraph~\nameref{par:choosing_sem} in the next Section). In practice, it yielded similar results to polytomous logistic regression such that they remain a parameter of the \textsf{R} package \textit{glmdisc} (see Appendix~\ref{app2}).
 
 \subsection{Stochastic search of the best quantization} \label{subsec:stoch}
 
@@ -638,36 +651,38 @@ p(y | \glssymbol{bx}, \glssymbol{bth}, \ag) = \sum_{\bqk \in \Q} p_{\glssymbol{b
 \end{equation}
 A straightforward way to maximize the likelihood of $p(y | \glssymbol{bx}, \glssymbol{bth}, \ag)$ in $(\glssymbol{bth}, \ag)$ (not to be mistaken with~\eqref{eq:lqa}), as was done in Section~\ref{sec:proposal}, to deduce $\q^\star$ from $\ag$ \textit{via} the $\argmax$ operation (see Section~\ref{subsec:relaxation} and Equation~\eqref{eq:ht}), is to use an \gls{em} algorithm~\cite{dempster1977maximum}.
 
-However, maximizing this likelihood directly is untractable as the Expectation step requires to sum over $\bqk \in \Q$. Classically, the \gls{em} can be replaced by an MCMC method called \acrlong{sem}~\cite{celeux1985sem}: the expectation (the sum over $\bqk \in \Q$) is approximated by the empirical distribution of draws $\bqk^{(1)}, \dots, \bqk^{(\max\_{\text{iter}})}$ from $p_{\glssymbol{bth}}(y | \cdot) \prod_{j=1}^d p_{\ag_j}(\cdot | x_j)$.
+However, maximizing this likelihood directly is untractable as the Expectation step requires to sum over $\bqk \in \Q$. Classically, the \gls{em} can be replaced by the \acrlong{sem}~\cite{celeux1985sem} algorithm: the expectation (the sum over $\bqk \in \Q$) is approximated by the empirical distribution of draws $\bqk^{(1)}, \dots, \bqk^{(S)}$ from $p_{\glssymbol{bth}}(y | \cdot) \prod_{j=1}^d p_{\ag_j}(\cdot | \glssymbol{x}_j)$.
 
 \subsubsection{\gls{sem} as a quantization provider}
 
-As the parameters $\ag$ of $\q_{\ag}$ were initialized randomly in the neural network approach, the latent features observations $\bbqk^{(0)}$ are initialized randomly. At step $s$, the \gls{sem} algorithm allows us to compute the MLE of $\glssymbol{bth}$ (resp. $\ag$) as $\hat{\glssymbol{bth}}^{(s)}$ (resp. $\hat{\ag}^{(s)}$) given $\bbqk^{(s)}$ by maximizing the following likelihoods:
+As the parameters $\ag$ of $\q_{\ag}$ were initialized randomly in the neural network approach, the latent features observations $\bbqk^{(0)}$ are initialized randomly. At step $s$, the \gls{sem} algorithm allows us to compute the MLE of $\glssymbol{bth}$ (resp. $\ag$) as ${\glssymbol{bth}}^{(s)}$ (resp. ${\ag}^{(s)}$) given $\bbqk^{(s)}$ by maximizing the following likelihoods (M-steps):
 \begin{alignat}{2}
-\hat{\glssymbol{bth}}^{(s)} & = \argmax_{\glssymbol{bth}} \ell(\glssymbol{bth}; \bbqk^{(s)}, \glssymbol{bby}) && = \argmax_{\glssymbol{bth}} \sum_{i=1}^n \ln p_{\glssymbol{bth}}(y_i | \bqk^{(s)}_i), \nonumber \\
-\hat{\ag_j}^{(s)} & = \argmax_{\ag_j} \ell(\ag_j; \glssymbol{bbx}_j, \bbqk^{(s)}_j) && = \argmax_{\ag_j} \sum_{i=1}^n \ln p_{\ag_j}(\bqk^{(s)}_{i,j} | x_{i,j}) \text{ for } 1 \leq j \leq d. \label{eq:mle_ag}
+{\glssymbol{bth}}^{(s)} & = \argmax_{\glssymbol{bth}} \ell(\glssymbol{bth}; \bbqk^{(s)}, \glssymbol{bby}) && = \argmax_{\glssymbol{bth}} \sum_{i=1}^n \ln p_{\glssymbol{bth}}(y_i | \bqk^{(s)}_i), \nonumber \\
+{\ag_j}^{(s)} & = \argmax_{\ag_j} \ell(\ag_j; \glssymbol{bbx}_j, \bbqk^{(s)}_j) && = \argmax_{\ag_j} \sum_{i=1}^n \ln p_{\ag_j}(\bqk^{(s)}_{i,j} | \glssymbol{xij}) \text{ for } 1 \leq j \leq d. \label{eq:mle_ag}
 \end{alignat}
 
-As the \gls{lr} $p_{\glssymbol{bth}}(y | \bqk)$ is multivariate, it is hard to sample simultaneously all latent features. We have to resort to the Gibbs-sampler~\cite{casella1992explaining}: $\bqk_j$ is sampled while holding latent features $\bqk_{-\{j\}}$ fixed:
+As the \gls{lr} $p_{\glssymbol{bth}}(y | \bqk)$ is multivariate, it is hard to sample simultaneously all latent features. We have to resort to the Gibbs-sampler~\cite{casella1992explaining}: $\bqk_j$ is sampled while holding latent features $\bqk_{-\{j\}}$ fixed (S-step):
 \begin{equation} \label{eq:q_draw}
-\bqk_j^{(s+1)} \sim p_{\hat{\glssymbol{bth}}^{(s)}}(y | \bqk_{-\{j\}}^{(s)}, \cdot) p_{\hat{\ag}^{(s)}}(\cdot | x_j)
+\bqk_j^{(s+1)} \sim p_{\hat{\glssymbol{bth}}^{(s)}}(y | \bqk_{-\{j\}}^{(s)}, \cdot) p_{\hat{\ag}^{(s)}}(\cdot | \glssymbol{x}_j)
 \end{equation}
 This process is repeated for all features $1 \leq j \leq d$.
 
-%This MCMC provides parameters $\hat{\ag}^{(1)}, \dots, \hat{\ag}^{(\max\_{\text{iter}})}$ which can be used to produce $\hat{\q}^{(1)}, \dots, \hat{\q}^{(\max\_{\text{iter}})}$ following the \textit{maximum a posteriori} scheme from Equation~\eqref{eq:ht}. The best proposed quantization $\q^\star$ is thus chosen among them \textit{via} the BIC criterion as in Equation~\eqref{eq:opt_epoch}.
+This \gls{sem} provides parameters ${\ag}^{(1)}, \dots, {\ag}^{(S)}$ which can be used to produce $\hat{\q}^{(1)}, \dots, \hat{\q}^{(S)}$ following the \textit{maximum a posteriori} scheme from Equation~\eqref{eq:ht}, adapated to this new formulation:
+\[ \hat{\q}_j^{(s)}(\cdot) = \argmax_{h} p_{\ag_j^{(s)}}(\glssymbol{ehmj} | \cdot ) .\]
+The \gls{lr} parameters $\hat{\glssymbol{bth}}^{(s)}$ on quantized data are obtained similarly as in~\eqref{eq:lr_param_q}. The best proposed quantization $\q^\star$ is thus chosen among them \textit{via e.g.}\ the BIC criterion as in Equation~\eqref{eq:opt_epoch}.
 
 
 \subsubsection{Validity of the approach}
 
-The pseudo-completed sample $(\glssymbol{bbx}, \bbqk^{(s)}, \glssymbol{bby})$ allows to compute $(\hat{\glssymbol{bth}}^{(s)},\hat{\ag}^{(s)})$ which do not converge to the MLE of $p(\glssymbol{bby} | \glssymbol{bbx}, \glssymbol{bth}, \ag)$, for the simple reason that, being random in essence, it does not converge pointwise. From its authors, the \gls{sem} is however expected to be directed by the \gls{em} dynamics~\cite{celeux_sem} and as any MCMC approach, its empirical distribution converges to the target distribution $p(\glssymbol{bby} | \glssymbol{bbx}, \glssymbol{bth}, \ag)$ provided such a distribution exists and is unique. This existence is guaranteed by remarking that for all features $j$, $ p(\bqk_j | x_j, \bqk^{(s)}_{-\{j\}} y, \glssymbol{bth}, \ag) \propto p_{\glssymbol{bth}}(y | \bqk^{(s)}_{-\{j\}}, \bqk_j) p_{\ag_j}(\bqk_j | x_j) > 0 $ by definition of the \gls{lr} and polytomous logistic regressions or the contingency tables respectively. The uniqueness is not guaranteed since levels can disappear and there is an absorbing state (the empty model): this point is detailed in the next Section.
+The pseudo-completed sample $(\glssymbol{bbx}, \bbqk^{(s)}, \glssymbol{bby})$ allows to compute $({\glssymbol{bth}}^{(s)},{\ag}^{(s)})$ which do not converge to the MLE of $p(\glssymbol{bby} | \glssymbol{bbx}, \glssymbol{bth}, \ag)$, for the simple reason that, being random in essence, it does not converge pointwise. From its authors, the \gls{sem} is however expected to be directed by the \gls{em} dynamics~\cite{celeux_sem} and its empirical distribution converges to the target distribution $p(\glssymbol{bby} | \glssymbol{bbx}, \glssymbol{bth}, \ag)$ provided such a distribution exists and is unique. This existence is guaranteed by remarking that for all features $j$, $ p(\bqk_j | \glssymbol{x}_j, \bqk^{(s)}_{-\{j\}} y, \glssymbol{bth}, \ag) \propto p_{\glssymbol{bth}}(y | \bqk^{(s)}_{-\{j\}}, \bqk_j) p_{\ag_j}(\bqk_j | \glssymbol{x}_j) > 0 $ by definition of the \gls{lr} and polytomous logistic regressions or the contingency tables respectively. The uniqueness is not guaranteed since levels can disappear and there is an absorbing state (the empty model): this point is detailed in the next Section.
 
-In its original purpose~\cite{celeux_sem}, the \gls{sem} was employed either to find good starting points for the \gls{em} (\textit{e.g.}\ to avoid local maxima) or to propose an estimator of the MLE of the target distribution as the mean or the mode of the resulting empirical distribution, eventually after a burn-in phase. As, in our setting, we are not directly interested in the MLE but only to the best quantization in the sense of Equation~\eqref{eq:BICq}, we compute $\hat{\q}^{(1)}, \dots, \hat{\q}^{(\max\_{\text{iter}})}$ following the \textit{maximum a posteriori} scheme from Equation~\eqref{eq:ht}. The best proposed quantization $\q^\star$ is thus chosen among them \textit{via} the BIC criterion as in Equation~\eqref{eq:opt_epoch}.
+In its original purpose~\cite{celeux_sem}, the \gls{sem} was employed either to find good starting points for the \gls{em} (\textit{e.g.}\ to avoid local maxima) or to propose an estimator of the MLE of the target distribution as the mean or the mode of the resulting empirical distribution, eventually after a burn-in phase. As, in our setting, we are not directly interested in the MLE but only to the best quantization in the sense of Equation~\eqref{eq:BICq}. The best proposed quantization $\q^\star$ is thus chosen among them \textit{via} the BIC criterion as in Equation~\eqref{eq:opt_epoch} as stated in the previous paragraph.
 
-\subsubsection{Choosing an appropriate number of levels}
+\subsubsection{Choosing an appropriate number of levels} \label{par:choosing_sem}
 
-Contrary to the neural network approach developed in Section~\ref{sec:proposal}, the \gls{sem} algorithm alternates between drawing $\bbqk^{(s)}$ and fitting $\hat{\glssymbol{bth}}^{(s)}$ and $\hat{\ag}^{(s)}$  at each step $s$. Therefore, additionally to the phenomenon of ``vanishing'' levels caused by the \textit{maximum a posteriori} procedure similar to the neural network approach, if a level $h$ of $\bqk$ is not drawn, following Equation~\eqref{eq:q_draw}, at step $s$, then at step $s+1$ when adjusting parameters $\ag_j$ by maximum likelihood from Equation~\eqref{eq:mle_ag}, this level will have disappeared and cannot be drawn again. A Reversible-Jump MCMC approach would be needed~\cite{green1995reversible} to ``resuscitate'' these levels, which is not needed in the neural network approach because its architecture is fixed in advance. As a consequence, with a design matrix of fixed size $n$, there is a non-zero probability that for any given feature, any of its levels collapses at each step such that $m_j^{(s+1)} \leftarrow m_j^{(s)} - 1$.
+Contrary to the neural network approach developed in Section~\ref{sec:proposal}, the \gls{sem} algorithm alternates between drawing $\bbqk^{(s)}$ and fitting ${\glssymbol{bth}}^{(s)}$ and ${\ag}^{(s)}$  at each step $s$. Therefore, additionally to the phenomenon of ``vanishing'' levels caused by the \textit{maximum a posteriori} procedure similar to the neural network approach, if a level $h$ of $\bqk$ is not drawn, following Equation~\eqref{eq:q_draw}, at step $s$, then at step $s+1$ when adjusting parameters $\ag_j$ by maximum likelihood from Equation~\eqref{eq:mle_ag}, this level will have disappeared and cannot be drawn again. A Reversible-Jump MCMC approach would be needed~\cite{green1995reversible} to ``resuscitate'' these levels, which is not needed in the neural network approach because its architecture is fixed in advance. As a consequence, with a design matrix of fixed size $n$, there is a non-zero probability that for any given feature, any of its levels collapses at each step such that $\glssymbol{mj}^{(s+1)} \leftarrow \glssymbol{mj}^{(s)} - 1$.
 
-The MCMC has thus an absorbing state for which all features are quantized into one level (the empty model with no features) which is reached in a finite number of steps (although very high if $n$ is sufficiently large as is the case with \textit{Credit Scoring} data). The \gls{sem} algorithm is an effective way to start from a high number of levels per feature $\bm{m}_{\max}$ and explore smaller values.
+The MCMC has thus an absorbing state for which all features are quantized into one level (the empty model with no features) which is reached in a finite number of steps (although very high if $n$ is sufficiently large as is the case with \textit{Credit Scoring} data). The \gls{sem} algorithm is an effective way to start from a high number of levels per feature $\glssymbol{bm}_{\max}$ and explore smaller values.
 
 The full algorithm is described in Appendix~\ref{app1:glmdiscSEM}.
 
@@ -678,15 +693,15 @@ This section is divided into three complementary parts to assess the validity of
 
 \subsection{Simulated data: empirical consistency and robustness}
 
-I focus here on discretization of continuous features (similar experiments could be conducted on categorical ones). Two continuous features $x_1$ and $x_2$ are sampled from the uniform distribution on $[0,1]$ and discretized as exemplified on Figure~\ref{fig:exp_sim} by using
+I focus here on discretization of continuous features (similar experiments could be conducted on categorical ones). Two continuous features $\glssymbol{x}_1$ and $\glssymbol{x}_2$ are sampled from the uniform distribution on $[0,1]$ and discretized as exemplified on Figure~\ref{fig:exp_sim} by using
 \[\q_1(\cdot)=\q_2(\cdot) = (\mathds{1}_{]-\infty,1/3]}(\cdot),\mathds{1}_{]1/3,2/3]}(\cdot),\mathds{1}_{]2/3,\infty[}(\cdot)).\]
 Here, following (\ref{eq:Cjhcont}), we have $d=2$ and $m_1=m_2=3$ and the cutpoints are $c_{j,1}=1/3$ and $c_{j,2}=2/3$ for $j=1,2$. Setting $\glssymbol{bth}=(0,-2,2,0,-2,2,0)$, the target feature $y$ is then sampled from $p_{\glssymbol{bth}}(\cdot | \q(\glssymbol{bbx}))$ via the logistic model (\ref{eq:reglogq}).
 
 \begin{figure}[!ht]
 \centering
 \begin{tikzpicture}
-      \draw[->] (-1,0) -- (9,0) node[right] {$x$};
-      \draw[->] (0,-1) -- (0,3) node[above] {$p(x)$};
+      \draw[->] (-1,0) -- (9,0) node[right] {$\glssymbol{x}$};
+      \draw[->] (0,-1) -- (0,3) node[above] {$p(\glssymbol{x})$};
       \draw[scale=1,domain=0.5:7,smooth,variable=\y,red,thick]  plot ({\y},2.5);
       \draw[scale=1,domain=-1:0.5,smooth,variable=\y,red,thick]  plot ({\y},0);
       \draw[scale=1,domain=7:8.5,smooth,variable=\y,red,thick]  plot ({\y},0);
@@ -696,9 +711,9 @@ Here, following (\ref{eq:Cjhcont}), we have $d=2$ and $m_1=m_2=3$ and the cutpoi
       \draw[scale=1,domain=-0.2:2.8,smooth,variable=\x,blue]  plot (2.67,{\x});
       \draw[scale=1,domain=-0.2:2.8,smooth,variable=\x,blue]  plot (4.83,{\x});
 
-		\node[scale=0.7] (q1) at  (1.2,2.7) {\small $\q(x)=(1,0,0)$};
-		\node[scale=0.7] (q2) at  (3.5,2.7) {\small $\q(x)=(0,1,0)$};
-		\node[scale=0.7] (q3) at  (6,2.7) {\small $\q(x)=(0,0,1)$};
+		\node[scale=0.7] (q1) at  (1.2,2.7) {\small $\q(\glssymbol{x})=(1,0,0)$};
+		\node[scale=0.7] (q2) at  (3.5,2.7) {\small $\q(\glssymbol{x})=(0,1,0)$};
+		\node[scale=0.7] (q3) at  (6,2.7) {\small $\q(\glssymbol{x})=(0,0,1)$};
 
 		\node[scale=0.7] (x1) at  (0.5,-0.5) {$0$};
 		\node[scale=0.7] (x2) at  (2.67,-0.5) {$c_1=1/3$};
@@ -706,7 +721,7 @@ Here, following (\ref{eq:Cjhcont}), we have $d=2$ and $m_1=m_2=3$ and the cutpoi
 		\node[scale=0.7] (x4) at  (7,-0.5) {$1$};
 
 \end{tikzpicture}
-\caption{\label{fig:exp_sim} Pdf of the simulated continuous data $x$ and the true quantization $\q$.}
+\caption{\label{fig:exp_sim} Pdf of the simulated continuous data $\glssymbol{x}$ and the true quantization $\q$.}
 \end{figure}
 
 
@@ -714,9 +729,9 @@ From the \textit{glmdisc} algorithm, I studied three cases:
 \begin{enumerate}[(a)]
     \item First, the quality of the cutoff estimator $\hat{c}_{j,2}$ of $c_{j,2} = 2/3$ is assessed when the starting maximum number of intervals per discretized continuous feature is set to its true value $m_1=m_2= 3$;
     \item Second, I estimated the number of intervals $\hat{m}_1$ of $m_1=3$ when the starting maximum number of intervals per discretized continuous feature is set to $m_{\text{max}} = 10$; 
-    \item Last, I added a third feature $x_3$ also drawn uniformly on $[0,1]$ but uncorrelated to $y$ and estimated the number $\hat{m}_3$ of discretization intervals selected for $x_3$. The reason is that a non-predictive feature which is discretized or grouped into a single value is \textit{de facto} excluded from the model, and this is a positive side effect.
+    \item Last, I added a third feature $\glssymbol{x}_3$ also drawn uniformly on $[0,1]$ but uncorrelated to $\glssymbol{y}$ and estimated the number $\hat{m}_3$ of discretization intervals selected for $\glssymbol{x}_3$. The reason is that a non-predictive feature which is discretized or grouped into a single value is \textit{de facto} excluded from the model, and this is a positive side effect.
 \end{enumerate}
-From a statistical point of view, experiment (a) assesses the empirical consistency of the estimation of $C_{j,h}$, whereas experiments (b) and (c) focus on the consistency of the estimation of $m_j$. The results are summarized in Table~\ref{tab:estim_precision} where 95\% confidence intervals (CI~\cite{sun2014fast}) are given, with a varying sample size. Note in particular that the slight underestimation in (b) is a classical consequence of the BIC criterion on small samples. 
+From a statistical point of view, experiment (a) assesses the empirical consistency of the estimation of $C_{j,h}$, whereas experiments (b) and (c) focus on the consistency of the estimation of $\glssymbol{mj}$. The results are summarized in Table~\ref{tab:estim_precision} where 95\% confidence intervals (CI~\cite{sun2014fast}) are given, with a varying sample size. Note in particular that the slight underestimation in (b) is a classical consequence of the BIC criterion on small samples. 
 
 \begin{table}[ht]
     \centering
@@ -725,18 +740,18 @@ From a statistical point of view, experiment (a) assesses the empirical consiste
 \begin{tabular}{lllllll}
 Algorithm & $n$ & (a) $\hat{c}_{j,2}$ & (b) & $\hat{m}_1$ & (c) & $\hat{m}_3$ \\
 \hline
+\hline
 \textit{glmdisc}-NN & $1{,}000$ & $[0.656,0.666]$ & \myobar{9}{90}{1} & \mybar{60}{32}{8} \\
-\textit{glmdisc}-SEM & $1{,}000$ & $[0.655,0.710]$ & \myobar{2}{53}{44} & \mybar{34}{56}{10} \\
+\textit{glmdisc}-SEM & $1{,}000$ & $[0.664,0.669]$ & \myobar{2}{53}{44} & \mybar{34}{56}{10} \\
+\hline
 \textit{glmdisc}-NN & $10{,}000$ & $[0.666,0.666]$ & \myobar{0}{100}{0} & \mybar{88}{12}{0} \\
-\textit{glmdisc}-SEM & $10{,}000$ & $[0.666,0.666]$ & \myobar{0}{100}{0} & \mybar{30}{48}{22}
+\textit{glmdisc}-SEM & $10{,}000$ & $[0.666,0.666]$ & \myobar{2}{69}{30} & \mybar{30}{48}{22}
 \end{tabular}
 \end{table}
 
 To complement these experiments on simulated data following a well-specified model, a similar study can be done for categorical features: 10 levels are drawn uniformly and 3 groups of levels, which share the same log-odd ratio, are created. The same phenomenon as in Table~\ref{tab:estim_precision} is witnessed: the empirical distribution of the estimated number of groups of levels is peaked at its true value of 3.
 
-Finally, it was argued in Section~\ref{sec:model_selection} that by considering all features when quantizing the data, .
-
-\textcolor{red}{commenter le tableau et donner le mécanisme de génération de données}
+Finally, it was argued in Section~\ref{sec:model_selection} that by considering all features when quantizing the data, relying on a multivariate approach could yield better results than classical univariate techniques in presence of correlation. This claim is verified in Table~\ref{tab:sim_false} where multivariate heteroskedastic gaussian data is simulated on which the log odd ratio of $y$ depends linearly (misspecified model setting for the quantized \gls{lr}). The proposed approach yields significantly better results.
 
 \begin{table}[ht]
     \centering
@@ -762,14 +777,14 @@ Performance & 50.1 (1.6) & 77.1 (0.9) & \textbf{80.6} (0.6)
         \centering
         \input{figures/chapitre4/True_simulated_data/feature_0_iteration_5.tex}
         \vspace{-0.5cm}
-        \caption{Quantization $\hat{\q}^{(s)}_1(x_1)$ resulting from the thresholding (\ref{eq:ht}) at iterations $t = 5$ and $m_{\text{start}} = 3$.}
+        \caption{Quantization $\hat{\q}^{(s)}_1(\glssymbol{x}_1)$ resulting from the thresholding (\ref{eq:ht}) at iterations $t = 5$ and $m_{\text{max}} = 3$.}
     \end{subfigure}%
     
     \begin{subfigure}[t]{\textwidth}
         \centering
         \input{figures/chapitre4/True_simulated_data/feature_0_iteration_300.tex}
         \vspace{-0.5cm}
-        \caption{Quantizations $\hat{\q}^{(s)}_1(x_1)$ resulting from the thresholding (\ref{eq:ht}) at iterations $t = 300$ and $m_{\text{start}} = 3$.}
+        \caption{Quantizations $\hat{\q}^{(s)}_1(\glssymbol{x}_1)$ resulting from the thresholding (\ref{eq:ht}) at iterations $t = 300$ and $m_{\text{max}} = 3$.}
     \end{subfigure}
     
     \caption{\label{fig:MAP} Quantizations $\hat{\q}^{(s)}_1(\glssymbol{x}_1)$ of experiment (a) resulting from the thresholding (\ref{eq:ht}).}
@@ -779,7 +794,7 @@ Performance & 50.1 (1.6) & 77.1 (0.9) & \textbf{80.6} (0.6)
 
 To test further the effectiveness of \textit{glmdisc} in a predictive setting, I gathered 6 datasets from the UCI library: the Adult dataset ($n=48,842$, $d=14$), the Australian dataset ($n=690$, $d=14$), the Bands dataset ($n=512$, $d=39$), the Credit-screening dataset ($n=690$, $d=15$), the German dataset ($n=1,000$, $d=20$) and the Heart dataset ($n=270$, $d=13$). Each of these datasets have mixed (continuous and categorical) features and a binary response to predict. To get more information about these datasets, their respective features, and the predictive task associated with them, readers may refer to the UCI website\footnote{\cite{Dua:2017} : http://archive.ics.uci.edu/ml}.
 
-Now that the proposed approach was shown empirically consistent, \textit{i.e.}\ it is able to find the true quantization in a well-specified setting, it is desirable to verify the previous claim that embedding the learning of a good quantization in the predictive task \textit{via glmdisc} is better than other methods that rely on \textit{ad hoc} criteria. As I was primarily interested in \gls{lr}, I will compare the proposed approach to a na\"{\i}ve linear \gls{lr} (hereafter ALLR), a \gls{lr} on continuous discretized data using the now standard MDLP algorithm from~\cite{fayyad1993multi} and categorical grouped data using $\chi^2$ tests of independence between each pair of factor levels and the target in the same fashion as the ChiMerge discretization algorithm proposed by~\cite{kerber1992chimerge} (hereafter MDLP/$\chi^2$). Table~\ref{tab:banchmark} shows our approach yields significantly better results on these rather small datasets where the added flexibility of quantization might help the predictive task.
+Now that the proposed approach was shown empirically consistent, \textit{i.e.}\ it is able to find the true quantization in a well-specified setting, it is desirable to verify the previous claim that embedding the learning of a good quantization in the predictive task \textit{via glmdisc} is better than other methods that rely on \textit{ad hoc} criteria. As I was primarily interested in \gls{lr}, I will compare the proposed approach to a na\"{\i}ve linear \gls{lr} (hereafter ALLR), \textit{i.e.}\ on non-qunantized data, a \gls{lr} on continuous discretized data using the now standard MDLP algorithm from~\cite{fayyad1993multi} and categorical grouped data using $\chi^2$ tests of independence between each pair of factor levels and the target in the same fashion as the ChiMerge discretization algorithm proposed by~\cite{kerber1992chimerge} (hereafter MDLP/$\chi^2$). In this Section and the next, Fini indices are reported on a random 30~\% test set and CIs are given following a method found in~\cite{sun2014fast}. Table~\ref{tab:banchmark} shows our approach yields significantly better results on these rather small datasets where the added flexibility of quantization might help the predictive task.
 
 \begin{table}
     \centering
@@ -825,12 +840,12 @@ The usefulness of discretization and grouping is clear on \textit{Credit Scoring
 \begin{tabular}{llllll}
 Portfolio & ALLR & \makecell{Current\\performance} & \makecell{\textit{ad hoc}\\methods} & \makecell{Our proposal:\\ \textit{glmdisc}-NN} & \makecell{Our proposal:\\ \textit{glmdisc}-SEM} \\
 \hline
-Automobile & \bf{59.3} (3.1) & 55.6 (3.4) & \bf{59.3} (3.0) & 58.9 (2.6) & 54.7 (3.1) \\
-Renovation & 52.3 (5.5) & 50.9 (5.6) & 54.0 (5.1) & \bf{56.7} (4.8) & \\
-Standard & 39.7 (3.3) & 37.1 (3.8) & \bf{45.3} (3.1) & 43.8 (3.2) & 32.4 (3.7) \\
-Revolving & 62.7 (2.8) & 58.5 (3.2) & \bf{63.2} (2.8) & 62.3 (2.8) & \\
-Mass retail & 52.8 (5.3) & 48.7 (6.0) & 61.4 (4.7) & \bf{61.8} (4.6) & \\
-Electronics & 52.9 (11.9) & 55.8 (10.8) & 56.3 (10.2)  & \bf{72.6} (7.4) & 52.3 (11.3)
+Automobile & \bf{59.3} (3.1) & 55.6 (3.4) & \bf{59.3} (3.0) & 58.9 (2.6) & 57.8 (2.9) \\
+Renovation & 52.3 (5.5) & 50.9 (5.6) & 54.0 (5.1) & \bf{56.7} (4.8) & 55.5 (5.2) \\
+Standard & 39.7 (3.3) & 37.1 (3.8) & \bf{45.3} (3.1) & 43.8 (3.2) & 36.7 (3.7) \\
+Revolving & 62.7 (2.8) & 58.5 (3.2) & \bf{63.2} (2.8) & 62.3 (2.8) & 60.7 (2.8) \\
+Mass retail & 52.8 (5.3) & 48.7 (6.0) & 61.4 (4.7) & \bf{61.8} (4.6) & 61.0 (4.7) \\
+Electronics & 52.9 (11.9) & 55.8 (10.8) & 56.3 (10.2)  & \bf{72.6} (7.4) & 62.0 (9.5)
 \end{tabular}
 \end{footnotesize}
 \end{table}
@@ -852,21 +867,17 @@ Portfolio & \makecell{Current\\performance} & ChiMerge & MDLP & \makecell{Our pr
 %\end{footnotesize}
 \end{table}
 
-
-
-\textcolor{red}{ajouter SEM}
-
 \section{Concluding remarks}
 
 \subsection{Handling missing data}
 
 For categorical features, handling missing data is straightforward: the level ``missing'' is simply considered a separate level, that can eventually be merged in the proposed algorithm with any other level. If it is \gls{mnar} (\textit{e.g.}\ co-borrower information missing because there is none) and such clients are significantly different from other clients in terms of creditworthiness, then such a treatment makes sense. If it is \gls{mar} and \textit{e.g.}\ highly correlated with some of the feature's levels (for example, the feature ``number of children'' could be either $0$ or missing to mean the borrower has no child), the proposed algorithm is highly likely to group these levels.
 
-For continuous features, the same strategy can be employed: they can be encoded as ``missing'' and considered a separate level. However, this prevents this level to be merged with another one by having \textit{e.g.}\ a level $[0;200] \text{ or missing}$.
+For continuous features, the same strategy can be employed: they can be encoded as ``missing'' and considered a separate level. However, this prevents this level to be merged with another one by having \textit{e.g.}\ a level ``$[0;200] \text{ or missing}$''.
 
 \subsection{Integrating constraints on the cut-points}
 
-Another problem that \gls{cacf} faces is to have interpretable cutpoints, \text{i.e.}\ having discretization intervals of the form $[0;200]$ and not $[0.389 ; 211.2]$ which are arguably less interpretable. But it is also highly subjective, and it would require the addition of an hyperparameter, namely the set of admissible discretization and / or the rounding to perform for each feature $j$ such that we did not pursue this problem. For the record, it is interesting to note that a straightforward rounding might not work: in the optimization community, it is well known that integer problems require special algorithmic treatment (dubbed integer programming). As an undergraduate, I applied some of these techniques to financial data in~\cite{} where I give a counterexample. Additionally, forcing estimated cutpoints to fall into a constrained set might drastically change predictive performance if levels collapse as on Figure~\ref{fig:constraint}.
+Another problem that \gls{cacf} faces is to have interpretable cutpoints, \text{i.e.}\ having discretization intervals of the form $[0;200]$ and not $[0.389 ; 211.2]$ which are arguably less interpretable. But it is also highly subjective, and it would require the addition of an hyperparameter, namely the set of admissible discretization and / or the rounding to perform for each feature $j$ such that we did not pursue this problem. For the record, it is interesting to note that a straightforward rounding might not work: in the optimization community, it is well known that integer problems require special algorithmic treatment (dubbed integer programming). As an undergraduate, I applied some of these techniques to financial data in~\cite{projet_recherche} where I give a counterexample. Additionally, forcing estimated cutpoints to fall into a constrained set might drastically change predictive performance if levels collapse as on Figure~\ref{fig:constraint}.
 
 \begin{figure}[!ht]
 \begin{subfigure}[t]{0.5\textwidth}
@@ -1041,7 +1052,7 @@ The first proposed implementation relies on the use of a neural network of parti
 
 The experiments showed that, as was sensed empirically by statisticians in the field of \textit{Credit Scoring}, discretization and grouping can indeed provide better models than standard \gls{lr}. This novel approach allows practitioners to have a fully automated and statistically well-grounded tool that achieves better performance than \textit{ad hoc} industrial practices at the price of decent computing time but much less of the practitioner's valuable time.
 
-As described in the introduction, \gls{lr} is additive in its inputs which does not allow to take into account conditional dependency, as stated by~\cite{berry2010testing}. This problem is often dealt with by sparsely introducing ``interactions'', \textit{i.e.}\ products of two features. This leads again to a model selection challenge on a highly combinatorial discrete space that could be solved with a similar approach. In a broader context with no restriction on the predictive model, \cite{tsang2018detecting} already made use of neural networks to estimate the presence or absence of statistical interactions. I take another approach in the subsequent chapter where I tackle the parsimonious addition of pairwise interactions among quantized features, that might influence the quantization process introduced in this work, is a future area of research.
+As described in the introduction, \gls{lr} is additive in its inputs which does not allow to take into account conditional dependency, as stated by~\cite{berry2010testing}. This problem is often dealt with by sparsely introducing ``interactions'', \textit{i.e.}\ products of two features. This leads again to a model selection challenge on a highly combinatorial discrete space that could be solved with a similar approach. In a broader context with no restriction on the predictive model, \cite{tsang2018detecting} already made use of neural networks to estimate the presence or absence of statistical interactions. I take another approach in the subsequent Chapter where I tackle the parsimonious addition of pairwise interactions among quantized features, that might influence the quantization process introduced in this Chapter.
 
 
 

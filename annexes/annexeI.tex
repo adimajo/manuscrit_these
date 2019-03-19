@@ -726,7 +726,7 @@ The \textit{ChiMerge}~\cite{kerber1992chimerge} algorithm~\ref{chimerge} is a su
 %\textcolor{red}{calculer les chi 2 exacts}
 
 \begin{table}
-\caption{\label{tab:chimerge_ex} p-values of $\chi^2$ tests between subsequent categories on the iris dataset taken from~\cite{kerber1992chimerge}.}
+\caption{\label{tab:chimerge_ex} p-values of $\chi^2$ tests between subsequent categories on the iris dataset.}
 \centering
 \includegraphics[width = .7\textwidth]{figures/appendix/tab_chimerge.PNG}
 \end{table}
@@ -784,12 +784,12 @@ Stop when $\text{Gain}(c,\glssymbol{bbx}) = \text{E}(c) - \text{Ent}(\glssymbol{
 This section describes the \textit{glmdisc}-NN algorithm developed in Chapter~\ref{chap4} and examplifies it on simulated data in Figure~\ref{fig:animNN}
 
 \begin{algorithm}[H]
- \KwData{$((\glssymbol{bbx}_j)_1^{d}, \glssymbol{bby}),\max\_\text{iter},\bm{m}_\text{start}$}
+ \KwData{$((\glssymbol{bbx}_j)_1^{d}, \glssymbol{bby}),S,\bm{m}_\text{start}$}
  \KwResult{$\hat{\q}^{(s_\star)}$}
  Initialization of the network: for each feature feature $j$, add a softmax with $m_{j,\text{start}}$ outputs which are themselves combined in a sigmoid neuron\;
  Initialization of the network's weights at random\;
  $s = 0$\;
- \While{$s < \max\_\text{iter}$}{
+ \While{$s < S$}{
 Perform feed-forward pass of the data: calculate $p_{\glssymbol{bth}^{(s)}}(\glssymbol{bby} | \q_{\ag^{(s)}}(\glssymbol{bbx}))$\;
 Perform back-propagation of the error via Stochastic Gradient Descent which yields parameters $(\glssymbol{bth}^{(s+1)},\ag^{(s+1)})$\;
  Compute the \textit{maximum a posteriori} of the hidden layer's representations $\hat{\q}^{(s)}(\glssymbol{bbx})$ such that $\hat{q}_{j,h}(x_j) = 1 \text{ if } h = \argmax_{1 \leq h' \leq m_j} q_{\hat{\ag}_{j,h'}}, 0 \text{ otherwise.}$\;
@@ -815,11 +815,11 @@ Perform back-propagation of the error via Stochastic Gradient Descent which yiel
 This section describes the \textit{glmdisc}-SEM algorithm developed in Chapter~\ref{chap4} and examplifies it on simulated data in Figure~\ref{fig:animSEM}
 
 \begin{algorithm}[H]
- \KwData{$((\glssymbol{bbx}_j)_1^{d}, \glssymbol{bby}),\max\_\text{iter},\bm{m}_\text{start}$}
+ \KwData{$((\glssymbol{bbx}_j)_1^{d}, \glssymbol{bby}),S,\bm{m}_\text{start}$}
  \KwResult{$\hat{\bbqk}^{(s_\star)}$}
  Initialization of $\bbqk_j^{(0)}$ at random in $\{1, \dots, m_{j,\text{start}}\}$ and one-hot encode the resulting vector\;
  $s = 0$\;
- \While{$s < \max\_\text{iter}$}{
+ \While{$s < S$}{
   Adjust logistic regression $\glssymbol{bth}^{(s)} = \argmax_{\glssymbol{bth}} \ell(\glssymbol{bth};\bbqk^{(s)}, \glssymbol{bby})$\;
   \For{$j = 1$ \KwTo $d$}{
    Adjust multinomial logistic regression or contingency tables $\ag_j^{(s)} = \argmax_{\ag_j} \ell(\ag_j;\glssymbol{bbx}_j,\bbqk_j^{(s)})$\;
@@ -910,10 +910,10 @@ Let $X \sim \chi^2$ and $\alpha_{\max} = \max_{h_1,h_2} p(X \geq \chi^2_{h_1,h_2
 The LogitBoost algorithm~\cite{friedman2000additive} for 2 classes is equivalent to the Iterative Reweighted Least Squares method~\cite{friedman2001elements}. However, in \gls{lmt}, in order to perform feature selection, a slight modification is brought to the algorithm so as to fit univariate regressions and pick the best. It is given in Algorithm~\ref{alg:logitboost}.
 
 \begin{algorithm}[H]
- \KwData{$n,\glssymbol{bbx},\glssymbol{bby}, \max\_{\text{iter}}$}
+ \KwData{$n,\glssymbol{bbx},\glssymbol{bby}, S$}
  \KwResult{$F(\glssymbol{bx})$}
 Let weights $w_i = 1 / n$, $F(x) = 0$, $p(1 | \glssymbol{bx}) = \frac{\exp(F(\glssymbol{bx})}{\exp(F(\glssymbol{bx}) + \exp(-F(\glssymbol{bx})}$\;
-\For{$s = 1$ to $\max\_{\text{iter}}$}{
+\For{$s = 1$ to $S$}{
 Compute weights $\mathbf{w} = p(1 | \glssymbol{bbx}) \odot (\mathbf{1} - p(1 | \glssymbol{bbx}))$\;
 Compute response $z_{i} = \frac{y_i - p(1 | \glssymbol{bx})}{w_i}$\;
 \For{$j = 1$ to $d$}{
