@@ -52,7 +52,17 @@ tikz("famd_features.tex", standAlone=FALSE, width = 7, height = 7, lwdUnit = 1.3
 plot(res_famd_autos, choix = 'var', autoLab = 'yes')
 dev.off()
 
+## PLS
 
+library(pls)
+AUTOS$top_perf <- as.numeric(as.character(AUTOS$top_perf))
+pls_auto = plsr(top_perf ~ ., data = AUTOS %>% select(-c(SCORE, CSPCJ, anc_AMEMBC, anc_DNACJ, anc_DT1FIN)) %>% impute_at(.na = na.mean, .vars = c("CVFISC", "CYLVH", "POIDSVH", "CVFISC")))
+ind_graph = sample.int(nrow(AUTOS), size = 1000)
+prediction_pls = predict(pls_auto,AUTOS[ind_graph,] %>% select(-c(SCORE, CSPCJ, anc_AMEMBC, anc_DNACJ, anc_DT1FIN)) %>% impute_at(.na = na.mean, .vars = c("CVFISC", "CYLVH", "POIDSVH", "CVFISC")), comps = 1:2, type = "scores")
+
+tikz("graph_pls.tex", standAlone=FALSE, width = 12, height = 6, fg = "black", sanitize = FALSE)
+plot(prediction_pls, col = (as.data.frame(AUTOS[ind_graph,"top_perf"]+1))$top_perf)
+dev.off()
 
 ## LMT
 
@@ -101,7 +111,9 @@ library(partykit)
 
 ### en laissant les valeurs manquantes
 
-mob_data = glmtree(top_perf ~ . | ., data = AUTOS %>% select(-SCORE), family = binomial(link="logit"))
+mob_data_autos = as.data.frame(AUTOS[AUTOS %>% select(-SCORE) %>% complete.cases(),] %>% select(c(top_perf, CSP, anc_DNAISS, MLOYER)))
+
+mob_data = glmtree(top_perf ~ . | ., data = mob_data_autos, family = binomial(link="logit"))
 plot(mob_data)
 print(mob_data)
 

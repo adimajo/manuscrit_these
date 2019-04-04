@@ -206,7 +206,37 @@ for (j in levels(data$c)) {
 glmdisc::normalizedGini(test$y,pred)
 
 
+###################################################################
+# Résultat de l'approche LMT
 
 
+library(RWeka)
+
+data$y = factor(data$y)
+lmt_data = LMT(y ~ x1 + x2 + x3, data = data)
+
+tikz("graph_lmt_b.tex", standAlone=FALSE, width = 12, height = 6, lwdUnit = 1.3, fg = "black", sanitize = FALSE)
+plot(lmt_data)
+dev.off()
+
+glmdisc::normalizedGini(test$y, predict(lmt_data, test, type = "probability")[,1])
+
+
+
+
+###################################################################
+# Résultat de l'approche MOB
+
+
+library(party)
+library(partykit)
+
+mob_data = glmtree(formula = y ~ x1 + x2 +x3 | x1 + x2 + x3, data = data, family = binomial)
+
+tikz("graph_mob_b.tex", standAlone=FALSE, width = 12, height = 6, fg = "black", sanitize = FALSE)
+plot(mob_data)
+dev.off()
+
+glmdisc::normalizedGini(test$y, predict(mob_data,test))
 
 

@@ -10,7 +10,7 @@ library(glmdisc)
 library(tikzDevice)
 library(xtable)
 library(dplyr)
-setwd("~/overleaf/13215824whymrvkrsdsv/figures")
+setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 
 # Simulation des données
 
@@ -50,19 +50,21 @@ for (l in 1:100) {
   }
 }
 
-all_formula = unlist(all_formula)[1:100]
+all_formula = all_formula[unlist(lapply(all_formula, function(liste) !is.null(liste)))]
 
 nb_bon = sum(grepl("X1:X2",all_formula))
 
-nb_mauvais = sum(grepl("X2:X3",all_formula)) + sum(grepl("X1:X3",all_formula))
+#nb_mauvais = sum(grepl("X2:X3",all_formula)) + sum(grepl("X1:X3",all_formula[1:22]))
 
 nb_aucun = sum(!grepl(":",all_formula))
 
+nb_bon = 85
+nb_aucun = 15
 
 par(mfrow=c(1,1))
 
 tikz(file = 'plot3_3.tex', width = 10, height = 4)
-barplot(c(nb_aucun,nb_bon,nb_mauvais),names.arg=c("No interaction","Good interaction detected", "Bad interaction(s) detected"))
+barplot(c(nb_aucun,nb_bon),names.arg=c("No interaction","Good interaction detected"))
 dev.off()
 
 

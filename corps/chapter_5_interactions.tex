@@ -279,29 +279,29 @@ The code used for numerical experiments is available as packages, see Appendix~\
 
 In this first part, focus is given on showing empirically the consistency of the approach. The same data generation process as in Chapter~\ref{chap4} is employed: two continuous features $\glssymbol{x}_1$ and $\glssymbol{x}_2$ are sampled from the uniform distribution on $[0,1]$ and discretized as exemplified on Figure~\ref{fig:exp_sim} by using
 \[\q_1(\cdot)=\q_2(\cdot) = (\mathds{1}_{]-\infty,1/3]}(\cdot),\mathds{1}_{]1/3,2/3]}(\cdot),\mathds{1}_{]2/3,\infty[}(\cdot)).\]
-Here, following (\ref{eq:Cjhcont}), we have $d=2$ and $m_1=m_2=3$ and the cutpoints are $c_{j,1}=1/3$ and $c_{j,2}=2/3$ for $j=1,2$. Setting $\glssymbol{bth}^{1}=(0,-2,2,0,-2,2,0)$, $\bdelta^{1} = 0$, $\glssymbol{bth}^{2} = (\glssymbol{bth}^{1},)$, $\bdelta^{2} = 1$ the target feature $y$ is then sampled from $p_{\glssymbol{bth}^{o}}(\cdot | \q(\glssymbol{bbx}), \bdelta^{o}), o = \{1,2\}$ via the logistic model (\ref{eq:reglogq}). Two cases are first studied:
-\begin{enumerate}[(a)]
-    \item First, we assess that in the presence of a true interaction, it is discovered by our procedure, so that we simulate $Y \sim p_{\glssymbol{bth}^{2}}$ and provide $\q(\glssymbol{bbx})$;
-    \item Second, we assess that in the absence of a true interaction, no interaction is found by our procedure, so that we simulate $Y \sim p_{\glssymbol{bth}^{1}}$ and provide $\q(\glssymbol{bbx})$.
-\end{enumerate}
-As promised, two further cases are first studied:
+Here, following (\ref{eq:Cjhcont}), we have $d=2$ and $m_1=m_2=3$ and the cutpoints are $c_{j,1}=1/3$ and $c_{j,2}=2/3$ for $j=1,2$. Setting $\glssymbol{bth}^{1}=(0,-2,2,0,-2,2,0)$, $\bdelta^{1} = 0$, $\glssymbol{bth}^{2} = (\glssymbol{bth}^{1},)$, $\bdelta^{2} = 1$ the target feature $y$ is then sampled from $p_{\glssymbol{bth}^{o}}(\cdot | \q(\glssymbol{bbx}), \bdelta^{o}), o = \{1,2\}$ via the logistic model (\ref{eq:reglogq}). Two cases are studied:
+%\begin{enumerate}[(a)]
+%    \item First, we assess that in the presence of a true interaction, it is discovered by our procedure, so that we simulate $Y \sim p_{\glssymbol{bth}^{2}}$ and provide $\q(\glssymbol{bbx})$;
+%    \item Second, we assess that in the absence of a true interaction, no interaction is found by our procedure, so that we simulate $Y \sim p_{\glssymbol{bth}^{1}}$ and provide $\q(\glssymbol{bbx})$.
+%\end{enumerate}
+%As promised, two further cases are first studied:
 \begin{enumerate}[(a)]
     \item First, we assess that in the presence of a true interaction, it is discovered by \textit{glmdisc} while quantizing the data, so that we simulate $Y \sim p_{\glssymbol{bth}^{2}}$ and provide $\glssymbol{bbx}$;
     \item Second, we assess that in the absence of a true interaction, no interaction is found by \textit{glmdisc} while quantizing the data, so that we simulate $Y \sim p_{\glssymbol{bth}^{1}}$ and provide $\glssymbol{bbx}$.
 \end{enumerate}
-Note that the interaction screening procedure is also applicable to continuous features, which is not tested here. These 4 experiments are run 100 times with $n = \{1{,}000,10{,}000\}$ and histograms are given in Table~\ref{tab:simu_inter}.
+Note that the interaction screening procedure is also applicable to continuous features, which is not tested here. These 2 experiments are run 100 times with $n = \{1{,}000,10{,}000\}$ and histograms are given in Table~\ref{tab:simu_inter}.
 
 \begin{table}[ht]
     \centering
-    \caption{For \textit{glmdisc} w. and w.o. providing true quantization and different sample sizes $n$, (a) Bar plot of $\hat{\bdelta} = 0,1$ (resp.) for $\bdelta=1$. (C) Bar plot of $\hat{\bdelta} = 0,1$ (resp.) for $\bdelta=0$.}
+    \caption{For \textit{glmdisc} w.o. providing true quantization and different sample sizes $n$, (a) Bar plot of $\hat{\bdelta} = 0,1$ (resp.) for $\bdelta=1$. (b) Bar plot of $\hat{\bdelta} = 0,1$ (resp.) for $\bdelta=0$.}
     \label{tab:simu_inter}
 \begin{tabular}{lllllll}
 Algorithm & $n$ & (a) & $\hat{\bdelta}$ & (b) & $\hat{\bdelta}$ \\
 \hline
 %\textit{glmdisc} w. provided quantization & $1{,}000$ & \myobar{9}{90}{1} & \mybar{60}{32}{8} \\
-\textit{glmdisc} w.o. provided quantization & $1{,}000$ & \myobar{9}{90}{1} & \mybar{60}{32}{8} \\
+\textit{glmdisc} w.o. provided quantization & $1{,}000$ & \mybarb{60}{40} & \myobarb{39}{61} \\
 %\textit{glmdisc} w. provided quantization & $10{,}000$ & \myobar{0}{100}{0} & \mybar{88}{12}{0} \\
-\textit{glmdisc} w.o. provided quantization & $10{,}000$ & \myobar{0}{100}{0} & \mybar{88}{12}{0}
+\textit{glmdisc} w.o. provided quantization & $10{,}000$ & \mybarb{85}{15} & \myobarb{6}{94}
 \end{tabular}
 \end{table}
 
@@ -313,7 +313,7 @@ Algorithm & $n$ & (a) & $\hat{\bdelta}$ & (b) & $\hat{\bdelta}$ \\
 
 We complement Table~\ref{tab:banchmark} (see Section~\ref{subsec:exp_benchmark} for details about the datasets) with the \textit{glmdisc}-SEM approach with interactions in the last column of Table~\ref{tab:banchmark_inter}.
 
-\textcolor{red}{commenter les résultats exclusivement des interactions}
+Half of the datasets do not benefit from the enriched model space but the performance of \textit{glmdisc} without interactions was already high. The other half 
 
 \begin{table}
     \centering
@@ -325,9 +325,9 @@ Dataset & ALLR & \textit{ad hoc} methods & \makecell{Our proposal:\\ \textit{glm
 \hline
 Adult & 81.4 (1.0) & \textbf{85.3} (0.9) & 80.4 (1.0) & 81.5 (1.0) & 81.5 (1.0 - no interaction) \\
 Australian & 72.1 (10.4) & 84.1 (7.5) & 92.5 (4.5) & \textbf{100} (0) & \textbf{100} (0 - no interaction) \\
-Bands & 48.3 (17.8) & 47.3 (17.6) & 58.5 (12.0) & \textbf{58.7} (12.0) & \\
+Bands & 48.3 (17.8) & 47.3 (17.6) & 58.5 (12.0) & \textbf{58.7} (12.0) & \textbf{58.8} (13.0) \\
 Credit & 81.3 (9.6) & 88.7 (6.4) & \textbf{92.0} (4.7) & 87.7 (6.4) & 87.7 (6.4 - no interaction) \\
-German & 52.0 (11.3) & 54.6 (11.2) & \textbf{69.2} (9.1) & 54.5 (10) & \\
+German & 52.0 (11.3) & 54.6 (11.2) & \textbf{69.2} (9.1) & 54.5 (10) &  \\
 Heart & 80.3 (12.1) & 78.7 (13.1) & \textbf{86.3} (10.6) & 82.2 (11.2) & 84.5 (10.8)
 \end{tabular}
 \end{small}

@@ -105,6 +105,12 @@ yshift=-3ex,
 \def\myobar#1#2#3{%%
 \begin{tabular}{@{}l@{}} {\scriptsize #1} \vspace*{-0.2cm} \\ {\scriptsize #2} \vspace*{-0.2cm} \\ {\scriptsize #3}\end{tabular} & \resizebox{.05\textwidth}{0.5cm}{\begin{tabular}{@{}l@{}}{\color{orange}\rule[-6pt]{#1bp}{10pt}} \\ {\color{green}\rule[0pt]{#2bp}{10pt}} \vspace*{-0.1cm} \\ {\color{orange}\rule[10pt]{#3bp}{10pt}}\end{tabular}}}
 
+\def\mybarb#1#2{%%
+\begin{tabular}{@{}l@{}} {\scriptsize #1} \vspace*{-0.2cm} \\ {\scriptsize #2} \end{tabular} & \resizebox{.05\textwidth}{0.5cm}{\begin{tabular}{@{}l@{}}{\color{green}\rule[-6pt]{#1bp}{10pt}} \\ {\color{orange}\rule[0pt]{#2bp}{10pt}} \end{tabular}}}
+
+\def\myobarb#1#2{%%
+\begin{tabular}{@{}l@{}} {\scriptsize #1} \vspace*{-0.2cm} \\ {\scriptsize #2} \vspace*{-0.2cm} \end{tabular} & \resizebox{.05\textwidth}{0.5cm}{\begin{tabular}{@{}l@{}}{\color{orange}\rule[-6pt]{#1bp}{10pt}} \\ {\color{green}\rule[0pt]{#2bp}{10pt}} \end{tabular}}}
+
 
 \definecolor{light-gray}{gray}{0.95}
 \newcommand{\code}[1]{\colorbox{light-gray}{\texttt{#1}}}
@@ -263,3 +269,21 @@ otherkeywords={install_github},             % Add keywords here
 {\bashstyle}{}
 
 \newcommand\bashinline[1]{{\bashstyle\lstinline!#1!}}
+
+
+
+
+% Chapitre rejets
+
+\newcommand{\thetao}{\theta^{\text{opt}}}
+\newcommand{\thetaof}{\theta_{\text{f}}^{\text{opt}}}
+\newcommand{\thetaf}{\theta_{\text{f}}}
+\newcommand{\Sigmao}{\Sigma^{\text{opt}}}
+\newcommand{\Sigmaof}{\Sigma_{\text{f}}^{\text{opt}}}
+\newcommand{\gen}{\text{gen}}
+
+
+\newcommand{\lnameref}[1]{%
+\bgroup
+\let\nmu\MakeLowercase
+\nameref{#1}\egroup}

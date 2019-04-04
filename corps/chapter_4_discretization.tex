@@ -6,7 +6,7 @@
 
 \minitoc
 
-\textit{Nota Bene :} Ce chapitre s'inspire fortement ... \textcolor{red}{à adapter au moment de l'envoi du manuscrit}
+%\textit{Nota Bene :} Ce chapitre s'inspire fortement ... \textcolor{red}{à adapter au moment de l'envoi du manuscrit}
 
 \bigskip
 
@@ -86,7 +86,7 @@ However, two things must appear clearly: first, we are in a ``statistical'' sett
 This phenomenon can be very simply captured by a small simulation: in the misspecified model setting, where the logit transform is assumed to stem from a sinusoidal transformation of $\glssymbol{x}$ on $[0;1]$, it can clearly be seen from Figure~\ref{fig:sinus_lin} that a standard linear logistic regression does poorly. Discretizing the feature $\glssymbol{x}$ results, using a very simple unsupervised heuristic named \textit{equal-length} (described in-depth in Appendix~\ref{app1:equal_length}), in good results (\textit{i.e.}\ visually mild bias / low variance) so long as the number of intervals, and subsequently of logistic regression coefficients, is low (see Animation on Figure~\ref{fig:anim_sinus} or still on Figure~\ref{fig:sinus_deb}). When the number of intervals gets large, the bias gets low (the sinus is well approximated by the little step functions), but the variance gets bigger (see Animation on Figure~\ref{fig:anim_sinus} or still on Figure~\ref{fig:sinus_fin}).
 
 
-\textcolor{red}{décommenter animation}
+%\textcolor{red}{décommenter animation}
 
 %\begin{figure}[!ht]
 %\begin{animateinline}[poster=first, controls=all, palindrome, autopause, autoresume, width=\textwidth, height=7cm]{3}
@@ -794,7 +794,7 @@ Performance & 50.1 (1.6) & 77.1 (0.9) & \textbf{80.6} (0.6)
 
 To test further the effectiveness of \textit{glmdisc} in a predictive setting, I gathered 6 datasets from the UCI library: the Adult dataset ($n=48,842$, $d=14$), the Australian dataset ($n=690$, $d=14$), the Bands dataset ($n=512$, $d=39$), the Credit-screening dataset ($n=690$, $d=15$), the German dataset ($n=1,000$, $d=20$) and the Heart dataset ($n=270$, $d=13$). Each of these datasets have mixed (continuous and categorical) features and a binary response to predict. To get more information about these datasets, their respective features, and the predictive task associated with them, readers may refer to the UCI website\footnote{\cite{Dua:2017} : http://archive.ics.uci.edu/ml}.
 
-Now that the proposed approach was shown empirically consistent, \textit{i.e.}\ it is able to find the true quantization in a well-specified setting, it is desirable to verify the previous claim that embedding the learning of a good quantization in the predictive task \textit{via glmdisc} is better than other methods that rely on \textit{ad hoc} criteria. As I was primarily interested in \gls{lr}, I will compare the proposed approach to a na\"{\i}ve linear \gls{lr} (hereafter ALLR), \textit{i.e.}\ on non-qunantized data, a \gls{lr} on continuous discretized data using the now standard MDLP algorithm from~\cite{fayyad1993multi} and categorical grouped data using $\chi^2$ tests of independence between each pair of factor levels and the target in the same fashion as the ChiMerge discretization algorithm proposed by~\cite{kerber1992chimerge} (hereafter MDLP/$\chi^2$). In this Section and the next, Fini indices are reported on a random 30~\% test set and CIs are given following a method found in~\cite{sun2014fast}. Table~\ref{tab:banchmark} shows our approach yields significantly better results on these rather small datasets where the added flexibility of quantization might help the predictive task.
+Now that the proposed approach was shown empirically consistent, \textit{i.e.}\ it is able to find the true quantization in a well-specified setting, it is desirable to verify the previous claim that embedding the learning of a good quantization in the predictive task \textit{via glmdisc} is better than other methods that rely on \textit{ad hoc} criteria. As I was primarily interested in \gls{lr}, I will compare the proposed approach to a na\"{\i}ve linear \gls{lr} (hereafter ALLR), \textit{i.e.}\ on non-qunantized data, a \gls{lr} on continuous discretized data using the now standard MDLP algorithm from~\cite{fayyad1993multi} and categorical grouped data using $\chi^2$ tests of independence between each pair of factor levels and the target in the same fashion as the ChiMerge discretization algorithm proposed by~\cite{kerber1992chimerge} (hereafter MDLP/$\chi^2$). In this Section and the next, Gini indices are reported on a random 30~\% test set and CIs are given following a method found in~\cite{sun2014fast}. Table~\ref{tab:banchmark} shows our approach yields significantly better results on these rather small datasets where the added flexibility of quantization might help the predictive task.
 
 \begin{table}
     \centering

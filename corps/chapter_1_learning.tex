@@ -16,7 +16,7 @@ S'agissant d'une thèse CIFRE, il apparaît comme nécessaire de planter le déc
 
 \subsection{Qu'est-ce qu'un crédit à la consommation ?}
 
-La définition légale en a été donnée en~\nameref{chap_intro}. En pratique, on peut distinguer trois produits de crédit à la consommation.
+La définition légale en a été donnée en~\lnameref{chap_intro}. En pratique, on peut distinguer trois produits de crédit à la consommation.
 
 
 Le premier d'entre eux, le \gls{creditclassique}, est le produit historique. De la même manière qu'un crédit immobilier, le client emprunte une somme fixe qui lui est attribuée au moment du financement et qu'il rembourse selon un échéancier défini à l'avance (taux et nombre de mensualités fixes). D'un point de vue statistique, le traitement est relativement simple : que ce soit à l'octroi, pour déterminer le risque du client, ou au cours de la vie du dossier, pour provisionner les pertes potentielles, tout est connu à l'avance. Il suffit en quelque sorte de vérifier le paiement de la mensualité à la date prévue. Il convient également de préciser que certains crédits classiques sont dits \glspl{creditaffecte}, c'est-à-dire qu'ils financent un bien précis et identifié, de sorte que le prêt transite directement de l'organisme prêteur au vendeur (un concessionnaire par exemple). Par ailleurs, la mise en défaut du crédit entraîne généralement une procédure de recouvrement de la dette qui peut se solder, dans le cas d'un \gls{creditaffecte}, par la récupération du bien par un huissier. Là encore, d'un point de vue statistique, il paraît indispensable de consigner les caractéristiques du bien sous-jacent afin d'intégrer sa valeur résiduelle récupérable en cas de défaut.
@@ -53,7 +53,8 @@ Cette partie vise à présenter la pratique actuelle en matière de \textit{Cred
 
 \subsection{Collecte des données}
 
-La partie précédente a mis en exergue la pluralité des sources de données, schématisées en figure~\ref{fig:marque}~: Crédit Agricole, à travers sa filiale dédiée aux crédits à la consommation Crédit Agricole Consumer Finance, finance des crédits en France à travers sa marque Sofinco (B2C), ou en magasins / concessions chez des partenaires (B2B) où les données du demandeur de crédit sont collectées. La figure~\ref{fig:souscription} présente par exemple le formulaire de souscription en vigueur pour un crédit automobile auprès de Sofinco \textit{via} son site web. Dans cet exemple, des données socio-démographiques et du véhicule à financer sont demandées. Pour un client, elles sont notées $\glssymbol{bx} = (\glssymbol{x}_j)_1^d$ dans la suite. Ces informations sont de nature continue, c'est-à-dire $\glssymbol{x}_j \in \glssymbol{R}$, ou catégorielle, c'est-à-dire que l'on se donne, à titre d'exemple, un encodage ``Métier = technicien'' $\rightarrow \glssymbol{x}_j = 1$, ``Métier = ouvrier'' $\rightarrow \glssymbol{x}_j = 2$, \dots de telle sorte que l'on considère que $\glssymbol{x}_j \in \glssymbol{NO}$, où $\glssymbol{lj}$ représente le nombre de modalités de $x_j$ et sans notion d'ordre. Cela permettra d'alléger les notations en lieu et place de noter le support de chaque variable catégorielle différemment.
+La partie précédente a mis en exergue la pluralité des sources de données, schématisées en figure~\ref{fig:marque}~: Crédit Agricole, à travers sa filiale dédiée aux crédits à la consommation Crédit Agricole Consumer Finance, finance des crédits en France à travers sa marque Sofinco (B2C), ou en magasins / concessions chez des partenaires (B2B) où les données du demandeur de crédit sont collectées. La figure~\ref{fig:souscription} présente par exemple le formulaire de souscription en vigueur pour un crédit automobile auprès de Sofinco \textit{via} son site web. Dans cet exemple, des données socio-démographiques et du véhicule à financer sont demandées. Pour un client, elles sont notées $\glssymbol{bx} = (\glssymbol{x}_j)_1^d$ dans la suite. Ces informations sont de nature continue, c'est-à-dire $\glssymbol{x}_j \in \glssymbol{R}$, ou catégorielle, c'est-à-dire que l'on se donne, à titre d'exemple, un encodage ``Métier = technicien'' $\rightarrow \glssymbol{x}_j = 1$, ``Métier = ouvrier'' $\rightarrow \glssymbol{x}_j = 2$, \dots de telle sorte que l'on considère que $\glssymbol{x}_j \in \glssymbol{NO} = \{1, \dots,l_j\}$, où $\glssymbol{lj}$ représente le nombre de modalités de $x_j$ et sans notion d'ordre. 
+%Cela permettra d'alléger les notations en lieu et place de noter le support de chaque variable catégorielle différemment.
 
 \begin{figure}
 
@@ -98,9 +99,14 @@ La partie précédente a mis en exergue la pluralité des sources de données, s
 \caption{\label{fig:souscription} Formulaire de souscription d'un crédit automobile Sofinco.}
 \end{figure}
 
-On considère que ces caractéristiques sont une réalisation du vecteur aléatoire de design $\glssymbol{bX} = (\glssymbol{Xj})_1^d \in \glssymbol{Xspace}$ sur un espace probabilisé $(\Omega,\mathcal{A},\mathbb{P})$, que l'on observe sur l'ensemble des $n$ demandeurs de crédit à la consommation pour former, dans la littérature consacrée au \textit{machine learning}, la matrice de design $\glssymbol{bbx} = (\glssymbol{xij})_{1 \leq i \leq n, 1 \leq j \leq d}$. En accord avec ce qui précède, on se limite au cas $\glssymbol{Xspace} \subseteq\glssymbol{R}^d$.
+On considère que ces caractéristiques sont une réalisation du vecteur aléatoire de design $\glssymbol{bX} = (\glssymbol{Xj})_1^d \in \glssymbol{Xspace}$ sur un espace probabilisé $(\Omega,\mathcal{A},\mathbb{P})$, que l'on observe sur l'ensemble des $n$ demandeurs de crédit à la consommation pour former, dans la littérature consacrée au \textit{machine learning}, la matrice de design $\glssymbol{bbx} = (\glssymbol{xij})_{1 \leq i \leq n, 1 \leq j \leq d}$. 
+%En accord avec ce qui précède, on se limite au cas $\glssymbol{Xspace} \subseteq\glssymbol{R}^d$.
 
-A ce stade, deux remarques importantes doivent être faites : d'abord, la partie précédente a montré qu'en fonction du produit demandé et du canal de la demande, une partie de ces caractéristiques peuvent être absentes. Par ailleurs, ces informations étant, à ce stade, déclaratives (des contrôles supplémentaires peuvent avoir lieu en fonction du montant demandé par exemple), elles sont associées à un degré de certitude variable, la tentation étant grande, afin de s'assurer de l'attribution du crédit, de déformer la réalité de ses charges, ses revenus, etc. En synthèse, le tableau~\ref{tab:design} présente un exemple simplifié de matrice de design en \textit{Credit Scoring}. En pratique un tel tableau structuré est directement mis à disposition des statisticiens de \gls{cacf} à travers le logiciel de traitement statistique SAS.
+A ce stade, deux remarques importantes doivent être faites : d'abord, 
+%la partie précédente a montré qu'en fonction du produit demandé et du canal de la demande, 
+une partie de ces caractéristiques peut être absente. Par ailleurs, 
+%ces informations étant, à ce stade, 
+elles sont à ce stade déclaratives (des contrôles supplémentaires peuvent avoir lieu en fonction du montant demandé par exemple), et donc associées à un degré de certitude variable, la tentation étant grande, afin de s'assurer de l'attribution du crédit, de déformer la réalité de ses charges, ses revenus, etc. En synthèse, le tableau~\ref{tab:design} présente un exemple simplifié de matrice de design en \textit{Credit Scoring}. En pratique un tel tableau structuré est directement mis à disposition des statisticiens de \gls{cacf} à travers le logiciel de traitement statistique SAS.
 
 
 \begin{table}
@@ -122,7 +128,9 @@ Ouvrier & Par la famille & 2 & 0 & Célibataire & {1200}  \\
 
 Le tableau~\ref{tab:design} fait apparaître deux problèmes bien connus en statistique : la gestion des observations manquantes et celle des valeurs extrêmes (\textit{outliers}).
 
-Concernant les observations manquantes, deux stratégies différentes peuvent être employées. \gls{cacf} réalise une ``segmentation'' de sa clientèle, de sorte que, à titre d'exemple, plusieurs modèles statistiques spécialisés à un sous-ensemble de la population totale peuvent être employés, chacun d'eux bénéficiant alors de données complètes. On pourra par exemple se limiter aux demandeurs de crédit automobile afin d'exploiter les données du véhicule à financer, qui sont alors toutes renseignées. Le processus de choix des ``segments'', \textit{i.e.}\ la partition des lignes de $\glssymbol{bbx}$ sur lesquels développer des modèles séparés, est basé soit sur l'histoire de l'entreprise (par exemple, un modèle spécifique aux crédits automobiles a pu être développé au début de la commercialisation de ce produit), soit sur des heuristiques très simples. On détaillera ce problème en chapitre~\ref{chap6}.
+Concernant les observations manquantes, deux stratégies différentes peuvent être employées. \gls{cacf} réalise une ``segmentation'' de sa clientèle, de sorte que, à titre d'exemple, plusieurs modèles statistiques spécialisés à un sous-ensemble de la population totale peuvent être employés, chacun d'eux bénéficiant alors de données complètes. 
+%On pourra par exemple se limiter aux demandeurs de crédit automobile afin d'exploiter les données du véhicule à financer, qui sont alors toutes renseignées. 
+Le processus de choix des ``segments'', \textit{i.e.}\ la partition des lignes de $\glssymbol{bbx}$ sur lesquels développer des modèles séparés, est basé soit sur l'histoire de l'entreprise (par exemple, un modèle spécifique aux crédits automobiles a pu être développé au début de la commercialisation de ce produit), soit sur des heuristiques très simples. On détaillera ce problème en chapitre~\ref{chap6}.
 
 L'autre pré-traitement répandu dans le milieu du \textit{Credit Scoring} pour faire face aux données manquantes et aux valeurs extrêmes est la discrétisation (pour les variables continues uniquement). Cela consiste à transformer une variable continue dont certaines observations sont manquantes en une variable catégorielle dont chaque modalité correspond à un intervalle de la variable continue d'origine et / ou au fait que l'observation d'origine était manquante. Un exemple de discrétisation de la variable ``Âge du client'' est visible en figure~\ref{tab:disc_ex} ; ainsi, le fait que l'observation soit manquante est considérée comme une information à part entière et les valeurs extrêmes sont regroupées dans le dernier intervalle. Les mécanismes de données manquantes seront discutés en chapitre~\ref{chap2}. Le processus de discrétisation est discuté en détail au chapitre~\ref{chap4}.
 
@@ -138,7 +146,7 @@ L'autre pré-traitement répandu dans le milieu du \textit{Credit Scoring} pour 
 
 \`A présent, on dispose de données rendues complètes sur l'ensemble des demandeurs de crédit et l'on souhaite prédire le niveau de risque présenté par un nouveau demandeur. Il convient donc dans un premier temps de quantifier le risque de chaque échantillon de la matrice de design $\glssymbol{bbx}$.
 
-\subsection{Critère à modéliser} \label{subsec:critere}
+\subsection{Définir les ``bons'' et ``mauvais'' payeurs} \label{subsec:critere}
 
 L'institut financier emprunte de l'argent sur les marchés à un taux relativement faible et le redistribue aux demandeurs de crédit qu'il juge profitables, c'est-à-dire susceptible de rembourser cette dette. Il y a donc un système d'acceptation, reposant sur un ensemble de règles automatiques et potentiellement une étude humaine. On considère que le mécanisme qui conduit au financement \textit{in fine} de la demande de crédit est aléatoire, noté $Z$ et prenant les valeurs f (pour les clients dont la demande est financée) et nf (pour les non-financés).
 
@@ -177,14 +185,14 @@ En essence, il est souhaitable de mesurer la profitabilité de chaque crédit, p
 
 En conséquence, on sélectionne généralement 12 mois de dossiers de demandes de crédit pour s'affranchir de phénomènes de saisonnalité et on observe le mois suivant la date de financement de chaque dossier si la mensualité a été remboursée. On répète le processus jusqu'à un horizon de 12 à 24 mois selon la disponibilité des données. On dispose alors pour chaque client d'une série temporelle qui indique si le remboursement mensuel a été effectué ou non. On cherche ensuite à se ramener à une seule variable aléatoire cible $\glssymbol{Y} \in \{0,1\}$ qualifiant un client ``bon'' par $Y=1$ ou ``mauvais'' par $Y=0$. L'heuristique actuellement utilisée est la suivante :
 \begin{itemize}
-\item Pour un horizon $T=\{6,12,18,24\}$ mois et $I = \{0,\dots,6\}$ impayés consécutifs,
+\item Pour un ensemble d'horizons $T \in \{6,12,18,24\}$ mois et d'impayés consécutifs $I \in \{0,\dots,6\}$ ,
 \begin{itemize}
+\item Tracer le graphique d'``horizon du risque'' : la proportion de clients ayant $I$ impayés consécutifs $T$ mois après leur financement, dont un exemple est donné en figure~\ref{fig:courbe_horizon}.
+
+On cherche un point d'inflexion sur cette courbe, qui traduirait le fait qu'au-delà d'un certain horizon $T$, la proportion de dossiers ``mauvais'' n'évolue plus et l'on considère que tous les ``mauvais'' clients sont déjà identifiés.
 \item Construire le tableau des \textit{Roll Rates}, dont un exemple est donné en tableau~\ref{tab:impayes}.
 
 On cherche le nombre d'impayés consécutifs $I$ au-delà duquel la proportion de dossiers se dégradant (et donc fortement susceptibles de générer des pertes) est ``importante'', généralement au-delà de 50 \%. 
-\item Tracer le graphique d'``horizon du risque'', dont un exemple est donné en figure~\ref{fig:courbe_horizon}.
-
-On cherche un point d'inflexion sur cette courbe, qui traduirait le fait qu'au-delà d'un certain horizon $T$, la proportion de dossiers ``mauvais'' n'évolue plus et l'on considère que tous les ``mauvais'' clients sont déjà identifiés.
 \end{itemize}
 \item Choisir le couple $(T,I)$ qui répond au mieux aux critères ci-dessus et permet d'avoir un nombre significatif de dossiers ``mauvais''. Il faut garder à l'esprit que plus l'on choisit un horizon $T$ faible et / ou un nombre élevé d'impayés consécutifs $I$, plus la proportion $\hat{\pi}_0$ (l'estimateur de la moyenne pour $\pi_i = p(Y=i)$) de dossiers ``mauvais'' par rapport aux dossiers ``bons'' devient faible.
 %On note dans la suite, de manière classique, $\pi_i = p(Y=i)$. 
@@ -212,25 +220,32 @@ Impayés consécutifs & Amélioration & Stabilité & Dégradation \\
 \end{tabular}
 \end{table}
 
-Pour des raisons pratiques et historiques, on choisit généralement $T=12$ mois et $I = 2$ impayés consécutifs. On considère donc comme ``mauvais'' ($Y=0$) les dossiers financés ayant eu plus de 2 mensualités impayées consécutives dans les 12 mois qui ont suivi leur financement, comme ``bons'' ($Y=1$) les dossiers n'ayant pas eu d'impayés, comme ``indéterminés'' les dossiers ayant eu 1 impayé, et on exclut tous les dossiers non financés ($Z=\nf$). On a alors le vecteur de réponse $\glssymbol{bby}$ dont un exemple est donné en tableau~\ref{tab:rep_ex}.
+Pour des raisons pratiques et historiques, on choisit généralement $T=12$ mois et $I = 2$ impayés consécutifs. On considère donc comme ``mauvais'' ($Y=0$) les dossiers financés ayant eu plus de 2 mensualités impayées consécutives dans les 12 mois qui ont suivi leur financement, comme ``bons'' ($Y=1$) les dossiers n'ayant pas eu d'impayés, comme ``indéterminés'' les dossiers ayant eu 1 impayé, et on exclut tous les dossiers non financés ($Z=\nf$). On a alors le vecteur de réponses $\glssymbol{bby}$ dont un exemple est donné en tableau~\ref{tab:rep_ex}.
 
 \begin{table}
 \centering
 \caption{\label{tab:rep_ex} Exemple de vecteur $\glssymbol{bby}$ de qualification du risque des clients.}
-\begin{tabular}{|c|c|c|c|c|c|c|}
+\begin{tabular}{|c|}
 \hline
-$y$ & 1 & Manquant - Non-financé & 0 & Manquant - Indéterminé & 0 & 1 \\
+$y$ \\
+\hline
+1 \\
+Manquant - Non-financé \\
+0 \\
+Manquant - Indéterminé \\
+0 \\
+1 \\
 \hline
 \end{tabular}
 \end{table}
 
-On en conclut que la performance de remboursement n'est observable que pour les clients financés non indéterminés, que l'on va assimiler dans la suite à ceux pour lesquels $Z=\f$, problème qui fait l'objet du chapitre~\ref{chap2}. Toujours-est-il qu'à présent, on dispose de données $(\glssymbol{bbx},\glssymbol{bby})$ complètes grâce auxquelles on souhaite apprendre une règle de décision, appelée \gls{score} et discernant, parmi les futurs demandeurs de crédit, les ``bons'' des ``mauvais'' clients.
+On en conclut que la performance de remboursement n'est observable que pour les clients financés non indéterminés, que l'on va assimiler dans la suite à ceux pour lesquels $Z=\f$, problème qui fait l'objet du chapitre~\ref{chap2}. Toujours est-il qu'à présent, on dispose de données $(\glssymbol{bbx},\glssymbol{bby})$ complètes grâce auxquelles on souhaite apprendre un \gls{score} qualifiant la qualité des emprunteurs, et associé à un cutoff produisant une fonction de classification binaire discernant, parmi les futurs demandeurs de crédit, les ``bons'' des ``mauvais'' clients.
 
-\subsection{L'apprentissage d'une règle de décision} \label{subsec:apprentissage}
+\subsection{L'apprentissage d'un \gls{score}} \label{subsec:apprentissage}
 
-Malgré l'existence de nombreux modèles statistiques permettant de prédire $\glssymbol{Y}$ connaissant les caractéristiques $\glssymbol{bX}$ d'un client et que nous discuterons en partie~\ref{chap1:sec3}, la régression logistique est très largement utilisée en \textit{Credit Scoring}~\cite{thomas2000survey}. Plusieurs travaux empiriques ont suggéré que du fait de la nature des données ``classiques'' en \textit{Credit Scoring}, \textit{i.e.}\ faible nombre de covariables et classes très mélangées (en particulier, absence de frontière de séparation linéaire entre ``bons'' et ``mauvais'' clients), aucun autre modèle de classification supervisée ne produit de résultats significativement supérieurs à la régression logistique sur les données à disposition de leurs auteurs respectifs (se référer par exemple à~\cite{hand1997statistical,baesens2003benchmarking,brown2012experimental}).
+Malgré l'existence de nombreux modèles statistiques permettant de prédire $\glssymbol{Y}$ connaissant les caractéristiques $\glssymbol{bX}$ d'un client et que nous discuterons en partie~\ref{chap1:sec3}, la régression logistique est très largement utilisée en \textit{Credit Scoring}~\cite{thomas2000survey}. Plusieurs travaux empiriques ont suggéré que du fait du faible nombre de covariables et de classes très mélangées (en particulier, absence de frontière de séparation linéaire entre ``bons'' et ``mauvais'' clients), aucun autre modèle de classification supervisée ne produit de résultats significativement supérieurs à la régression logistique sur les données à disposition de leurs auteurs respectifs (se référer par exemple à~\cite{hand1997statistical,baesens2003benchmarking,brown2012experimental}).
 
-Le modèle de régression logistique, contrairement à ce que son nom suggère, est un modèle de classification qui impose une structure particulière de loi de probabilité d'une variable aléatoire cible binaire $\glssymbol{Y}$ conditionnellement à des covariables explicatives $\glssymbol{bX} \in \glssymbol{Xspace}=\glssymbol{R}^d$ donnée par :
+Le modèle de régression logistique, contrairement à ce que son nom suggère, est un modèle de classification qui impose une structure particulière de loi de probabilité d'une variable aléatoire cible binaire $\glssymbol{Y}$ conditionnellement à des covariables $\glssymbol{bX} \in \glssymbol{Xspace}=\glssymbol{R}^d$ donnée par :
 \begin{equation} \label{eq:logit}
 \text{logit}[p(Y=1 | \glssymbol{bX}=\glssymbol{bx}, \glssymbol{bth})] = \ln \frac{p(Y=1 | \glssymbol{bX}=\glssymbol{bx}, \glssymbol{bth})}{1-p(Y=1 | \glssymbol{bX}=\glssymbol{bx}, \glssymbol{bth})} = \glssymbol{bth}' \times (1,\glssymbol{bx})
 \end{equation}
@@ -311,11 +326,13 @@ Après cette mise en situation industrielle qui aura mis en avant les approximat
 
 On note $p$ la \gls{pdf} de $(\glssymbol{bX},Y)$ et $\pd(\cdot | \glssymbol{bx})$ la loi de probabilité de $Y$ sachant $\glssymbol{bx}$, qui s'obtient à partir de $p$ et de la relation de Bayes: $$\pd(\cdot | \glssymbol{bx}) = \frac{p(\glssymbol{bx},y)}{p(\glssymbol{bx})},$$ que l'on désignera par ``oracle'' dans la suite. On aimerait ``retrouver'' cette loi par calcul, or elle est inconnue (si elle était connue, le problème serait résolu !), et on a uniquement accès à un $n$-échantillon $\mathcal{T}_n = (\glssymbol{bbx},\glssymbol{bby})$ dont on note la loi de probabilité (uniforme) $\ps$.
 
-Imaginons un instant que $\pd(\cdot | \glssymbol{bx})$ soit connu. Une première approche consiste en quelque sorte à exprimer notre connaissance de cette loi en la forçant à appartenir à un modèle (ou à une famille de modèles). Autrement dit, on suppose que $\pd(\cdot | \glssymbol{bx})$ appartient à un ensemble (très) restreint des lois possibles. Si l'on note $\mathcal{B}(\glssymbol{Xspace} \times \mathcal{Y})$ la tribu borélienne sur $\glssymbol{Xspace} \times \mathcal{Y}$, alors $p$, dont $\pd$ est un sous-produit, est l'une des nombreuses mesures de probabilités possibles sur l'espace mesurable $(\glssymbol{Xspace} \times \mathcal{Y},\mathcal{B}(\glssymbol{Xspace} \times \mathcal{Y}))$. Comme énoncé plus haut, dans le cadre du \textit{Credit Scoring}, on s'intéresse au modèle de \gls{lr}~\eqref{eq:logit} noté $p_{\glssymbol{bth}}(\cdot | \glssymbol{bx})$ dans la suite. Dès lors, une formulation simple du problème consiste à se donner une notion de distance entre $p_{\text{data}}(\cdot | \glssymbol{bx})$ et $p_{\glssymbol{bth}}(\cdot | \glssymbol{bx})$ afin d'estimer le ``meilleur'' paramètre $\glssymbol{bthstar}$ au sens de cette ``distance''. Un bon candidat est la divergence de Kullback-Leibler~\cite{kullback1951information} :
+Imaginons un instant que $\pd(\cdot | \glssymbol{bx})$ soit connu. Une première approche consiste en quelque sorte à exprimer notre connaissance de cette loi en la forçant à appartenir à un modèle (ou à une famille de modèles). Autrement dit, on suppose que $\pd(\cdot | \glssymbol{bx})$ appartient à un ensemble (très) restreint des lois possibles. 
+%Si l'on note $\mathcal{B}(\glssymbol{Xspace} \times \mathcal{Y})$ la tribu borélienne sur $\glssymbol{Xspace} \times \mathcal{Y}$, alors $p$, dont $\pd$ est un sous-produit, est l'une des nombreuses mesures de probabilités possibles sur l'espace mesurable $(\glssymbol{Xspace} \times \mathcal{Y},\mathcal{B}(\glssymbol{Xspace} \times \mathcal{Y}))$. 
+Comme énoncé plus haut, dans le cadre du \textit{Credit Scoring}, on s'intéresse au modèle de \gls{lr}~\eqref{eq:logit} noté $p_{\glssymbol{bth}}(\cdot | \glssymbol{bx})$ dans la suite. Dès lors, une formulation simple du problème consiste à se donner une notion de distance entre $p_{\text{data}}(\cdot | \glssymbol{bx})$ et $p_{\glssymbol{bth}}(\cdot | \glssymbol{bx})$ afin d'estimer le ``meilleur'' paramètre $\glssymbol{bthstar}$ au sens de cette ``distance''. Un bon candidat est la divergence de Kullback-Leibler~\cite{kullback1951information} :
 \begin{equation} \label{eq:KL}
 \glssymbol{KL}(p_{\text{data}}(\cdot | \glssymbol{bx})||p_{\glssymbol{bth}}(\cdot | \glssymbol{bx})) = \sum_{y \in \{0,1\}} p_{\text{data}}(y | \glssymbol{bx}) \ln \left( \frac{p_{\text{data}}(y | \glssymbol{bx})}{p_{\glssymbol{bth}}(y | \glssymbol{bx})} \right)
 \end{equation}
-Cette divergence est donnée pour une valeur particulière $\glssymbol{bx}$ de $\glssymbol{bX}$. Or, l'institut financier voudrait que le modèle $p_{\glssymbol{bth}}(\cdot | \glssymbol{bx})$ soit similaire à $\pd(\cdot | \glssymbol{bx})$ en moyenne pour tous ses clients, soit $${\glssymbol{bthstar}} = \argmin_{\glssymbol{bth}} \mathbb{E}_{\glssymbol{bX}} [\glssymbol{KL}(p_{\text{data}}(\cdot | \glssymbol{bx})||p_{\glssymbol{bth}}(\cdot | \glssymbol{bx}))].$$ Comme $\glssymbol{KL}(\pd(\cdot | \glssymbol{bx})||p_{\glssymbol{bth}}(\cdot | \glssymbol{bx})) \geq 0$, on peut voir cette opération comme une projection de la loi $\pd(\cdot | \glssymbol{bx})$ dans l'espace du modèle (ou de la famille de modèles) comme sur la figure~\ref{fig:projection}. Cette interprétation géométrique permet d'affirmer que si $\min_{\glssymbol{bth}} \mathbb{E}_{\glssymbol{bX}} [\glssymbol{KL}(p_{\text{data}}(\cdot | \glssymbol{bx})||p_{\glssymbol{bth}}(\cdot | \glssymbol{bx}))] = 0$, alors on a $p_{\text{data}}(\cdot | \glssymbol{bx}) = p_{\glssymbol{bthstar}}(\cdot | \glssymbol{bx}) \; \forall \: \glssymbol{bx}$. Dans ce cas, on parlera dans la suite de ``vrai modèle'' ; dans le cas contraire, de ``modèle mal spécifié'' (anglicisme de \textit{misspecified model}).
+Cette divergence est donnée pour une valeur particulière $\glssymbol{bx}$ de $\glssymbol{bX}$. Or, l'institut financier voudrait que le modèle $p_{\glssymbol{bth}}(\cdot | \glssymbol{bx})$ soit similaire à $\pd(\cdot | \glssymbol{bx})$ en moyenne pour tous ses clients, ce qui conduit au paramètre $${\glssymbol{bthstar}} = \argmin_{\glssymbol{bth}} \mathbb{E}_{\glssymbol{bX}} [\glssymbol{KL}(p_{\text{data}}(\cdot | \glssymbol{bx})||p_{\glssymbol{bth}}(\cdot | \glssymbol{bx}))].$$ Comme $\glssymbol{KL}(\pd(\cdot | \glssymbol{bx})||p_{\glssymbol{bth}}(\cdot | \glssymbol{bx})) \geq 0$, on peut voir cette opération comme une projection de la loi $\pd(\cdot | \glssymbol{bx})$ dans l'espace du modèle (ou de la famille de modèles) comme sur la figure~\ref{fig:projection}. Cette interprétation géométrique permet d'affirmer que si $\min_{\glssymbol{bth}} \mathbb{E}_{\glssymbol{bX}} [\glssymbol{KL}(p_{\text{data}}(\cdot | \glssymbol{bx})||p_{\glssymbol{bth}}(\cdot | \glssymbol{bx}))] = 0$, alors on a $p_{\text{data}}(\cdot | \glssymbol{bx}) = p_{\glssymbol{bthstar}}(\cdot | \glssymbol{bx}) \; \forall \: \glssymbol{bx}$. Dans ce cas, on parlera dans la suite de ``vrai modèle'' ; dans le cas contraire, de ``modèle mal spécifié'' (anglicisme de \textit{misspecified model}).
 
 \begin{figure}
 \begin{center}
@@ -381,11 +398,12 @@ N'ayant accès à $\pd(\cdot | \glssymbol{bx})$ qu'à travers un échantillon, i
 
 \subsection{Minimisation du risque empirique et maximum de vraisemblance} \label{subsec:gradient}
 
-On peut réécrire $\glssymbol{KL}(p_{\text{data}}(\cdot|\glssymbol{bx})||p_{\glssymbol{bth}}(\cdot|\glssymbol{bx}))$ pour faire apparaître un terme indépendant de $p_{\glssymbol{bth}}$ :
-\[ \glssymbol{KL}(p_{\text{data}}(\cdot|\glssymbol{bx})||p_{\glssymbol{bth}}(\cdot|\glssymbol{bx})) = \underbrace{\sum_{y \in \{0,1\}} p_{\text{data}}(y|\glssymbol{bx}) \ln [p_{\text{data}}(y|\glssymbol{bx})]}_{\perp p_{\glssymbol{bth}}} - \underbrace{\sum_{y \in \{0,1\}} p_{\text{data}}(y|\glssymbol{bx}) \ln [p_{\glssymbol{bth}}(y|\glssymbol{bx})]}_{\mathbb{E}_{\glssymbol{Y}} [\ln[p_{\glssymbol{bth}}(\cdot|\glssymbol{bx})]]}  \]
+On peut réécrire $\glssymbol{KL}(p_{\text{data}}(\cdot|\glssymbol{bx})||p_{\glssymbol{bth}}(\cdot|\glssymbol{bx}))$ pour faire une quantité indépendante de $p_{\glssymbol{bth}}$ :
+%\[ \glssymbol{KL}(p_{\text{data}}(\cdot|\glssymbol{bx})||p_{\glssymbol{bth}}(\cdot|\glssymbol{bx})) = \underbrace{\sum_{y \in \{0,1\}} p_{\text{data}}(y|\glssymbol{bx}) \ln [p_{\text{data}}(y|\glssymbol{bx})]}_{\perp p_{\glssymbol{bth}}} - \underbrace{\sum_{y \in \{0,1\}} p_{\text{data}}(y|\glssymbol{bx}) \ln [p_{\glssymbol{bth}}(y|\glssymbol{bx})]}_{\mathbb{E}_{\glssymbol{Y}} [\ln[p_{\glssymbol{bth}}(\cdot|\glssymbol{bx})]]}  \]
+\[ \glssymbol{KL}(p_{\text{data}}(\cdot|\glssymbol{bx})||p_{\glssymbol{bth}}(\cdot|\glssymbol{bx})) = \sum_{y \in \{0,1\}} p_{\text{data}}(y|\glssymbol{bx}) \ln [p_{\text{data}}(y|\glssymbol{bx})] - \underbrace{\sum_{y \in \{0,1\}} p_{\text{data}}(y|\glssymbol{bx}) \ln [p_{\glssymbol{bth}}(y|\glssymbol{bx})]}_{\mathbb{E}_{\glssymbol{Y}} [\ln[p_{\glssymbol{bth}}(\cdot|\glssymbol{bx})]]}  \]
 On va donc naturellement se concentrer sur la maximisation du second terme pour l'ensemble des clients en moyenne, c'est-à-dire $\glssymbol{bthstar} = \argmax_{\glssymbol{bth}} \mathbb{E}_{\glssymbol{bX}}  [\mathbb{E}_{\glssymbol{Y}} [\ln[p_{\glssymbol{bth}}(\cdot|\glssymbol{bx})]]] = \argmax_{\glssymbol{bth}} \mathbb{E}_{(\glssymbol{bX},\glssymbol{Y}) \sim p} [\ln[p_{\glssymbol{bth}}]]$.
 
-En substituant $p$ pour ${p_{\text{sample}}}$, on approxime l'espérance sur $\glssymbol{Xspace} \times \mathcal{Y}$ par l'espérance sur l'échantillon et on obtient le critère $\ell(\theta;\glssymbol{bbx},\glssymbol{bby})$ :
+En substituant ${p_{\text{sample}}}$ à $\pd$, on approxime l'espérance sur $\glssymbol{Xspace} \times \mathcal{Y}$ par l'espérance sur l'échantillon et on obtient le critère $\ell(\theta;\glssymbol{bbx},\glssymbol{bby})$ :
 \begin{equation} \label{eq:vraisemblance}
 \ell(\glssymbol{bth};\glssymbol{bbx},\glssymbol{bby}) = \sum_{i=1}^n \ln[p_{\glssymbol{bth}}(y_i | \glssymbol{bx}_i) ]
 \end{equation}
@@ -408,7 +426,8 @@ On suppose que $\hat{\glssymbol{bth}}$ est un maximum local ; il y a un voisinag
 Le ``réflexe'' pour obtenir un maximum local conduit à dériver la fonction de vraisemblance et trouver $\hat{\glssymbol{bth}}$ pour lequel cette dérivé est nulle :
 \[ \dfrac{\delta \ell}{\delta \theta_j} (\hat{\glssymbol{bth}};\glssymbol{bbx},\glssymbol{bby})= \sum_{i=1}^n (y_i - p_{\hat{\glssymbol{bth}}}(1|\glssymbol{bx}_i)) x_{i,j} = 0\]
 
-Cependant, contrairement à la régression linéaire où l'on dispose d'une formule close pour l'estimateur du maximum de vraisemblance $\hat{\glssymbol{bth}}$, il n'existe rien de tel pour la \gls{lr} puisque cette équation n'est pas linéaire en $\glssymbol{bth}$ et l'on doit recourir à des algorithmes itératifs, dont le plus connu est la descente de gradient et ses nombreux dérivés.
+Cependant, contrairement à la régression linéaire où l'on dispose d'une formule close pour l'estimateur du maximum de vraisemblance $\hat{\glssymbol{bth}}$, il n'existe rien de tel pour la \gls{lr} puisque cette équation n'est pas linéaire en $\glssymbol{bth}$ et l'on doit recourir à des algorithmes itératifs, dont le plus connu est la descente de gradient.
+% et ses nombreux dérivés.
 
 On désigne le gradient de la log-vraisemblance par rapport à $\glssymbol{bth}$ par $\nabla_{\glssymbol{bth}} \ell = \left( \dfrac{\delta \ell}{\delta \theta_j} \right)_0^d$. L'algorithme de descente de gradient consiste à mettre à jour à l'étape $(s)$ le paramètre $\glssymbol{bth}^{(s)}$ dans la direction qui améliore le critère $\ell(\glssymbol{bth};\glssymbol{bbx},\glssymbol{bby})$ : $$\glssymbol{bth}^{(s+1)} = \glssymbol{bth}^{(s)} + \epsilon \nabla_{\glssymbol{bth}} \ell(\glssymbol{bth}^{(s)};\glssymbol{bbx},\glssymbol{bby}).$$ Une immense littérature est dédiée au choix d'$\epsilon$, appelé \textit{learning rate} en \textit{machine learning} et à d'autres astuces destinées à accélérer la convergence éventuelle vers $\hat{\glssymbol{bth}}$. Cette littérature s'est particulièrement développée dans le cadre des réseaux de neurones, pour lesquels la méthode de Newton, bien adaptée à la \gls{lr} et que l'on développera ci-après, n'est pas tractable.
 
@@ -536,7 +555,7 @@ Dans le cas particulier du \textit{Credit Scoring}, une thèse CIFRE récente a 
 où $t$ et $\lambda$ sont mutuellement dépendants et règlent la sévérité de la régularisation. De manière générale, la régularisation présente plusieurs avantages, et la motivation première est le contrôle du compromis biais-variance. Néanmoins, par l'utilisation d'une pénalisation de type $L^1$ comme le LASSO, un effet de bord désirable est la sélection de variables, c'est-à-dire la capacité à ``forcer'' des coefficients estimés exactement à $0$. Plusieurs variantes ou raffinements du LASSO existent aujourd'hui et possèdent des propriétés asymptotiques différentes ou meilleures : nous y reviendrons brièvement au chapitre~\ref{chap7}.
 
 
-\subsubsection{Choix de modèle} \label{subsubsec:choix_modele}
+\subsubsection{Critère de sélection de modèle} \label{subsubsec:choix_modele}
 
 Une approche de résolution indirecte du problème de sélection de variable est le choix de modèle : considérons M modèles $\Theta^{(1)},\dots,\Theta^{(M)}$ de \gls{lr} différents, c'est-à-dire pour lesquels les variables inclues ne sont pas les mêmes. On peut d'ailleurs voir le problème de sélection de variables comme un choix entre tous les $2^d$ modèles possibles. Dans ce cadre, de nombreux critères de choix de modèle, voire d'aggrégation de modèles, c'est-à-dire de sélection de tout ou partie de ces modèles en pondérant leur contribution globale, ont été proposés. La justification de ces critères sort largement du cadre de ce manuscrit ; aussi nous nous limiterons, dans le cadre de la sélection de modèle, au critère BIC (proposé dans~\cite{BIC}). Outre sa consistance asymptotique, c'est-à-dire la capacité de sélectionner, sous certaines conditions sur la famille notamment, le ``quasi-vrai'' modèle à une probabilité tendant vers $1$ lorsque la taille d'échantillon $n$ augmente, ce critère possède une propriété au coeur du chapitre~\ref{chap5} qui le lie à la probabilité \textit{a posteriori} d'un modèle sachant les données. On donne les grandes lignes de la dérivation de ce résultat en Chapitre~\ref{chap5} et on reviendra plusieurs fois sur la question du comptage du nombre de paramètres estimés $\nu$ ci-dessous que constitue le terme de pénalisation du critère BIC. Le lecteur désireux d'en apprendre plus sur les propriétés et les fondements théoriques du critère BIC peuvent consulter~\cite{lebarbier} et en particulier une de ses références~\cite{burnham2003model}.
 
@@ -545,7 +564,7 @@ Le critère BIC s'écrit de la manière suivante :
     \label{eq:BIC}
     \text{BIC}(\hat{\glssymbol{bth}}) =  2 \ell(\hat{\glssymbol{bth}} ; \glssymbol{bbx},\glssymbol{bby}) - \nu \ln (n),
 \end{equation}
-où $\hat{\glssymbol{bth}}$ est l'estimateur du maximum de vraisemblance et $\nu = |\Theta|$.
+où $\hat{\glssymbol{bth}}$ est l'estimateur du maximum de vraisemblance et $\nu = \text{dim}(\Theta)$.
 
 
 %\subsubsection{Variable cible}
@@ -628,7 +647,7 @@ Les arbres de décision souffrent souvent de large variance~\cite{geurts2000inve
 
 \paragraph{Principe}
 
-Chaque variable d'entrée, c'est-à-dire une covariable $\glssymbol{bx}_j$, est vue comme un neurone, tout comme la variable de sortie, c'est-à-dire la variable dépendante à prédire $y$. Les neurones intermédiaires, formant la (les) couche(s) caché(s) réalisent un calcul à partir de leur(s) neurone(s) parent(s) (phase de propagation dite \textit{feedforward}) consistant typiquement en une addition et une transformation non-linéaire (comme la sigmoïde qui sert en \gls{lr}). Les résultats prédits $\hat{\glssymbol{bby}}$ sont comparés aux exemples d'apprentissage $\glssymbol{bby}$ et l'erreur est rétropropagée (phase dite \textit{backpropagation}) : comme en \gls{lr}, les couches cachées disposent de coefficients $\glssymbol{bth}$ qui sont ajustés par descente de gradient. La comparaison biologique est cependant bien plus limitée que ce que leur nom laisse supposer : les neurones représentent simplement un état résultant d'un calcul, et les synapses sont les arêtes du graph de calcul (qui déterminent le(s) neurone(s) parent(s) / enfant(s) de chaque neurone). Une architecture particulière de ce modèle est utilisée dans le chapitre~\ref{chap4} comme graph de calcul pour résoudre le problème de discrétisation évoqué en section~\ref{subsec:segmentation}.
+Chaque variable d'entrée, c'est-à-dire une covariable $\glssymbol{bx}_j$, est vue comme un neurone, tout comme la variable de sortie, c'est-à-dire la variable dépendante à prédire $y$. Les neurones intermédiaires, formant la (les) couche(s) caché(s) réalisent un calcul à partir de leur(s) neurone(s) parent(s) (phase de propagation dite \textit{feedforward}) consistant typiquement en une addition et une transformation non-linéaire (comme la sigmoïde qui sert en \gls{lr}). Les résultats prédits $\hat{\glssymbol{bby}}$ sont comparés aux exemples d'apprentissage $\glssymbol{bby}$ et l'erreur est rétropropagée (phase dite \textit{backpropagation}) : comme en \gls{lr}, les couches cachées disposent de coefficients $\glssymbol{bth}$ qui sont ajustés par descente de gradient. La comparaison biologique est cependant bien plus limitée que ce que leur nom laisse supposer : les neurones représentent simplement un état résultant d'un calcul, et les synapses sont les arêtes du graphe de calcul (qui déterminent le(s) neurone(s) parent(s) / enfant(s) de chaque neurone). Une architecture particulière de ce modèle est utilisée dans le chapitre~\ref{chap4} comme graph de calcul pour résoudre le problème de discrétisation évoqué en section~\ref{subsec:segmentation}.
 
 \paragraph{Limites et développements récents}
 

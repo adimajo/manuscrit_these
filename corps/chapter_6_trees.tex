@@ -2,7 +2,7 @@
 
 \selectlanguage{english}
 
-\epigraph{.}{.}
+\epigraph{All religions, arts and sciences are branches of the same tree. All these aspirations are directed toward ennobling man's life, lifting it from the sphere of mere physical existence and leading the individual towards freedom.}{Albert Einstein, ``Moral Decay'', 1937.}
 
 \minitoc
 
@@ -76,7 +76,7 @@ The next Section illustrates how such a structure is achieved using \gls{cacf}'s
 
 \paragraph{\glsfirst{pca}}
 
-The goal of \gls{pca}~\cite{pages2014multiple} is to represent observations graphically in a way that exhibits most efficiently their similitude and differences by combining input features in so-called orthogonal ``principal components'' $\bm{u} = (\bm{u}_1,\dots,\bm{u}_d)$ such that the inertia of each axis $j$ (the variance of $\glssymbol{bx}' \bm{u}_j$) is maximized. It can be shown that it is equivalent to seeking the ordering of the eigenvalues $\bm{\lambda} = (\lambda_1,\dots,\lambda_d)$ of the covariance matrix $\Sigma = \glssymbol{bbx}'\glssymbol{bbx}$. The explained variance of each axis $j$ is given by $\frac{\lambda_j}{\sum_{j'=1}^d \lambda_j'}$. Classically, only the two first axes $(\bm{u}_1,\bm{u}_2)$ (after reordering from largest to lowest explained variance) are used. The composition of theses axes in the original features $\glssymbol{x}_j$ is often represented first, to see if groups of features can be formed which would define the subsequent segments. \gls{pca} has been applied to the Automobile dataset from \gls{cacf} on Figure~\ref{fig:pca}, where the aforementioned principal components' composition is displayed on Figure~\ref{fig:pca1}: interestingly, the first axis is dominated by car and loan characteristics such as the vehicle's price (``APPORT'', ``MCDE'', ``CREDAC''), its fiscal and mechanical characteristics (``CVFISC'', ``POIDSVH'', ``CYLVH'') while the second axis is composed of clients' characteristics such as their age (``anc\_DNAISS'', ``anc\_DNACJ''), their number of children (``NBENF''), their job stability (``anc\_AMEMBC''). Note that a good portion of the total variance is explained by the first axes (22.54 \% and 18.97 \% resp.). The second classical representation is the observations themselves in this new space, which is displayed on Figure~\ref{fig:pca2}: no clear group is distinguishable from the pack. With these two representations, the \textit{Credit Scoring} practitioner decide if, visually, clusters are formed (\textit{i.e.}\ clouds with little intra-class variance) which would be used to build separate scorecards $(p_{\glssymbol{bth}^{1}},p_{\glssymbol{bth}^{2}})$.
+The goal of \gls{pca}~\cite{pages2014multiple} is to represent observations graphically in a way that exhibits most efficiently their similitude and differences by combining input features in so-called orthogonal ``principal components'' $\bm{u} = (\bm{u}_1,\dots,\bm{u}_d)$ such that the inertia of each axis $j$ (the variance of $\glssymbol{bx}' \bm{u}_j$) is maximized. It can be shown that it is equivalent to seeking the ordering of the eigenvalues $\bm{\lambda} = (\lambda_1,\dots,\lambda_d)$ of the covariance matrix $\Sigma = \glssymbol{bbx}'\glssymbol{bbx}$. The explained variance of each axis $j$ is given by $\frac{\lambda_j}{\sum_{j'=1}^d \lambda_j'}$. Classically, only the two first axes $(\bm{u}_1,\bm{u}_2)$ (after reordering from largest to lowest explained variance) are used. The composition of theses axes in the original features $\glssymbol{x}_j$ is often represented first, to see if groups of features can be formed which would define the subsequent segments. \gls{pca} has been applied to the Automobile dataset from \gls{cacf} ($n = 50{,}000$, $d = 25$ among which $18$ continuous and $7$ categorical features which number of levels go from $5$ - family status - to $100$ - brand of the vehicle and $200{,}000$ missing entries) on Figure~\ref{fig:pca}, where the aforementioned principal components' composition is displayed on Figure~\ref{fig:pca1}: interestingly, the first axis is dominated by car and loan characteristics such as the vehicle's price (``APPORT'', ``MCDE'', ``CREDAC''), its fiscal and mechanical characteristics (``CVFISC'', ``POIDSVH'', ``CYLVH'') while the second axis is composed of clients' characteristics such as their age (``anc\_DNAISS'', ``anc\_DNACJ''), their number of children (``NBENF''), their job stability (``anc\_AMEMBC''). Note that a good portion of the total variance is explained by the first axes (22.54 \% and 18.97 \% resp.). The second classical representation is the observations themselves in this new space, which is displayed on Figure~\ref{fig:pca2}: no clear group is distinguishable from the pack. With these two representations, the \textit{Credit Scoring} practitioner decide if, visually, clusters are formed (\textit{i.e.}\ clouds with little intra-class variance) which would be used to build separate scorecards $(p_{\glssymbol{bth}^{1}},p_{\glssymbol{bth}^{2}})$.
 %The method is described in Appendix~\ref{app1:pca}.
 
 However, the \textit{Credit Scoring} data is of mixed type and \textit{Credit Scoring} practitioners are used to quantizing the data, as explained thoroughly in Chapter~\ref{chap4}, such that the \gls{mca} algorithm, specific to categorical features, becomes applicable to all features, by using \textit{e.g.\ equal-freq} or $\chi^2$ tests (see Appendix~\ref{app1}).
@@ -106,7 +106,7 @@ In presence of only categorical features (or following quantization), the \gls{m
 %The method is described in Appendix~\ref{app1:mca}.
 This is of high practical interest in \textit{Credit Scoring} because clouds of points are directly characterized by the categorical levels that are displayed nearest, contrary to \gls{pca} where groups correspond to surfaces of equation $\glssymbol{bx} ' \bm{u}_1 + \glssymbol{bx} ' \bm{u}_2 \geq \alpha$ where $\alpha$ encodes the separation boundary of resulting clusters, which would be the edges of our decision system, as on Figure~\ref{fig:arbre}, and make it arguably less interpretable.
 
-When applied to the Automobile dataset, the \gls{mca} algorithm yields Figure~\ref{fig:mca}. As categorical features' levels are dummy encoded, they are all represented separately as in Figure~\ref{fig:mca1}. Unfortunately, as the vehicle's brand takes a lot of levels, this Figure is not very informative. A useful trick, apart from grouping levels, is to plot the barycentre of a feature's levels (weighted by the number of observations in each level), as displayed on Figure~\ref{fig:mca2}. Note that a low portion of the total variance is explained by the first axes (1.51 \% and 1.14 \% resp.) since the data, when one-hot encoded, is very high dimensional.
+When applied to the Automobile dataset, the \gls{mca} algorithm yields Figure~\ref{fig:mca}. As categorical features' levels are dummy encoded, they are all represented separately as in Figure~\ref{fig:mca1}. Unfortunately, as the vehicle's brand takes a lot of levels, this Figure is not very informative. A useful trick, apart from grouping levels, is to plot the barycentre of a feature's levels (weighted by the number of observations in each level), as displayed on Figure~\ref{fig:mca2}. Note that a low portion of the total variance is explained by the first axes (1.51 \% and 1.14 \% resp.) since the data, when one-hot encoded, is very high dimensional. As for \gls{pca}, no groups are formed when displaying the (uninformative) equivalent of Figure~\ref{fig:pca1} and no factor level(s) is / are isolated from the others in Figure~\ref{fig:mca1}. A practitioner would conclude the absence of segments on which to build several scorecards.
 
 Nevertheless, a method applicable to mixed data exists as well and could directly be applied to ``raw'' features.
 
@@ -135,7 +135,7 @@ Nevertheless, a method applicable to mixed data exists as well and could directl
 
 The \gls{famd} algorithm~\cite{pages2014multiple} aims at performing both \gls{mca} on categorical features and \gls{pca} on continuous features in a simultaneous fashion. Resulting principal component axes depend on both data types, as can be seen from Figure~\ref{fig:famd}. As on Figures~\ref{fig:pca1} and~\ref{fig:mca1}, categorical features' levels' and continuous features' contributions to the two first principal components can be displayed on Figure~\ref{fig:famd1}, where vehicle brands make it rather hard to read. When switching to the categorical features' levels barycentre representation, as in Figure~\ref{fig:mca2}, interpretation is easier and somewhat similar to the \gls{pca} method (up to a permutation on the first and second components): the first axis contains information about the client, represented by continuous (\textit{e.g.}\ age) and categorical features (\textit{e.g.}\ job category) while the second axis is about the loan and the vehicle (its brand, cost, etc.).
 %The method is described in Appendix~\ref{app1:famd}.
-This method has the advantage of not requiring the \textit{Credit Scoring} practitioner to preprocess the ``raw'' data by quantizing it, which could have a huge impact on the results of the subsequent method employed, as argumented in Chapter~\ref{chap4}. Moreover, the practitioner would fine-tune the quantization of each sub-population which, if fed back to the \gls{mca}, would potentially yield completely different results!
+This method has the advantage of not requiring the \textit{Credit Scoring} practitioner to preprocess the ``raw'' data by quantizing it, which could have a huge impact on the results of the subsequent method employed, as argumented in Chapter~\ref{chap4}. Moreover, the practitioner would fine-tune the quantization of each sub-population which, if fed back to the \gls{mca}, would potentially yield completely different results! As for \gls{pca} and \gls{mca}, the equivalent of Figure~\ref{fig:pca1} (not shown here) for \gls{famd} does not display distinguishable groups of observations. Nevertheless, the luxury car brands are now well separated in Figure~\ref{fig:famd1} from other continuous features and other categorical features' levels which would be interpreted by a \textit{Credit Scoring} practitioner as the need to build a specific scorecard for this market. However, due to the low volumes of applicants and considering that all of them are probably good clients that are all accepted (the score has little relevance for such markets), no segmentation would be performed.
 
 \medskip
 
@@ -279,7 +279,7 @@ The second failing situation is the counterpart of the first tailored data gener
 
 This Section aims at providing an eluded literature review of some well-known supervised clustering approaches that could be transposed to the \textit{Credit Scoring} industry.
 
-\subsection{Supervised generative clustering methods}
+\subsection{Supervised generative clustering methods} \label{subsec:sup_gen}
 
 In the preceding Section, examples of classical unsupervised clustering methods were given: \gls{pca} (continuous data), \gls{mca} (categorical data) and ultimately \gls{famd} (mixed data). In this Section, focus is given to supervised generative methods. Indeed, a fully generative model $p(\glssymbol{bx},y)$, if sufficiently flexible, could have easily spotted the bottlenecks of the failures of the \gls{pca} approach illustrated on Figures~\ref{fig:xdiff} and~\ref{fig:ydiff}.
 
@@ -289,13 +289,20 @@ The \gls{pls}~\cite{wold1984collinearity} algorithm seeks to combine the strengt
 
 The main idea is to construct a first component from the sum of the univariate regressions of $\glssymbol{bbx}_j$ on $\glssymbol{bby}$, then a second component from the sum of the univariate regressions of $\glssymbol{bbx}_j$ subtracted by the first component on $\glssymbol{bby}$, and so on. In a sense, a trade-off between reconstruction quality of $\glssymbol{bbx}$ and $\glssymbol{bby}$ with as few components as possible is achieved.
 
-The \gls{pls} algorithm is given in Section~\ref{app1:sec_pls} of the Appendix, Algorithm~\ref{alg:pls}. It was used in~\cite{schwartz2009human} in a classification setting which results in Figure~\ref{fig:pca_vs_pls} reproduced with permission\footnote{\copyright 2009 IEEE}. It is striking how classes are better separated when using \gls{pls}. However, this does not guarantee that the resulting inferred segments' \gls{lr} will yield better predictive performance.
+The \gls{pls} algorithm is given in Section~\ref{app1:sec_pls} of the Appendix, Algorithm~\ref{alg:pls}. It was used in~\cite{schwartz2009human} in a classification setting which results in Figure~\ref{fig:pca_vs_pls} reproduced with permission\footnote{\copyright 2009 IEEE}. It is striking how classes are better separated when using \gls{pls}. However, this does not guarantee that the resulting inferred segments' \gls{lr} will yield better predictive performance, considering that a \textit{Credit Scoring} practitioner would effectively spot two groups in Figure~\ref{fig:pca_vs_pls} (right) and separate them on the first \gls{pls} axis being above or below a threshold of approximately $0.01$. When applied to the Automobile dataset, it does not show such spectacular results (see Figure~\ref{fig:simu_pls}).
 
 \begin{figure}
 \includegraphics[width = \textwidth]{figures/chapitre6/pca_vs_pls.png}
 \caption{Cloud points resulting from the application of \gls{pca} (left) and \gls{pls} (right) on a binary-labelled multivariate continuous dataset.}
 \label{fig:pca_vs_pls}
 \end{figure}
+
+\begin{figure}
+\centering \resizebox{.8\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/graph_pls.tex}}
+\caption{Cloud points of resulting from the \gls{pls} algorithm applied to the running example of the Automobile dataset with good and bad borrowers in \textcolor{red}{red} and black respectively.}
+\label{fig:simu_pls}
+\end{figure}
+
 
 \paragraph{\glsfirst{spc}}
 
@@ -307,7 +314,7 @@ There is a close link between \gls{pls} and \gls{spc} that is thoroughly explain
 
 Although these methods make good use of $y$ in constructing sub-populations on which the practitioner would construct separate scorecards, the resulting segments would be, as described in the \gls{mca} Section, visually separated clouds of points on the graph of the two first principal components. This paradigm has two major drawbacks: first, as explained in the preceding Section, the separation boundary is complex and multivariate (as the two first principal components will most likely involve all features). Second, to make a complete tree as on Figure~\ref{fig:arbre}, these procedures would have to be repeated ``recursively'' which yields the need for a stopping criterion and an objective splitting criterion in place of the rather subjective visual separation. Direct approaches of estimating such trees are reviewed in the next Section.
 
-\subsection{Direct approaches: logistic regression trees} \label{subsec:sup_gen}
+\subsection{Direct approaches: logistic regression trees} \label{subsec:direct}
 
 \paragraph{\glsfirst{lotus}}
 
@@ -327,7 +334,7 @@ Their approach differs however drastically from \gls{lotus} in that they rely on
 
 However, categorical features are dummy / one-hot encoded so that only a few factor levels might be selected at each leaf, which amounts to merging the not selected levels into a reference value. Conversely, when used as a split feature, each level yields a distinct branch. Moreover, missing values are imputed by the mean or mode.
 
-Its original implementation is in Weka but the \textsf{R} package \rinline{RWeka} provides interfaces and wrappers to it.
+Its original implementation is in Java (Weka) but the \textsf{R} package \rinline{RWeka} provides interfaces and wrappers to it. When applied directly to the Automobile dataset, as \gls{lmt} does not handle missing values, a first preprocessing step is to select only complete observations: there remains only approx.\ $4{,}000$ observations (among $50{,}000$) and no segmentation is performed. Due to the use of the LogitBoost algorithm, only a few features are selected: one continuous feature and three particular levels of three different categorical features, yielding a rather low performance of $44.3$ Gini points (compared to the current performance of $55.7$) which is nevertheless impressive given the few training observations and features used. To help the \gls{lmt} algorithm further, features with the highest rate of missing values are deleted; we now have $d = 21$ and $n = 20{,}000$. Finally, in a third experiment, missing values of categorical features are encoded as a particular level and continuous features' missing values are imputed by their mean, all observations and features can now be used. In these two last experiments, the LogitBoost algorithm seems to fail since no segmentation is performed and only the age of the client is retained, yielding a low performance ($30$ Gini points).
 
 \begin{figure}[!htb]
 {\setlength{\parindent}{0cm}}
@@ -385,7 +392,7 @@ Lastly, a third approach closely related to our problem is \gls{mob}~\cite{zeile
 
 Their algorithm consists in fitting the chosen model (in our case, \gls{lr}) for all observations $(\glssymbol{bbx},\glssymbol{bby})$ at the current node and decide to split these into subsets based on a correlation measure (several such measures are proposed) of the residuals of the current model and splitting features $\bm{V} = (V_1, \dots, V_p)$ where $V_j \in \glssymbol{R}$ or $\glssymbol{NO}$, $1 \leq j \leq p$, which are not necessarily included in $\glssymbol{bbx}$ (they are specified by the user). The procedure is repeated until no significant ``correlation'' is detected. The C4.5 algorithm, in presence of a binary outcome, orders the levels of categorical features by their proportion of events $y$ and split as if the feature were ordinal (it can be shown that it is optimal, see~\cite{friedman2001elements} Section 9.2.4).  Similarly to \gls{lotus} and contrary to C4.5, \gls{mob} performs, for example for binary splits and when confronted to categorical features $j$ having $\glssymbol{lj}$ levels, $2^{\glssymbol{lj}}$ tests. Moreover, there is no mention of an eventual treatment of missing values. Finally, the number of segments per split is searched exhaustively.
 
-Its implementation is available through the \textsf{R} packages \rinline{party} and \rinline{partykit} which will be used in numerical experiments of Section~\ref{sec:num_exp}.
+Its implementation is available through the \textsf{R} packages \rinline{party} and \rinline{partykit} which will be used in numerical experiments of Section~\ref{sec:num_exp}. It worked well on small toy data, however, on real data, even with complete cases ($n = 4{,}000$) and by arbitrarily selecting $d = 4$ features, computation took a very long time. With bigger datasets, I got ``file size''-related errors.
 
 \medskip
 
@@ -446,7 +453,7 @@ An example is given on Figure~\ref{fig_arbre_ex_notations}.
               edge from parent node [above] {$\glssymbol{x}_{\sigma(2,1)} \not\in C_{2,2}$} };
 \end{tikzpicture}
 }
-\caption{Notations by an example.}
+\caption{Notations of a segmentation tree by an example.}
 \label{fig_arbre_ex_notations}
 \end{figure}
 
@@ -475,7 +482,7 @@ In the next Section, we propose to relax the constraint of Equation~\eqref{eq:tr
 
 The difficulty in optimizing Criterion~\eqref{eq:BICc} directly lies in the discrete nature of $c$ given $\glssymbol{bx}$, illustrated by the profusion of indicator functions in Equation~\eqref{eq:tree}, which is very similar to the problems of quantization (see Chapter~\ref{chap4} and in particular Section~\ref{subsec:relaxation}) and interaction screening (see Chapter~\ref{chap5} and in particular Section~\ref{subsec:mcmc}). In both cases, highly-combinatorial discrete problems were relaxed, by approaching door functions by softmax and relying on MCMC methods. Unsurprisingly, a similar approach can be taken here to design a smooth approximation of $p(c | \glssymbol{bx})$ which will be denoted by $p_{\betag}(c | \glssymbol{bx})$.
 
-\subsection{The proposed relaxation: tree structure and piecewise constant membership probability}
+\subsection{The proposed relaxation: tree structure and piecewise constant membership probability} \label{subsec:relax_tree}
 
 As emphasized in Section~\ref{subsec:sup_gen}, classification trees aim at predicting $c$ by making their leaves as ``pure'' as possible (hence the use of the term ``impurity measure'' to designate their optimized criterion), \textit{i.e.}\ where one class strongly dominates the others by being the labels of most observations that fall into it. However, as for \gls{lr}, they can be viewed as probabilistic classifiers by substituting their classical majority vote by the proportion of each class in each leaf:
 \begin{equation}
@@ -484,7 +491,7 @@ p_{\betag}(c | \glssymbol{bx}) = \frac{|\mathbf{c}^{\mathcal{L}(\glssymbol{bx})}
 where $\mathcal{L}(\glssymbol{bx})$ denotes the leaf where $\glssymbol{bx}$ falls and $\beta$ is sloppily used to denote all parameters involved in classical classification tree methods such as CART and C4.5 written explicitly in Equation~\eqref{eq:tree}. Indeed, in this soft assignment, $\mathcal{L}(\glssymbol{bbx})$ and its segment $c$ are not identifiable anymore. An example of such behaviour is given on Figure~\ref{fig:titanic_tree} where there are two classes: ``survived'' and ``not survived'' for Titanic passengers given their age, sex and passenger class. The proportion of each class in each leaf is given in parentheses.
 
 \begin{figure}
-\resizebox{\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/titanic_tree.tex}}
+\centering \resizebox{\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/titanic_tree.tex}}
 \caption{A C4.5 decision tree applied to the famous Titanic dataset containing the fate of 1309 passengers alongside their class, age and sex.}
 \label{fig:titanic_tree}
 \end{figure}
@@ -524,14 +531,33 @@ However, this approach suffers from two main drawbacks: first, all observations 
 
 In a similar fashion as the MCMC approaches developed in Chapters~\ref{chap4} and~\ref{chap5} where a ``clever'' quantization (resp.\ interaction matrix) was drawn and evaluated at each step, refining it for the subsequent steps, a straightforward way of building logistic regression trees is to propose a tree structure, fit \gls{lr} at its leaves, and evaluate the goodness-of-fit using Criterion~\ref{eq:BICc} of the resulting logistic regression tree. This is somehow the way \gls{lmt} works: a tree structure is proposed based on C4.5, \gls{lr} are fitted using the LogitBoost algorithm, and the tree is pruned back using a goodness-of-fit criterion.
 
-Similarly to the quantization and the interaction screening problems, doing so for all possible tree structures is intractable, so that a way of generating ``good'' candidates can be designed by relying on an \gls{sem} algorithm. The E-step of the previous Section is thus replaced by a Stochastic (S-) step which has some consequences on the M-steps.
+Similarly to the quantization and the interaction screening problems, doing so for all possible tree structures is intractable, so that a way of generating ``good'' candidates can be designed by relying on an \gls{sem} algorithm, which I call \textit{glmtree}. The E-step of the previous Section is thus replaced by a Stochastic (S-) step which has some consequences on the M-steps.
 \paragraph{S-step} The ``soft'' assignment of the \gls{em} algorithm of the previous Section is hereby replaced by a ``hard'' stochastic assignment such that:
 \[ c_i^{(s+1)} \sim p_{\glssymbol{bth}^{\cdot(s)}}(y_i | \glssymbol{bx}_i) p_{\betag^{(s)}}(\cdot | \glssymbol{bx}_i). \]
 \paragraph{M1-step} Thanks to the previous step, the segments are now ``hardly'' assigned such that the \gls{lr} are estimated using only observations affected to their segment:
 \[ \glssymbol{bth}^{c(s+1)} = \argmax_{\glssymbol{bth}} \ell(\glssymbol{bth};\glssymbol{bbx}^{c(s+1)},\glssymbol{bby}^{c(s+1)}). \]
 \paragraph{M2-step} Similarly, a new tree structure is given by:
 \[ \betag^{(s)} = \argmax_{\betag} \ell(\betag, \glssymbol{bbx}, \mathbf{\bm{c}}). \]
-This last expression is again approximated by C4.5's impurity measure: the entropy. Without more theoretical and empirical work, it is unclear which of the \gls{em} and \gls{sem} approaches will perform best. However, as mentioned earlier, this \gls{sem} algorithm calls for an easy integration with the quantization and interaction screening methods proposed in the previous Chapter which we explore in the next Section.
+This last expression is again approximated by C4.5's impurity measure: the entropy. Without more theoretical and empirical work, it is unclear which of the \gls{em} and \gls{sem} approaches will perform best. However, as mentioned earlier, this \gls{sem} algorithm calls for an easy integration with the quantization and interaction screening methods proposed in the previous Chapter.
+
+\subsection{Choosing an appropriate number of ``hard'' segments} \label{subsec:hard_seg}
+
+\paragraph{Going back to ``hard'' segments}
+The motivation of Section~\ref{subsec:relax_tree} was to propose a relaxation of Equation~\eqref{eq:tree} so that an iterative estimation, be it an \gls{em} or an \gls{sem} algorithm, could be carried out. In Chapter~\ref{chap4}, a similar relaxation was proposed for quantization, which lead us to propose a ``soft'' quantization $\q_{\ag}(\cdot)$ or $p_{\ag}(\bqk_j | \cdot)$ for the neural network and the \gls{sem} approaches respectively. These relaxations allowed quantized features to be ``partly'' in all intervals or groups for continuous or categorical features respectively. Thus, to get back to the original quantization problem, a \textit{maximum a posteriori} scheme was introduced in Section~\ref{subsec:relaxation} to deduce ``hard'' quantizations from this relaxation. In our tree setting, a similar approach has to be taken: this soft segmentation can be interpreted as a mixture of \gls{lr} which implies that all applicants are scored by all scorecards which is arguably not interpretable. An assignment of each applicant $i$ to a single scorecard, \textit{i.e.}\ to a leaf of the segmentation tree, is easily done again by a \textit{maximum a posteriori} step such that:
+\begin{equation} \label{eq:max_seg}
+\hat{c}_i^{(s)} = \argmax_c p_{\betag^{(s)}}(c | \glssymbol{bx}_i).
+\end{equation}
+
+\paragraph{Segmentation candidates}
+Similarly to the neural network architecture introduced in Section~\ref{sec:proposal}, the \gls{sem} algorithm which proposed quantization candidates introduced in Section~\ref{sec:sem} and the Metropolis-Hastings algorithm for pairwise interaction screening introduced in Section~\ref{subsec:mcmc}, the \gls{em} and \gls{sem} strategies introduced in the two previous Sections for segmentation are merely ``segments providers''. Indeed, through the iterations $1$ to $S$, as argued in the preceding paragraph, segmentations $\hat{\mathbf{c}}^{(1)}, \dots \hat{\mathbf{c}}^{(S)}$ are proposed through a \textit{maximum a posteriori} rule parallel to these algorithms. These candidates are then reintroduced to our original criterion~\eqref{eq:BICc} and the best performing segmentation is found according to:
+\begin{equation} \label{eq:BICtree}
+s^\star = \argmin_s \text{BIC}(\hat{\glssymbol{bth}}^{c^{(s)}}) + K^{(s)} - 1,
+\end{equation}
+which bears resemblance with Equation~\eqref{eq:opt_epoch} for quantizations.
+
+\paragraph{Exploring a fewer number of segments}
+In the preceding Sections, the number of segments $K$ was assumed to be fixed. However, the \textit{maximum a posteriori} scheme introduced in this Section allows, similarly to the one used to go from ``soft'' ($\q_{\ag}(\cdot)$ or $p_{\ag}(\bqk_j | \cdot)$) to ``hard'' ($\q(\cdot)$) quantizations, to explore a number of segments potentially way lower than $K$: for a fixed segment $c$, if there is no observation $i$ such that $p_{\betag}(c | \glssymbol{bx}_i)$ > $p_{\betag}(c' | \glssymbol{bx}_i)$ for $c' \neq c$, than the segment is empty, which is equivalent to producing a segmentation in $K-1$ segments. Supplemental to this thresholding effect, the use of an \gls{sem} algorithm makes it possible to enforce this phenomenon: as $c$ is drawn in the S-step, and as was argued for quantizations with an \gls{sem} algorithm in Section~\ref{sec:sem}, Paragraph~\nameref{par:choosing_sem}, there is a non-zero probability of not drawing a particular segment $c$ at a given step $(s)$. When run long enough, the chain will stop with $K = 1$, just like the \textit{glmdisc}-SEM algorithm could be run until all features are quantized in one level. This can be seen as a strength since it does not require to loop on the number of segments $K$ which would be required for an \gls{em} algorithm, which is why focus is given to the \gls{sem} algorithm in what follows.
+
 
 \section{Extension to quantization and interactions}
 
@@ -550,10 +576,9 @@ The following modifications would have to be performed:
 \[ \ag_j^{c(s+1)} = \argmax_{\ag_j} \ell(\ag_j;\glssymbol{bbx}_j^{c(s+1)},\bbqk_j^{c(s+1)}). \]
 \paragraph{M3-step} The tree-structure is obtained again via the C4.5 algorithm as an approximation of:
 \[ \betag^{(s+1)} = \argmax_{\betag} \ell(\betag, \glssymbol{bbx}, \mathbf{\bm{c}}^{(s+1)}). \]
-As proposed in Chapter~\ref{chap4}, parallel to this \gls{sem} algorithm, quantizations are obtained by performing a \textit{maximum a posteriori} operation on the quantization $q_\alpha$ (see Section~\ref{subsec:relaxation}):
-\[ \hat{q}_{j,h}^{c(s)} = 1 \text{ if } h = \argmax_{1 \leq h' \leq m_j} q_{\hat{\ag}_{j,h'}^{(c(s)}}, 0 \text{ otherwise,} \]
-and the best logistic regression tree is chosen via the following BIC criterion, adapted from Equations~\eqref{eq:BICq} and~\eqref{eq:BICq}:
-\[ s_\star = \argmin_{s\in \{1,\ldots, S\}} \sum_{c=1}^K \mbox{BIC}(\hat{\glssymbol{bth}}^{c(s)}) + K - 1.\]
+As proposed in Chapter~\ref{chap4}, parallel to this \gls{sem} algorithm, ``hard'' quantizations are obtained by performing a \textit{maximum a posteriori} operation on the quantization probability $p_{\ag}$ (see Section~\ref{subsec:relaxation}):
+\[ \hat{q}_{j,h}^{c(s)}(\cdot) = 1 \text{ if } h = \argmax_{1 \leq h' \leq m_j} p_{{\ag}_{j,h'}^{(c(s)}}(\bm{e}_{h'}^{m_j} | \cdot), 0 \text{ otherwise.} \]
+As proposed in Section~\ref{subsec:hard_seg}, ``hard'' segments are obtained \textit{via} a \textit{maximum a posteriori} operation on the segmentation probability $p_{\betag}$ (see Equation~\eqref{eq:max_seg}). The best logistic regression tree is thereafter chosen via the following BIC criterion~\eqref{eq:BICtree} adapted from Equations~\eqref{eq:BICc} and~\eqref{eq:BICq}.
 
 Although this extension seems straightforward, it is relatively computationally expensive since at each step (s), $K$ Metropolis-Hastings steps have to be performed and a tree, $K$ \gls{lr} and $K \times d$ polytomous logistic regressions are fitted. With a relatively small number of segments, \textit{i.e.}\ 4 to 30 as proposed earlier, it seems nevertheless feasible but it will require more work.
 
@@ -566,11 +591,18 @@ This Chapter is based on more recent work which consequently limits the exhausti
 As for the two preceding Chapters, the first set of numerical experiments are dedicated to verifying empirically the consistency of the proposed approach. To do so, we simulate the failing situations presented in Section~\ref{subsec:fail}.
 
 \begin{enumerate}[(a)]
-\item Two covariates $(\glssymbol{x}_1,\glssymbol{x}_2)$ are simulated from and the log odd ratio of $y$ is given by $\theta_1 \glssymbol{x}_1 + \theta_2 \glssymbol{x}_2$ where $\theta_1 = $ and $\theta_2 = $.
-\item Two covariates $(\glssymbol{x}_1,\glssymbol{x}_2)$ are simulated from $\mathcal{U}(0,1)$ and a third categorical covariate $\glssymbol{x}_3$ with 6 uniformly drawn levels. For levels $1$ and $2$ of feature $\glssymbol{x}_3$, the log odd ratio of $y$ is given by $\theta_1 \glssymbol{x}_1 + \theta_2 \glssymbol{x}_2$ where $\theta_1 = $ and $\theta_2 = $. For levels $3$ and $4$, we have $\theta_1 = $ and $\theta_2 = $ and finally for levels $5$ and $6$, we set $\theta_1 = $ and $\theta_2 = $. This data generating mechanism is illustrated in Figure~\ref{fig:simu}. Results of various clustering methods developed in this Chapter are given in Table~\ref{tab:num_exp_tree}.
+\item Two covariates $(\glssymbol{x}_1,\glssymbol{x}_2)$ are independently simulated from an equally probable mixture of $\mathcal{N}(3,1)$, $\mathcal{N}(6,1)$ and $\mathcal{N}(9,1)$ and the log odd ratio of $y$ is given by $\theta_0 + \theta_1 \glssymbol{x}_1 + \theta_2 \glssymbol{x}_2$ where $\theta_0 = 3$, $\theta_1 = 0.5$ and $\theta_2 = -1$. This data generating mechanism is illustrated in Figure~\ref{fig:simu_pas}. Results of various clustering methods developed in this Chapter are given in Table~\ref{tab:num_exp_tree_pas}.
+\item Two covariates $(\glssymbol{x}_1,\glssymbol{x}_2)$ are simulated from $\mathcal{U}(0,1)$ and a third categorical covariate $\glssymbol{x}_3$ with 6 uniformly drawn levels. For levels $1$ and $2$ of feature $\glssymbol{x}_3$, the log odd ratio of $y$ is given by $\theta_1 \glssymbol{x}_1 + \theta_2 \glssymbol{x}_2$ where $\theta_1 = -1$ and $\theta_2 = 0.5$. For levels $3$ and $4$, we have $\theta_1 = -0.5$ and $\theta_2 = 1.5$ and finally for levels $5$ and $6$, we set $\theta_1 = 1$ and $\theta_2 = -0.5$. This data generating mechanism is illustrated in Figure~\ref{fig:simu}. Results of various clustering methods developed in this Chapter are given in Table~\ref{tab:num_exp_tree}.
 \end{enumerate}
 
-In experiment (a), . In experiment (b), the proposed approach is able to recover the tree structure, as displayed on Figure~\ref{fig:tree_estim}. For both experiments, it would be useful to report confidence intervals and or bar plots as was done in Chapters~\ref{chap4} and~\ref{chap5} to derive an empirical consistency of the proposed approach.
+For both experiments, the \gls{sem} algorithm is initialized randomly with $K = 5$ segments. In experiment (a), the proposed approach selects effectively no partitions. The \textit{maximum a posteriori} scheme of Equation~\eqref{eq:max_seg} is able, as argued in Section~\ref{subsec:hard_seg}, to make segments ``vanish'' and explore segmentations with less than $K$ segments. In experiment (b), the proposed approach is able to recover the tree structure. Consequently, the proposed algorithm yields the best performance in both settings. As for \gls{famd} and \gls{pls} which resulting projections for experiment (a) are displayed on Figure~\ref{fig:simu_a_famd} and~\ref{fig:simu_a_pls} respectively, they form $3$ clusters and conseuqently the $3$ resulting \gls{lr} suffer from a higher estimation variance loosely reflected in their inferior performance in Table~\ref{tab:num_exp_tree_pas}. \gls{lmt} recovers the truth by producing a single \gls{lr} but not \gls{mob} (see Figure~\ref{fig:simu_a_mob}) which splits the data into $2$ segments. On experiment (b), \gls{famd} produces worse results than a single \gls{lr} and the benefit of using the target $y$ is clear from the result of \gls{pls} (see Table~\ref{tab:num_exp_tree}). \gls{mob} also recovers the true structure (see Figure~\ref{fig:simu_b_mob}) but not \gls{lmt} which first splitting node is a continuous feature not involved in the data generating mechanism of the segments as displayed on Figure~\ref{fig:simu_b_lmt}. For both experiments, it would be useful to report confidence intervals and or bar plots as was done in Chapters~\ref{chap4} and~\ref{chap5} to derive an empirical consistency of the proposed approach.
+
+\begin{figure}
+\centering \resizebox{.7\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/graph_pas_mix_reglog.tex}}
+\caption{Cloud points of simulated data from (a) with respective labels in \textcolor{red}{red} and black.}
+\label{fig:simu_pas}
+\end{figure}
+
 
 \begin{figure}
 \begin{subfigure}[t]{0.32\textwidth}
@@ -592,14 +624,60 @@ In experiment (a), . In experiment (b), the proposed approach is able to recover
 \label{fig:simu}
 \end{figure}
 
+\begin{figure}
+\centering \resizebox{.7\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/graph_pas_mix_reglog_pca.tex}}
+\caption{Cloud points of simulated data from (a) with respective labels in \textcolor{red}{red} and black after applying the \gls{pca} algorithm.}
+\label{fig:simu_a_famd}
+\end{figure}
+
+\begin{figure}
+\centering \resizebox{.7\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/graph_pas_mix_reglog_pls.tex}}
+\caption{Cloud points of simulated data from (a) with respective labels in \textcolor{red}{red} and black after applying the \gls{pls} algorithm.}
+\label{fig:simu_a_pls}
+\end{figure}
+
+%\begin{figure}
+%\centering \resizebox{.7\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/graph_lmt.tex}}
+%\caption{Cloud points of simulated data from (a) with respective labels in \textcolor{red}{red} and black after applying the \gls{lmt} algorithm.}
+%\label{fig:simu_a_lmt}
+%\end{figure}
+
+\begin{figure}
+%\centering \resizebox{.7\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/graph_lmt_b.tex}}
+\caption{Cloud points of simulated data from (b) with respective labels in \textcolor{red}{red} and black after applying the \gls{lmt} algorithm.}
+\label{fig:simu_b_lmt}
+\end{figure}
+
+\begin{figure}
+\centering \resizebox{.7\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/graph_mob.tex}}
+\caption{Cloud points of simulated data from (a) with respective labels in \textcolor{red}{red} and black after applying the \gls{mob} algorithm.}
+\label{fig:simu_a_mob}
+\end{figure}
+
+\begin{figure}
+\centering \resizebox{.7\textwidth}{!}{\input{R_CODE_FIGURES/chapitre6/graph_mob_b.tex}}
+\caption{Cloud points of simulated data from (b) with respective labels in \textcolor{red}{red} and black after applying the \gls{mob} algorithm.}
+\label{fig:simu_b_mob}
+\end{figure}
 
 \begin{table}[t]
-\caption{\label{tab:num_exp_tree} Comparison of several clustering approaches w.r.t.\ the subsequent predictive performance.}
+\caption{\label{tab:num_exp_tree_pas} Comparison of several clustering approaches w.r.t.\ the subsequent predictive performance in experiment (a).}
 \centering
-\begin{tabular}{ll|llll}
- & Oracle & Naif & \textit{glmtree}-SEM & \gls{famd} & \gls{pls} \\
+\begin{tabular}{ll|lllll}
+ & Oracle = ALLR & \textit{glmtree}-SEM & \gls{famd} & \gls{pls} & \gls{lmt} & \gls{mob} \\
 \hline
-Gini & 69.7 & 25.8 & \textbf{68.7} & 17.7 & 48.4 \\
+Gini & 69.7 & \textbf{69.7} & 65.3 & 47.0 & \textbf{69.7} & 64.8 \\
+\end{tabular}
+\end{table}
+
+
+\begin{table}[t]
+\caption{\label{tab:num_exp_tree} Comparison of several clustering approaches w.r.t.\ the subsequent predictive performance in experiment (b).}
+\centering
+\begin{tabular}{ll|llllll}
+ & Oracle & ALLR & \textit{glmtree}-SEM & \gls{famd} & \gls{pls} & \gls{lmt} & \gls{mob} \\
+\hline
+Gini & 69.7 & 25.8 & \textbf{69.7} & 17.7 & 48.4 & 65.8 & \textbf{69.7} \\
 \end{tabular}
 \end{table}
 
@@ -607,8 +685,19 @@ Gini & 69.7 & 25.8 & \textbf{68.7} & 17.7 & 48.4 \\
 
 \subsection{Benchmark on \textit{Credit Scoring} data}
 
-A subset of all applications, representative of $ $ portfolios with different scorecards, has been extracted for the purpose of the present benchmark with $n = $ observations and $d = $. The missing values have been preprocessed such that no continuous features have missing values and the categorical features have a separate and meaningful ``missing'' level. Also for simplification purposes, no quantization or interaction screening is performed so that the \gls{sem} algorithm is conducted as presented in Section~\ref{subsec:sem}.
+\subsubsection{The running example: the Automobile dataset}
 
+Recall from Sections~\ref{subsec:adhoc} and~\ref{subsec:sup_gen} that \gls{pca}, \gls{mca}, \gls{famd} and \gls{pls} revealed no segments on this dataset and from Section~\ref{subsec:direct} that \gls{lmt} produced disappointing results and \gls{mob} could not be tested.
+
+\subsubsection{One year of financed applications}
+
+A subset of all applications, representative of approx.\ $30$ portfolios with different scorecards, has been extracted for the purpose of the present benchmark with $n = 900{,}000$ observations and $d = 18$ among which $12$ continuous features and $8$ categorical features with $6$ to $100$ levels (most features are similar to the Automobile dataset). The missing values have been preprocessed such that no continuous features have missing values and the categorical features have a separate and meaningful ``missing'' level. Also for simplification purposes, no quantization or interaction screening is performed so that the \gls{sem} algorithm is conducted as presented in Section~\ref{subsec:sem}.
+
+Generative approaches (\gls{famd} and \gls{pls}) are not used due to their subjectivity (visual separation) and the fact that they are used by practitioners to provide ``local'' segments (\textit{e.g.}\ for the Automobile market). Hence for such a large dataset, they would have to be applied ``recursively'' (applying \gls{famd} / \gls{pls} on each of the resulting visually separated segments). For computational reasons that became apparent in applying \gls{lmt} and \gls{mob} to the Automobile dataset, these methods cannot cope either with this larger dataset.
+
+Consequently, \textit{glmtree}-SEM is only compared to the current performance. The combined scorecards have an overall performance of approximately 46 Gini points but they are not on the same ``scale'' since they were developed at different times. I rely on the method developed in~\cite{} and used in common \textit{machine learning} libraries such as , to put all of them on the same scale:
+\[ bla \]
+After this procedure, overall performance jumps to approximately 55 Gini points which will be our baseline.
 
 \bigskip
 
@@ -616,7 +705,7 @@ This Chapter aimed at formalizing an old problem in \textit{Credit Scoring}, pro
 
 However, situations can easily be imagined where such practices can fail, which is why other existing methods, that take into account the predictive task, were exemplified. Nevertheless, as in the best case scenario, practitioners would like to have an all-in-one tool that works with missing values and eventually performs quantization and interaction screening while guaranteeing the best predictive performance by embedding the learning of a segmentation in the predictive task of learning its \gls{lr}, a new method is proposed, based on an \gls{sem} algorithm, that was adapted to be usable with the \textit{glmdisc} method developed in the two preceding Chapters.
 
-On simulated data, it shows very promising results that aims at demonstrating the consistency of the approach. On real data from \gls{cacf}, .
+On simulated data, it shows very promising results that aims at demonstrating the consistency of the approach. On real data from \gls{cacf}, other methods yielded disappointing results while \textit{glmtree}-SEM was able to compete with the current performance which required months of manual adjustments. By adding the quantization and interaction screening ability to this algorithm, as described in Section~\ref{}, we could easily imagine beating this \textit{ad hoc} segmentation by a significant margin.
 
 \printbibliography[heading=subbibliography, title=References of Chapter 5]
 
