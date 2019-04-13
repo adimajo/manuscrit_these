@@ -689,15 +689,23 @@ Gini & 69.7 & 25.8 & \textbf{69.7} & 17.7 & 48.4 & 65.8 & \textbf{69.7} \\
 
 Recall from Sections~\ref{subsec:adhoc} and~\ref{subsec:sup_gen} that \gls{pca}, \gls{mca}, \gls{famd} and \gls{pls} revealed no segments on this dataset and from Section~\ref{subsec:direct} that \gls{lmt} produced disappointing results and \gls{mob} could not be tested.
 
+By applying \textit{glmtree}-SEM to the Automobile dataset, we get $\hat{K} = $ segments defined by the tree given in Figure~\ref{fig:tree_sem_auto} yielding an overall performance of $ $ Gini points.
+
+\begin{figure}
+\centering
+
+\caption{\label{fig:tree_sem_auto} bla.}
+\end{figure}
+
 \subsubsection{One year of financed applications}
 
 A subset of all applications, representative of approx.\ $30$ portfolios with different scorecards, has been extracted for the purpose of the present benchmark with $n = 900{,}000$ observations and $d = 18$ among which $12$ continuous features and $8$ categorical features with $6$ to $100$ levels (most features are similar to the Automobile dataset). The missing values have been preprocessed such that no continuous features have missing values and the categorical features have a separate and meaningful ``missing'' level. Also for simplification purposes, no quantization or interaction screening is performed so that the \gls{sem} algorithm is conducted as presented in Section~\ref{subsec:sem}.
 
 Generative approaches (\gls{famd} and \gls{pls}) are not used due to their subjectivity (visual separation) and the fact that they are used by practitioners to provide ``local'' segments (\textit{e.g.}\ for the Automobile market). Hence for such a large dataset, they would have to be applied ``recursively'' (applying \gls{famd} / \gls{pls} on each of the resulting visually separated segments). For computational reasons that became apparent in applying \gls{lmt} and \gls{mob} to the Automobile dataset, these methods cannot cope either with this larger dataset.
 
-Consequently, \textit{glmtree}-SEM is only compared to the current performance. The combined scorecards have an overall performance of approximately 46 Gini points but they are not on the same ``scale'' since they were developed at different times. I rely on the method developed in~\cite{} and used in common \textit{machine learning} libraries such as , to put all of them on the same scale:
-\[ bla \]
-After this procedure, overall performance jumps to approximately 55 Gini points which will be our baseline.
+Consequently, \textit{glmtree}-SEM is only compared to the current performance. The combined scorecards have an overall performance of approximately 46 Gini points but they are not on the same ``scale'' since they were developed at different times. I rely on the Platt scaling method developed in~\cite{platt1999probabilistic} and~\cite{zadrozny2002transforming} and used in common \textit{machine learning} libraries such as Scikit-learn, to put all of them on the same scale by fitting a \gls{lr} between the observed labels $\glssymbol{bby}$ and the scores outputted by each scorecard. After this procedure, overall performance jumps to approximately 55 Gini points which will be our baseline.
+
+The \textit{glmtree}-SEM applied to this big dataset .
 
 \bigskip
 

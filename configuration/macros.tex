@@ -287,3 +287,8 @@ otherkeywords={install_github},             % Add keywords here
 \bgroup
 \let\nmu\MakeLowercase
 \nameref{#1}\egroup}
+\newcommand{\fnameref}[1]{%
+\bgroup
+\def\nmu{\let\nmu\MakeLowercase}%
+\nameref{#1}\egroup}
+\newcommand{\nmu}{}
