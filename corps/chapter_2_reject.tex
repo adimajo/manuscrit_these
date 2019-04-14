@@ -10,11 +10,9 @@
 
 \bigskip
 
-The granting process of all credit institutions in based on the probability that the applicant will refund his loan given his characteristics. This probability also called \gls{score} is learnt based on a dataset in which rejected applicants are \textit{de facto} excluded. This implies that the population on which the \gls{score} is used will be different from the learning population. Thus, this biased learning can have consequences on the scorecard relevance. Many methods in the field of reject inference have been developed in order to try to exploit the data available from the rejected applicants to build the score. However most of these methods are considered from an empirical point of view, and there is some lack of formalization of the assumptions that are really made, and of the theoretical properties that can be expected. We propose a formalisation of these usually hidden assumptions for some of the most common reject inference methods, and we discus the improvement that can be expected. These conclusions are illustrated on simulated data and on real data from the French branch of Crédit Agricole Consumer Finance (CA CF).
-
+The granting process of all credit institutions in based on the probability that the applicant will refund his loan given his characteristics. This probability also called \gls{score} is learnt based on a dataset in which rejected applicants are \textit{de facto} excluded. This implies that the population on which the \gls{score} is used will be different from the learning population. Thus, this biased learning can have consequences on the scorecard relevance. Many methods in the field of reject inference have been developed in order to try to exploit the data available from the rejected applicants to build the score. However most of these methods are considered from an empirical point of view, and there is some lack of formalization of the assumptions that are really made, and of the theoretical properties that can be expected. We propose a formalisation of these usually hidden assumptions for some of the most common reject inference methods, and we discus the improvement that can be expected. These conclusions are illustrated on simulated data and on real data from \gls{cacf}.
 
 \section{Introduction}
-
 
 In consumer loans, the acceptance process was described in Chapter~\ref{chap1} and can be formalized as follows. For a new applicant's profile and credit's characteristics, the lender aims at estimating the repayment probability. To this end, the \textit{credit modeler} fits a predictive model, often a \gls{lr}, between already  financed  clients' characteristics $\glssymbol{bx}=(\glssymbol{x}_1,\ldots,\glssymbol{x}_d)$ and their repayment status, a binary variable $\glssymbol{y}\in\{0,1\}$ (where $1$ corresponds to good clients and $0$ to bad clients). The model is then applied to the new applicant and yields an estimate of its repayment probability. In practice, an increasing transformation of this probability also called score is often considered.
 Under some cut-off value of the \gls{score} (see Section~\ref{subsec:critere}) the applicant is rejected, except if further expert rules come into play as can be seen from Figure~\ref{fig:figure1}.
@@ -63,9 +61,10 @@ The through-the-door population (all applicants) can be classified into two cate
 In fact, it can be considered as a part of the semi-supervised learning setting, which consist in learning from both labelled and unlabelled data. However, in the semi-supervised setting~(\cite{ChaSchZie06}) it is generally assumed that labelled data and unlabelled data come from the same distribution, which is rarely the case in \textit{Credit Scoring}. Moreover, the main case of use of semi-supervised learning is when the number of unlabelled data is far larger than the number of labelled data, which is not the case in \textit{Credit Scoring} since the number of rejected clients and accepted clients is often balanced and depends heavily on the financial institution, the portfolio considered, etc.
 
 
-The purpose of the present chapter is twofold: a clarification of which mathematical hypotheses, if any, underlie those reject inference methods and a clear conclusion on their relevance. In Section~\ref{sec:criteres}, we present a criterion to assess a method's performance and discuss missingness mechanisms that characterize the relationship of $\glssymbol{z}$ with respect to $\glssymbol{bx}$ and $\glssymbol{y}$. In Section~\ref{sec:methods_reject}, we go through some of the most common reject inference methods and exhibit their mathematical properties. Finally, to confirm our theoretical findings, we test each method on simulated and real data from Crédit Agricole Consumer Finance in Section~\ref{sec:num_exp_reject}.
-
-\textcolor{blue}{CB : ajouter description partie 5 (conclusion)}
+The purpose of the present chapter is twofold: a clarification of which mathematical hypotheses, if any, underlie those reject inference methods and a clear conclusion on their relevance. In Section~\ref{sec:criteres}, we present a criterion to assess a method's performance and discuss missingness mechanisms that characterize the relationship of $\glssymbol{z}$ with respect to $\glssymbol{bx}$ and $\glssymbol{y}$. In Section~\ref{sec:methods_reject}, we go through some of the most common reject inference methods and exhibit their mathematical properties. 
+%Finally, to confirm our theoretical findings, we test each method on simulated and real data from Crédit Agricole Consumer Finance in Section~\ref{sec:num_exp_reject}.
+Finally, some guidelines are given to practitioners in Section~\ref{sec:conclusion_reject}.
+%\textcolor{blue}{CB : ajouter description partie 5 (conclusion)}
 
 \section{\textit{Credit Scoring} modelling} \label{sec:criteres}
 
@@ -173,9 +172,9 @@ The second restriction to \gls{mnar} is the \glsfirst{mar} setting, meaning that
 \ell(\gamma;\mathcal{T}) = \ell(\glssymbol{bth};\mathcal{T}_{\text{f}}) + \sum_{i'=1}^n \ln p_{\glssymbol{phi}}(\glssymbol{z}_{i'} | \glssymbol{bx}_{i'}),
 \end{equation}
 with $\ell(\glssymbol{bth};\mathcal{T}_{\text{f}})=\sum_{i\in\text{F}}\ln p_{\glssymbol{bth}}(\glssymbol{y}_i | \glssymbol{bx}_i)$.
-Combining it with the ignorable assumption, estimation of $\glssymbol{bth}$ relies only on the first part $\ell(\glssymbol{bth};\mathcal{T}_{\text{f}})$, since the value $\glssymbol{phi}$ has no influence on~$\glssymbol{bth}$. In that case, invoking an EM algorithm due to missing data $\glssymbol{y}$ is no longer required as will be made explicit in Section~\ref{subsec:no_reject}.
+Combining it with the ignorable assumption, estimation of $\glssymbol{bth}$ relies only on the first part $\ell(\glssymbol{bth};\mathcal{T}_{\text{f}})$, since the value $\glssymbol{phi}$ has no influence on~$\glssymbol{bth}$. In that case, invoking an EM algorithm due to missing data $\glssymbol{y}$ is no longer required as will be made explicit in Section~\ref{subsec:strat1}.
 
-\subsection{Model selection}
+\subsection{Model selection} \label{subsec:model_selection}
 
 At this step, several kinds of parametric model~(\ref{eq:generative}) have been assumed. It concerns obviously the parametric family $\{p_{\glssymbol{bth}}(\glssymbol{y}|\glssymbol{bx})\}_{\glssymbol{bth} \in\Theta}$, and also the missingness mechanism \gls{mar} or \gls{mnar}. 
 However, it has to be noticed that \gls{mar} versus \gls{mnar} cannot be tested since we do not have access to $\glssymbol{y}$ for not financed clients~\cite{molenberghs2008every}. However, model selection is possible by modelling also the whole financing mechanism, namely the family $\{p_{\glssymbol{phi}}(\glssymbol{z}|\glssymbol{bx},\glssymbol{y})\}_{\glssymbol{phi} \in \Phi}$.
@@ -210,7 +209,7 @@ Since modelling the financing mechanism $p(\glssymbol{z} | \glssymbol{bx}, \glss
 However, most of the proposed reject inference strategies may make some hidden assumptions on the modelling process. Our challenge is to reveal as far as possible such hidden assumptions to then discuss their realism,  
 failing to be able to compare them by the model selection principle.
 
-\subsection{Strategy 1: ignoring not financed clients} \label{subsec:no_reject} \label{subsec:strat1}
+\subsection{Strategy 1: ignoring not financed clients} \label{subsec:strat1}
 
 \subsubsection{Definition}
 The simplest reject inference strategy is to ignore not financed clients for estimating $\glssymbol{bth}$. Thus it consists to estimate $\glssymbol{bth}$ by maximizing the log-likelihood $\ell(\glssymbol{bth};\mathcal{T}_{\text{f}})$.
@@ -279,52 +278,54 @@ The \gls{cem} algorithm is known for ``sharpening'' the decision boundary: predi
 \end{figure}
 
 
-\subsection{Strategy 4: augmentation}
+\subsection{Strategy 4: augmentation} \label{subsec:augmentation}
 
 \subsubsection{Definition}
 This technique is directly influenced by the Importance Sampling~\cite{zadrozny2004learning} literature because intuitively, as for all selection mechanism such as survey respondents, observations have to be weighted according to their probability of being in the sample w.r.t.\ the whole population, i.e.\ by $p(\glssymbol{z} | \glssymbol{bx},\glssymbol{y})$. By assuming implicitly a \gls{mar} missingness mechanism, as emphasized in Section~\ref{sec:mechanisms}, we get $p(\glssymbol{z} | \glssymbol{bx}; \glssymbol{y}) = p(\glssymbol{z} | \glssymbol{bx})$. However, as was also emphasized in Section~\ref{subsec:challenge}, this \gls{pdf} also has to be estimated. This method proposes to bin observations in $\mathcal{T}$ in, say, 10 \textit{equal-length} intervals of the \gls{score} given by $p_{\hat{\glssymbol{bth}}_\text{f}}(1 | \glssymbol{bx})$ and estimate $p(\glssymbol{z} | \glssymbol{bx})$ as the proportion of financed clients in each of these bins. The inverse of this estimate is then used to weight financed clients in $\mathcal{T}_{\text{f}}$ and retrain the model.
 
 \subsubsection{Interpretation}
-The methods aims at correcting for the selection procedure yielding the training data $\mathcal{T}_{\f}$ in the \gls{mar} case. As was argued in Section~\ref{}, if the model is well-specified, such a procedure is superfluous as the estimated parameter $\hat{\glssymbol{bth}}_{\f}$ is consistent. In the misspecified case however, it is theoretically justified as will be developed in the next paragraph. However, it is unclear if this apparent benefit is not offset by the added estimation procedure (which comes with its bias / variance trade-off).
+The methods aims at correcting for the selection procedure yielding the training data $\mathcal{T}_{\f}$ in the \gls{mar} case. As was argued in Section~\ref{subsec:strat1}, if the model is well-specified, such a procedure is superfluous as the estimated parameter $\hat{\glssymbol{bth}}_{\f}$ is consistent. In the misspecified case however, it is theoretically justified as will be developed in the next paragraph. However, it is unclear if this apparent benefit is not offset by the added estimation procedure (which comes with its bias / variance trade-off).
 
 \subsubsection{In details}
-In Section~\ref{subsec:gradient}, we derived the likelihood from the $\glssymbol{KL}$ divergence by focusing on $\mathbb{E}_{\glssymbol{Y}} [\ln[p_{\glssymbol{bth}}(\cdot|\glssymbol{bx})]]$. By remarking that $p(\glssymbol{bx}) = \dfrac{p(\glssymbol{bx} | \f)}{p(\f | \glssymbol{bx})} p(\f) $ and by assuming a \gls{mar} missingness mechanism, we get:
-\[\mathbb{E}_{\glssymbol{Y}} [\ln[p_{\glssymbol{bth}}(\cdot|\glssymbol{bx})]] = p(\f) \sum_{\glssymbol{y}=0}^1 \int_{\mathcal{X}} \dfrac{\ln p_{\glssymbol{bth}}(\glssymbol{y} | \glssymbol{bx})}{p(\f | \glssymbol{bx})} p(\glssymbol{y} | \glssymbol{bx}) p(\glssymbol{bx} | \f) d\glssymbol{bx} \approx_{n \to \infty} \dfrac{p(\f)}{n} \sum_{i=1}^n \dfrac{1}{p(\f | \glssymbol{bx})} \ln p_{\glssymbol{bth}}(\glssymbol{y} | \glssymbol{bx}).\]
+In Section~\ref{subsec:gradient}, we derived the likelihood from the $\glssymbol{KL}$ divergence by focusing on $\mathbb{E}_{\glssymbol{bX},\glssymbol{Y}} [\ln[p_{\glssymbol{bth}}(\glssymbol{y}|\glssymbol{bx})]]$. By remarking that $p(\glssymbol{bx}) = \dfrac{p(\glssymbol{bx} | \f)}{p(\f | \glssymbol{bx})} p(\f) $ and by assuming a \gls{mar} missingness mechanism, we get:
+\[\mathbb{E}_{\glssymbol{bX},\glssymbol{Y}} [\ln[p_{\glssymbol{bth}}(\glssymbol{y}|\glssymbol{bx})]] = p(\f) \sum_{\glssymbol{y}=0}^1 \int_{\mathcal{X}} \dfrac{\ln p_{\glssymbol{bth}}(\glssymbol{y} | \glssymbol{bx})}{p(\f | \glssymbol{bx})} p(\glssymbol{y} | \glssymbol{bx}) p(\glssymbol{bx} | \f) d\glssymbol{bx} \approx_{n \to \infty} \dfrac{p(\f)}{n} \sum_{i=1}^n \dfrac{1}{p(\f | \glssymbol{bx}_i)} \ln p_{\glssymbol{bth}}(\glssymbol{y}_i | \glssymbol{bx}_i).\]
 Consequently, had we access to $p(\f | \glssymbol{bx})$, the parameter maximizing the above mentioned likelihood would asymptotically be equal to the one on the through-the-door population, had we access to $\glssymbol{bby}^\nf$. However, $p(\f | \glssymbol{bx})$ can be estimated by the practitioner's method of choice, which will come with its bias and variance. Additionally, the Importance Sampling paradigm requires $p(\f | \glssymbol{bx}) > 0$ for all $\glssymbol{bx}$ which is clearly not the case here: for example, jobless people are never financed.
 
 \subsection{Strategy 5: twins}
 
 \subsubsection{Definition}
-This \textit{Reject Inference} method is documented internally at \gls{cacf} and in Appendix~\ref{Twins}; it consists in combining two scorecards: one predicting $\glssymbol{y}$ learnt on financed clients (denoted by $\hat{\glssymbol{bth}}_{\text{f}}$ as previously), the other predicting $\glssymbol{z}$ learned on all applicants, before learning the final scorecard using the predictions made by both scorecards on financed clients.
+This \textit{Reject Inference} method is documented internally at \gls{cacf} and in Appendix~\ref{Twins}; it consists in combining two scorecards: one predicting $\glssymbol{y}$ learnt on financed clients (denoted by $\hat{\glssymbol{bth}}_{\text{f}}$ as previously), the other predicting $\glssymbol{z}$ learnt on all applicants, before learning the final scorecard using the predictions made by both scorecards on financed clients.
 
 \subsubsection{Interpretation}
 The method aims at re-injecting information about the financing mechanism in the \gls{mar} missingness mechanism by estimating $\hat{\glssymbol{phi}}$ as a \gls{lr} on all applicants, calculating \gls{score}s $(1,\glssymbol{bx})' \hat{\glssymbol{bth}}_\f$ and $(1,\glssymbol{bx})' \hat{\glssymbol{phi}}$ and use these as two continuous features in a third \gls{lr} predicting again the repayment feature $\glssymbol{y}$.
 
 \subsubsection{In details}
-It can be easily shown (Appendix~\ref{Twins}) that $\argmax_{\glssymbol{bth}} \ell(\glssymbol{bth};) = \hat{\theta}^{\text{f}}$ so that this method is similar to the scorecard learnt on the financed clients.
+It can be easily shown (Appendix~\ref{Twins}) that $\argmax_{\glssymbol{bth}} \ell(\glssymbol{bth};(\bm{1},\glssymbol{bbx})' \hat{\glssymbol{phi}}, (\bm{1},\glssymbol{bbx})' \hat{\glssymbol{bth}}_\f) = \hat{\theta}^{\text{f}}$ so that this method is similar to the scorecard learnt on the financed clients.
 
-\subsection{Strategy 6: parcelling}
+\subsection{Strategy 6: parcelling} \label{subsec:parcel}
 
 \subsubsection{Definition}
-The Parcelling method can be found in~\cite{saporta,banasik,RI6}. It is also described in Appendix~\ref{Parceling}. This method aims to correct the log-likelihood estimation in the \gls{mnar} case by making further assumptions on $p(\glssymbol{y} | \glssymbol{bx}, \glssymbol{z})$.
+The Parcelling method can be found in~\cite{saporta,banasik,RI6}. It is also described in Appendix~\ref{Parceling}. This method aims to correct the log-likelihood estimation in the \gls{mnar} case by making further assumptions on $p(\glssymbol{y} | \glssymbol{bx}, \glssymbol{z})$. It is a little deviation from the fuzzy augmentation method in a \gls{mnar} setting: we start with $\hat{\glssymbol{bth}}^{(0)} = \hat{\glssymbol{bth}}_\f$ and then impute $(\glssymbol{y}_i)_{i \in \text{NF}}^{(1)}$ by a user-defined prudence factor over their expected value (see next paragraphs).
 
 \subsubsection{Interpretation}
-
+By considering not-financed clients as riskier than financed clients with the same level of \gls{score}, \textit{i.e.}\ $p(\glssymbol{y} | \glssymbol{bx}, \nf) > p(\glssymbol{y} | \glssymbol{bx}, \f)$, it is implicitly assumed that manual operators (see Figure~\ref{fig:figure1}) have access to additional information, say $\tilde{\glssymbol{bx}}$, that influence the outcome $\glssymbol{y}$ even when $\glssymbol{bx}$ is accounted for, such that rejected and accepted clients with the same \gls{score} defer only by $\tilde{\glssymbol{bx}}$, which we do not have access to and is accounted for in a user-defined prudence factor stating that rejected clients would have been riskier than accepted ones.
 
 \subsubsection{In details}
+A completed dataset $\mathcal{T}_c$ is derived by making bins of observations in $\mathcal{T}$ in, say, 10 \textit{equal-length} intervals of the \gls{score} given by $p_{\hat{\glssymbol{bth}}_\text{f}}(1 | \glssymbol{bx})$ and estimate $p(\glssymbol{y} | \glssymbol{bx}, \nf)$ as the mean of $\glssymbol{Y} | \glssymbol{bx}, \f$ in each bin multiplied by a prudence factor encompassing the practitioner's \textit{belief} about the effectiveness of the operators' rejections.
 
+\bigskip
 
-
+Since it is possible to conclude about these reject inference methods analytically (see next section), simulations and numerical experiments on real data have been deferred to the Appendices~\ref{subsec:app_reject_sim}, \ref{subsec:app_reject_real} and~\ref{subsec:app_reject_real_method} where reject inference methods are applide on simulated data and real data and compared to other predictive methods respectively.
 
 %\section{Numerical experiments} \label{sec:num_exp_reject}
 
 \section{Discussion: choosing the right model} \label{sec:conclusion_reject}
 
-\subsection{Sticking with the }
+\subsection{Sticking with the financed clients model}
 
+Constructing scorecards by using a \gls{lr} on financed clients is a trade-off: on the one hand, it is implicitly assumed that it is well-specified, and that the missingness mechanism governing the observation of $\glssymbol{Y}$ is \gls{mar}. In other words, we suppose $p(\glssymbol{y} | \glssymbol{bx}) = p_{\glssymbol{bthstar}}(\glssymbol{y} | \glssymbol{bx}, \f)$. On the other hand, these assumptions, which seem strong at first hand, cannot really be relaxed: the use of \gls{lr} is a requirement from the financial institution, such that the straightforward \gls{em} algorithm of section~\ref{sec:EM} cannot be carried out, the comparison of models cannot be performed using standard techniques since $\glssymbol{bby}^{\nf}$ is missing (section~\ref{subsec:model_selection}), and strategies 4 and 6 that tackle the misspecified model and \gls{mnar} settings respectively require additional estimation procedures that, supplemental to their estimation bias and variance (section~\ref{subsec:gradient}), take time from the practitioner's perspective and are rather subjective (see sections~\ref{subsec:augmentation} and~\ref{subsec:parcel}), which is not ideal in the banking industry since there are auditing processes and model validation teams that might question these practices.
 
-
-\subsection{MCAR through a Control Group}
+\subsection{\gls{mcar} through a Control Group}
 
 Another simple solution often stated in the literature would be to keep a small portion of the population where applicants are not filtered: everyone gets accepted. This so-called \textit{Control Group} constitutes the learning and test sets for all scorecard developments.
 
@@ -332,7 +333,7 @@ Although theoretically perfect, this solution faces a major drawback: it is cost
 
 \subsection{Keep several models in production: "champion challengers"}
 
-Several scorecards could also be developed, e.g. one using each \textit{Reject Inference} technique. Each application is randomly scored by one of these scorecards. As time goes by, we would be able to put more weight on the most performing scorecard(s) and progressively less on the least performing one(s): this is the field of Reinforcement Learning~\cite{}.
+Several scorecards could also be developed, e.g. one using each \textit{Reject Inference} technique. Each application is randomly scored by one of these scorecards. As time goes by, we would be able to put more weight on the most performing scorecard(s) and progressively less on the least performing one(s): this is the field of Reinforcement Learning~\cite{Sutton1998}.
 
 The major drawback of this method, although its cost is very limited unlike the \textit{Control Group}, is that it is very time-consuming for the credit modeller who has to develop several scorecards, for the IT who has to put them all into production, for the auditing process and for the regulatory institutions.
 
@@ -340,9 +341,8 @@ The major drawback of this method, although its cost is very limited unlike the 
 
 For years, the necessity of {Reject Inference} at \gls{cacf} and other institutions (as it seems from the large literature coverage this research area has had) has been a question of personal belief. Moreover, there even exists contradictory findings in this area.
 
-By formalizing the {Reject Inference} problem in section~\ref{sec:criteres}, we were able to pinpoint in which cases the current scorecard construction methodology, using only financed clients' data, could be unsatisfactory: under a \gls{mnar} missingness mechanism and / or a misspecified model. We also defined criteria to reinterpret existing {Reject Inference} methods and assess their performance in section~\ref{sec:methods}. We concluded that no current {Reject Inference} method could enhance the current scorecard construction methodology: only the augmentation method (strategy ) and the parcelling method (strategy ) had .
+By formalizing the {Reject Inference} problem in section~\ref{sec:criteres}, we were able to pinpoint in which cases the current scorecard construction methodology, using only financed clients' data, could be unsatisfactory: under a \gls{mnar} missingness mechanism and / or a misspecified model. We also defined criteria to reinterpret existing {Reject Inference} methods and assess their performance in section~\ref{sec:methods}. We concluded that no current {Reject Inference} method could enhance the current scorecard construction methodology: only the augmentation method (strategy 4) and the parcelling method (strategy 6) had theoretical justifications but introduce other estimation procedures. Additionally, they cannot be compared through classical model selection tools (section~\ref{subsec:model_selection}).
 
-We confirmed numerically these findings in section~\ref{sec:experiments}: given a true model and the MAR assumption, no logistic regression-based \textit{Reject Inference} method performed best than the current method. In the misspecified model case, the Augmentation method seemed promising but it introduces a model that also comes with its bias and variance resulting in very close performances compared with the current method. With real data provided by \gls{cacf}, we showed that all methods gave very similar results: the ``best'' method (by the Gini index) was highly dependent on the data and/or the proportion of unlabelled observations. Last but not least, in practice such a benchmark would not be tractable as $\glssymbol{bby}^{\text{nf}}$ is missing. In light of those limitations, adding to the fact that implementing those methods is a non-negligible time-consuming task, we recommend credit modellers to work only with financed loans' data unless there is significant information available on either rejected applicants ($\glssymbol{bby}^{\text{nf}}$ - credit bureau information for example, which does not apply to France) or on the acceptance mechanism in the \gls{mnar} setting.
-
+We confirmed numerically these findings in the Appendices: given a true model and the \gls{mar} assumption, no \gls{lr}-based {Reject Inference} method performed best than the current method. In the misspecified model case, the Augmentation method seemed promising but it introduces a model that also comes with its bias and variance resulting in very close performances compared with the current method. With real data provided by \gls{cacf}, we showed that all methods gave very similar results: the ``best'' method (by the Gini index) was highly dependent on the data and/or the proportion of unlabelled observations. Last but not least, in practice such a benchmark would not be tractable as $\glssymbol{bby}^{\text{nf}}$ is missing. In light of those limitations, adding to the fact that implementing those methods is a non-negligible time-consuming task, we recommend credit modellers to work only with financed loans' data unless there is significant information available on either rejected applicants ($\glssymbol{bby}^{\text{nf}}$ - credit bureau information for example, which does not apply to France) or on the acceptance mechanism $\glssymbol{phi}$ in the \gls{mnar} setting. On a side note, it must be emphasized that this work only applies to \gls{lr} and can be extended to all ``local'' models per the terminology introduced in~\cite{zadrozny}. For ``global'' models, \textit{e.g.} decision trees, it can be shown that they are biased even in the \gls{mar} and well-specified settings, thus requiring \textit{ad hoc} reject inference techniques such as an adaptation of the augmentation method (strategy 4 - see~\cite{}).
 
 \printbibliography[heading=subbibliography, title=References of Chapter 2]

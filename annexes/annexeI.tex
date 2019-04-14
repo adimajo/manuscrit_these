@@ -11,8 +11,8 @@
 Fuzzy Augmentation can be found in \cite{economix}; it is the following procedure:
 \begin{enumerate}
 \item Construct Scorecard "Known Good Bad" (KGB) $S^{\text{f}}$ with financed clients' data (Figure \ref{fuzzy:sfig1})
-\item Calculate $p(1|x,\hat{\theta}^{\text{f}}) = \text{logit}(S^{\text{f}}(x))$ for rejects (Figure \ref{fuzzy:sfig2})
-\item Infer rejected client $i$ as good with weight $p(1|x,\hat{\theta}^{\text{f}})$ and as bad with weight {\begin{sloppypar} $1-p(1|x,\hat{\theta}^{\text{f}})$ (Figures \ref{fuzzy:sfig2} and \ref{fuzzy:sfig3}) \end{sloppypar} }
+\item Calculate $p(1|x,\hat{\theta}_{\text{f}}) = \text{logit}(S^{\text{f}}(x))$ for rejects (Figure \ref{fuzzy:sfig2})
+\item Infer rejected client $i$ as good with weight $p(1|x,\hat{\theta}_{\text{f}})$ and as bad with weight {\begin{sloppypar} $1-p(1|x,\hat{\theta}_{\text{f}})$ (Figures \ref{fuzzy:sfig2} and \ref{fuzzy:sfig3}) \end{sloppypar} }
 \item Calibrate a new scorecard with the ‘‘augmented'' dataset (Figure \ref{fuzzy:sfig4})
 \end{enumerate}
 
@@ -115,15 +115,15 @@ Fuzzy Augmentation can be found in \cite{economix}; it is the following procedur
 
  Clearly:
 
- \[ \forall j = 1, \ldots, d, \: \frac{\partial \sum_{i=n+1}^{m+n} \sum_{y_i = 0}^{1} p(y_i^{\text{inf}}| x_i, \hat{\theta}^{\text{f}})\ln (p(y_i| x_i, \theta))}{\partial \theta_j} = 0 \Leftrightarrow \theta = \hat{\theta}^{\text{f}} \]
+ \[ \forall j = 1, \ldots, d, \: \frac{\partial \sum_{i=n+1}^{m+n} \sum_{y_i = 0}^{1} p_{\hat{\glssymbol{bth}}_\f}(\glssymbol{y}_i| \glssymbol{bx}_i)\ln (p_{\glssymbol{bth}}(\glssymbol{y}_i| \glssymbol{bx}_i))}{\partial \theta_j} = 0 \Leftrightarrow \theta = \hat{\theta}^{\text{f}} \]
 
- It can be shown that:
- \[\argmax_{\theta \in \Theta}  \sum_{i=n+1}^{m+n} \sum_{y_i = 0}^{1} p_{\hat{\theta}^{\text{f}}}(y_i| x_i)\ln (p_\theta(y_i| x_i)) = \hat{\theta}^{\text{f}}\]
+ Such that:
+ \[\argmax_{\theta \in \Theta}  \sum_{i=n+1}^{m+n} \sum_{y_i = 0}^{1} p_{\hat{\theta}_{\text{f}}}(y_i| x_i)\ln (p_\theta(y_i| x_i)) = \hat{\theta}_{\text{f}}\]
 
  And finally:
- \[\argmax_{\theta \in \Theta} \ell(\theta;{\bm{x}},{\bm{y}}^{\text{f}},{\bm{y}}^{\text{inf}}) = \argmax_{\theta \in \Theta} \ell(\theta;{\bm{x}},{\bm{y}}^{\text{f}}) = \hat{\theta}^{\text{f}}\]
+ \[\argmax_{\theta \in \Theta} \ell(\theta;{\bm{x}},{\bm{y}}^{\text{f}},{\bm{y}}^{\text{nf}}) = \argmax_{\theta \in \Theta} \ell(\theta;{\bm{x}},{\bm{y}}^{\text{f}}) = \hat{\theta}_{\text{f}}\]
 
- To conclude, this method will not change the estimated parameters of any discriminant model, asymptotically and with a finite set of observations, regardless of any assumption on the missingness mechanism or the true model hypothesis. In other words, Fuzzy Augmentation has no effect on the Kullback-Leibler divergence, making this method useless because it is no different than the accepted clients model minimizing asymptotically expression~$H^{\text{f}}_{\theta}$ and not expression~$H_{\theta}$.
+ To conclude, this method will not change the estimated parameters of any discriminant model, asymptotically and with a finite set of observations, regardless of any assumption on the missingness mechanism or the true model hypothesis. In other words, Fuzzy Augmentation has no effect on the Kullback-Leibler divergence, making this method useless because it is no different than the financed clients model.
 
 
 \subsection{Reclassification} \label{reclassification}
@@ -131,7 +131,7 @@ Fuzzy Augmentation can be found in \cite{economix}; it is the following procedur
 Reclassification can be found in \cite{RI6}, also sometimes referred to as extrapolation as in \cite{banasik}; it is the following procedure:
 \begin{enumerate}
 \item Construct Scorecard "Known Good Bad" (KGB) $S^{\text{f}}$ with financed clients' data (Figure~\ref{reclass:sfig1})
-\item Calculate $p(1|x,\hat{\theta}^{\text{f}}) = \text{logit}(S^{\text{f}}(x))$ for rejects
+\item Calculate $p_{\hat{\theta}_{\text{f}}}(1|\glssymbol{bx}) = \text{logit}(S^{\text{f}}(x))$ for rejects
 \item Infer default status of rejected client $i$ if $S^{\text{f}}(x) > \text{threshold}$; typically threshold $=0.5$ (Figure~\ref{reclass:sfig2})
 \item Calibrate a new scorecard with the ‘‘augmented'' dataset (Figure~\ref{reclass:sfig3})
 \end{enumerate}
@@ -213,9 +213,9 @@ Reclassification can be found in \cite{RI6}, also sometimes referred to as extra
 \subsection{Augmentation} \label{augmentation}
 
 \begin{enumerate}
-\item Construct Scorecard "Accept Reject" (ACRJ) $R$ with financed clients' data on target variable $Z$ (Figure~\ref{augment:sfig1})
+\item Construct Scorecard "Accept Reject" (ACRJ) $R$ with financed clients' data on target variable $Z$ (Figure~\ref{augment:sfig1}), where $\text{logit}(R(\glssymbol{bx})) = p_{\hat{\glssymbol{phi}}}(\f | \glssymbol{bx})$
 \item Create $K$ score bands $B_1, \ldots, B_K$ according to $R$
-\item Compute in each score band $\hat{p}_{\text{true}}(\text{f}|x \in B_k) = \dfrac{|B_k|}{|z=\text{f}|}$ (Figure~\ref{augment:sfig2})
+\item Compute in each score band $\hat{p}(\text{f}|x \in B_k) = \dfrac{|B_k|}{|\text{F}|}$ (Figure~\ref{augment:sfig2})
 \item Construct Scorecard $S$ on target variable Good/Bad with financed clients' data re-weighted (Figure~\ref{augment:sfig3})
 \end{enumerate}
 
@@ -302,9 +302,9 @@ K & 1.1 \\
 
 The Twins Method is an internal method at Crédit Agricole documented in~\cite{groupe} (confidential) where Figure~\ref{fig:twins} is given; it consists in the following procedure:
 \begin{enumerate}
-\item Develop KGB (Known Good/Bad) scorecard $S^{\text{f}}$ on financed clients' data predicting $Y$; this gives us $\hat{\theta}^{\text{f}}$ (Figure~\ref{twins:sfig1})
-\item Develop ACRJ (Accept/Reject) scorecard $S_Z$ on all applicants predicting $Z$; this gives us $\hat{\zeta}$ (Figure~\ref{twins:sfig2})
-\item Develop a scorecard $S$ on financed clients' data predicting $Y$ based solely on $S^{\text{f}}$ and $S_Z$; this gives us $\hat{\theta}^{\text{twins}}$ (Figure~\ref{twins:sfig3})
+\item Develop KGB (Known Good/Bad) scorecard $S^{\text{f}}$ on financed clients' data predicting $Y$; this gives us $\hat{\theta}_{\text{f}}$ (Figure~\ref{twins:sfig1})
+\item Develop ACRJ (Accept/Reject) scorecard $R$ on all applicants predicting $Z$; this gives us $\hat{\glssymbol{phi}}$ (Figure~\ref{twins:sfig2})
+\item Develop a scorecard $S$ on financed clients' data predicting $Y$ based solely on $S^{\text{f}}$ and $R$; this gives us $\hat{\theta}^{\text{twins}}$ (Figure~\ref{twins:sfig3})
 \item Calculate $S$ on rejected applicants and reintegrate them twice in the training dataset like we did with Fuzzy Augmentation in Section \ref{fuzzy} (Figure~\ref{twins:sfig4})
 \item Develop scorecard $S_{\text{twins}}$ on all applicants' data
 \end{enumerate}
@@ -423,7 +423,7 @@ NA & -2.0 & -2.5 \\
 \end{table}
 
 
-\subsection{Parceling} \label{Parceling}
+\subsection{Parcelling} \label{Parceling}
 
 Parcelling is a process of reweighing according to the probability of default by score-band that is adjusted by the credit modeler. It has been documented in \cite{saporta,banasik,RI6}, as well as in~\cite{groupe} where Figure~\ref{fig:parceling} is given.
 
@@ -519,7 +519,7 @@ K & 0.01 & 0.04 \\
 
 
 
-\subsection{Simulation of Reject Inference methods applied to multivariate gaussian data} \label{subsec:app_reject_real}
+\subsection{Simulation of Reject Inference methods applied to multivariate gaussian data} \label{subsec:app_reject_sim}
 
 This early work aimed at comparing several Reject Inference methods in the well-specified model-case for 4 multivariate gaussian features on Figure~\ref{fig:simu_4var} and 30 features on Figure~\ref{fig:simu_30var} in terms of error rate. The horizontal axis represents the cut-off value of a \gls{lr} that simulates the acceptance / rejection mechanism, such that it roughly corresponds to the fraction of missing labels $\glssymbol{bby}^{\mathcal{N}\mathcal{F}}$. In this setting, the semi-supervised generative approach obviously yields better results since the data lies in its restricted hypothesis space and it is able to use the predictors with missing labels $\glssymbol{bbx}^{\mathcal{N}\mathcal{F}}$. As explained thoroughly in Chapter~\ref{chap2}, standard \gls{lr} and Augmentation perform similarly (since they are both well-specified models and we are in a \gls{mar} setting). Parcelling does not work well since it is designed for a \gls{mnar} setting. In presence of well-separated data, Reclassification works well with 30 features since the true decision boundary is ``sharp'' (see the very small error rate) such that by assigning $\argmax_y \hat{p}(y | x)$ and $\max_y \hat{p}(y | x)$ are very close, which is less apparent with 4 features.
 
@@ -565,7 +565,7 @@ This early work shows all Reject Inference methods based on \gls{lr} applied to 
 \end{figure}
 
 
-\subsection{Performance of other predictive models w.r.t.\ the acceptance level} \label{subsec:app_reject_real}
+\subsection{Performance of other predictive models w.r.t.\ the acceptance level} \label{subsec:app_reject_real_method}
 
 Also part of an earlier work, this Section's aim was to compare the performance of other ``machine learning'' models than simple \gls{lr} (although we sticked to this ) to see if, when presented with the same data and in presence of a simulated acceptance / rejection mechanism as earlier showcased, it would not be of better interest to switch to a different model, although it was argued in Chapter~\ref{chap2} that these models would not perform good under a \gls{mar} setting. The same datasets as in the previous Section are used: the proposed models all perform poorer than \gls{lr} but most importantly their performance drops significantly with the proportion of simulated accepted clients.
 
