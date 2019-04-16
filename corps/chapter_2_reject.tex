@@ -196,9 +196,9 @@ irrevocably prohibiting the calculus of~(\ref{eq:error}) as a model selection cr
 
 In the category of information criteria, the BIC criterion (presented in Section~\ref{subsubsec:choix_modele}) is expressed as the following penalization of the maximum log-likelihood:
 \begin{equation}\label{eq:AIC}
-\mbox{BIC} = 2 \ell(\hat\gamma;\glssymbol{T}) - dim(\Gamma) \ln n,
+\mbox{BIC} = - 2 \ell(\hat\gamma;\glssymbol{T}) + dim(\Gamma) \ln n,
 \end{equation}
-where $\hat\gamma$ is the maximum likelihood estimate of $\gamma$ and $dim(\Gamma)$ is the number of parameters to be estimated in the model at hand. The model leading to the greatest BIC value is then retained. Many other BIC-like criteria exist~\cite{vandewalle:tel-00447141} but the underlined idea is unchanged. Contrary to the error rate criteria like~(\ref{eq:error}), it is thus possible to compare models without funding ``non-fundable applicants'' since just the available sample $\glssymbol{T}$ is required. However, computing~(\ref{eq:AIC}) requires to precisely express the model families $\{p_{\gamma}(\glssymbol{y},\glssymbol{z}|\glssymbol{bx})\}_{\gamma \in \Gamma}$ which compete.
+where $\hat\gamma$ is the maximum likelihood estimate of $\gamma$ and $dim(\Gamma)$ is the number of parameters to be estimated in the model at hand. The model leading to the lowest BIC value is then retained. Many other BIC-like criteria exist~\cite{vandewalle:tel-00447141} but the underlined idea is unchanged. Contrary to the error rate criteria like~(\ref{eq:error}), it is thus possible to compare models without funding ``non-fundable applicants'' since just the available sample $\glssymbol{T}$ is required. However, computing~(\ref{eq:AIC}) requires to precisely express the model families $\{p_{\gamma}(\glssymbol{y},\glssymbol{z}|\glssymbol{bx})\}_{\gamma \in \Gamma}$ which compete.
 
 \section{Rational reinterpretation of \textit{reject inference} methods} \label{sec:methods_reject}
 

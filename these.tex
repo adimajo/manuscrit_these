@@ -41,7 +41,8 @@
 \usepackage{listings}
 \usepackage{cancel}
 \usetikzlibrary{arrows,intersections,positioning,shapes.arrows,babel}
-\usepackage[xindy,acronyms,symbols]{glossaries}
+%\usepackage[xindy,acronyms,symbols]{glossaries}
+\usepackage[xindy,symbols]{glossaries}
 \usepackage[english]{algorithm2e}
 \usepackage{float}
 \usepackage[customcolors,markings]{hf-tikz}
@@ -155,9 +156,9 @@
 % chargé)
 %\lstlistoflistings
 % (Facultatif) Glossaire (si souhaité distinct de la liste des acronymes) :
-\printglossary
+\printglossary[title={Glossaire et acronymes}]
 % (Facultatif) Liste des acronymes
-\printacronyms
+%\printacronyms
 % (Facultatif) Liste des symboles
 \printsymbols[title={Notations}]
 % (Facultatif) Liste des algorithmes
@@ -200,7 +201,7 @@
 \include{corps/chapter_6_trees}
 %
 % Septième chapitre
-\include{corps/chapter_7_highdimension}
+%\include{corps/chapter_7_highdimension}
 %
 % Chapitre  de conclusion (générale)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
