@@ -149,7 +149,7 @@
 }
 
 \newglossaryentry{bx}{
-        name={vecteur de caractéristiques d'un client},
+        name={réalisation du vecteur de caractéristiques d'un client},
         description={},
         symbol={\ensuremath{\bm{x}}},
         type=symbols,
@@ -173,15 +173,15 @@
 }
 
 \newglossaryentry{Xnotj}{
-        name={$j^{\text{ème}}$ variable aléatoire de $\bm{X}$},
+        name={vecteur aléatoire $\bm{X}$ privé de sa $j^{\text{ème}}$ composante},
         description={},
-        symbol={\ensuremath{X_j}},
+        symbol={\ensuremath{X_{-\{j\}}}},
         type=symbols,
   	   sort={ag},  
 }
 
 \newglossaryentry{xij}{
-        name={réalisation de $X_j$ pour le $i^{\text{ème}}$ client},
+        name={réalisation de $X_j$ pour le $i^{\text{ème}}$ client (en colonne)},
         description={},
         symbol={\ensuremath{x_{i,j}}},
         type=symbols,
@@ -189,7 +189,7 @@
 }
 
 \newglossaryentry{bbx}{
-        name={matrice de design de caractéristiques d'un ensemble de $n$ clients},
+        name={matrice de design de caractéristiques (en colonnes) d'un ensemble de clients (en lignes)},
         description={},
         symbol={\ensuremath{\mathbf{x}}},
         type=symbols,
@@ -221,7 +221,7 @@
 }
 
 \newglossaryentry{y}{
-        name={observation du caractère ``bon'' ($0$) ou ``mauvais'' ($1$) d'un client},
+        name={observation du caractère ``bon'' ($1$) ou ``mauvais'' ($0$) d'un client},
         description={},
         symbol={\ensuremath{y}},
         type=symbols,
@@ -293,7 +293,7 @@
 }
 
 \newglossaryentry{qj}{
-        name={fonction de discrétisation univariée de la $j^{\text{ème}}$ composante},
+        name={fonction de quantification univariée de la $j^{\text{ème}}$ composante},
         description={},
         symbol={\ensuremath{{\bm{q}_j}}},
         type=symbols,
@@ -341,7 +341,7 @@
 }
 
 \newglossaryentry{bth}{
-        name={vecteur de paramètres, généralement pour la régression logistique},
+        name={vecteur de paramètres, généralement pour la régression logistique, du modèle prédictif de $Y$ conditionnellement aux caractéristiques $\bm{X}$},
         description={},
         symbol={\ensuremath{\bm{\theta}}},
         type=symbols,
@@ -357,7 +357,7 @@
 }
 
 \newglossaryentry{phi}{
-        name={paramètre du mécanisme d'acceptation / rejet des demandeurs de crédit},
+        name={paramètre du mécanisme d'acceptation / rejet ($Z$) des demandeurs de crédit conditionnellement aux données $\bm{X}$ et $Y$},
         description={},
         symbol={\ensuremath{\bm{\phi}}},
         type=symbols,
@@ -386,4 +386,34 @@
         symbol={\ensuremath{\text{KL}}},
         type=symbols,
   	   sort={as},  
+}
+
+
+
+
+\newglossaryentry{T}{
+        name={ensemble d'observations d'apprentissage},
+        description={},
+        symbol={\ensuremath{\mathcal{T}}},
+        type=symbols,
+  	   sort={at},  
+}
+
+
+\newglossaryentry{Tf}{
+        name={ensemble d'observations de clients financés},
+        description={},
+        symbol={\ensuremath{\mathcal{T}_\f}},
+        type=symbols,
+  	   sort={au},  
+}
+
+
+
+\newglossaryentry{Tnf}{
+        name={ensemble d'observations de clients non financés},
+        description={},
+        symbol={\ensuremath{\mathcal{T}_{\text{nf}}}},
+        type=symbols,
+  	   sort={av},  
 }

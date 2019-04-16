@@ -312,7 +312,7 @@ The Twins Method is an internal method at Crédit Agricole documented in~\cite{g
 \begin{figure}
 \centering
 \includegraphics[width=0.5\textwidth]{figures/appendix/processusTwins.png}
-\caption{The accompanying Figure of the Twins method in~\cite{groupe}.}
+\caption{The accompanying Figure of the Twins method in the internal documentation.}
 \label{fig:twins}
 \end{figure}
 
@@ -422,6 +422,15 @@ NA & -2.0 & -2.5 \\
 }
 \end{table}
 
+Following notations introduced in Chapter~\ref{chap2}, we have:
+\[ \ell(\glssymbol{bth};(\bm{1},\glssymbol{bbx})' \hat{\glssymbol{phi}}, (\bm{1},\glssymbol{bbx})' \hat{\glssymbol{bth}}_\f, \glssymbol{bby}) = \sum_{i=1}^{n} \ln(p_{\glssymbol{bth}}(y_i | (1, \glssymbol{bx}_i)' \hat{\theta}_{\text{f}}, (1, \glssymbol{bx}_i)' \hat{\glssymbol{phi}})).\]
+We can rewrite $\ell(\glssymbol{bth};(\bm{1},\glssymbol{bbx})' \hat{\glssymbol{phi}}, (\bm{1},\glssymbol{bbx})' \hat{\glssymbol{bth}}_\f, \glssymbol{bby})$ by remarking that the logit of $p_{\glssymbol{bth}}(y_i | (1, \glssymbol{bx}_i)' \hat{\theta}_{\text{f}}, (1, \glssymbol{bx}_i)' \hat{\glssymbol{phi}})$ is a linear combination of $\bm{x}$.
+%: $\ell(\glssymbol{bth};(\bm{1},\glssymbol{bbx})' \hat{\glssymbol{phi}}, (\bm{1},\glssymbol{bbx})' \hat{\glssymbol{bth}}_\f, \glssymbol{bby}) = \ell(\theta;\glssymbol{bbx}^{\text{f}}, \glssymbol{bby}^{\text{f}})$ where $\begin{cases}
+%\glssymbol{bth} = (\theta_0,\theta_1,\theta_2). \\
+%\theta_j = \delta_1 \hat{\theta}_{\text{f}j} + \delta_2 \hat{\zeta}_{j} \text{ for } 1 \leq j \leq d. \\
+%\theta_0 = \delta_0 + \delta_1 \hat{\theta}_{\text{f}0} + \delta_2 \hat{\zeta}_{0}.
+%\end{cases}$
+We know that $\hat{\glssymbol{bth}}^{\text{f}} \in \argmax_{\glssymbol{bth} \in \Theta} \ell(\glssymbol{bth};\glssymbol{bbx}^{\text{f}},\glssymbol{bby}^{\text{f}})$ so that under the identifiability assumption, this method will give the same results as $\hat{\glssymbol{bth}}^{\text{f}}$. In terms of $\glssymbol{KL}$ divergence and as for Fuzzy Augmentation, this method is useless because it is no different than the financed clients model.
 
 \subsection{Parcelling} \label{Parceling}
 
@@ -439,7 +448,7 @@ Parcelling is a process of reweighing according to the probability of default by
 \begin{figure}
 \centering
 \includegraphics[width=0.5\textwidth]{figures/appendix/processusParcelling.png}
-\caption{The accompanying Figure of the Parceling method in~\cite{groupe}.}
+\caption{The accompanying Figure of the Parceling method in the internal documentation.}
 \label{fig:parceling}
 \end{figure}
 
@@ -751,7 +760,7 @@ Let $m_j \leftarrow m_j-1$\;
 Let $X \sim \chi^2$ and $\alpha_{\max} = \max_h p(X \geq \chi^2_h) = p(X \geq \min_h \chi^2_h)$.
 }
 }
- \caption{\label{chimerge} ChiMerge algorithm perfoming discretization by performing $\chi^2$ tests recursively at a user-defined level $\alpha$.}
+ \caption{\label{chimerge} The ChiMerge algorithm discretizes features by performing $\chi^2$ tests recursively at a user-defined level $\alpha$.}
 \end{algorithm}
 
 
@@ -772,7 +781,7 @@ where $\text{Ent}(\glssymbol{bbx} < c) = - \sum_{y=0}^1 p(y,\glssymbol{bbx} < c)
 Select $c_\star$ which minimizes $\text{E}(c)$ and append it to $\mathcal{C}_\star$\;
 Repeat steps for $\{\glssymbol{bbx}< c\}$ and $\{\glssymbol{bbx} > c\}$\;
 Stop when $\text{Gain}(c,\glssymbol{bbx}) = \text{E}(c) - \text{Ent}(\glssymbol{bbx}) \leq \frac{\ln_2 (|\glssymbol{bbx}|-1)}{|\glssymbol{bbx}|} + \frac{\Delta(c,\glssymbol{bbx}) }{|\glssymbol{bbx}|}$ where $\Delta(c,\glssymbol{bbx}) = \ln_2 7 - (k \text{Ent}(\glssymbol{bbx}) - k_{<c}\text{Ent}(\glssymbol{bbx} < c) - k_{>c}\text{Ent}(\glssymbol{bbx} < c))$ and $k$, $k_{<c}$, $k_{>c}$ represent the number of classes (1 or 2 in the binary setting) in their respective sample $\glssymbol{bbx}$, $\glssymbol{bbx} < c$ and $\glssymbol{bbx} > c$\;
- \caption{\label{mdlp} MDLP algorithm recursively perform discretization with an information gain criterion.}
+ \caption{\label{mdlp} The MDLP algorithm recursively performs discretization with an information gain criterion.}
 \end{algorithm}
 
 
@@ -797,7 +806,7 @@ Perform back-propagation of the error via Stochastic Gradient Descent which yiel
     $s \leftarrow s+1$\;
 }
  Choose the best quantization $\hat{\q}^{(s_\star)}$, which associated \gls{lr} parameters yield the lowest BIC criterion\;
- \caption{\label{NN-disc} \textit{glmdisc}-NN: supervised multivariate discretization for logistic regression with neural networks.}
+ \caption{\label{NN-disc} \textit{glmdisc}-NN: supervised multivariate quantization for logistic regression with neural networks.}
 \end{algorithm}
 
 \begin{figure}[!h]
@@ -830,7 +839,7 @@ Draw new latent features ${\bqk_j^{(s+1)}} \sim \text{ Mult} \left( p_{\glssymbo
    $s \leftarrow s+1$\;
  }
  Choose the best quantization $\hat{\bbqk}^{(s_\star)}$, which associated \gls{lr} parameters $\hat{\glssymbol{bth}}^{(s_\star)}$ yield the lowest BIC criterion.
- \caption{\label{SEM-disc} \textit{glmdisc}-SEM: supervised multivariate discretization for logistic regression with an \gls{sem} algorithm.}
+ \caption{\label{SEM-disc} \textit{glmdisc}-SEM: supervised multivariate quantization for logistic regression with an \gls{sem} algorithm.}
 \end{algorithm}
 
 \begin{figure}[!h]
@@ -976,7 +985,7 @@ The \gls{lmt} algorithm given in~\eqref{alg:lmt} has been proposed in~\cite{land
  Fit a \gls{lr} at the root node by using the LogitBoost algorithm~\ref{alg:logitboost} (the number of iterations is determined by cross-validation)\;
  Fit a \gls{lr} at the children nodes by resuming the LogitBoost algorithm~\ref{alg:logitboost} on the respective sub-populations\;
  Prune the tree based on the CART algorithm's pruning criterion (composed of misclassification error and complexity penalization)\;
- \caption{\label{alg:lmt} \gls{mob} algorithm (adapted from~\cite{landwehr2005logistic}).}
+ \caption{\label{alg:lmt} \gls{lmt} algorithm (adapted from~\cite{landwehr2005logistic}).}
 \end{algorithm}
 
 \subsection{\gls{mob}} \label{app1:sec_mob}

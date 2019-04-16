@@ -23,7 +23,7 @@
 \usepackage{microtype}
 \usepackage{varioref}
 \usepackage[backend=biber,safeinputenc,refsection=chapter]{biblatex}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{csquotes}
 \usepackage{textcomp}
 \usepackage{bm}
@@ -156,10 +156,10 @@
 %\lstlistoflistings
 % (Facultatif) Glossaire (si souhaité distinct de la liste des acronymes) :
 \printglossary
-% (Facultatif) Liste des symboles
-\printsymbols
 % (Facultatif) Liste des acronymes
 \printacronyms
+% (Facultatif) Liste des symboles
+\printsymbols[title={Notations}]
 % (Facultatif) Liste des algorithmes
 \listofalgorithms
 %
