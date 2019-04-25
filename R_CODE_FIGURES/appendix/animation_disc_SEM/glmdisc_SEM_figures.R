@@ -4,7 +4,7 @@ setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 
 
 # Simulation of a discretized logit model
-set.seed(1)
+set.seed(2)
 x = matrix(runif(300), nrow = 100, ncol = 3)
 cuts = seq(0,1,length.out= 4)
 xd = apply(x,2, function(col) as.numeric(cut(col,cuts)))
@@ -71,7 +71,14 @@ current_best = 1
 best_reglog = 0
 best_link = 0
 
-
+options(
+  tikzLatexPackages = c(
+    "\\usepackage{bm}",
+    "\\usepackage{amsfonts}",
+    "\\usepackage{tikz}",
+    "\\usepackage[active,tightpage]{preview}",
+    "\\PreviewEnvironment{pgfpicture}",
+    "\\setlength\\PreviewBorder{0pt}"))
 
 # SEM algorithm
 for (i in 1:iter){
@@ -145,7 +152,7 @@ for (i in 1:iter){
                          modalites_k[,paste0("X",j,as.numeric(levels_to_sample[k]))] = rep(1,n)
                     }
                     
-                    p = predictlogisticRegression(modalites_k,logit$coefficients)
+                    p = glmdisc::predictlogisticRegression(modalites_k,logit$coefficients)
                     
                     y_p[,k] <- (labels*p+(1-labels)*(1-p))
                }
@@ -222,7 +229,7 @@ for (i in 1:iter){
           }
           
           tikz(paste0('sem_simulated_data/sem_feature_',j,'_iter_',i,'.tex'), standAlone=FALSE, width = 4, height = 3, fg = "black")
-          plot(predictors[,j],e[,j], xlab = '$x_j$', ylab = '$e_j$', col = e[,j])
+          plot(predictors[,j],e[,j], xlab = '$x_j$', ylab = '$\\bm{\\mathfrak{q}}_j$', col = e[,j])
           dev.off()
      }
      lev <- apply(e,2,function(col) list(levels(factor(col))))
