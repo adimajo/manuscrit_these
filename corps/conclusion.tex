@@ -9,11 +9,11 @@
 Various sources estimate the growth of created data to be exponential. However, the difficulty of processing these data has superseded the difficulty of storing them: ``data is the new oil'' is the catch-phrase often repeated in industry. While this oil has been extensively extracted and stored in a lot of application contexts, including \textit{Credit Scoring}, there is not always a motor capable of burning it. \textit{Scalability} refers to the problem of applying an existing method to increasingly more data. It turns out that, either by lack of computing power and / or by statistical properties or assumptions not met, not all methods are scalable.
 Consequently, the statistics and machine learning communities have already tackled lots of problems stemming specifically from large $n$ and / or large $d$ settings.
 These problems form a vast literature and are out of the scope of the present work.
-The aim of this Chapter is to give a concise context of high-dimensional data w.r.t.\ the \textit{Credit Scoring} industry, what problems does it give rise to, and some simple existing solutions from an eluded literature review.
+The aim of these concluding remarks is to give a concise context of high-dimensional data w.r.t.\ the \textit{Credit Scoring} industry, what problems does it give rise to, and some simple existing solutions from an eluded literature review.
 
 \section{Motivation}
 
-This first Section aims at presenting this well-known paradigm in the context of \textit{Credit Scoring} and the two sub-problems that were identified and tackled in this Chapter.
+This first section aims at presenting this well-known paradigm in the context of \textit{Credit Scoring} and the two sub-problems that were identified and tackled in this chapter.
 
 \subsection{Industrial context}
 
@@ -66,15 +66,16 @@ Transactions from credit card holders are recorded and can easily be retrieved. 
     \centering
     \caption{Daily per-client credit card data.}
     \label{tab:credit_card_data}
-    \begin{tiny}
-\begin{tabular}{lllllll}
+\begin{tiny}
+\resizebox{\textwidth}{!}{\begin{tabular}{lllllll}
 Client & Date & Amount & Company & Location & Category & \dots \\
  \hline
 1 & 01/01/2019:09:05:18 & 10.9 & Amazon & Online & Online retail & \dots \\
 1 & 01/01/2019:12:50:25 & 14.5 & Les 3 Brasseurs & 22 Place de la Gare, 59800 LILLE & Restaurant & \dots \\
 1 & 02/01/2019:19:10:20 & 78.9 & Carrefour & 1 Avenue Willy Brandt, 59000 LILLE & Retail consumer goods & \dots 
 \end{tabular}
-    \end{tiny}
+}
+\end{tiny}
 \end{table}
 
 
@@ -110,23 +111,23 @@ Finally, clients often apply to loans after having been exposed to diverse forms
     \centering
     \caption{Marketing data.}
     \label{tab:marketing_data}
-    \begin{tiny}
-\begin{tabular}{lllllll}
+\begin{tiny}
+\resizebox{\textwidth}{!}{\begin{tabular}{lllllll}
 Client & Marketing lever & Date & Device & Opened & Visited & URL \\
  \hline
 1 & email & 02/03/2019:15:02:54 & Android & Yes & No & /media/new\_credit\_ad/car\_loan\&id=1\&\dots \\
 1 & mail & 02/04/2019:10:00:00 & NA & NA & NA & NA \\
 1 & Google Adword & 15/04/2019:12:10:10 & Windows & NA & Yes & /adword/personal\_credit\&id=1\&\dots \\
-\end{tabular}
-    \end{tiny}
+\end{tabular}}
+\end{tiny}
 \end{table}
 
-All these kinds of data are not directly used by \gls{cacf} in its \textit{Credit Scoring} practices, although by simply looking at the exemplary Tables, one is able to draw simple intuitions of signals of low / high risk of default. In the subsequent Section, two problems pertaining the usage of these data, justifying in a sense why they were not used to this day, are identified and formalized.
+All these kinds of data are not directly used by \gls{cacf} in its \textit{Credit Scoring} practices, although by simply looking at the exemplary Tables, one is able to draw simple intuitions of signals of low / high risk of default. In the subsequent section, two problems pertaining the usage of these data, justifying in a sense why they were not used to this day, are identified and formalized.
 
 
 \subsection{Two identified sub-problems}
 
-A very simple way of dealing with all examples of additional data of the preceding Section is to add them as columns of our ``traditional'' data. Taking Table~\ref{tab:credit_card_data} as an example, each credit card transaction can be reshaped so as to fit in separate columns relative to payment \#1, payment \#2, etc. This would yield Table~\ref{tab:example_longitudinal}. As a consequence, we are artificially back to a traditional setting with a very high number of covariates $d$. This setting is the subject of the next Section. A probably clever way to use these data is to exploit their temporal structure, just as Recurrent Neural Networks have been able, on \textit{e.g.} sentiment analysis by analysing raw text, to perform better than methods not making use of this structure such as n-grams~\cite{}. Some techniques are provided in the subsequent Section.
+A very simple way of dealing with all examples of additional data of the preceding Section is to add them as columns of our ``traditional'' data. Taking Table~\ref{tab:credit_card_data} as an example, each credit card transaction can be reshaped so as to fit in separate columns relative to payment \#1, payment \#2, etc. This would yield Table~\ref{tab:example_longitudinal}. As a consequence, we are artificially back to a traditional setting with a very high number of covariates $d$. This setting is the subject of the next section. A probably clever way to use these data is to exploit their temporal structure, just as Recurrent Neural Networks have been able, on \textit{e.g.} sentiment analysis by analysing raw text, to perform better than methods not making use of this structure such as n-grams~\cite{manning1999foundations}. Some techniques are provided in the subsequent section.
 
 
 
@@ -148,11 +149,11 @@ Client & Job & Children & Marketing lever 1 & Date 1 & Device 1 & Marketing leve
 
 \section{Longitudinal data in high dimension}
 
-This Section is an eluded literature review of problems that arise in high dimension for ``classical'' data. It was first tackled by bio-statisticians working with omics data, such as DNA that can span over thousands of features for each patient, which yields a situation where more features than observations are available!
+This section is an eluded literature review of problems that arise in high dimension for ``classical'' data. It was first tackled by bio-statisticians working with omics data, such as DNA that can span over thousands of features for each patient, which yields a situation where more features than observations are available!
 
 \subsection{The $d > n$ setting}
 
-In the next Section, we review the statistical properties associated with the ``curse of dimensionality'', a term attributed to Bellman:
+In the next section, we review the statistical properties associated with the ``curse of dimensionality'', a term attributed to Bellman:
 \epigraph{All [problems due to high dimension] may be subsumed under the heading “the curse of dimensionality”. Since this is a curse, [...], there is no need to feel discouraged about the possibility of obtaining significant results despite it.}{R. Bellman, ``Dynamic programming'', 1957}
 
 \subsection{The curse of dimensionality}
@@ -177,7 +178,7 @@ In the next Section, we review the statistical properties associated with the ``
 
 \subsection{Dimension reduction}
 
-A straightforward way of avoiding the curse(s) of dimensionality is to get back to a small dimension $d'$ relative to $n$ by pre-processing the $d$ features. In Chapter~\ref{chap4}, and particularly Section~\ref{sec:motivation}, it was argued that quantization could be thought of dimensionality reduction, because information was compressed in intervals and ``meta''-groups for continuous and categorical features respectively without affecting predictive power (on the contrary!). Two way more classical ways of performing dimensionality reduction are presented here: combining original features in principal components, which was already discussed in Chapter~\ref{chap6} when building segments of clients, and feature selection, which are the subjects of the two subsequent Section respectively.
+A straightforward way of avoiding the curse(s) of dimensionality is to get back to a small dimension $d'$ relative to $n$ by pre-processing the $d$ features. In Chapter~\ref{chap4}, and particularly Section~\ref{sec:motivation}, it was argued that quantization could be thought of as a dimensionality reduction technique, because information was compressed in intervals and ``meta''-groups for continuous and categorical features respectively without affecting predictive power (on the contrary!). Two way more classical ways of performing dimensionality reduction are presented here: combining original features in principal components, which was already discussed in Chapter~\ref{chap6} when building segments of clients, and feature selection, which are the subjects of the two subsequent sections respectively.
 
 \subsubsection{By combining input features}
 
@@ -198,7 +199,9 @@ Cette thèse a permis d'explorer cinq sujets directement inspirés de problémat
 
 \medskip
 
-Le chapitre~\ref{chap2} consacré à la ``réintégration des refusés'' a permis de poser un problème ancien de l'industrie du crédit à la consommation : l'ensemble d'apprentissage de la règle de classement bons / mauvais payeurs est un échantillon de la population ayant déjà été financée (ce qui est fortement corrélé à plusieurs règles destinées à ne financer que des bons clients, dont l'ancienne règle) ; cela induit-il un biais dans l'estimation des modèles de classification supervisée ? En réinterprétant les clients non financés comme des données manquantes, et en distinguant les cas du vrai (\textit{well-specified}) et du mauvais (\textit{misspecified}) modèle, on a montré que le paramètre de la régression logistique peut en effet être biaisé. Néanmoins, en reformulant les techniques \textit{ad hoc} d'utilisation des informations des clients non financés comme des tentatives de modélisation de la loi générative (la loi jointe des covariables et de l'information bon / mauvais payeur $p(\glssymbol{bx},y)$ par opposition à la loi prédictive $p(y | \glssymbol{bx})$), on a montré que la méthode actuelle consistant à n'utiliser que les clients financés pour lesquels $Z = \text{f}$ était la plus satisfaisante.
+Le chapitre~\ref{chap2} consacré à la ``réintégration des refusés'' a permis de poser un problème ancien de l'industrie du crédit à la consommation : l'ensemble d'apprentissage de la règle de classement bons / mauvais payeurs est un échantillon de la population ayant déjà été financée (ce qui est fortement corrélé à plusieurs règles destinées à ne financer que des bons clients, dont l'ancienne règle) ; cela induit-il un biais dans l'estimation des modèles de classification supervisée ? En réinterprétant les clients non financés comme des données manquantes, et en distinguant les cas du vrai (\textit{well-specified}) et du mauvais (\textit{misspecified}) modèle, on a montré que le paramètre de la régression logistique peut en effet être biaisé. Néanmoins, en reformulant les techniques \textit{ad hoc} d'utilisation des informations des clients non financés comme des tentatives de modélisation de la loi générative (prenant en compte le mécanisme de financement $p(\gls{z} | \gls{bx},\gls{y})$)
+%(la loi jointe des covariables et de l'information bon / mauvais payeur $p(\gls{bx},y)$ par opposition à la loi prédictive $p(y | \gls{bx})$)
+, on a montré que la méthode actuelle consistant à n'utiliser que les clients financés pour lesquels $Z = \text{f}$ était satisfaisante.
 
 \medskip
 
@@ -210,14 +213,15 @@ De manière similaire, pour des raisons pratiques et théoriques, il est courant
 
 \medskip
 
-Nous avions ensuite pris du recul sur le quotidien du praticien en \textit{Credit Scoring} qui se voit confier des scores et / ou des améliorations ``locales'' du système d'acceptation, c'est-à-dire ne concernant qu'une partie de la population totale des demandeurs de crédit. En effet, ledit système est bien souvent composé de nombreuses règles ``métier'' (écartées de cette étude) mais surtout de nombreux scores, c'est-à-dire des régressions logistiques utilisant des variables différentes, des quantifications et croisements différents, et utilisées sur des clientèles différentes. En ne remettant jamais en cause la structure d'arbre du système d'acceptation total, la qualité prédictive est nécessairement sous-optimale, ce qui nous a conduit à présenter les méthodes actuelles utilisées en industrie pour construire des segments sur lesquelles différentes \gls{lr} sont ensuite construites, plusieurs méthodes alternatives de l'état de l'art, très simples à mettre en oeuvre et qui produisent de meilleurs résultats que l'approche actuelle sur des données simulées, ainsi qu'une piste de résolution, sous la forme d'un algorithme~\gls{sem} comparable à celui exploité dans \textit{glmdisc} ont été passées en revue et comparées sur des données simulées. L'application de cette piste de recherche sur les données réelles de \gls{cacf} est un premier futur axe de travail.
+Nous avions ensuite pris du recul sur le quotidien du praticien en \textit{Credit Scoring} qui se voit confier des scores et / ou des améliorations ``locales'' du système d'acceptation, c'est-à-dire ne concernant qu'une partie de la population totale des demandeurs de crédit. En effet, ledit système est bien souvent composé de nombreuses règles ``métier'' (écartées de cette étude) mais surtout de nombreux scores, c'est-à-dire des régressions logistiques utilisant des variables différentes, des quantifications et croisements différents, et utilisées sur des clientèles différentes. En ne remettant jamais en cause la structure d'arbre du système d'acceptation total, la qualité prédictive est nécessairement sous-optimale, ce qui nous a conduit à présenter les méthodes actuelles utilisées en industrie pour construire des segments sur lesquelles différentes \gls{lr} sont ensuite construites, plusieurs méthodes alternatives de l'état de l'art, très simples à mettre en oeuvre et qui produisent de meilleurs résultats que l'approche actuelle sur des données simulées, ainsi qu'une piste de résolution, sous la forme d'un algorithme~\gls{sem} comparable à celui exploité dans \textit{glmdisc} ont été passées en revue et comparées sur des données simulées et réelles et montrent de bons résultats préliminaires.
+%L'application de cette piste de recherche sur les données réelles de \gls{cacf} est un premier futur axe de travail.
 
 \medskip
 
-Enfin, tous ces travaux exploitaient des données dites ``classiques'' en \textit{Credit Scoring}, c'est-à-dire majoritairement issues de formulaires remplis par le client ou par le vendeur (en magasin). \gls{cacf} dispose par ailleurs d'autres données, dont l'intérêt, la capacité prédictive additionnelle en tête de liste, reste à démontrer, comme par exemple les données transactionnelles de cartes de crédit, les données de log de connexion au site internet, les données marketing, etc. Le chapitre~\ref{chap7} a été l'occasion de voir les problèmes classiques liés à l'augmentation de dimension dans un cadre ``longitudinal''~: des espaces vides où la notion de ``voisin'' ne fait pas toujours sens, mais où il est plus facile de trouver de simples hyperplans séparant les classes bons et mauvais payeurs, pourvu que toutes ces nouvelles dimensions apportent de l'information. On s'est ensuite attardé sur la notion de ``new'' data, ces données dont la granularité fine (des centaines de transactions de carte bancaire pour un seul client) et le caractère non-structuré (succession de paramètres Javascript dans une URL) conduisent les praticiens, une fois de plus, à s'engouffrer dans des techniques \textit{ad hoc}, manuelles et chronophages d'agrégation (nombre d'opérations portées au débit pendant 6 mois), sans garantie statistique. La littérature relative à ces nouvelles données a été synthétisée de manière à favoriser la diffusion de ces bonnes pratiques~; l'application de ces techniques sur les données réelles de \gls{cacf} est un deuxième futur axe de travail.
+Enfin, tous ces travaux exploitaient des données dites ``classiques'' en \textit{Credit Scoring}, c'est-à-dire majoritairement issues de formulaires remplis par le client ou par le vendeur (en magasin). \gls{cacf} dispose par ailleurs d'autres données, dont l'intérêt, la capacité prédictive additionnelle en tête de liste, reste à démontrer, comme par exemple les données transactionnelles de cartes de crédit, les données de log de connexion au site internet, les données marketing, etc. La présente conclusion a été l'occasion de voir les problèmes classiques liés à l'augmentation de dimension dans un cadre ``longitudinal''~: des espaces vides où la notion de ``voisin'' ne fait pas toujours sens, mais où il est plus facile de trouver de simples hyperplans séparant les classes bons et mauvais payeurs, pourvu que toutes ces nouvelles dimensions apportent de l'information. On s'est ensuite attardé sur la notion de ``new'' data, ces données dont la granularité fine (des centaines de transactions de carte bancaire pour un seul client) et le caractère non-structuré (succession de paramètres Javascript dans une URL) conduisent les praticiens, une fois de plus, à s'engouffrer dans des techniques \textit{ad hoc}, manuelles et chronophages d'agrégation (par exemple le calcul du nombre d'opérations portées au débit pendant 6 mois), sans garantie statistique. La littérature relative à ces nouvelles données a été synthétisée de manière à favoriser la diffusion de ces bonnes pratiques~; l'application de ces techniques sur les données réelles de \gls{cacf} est un futur axe de travail.
 
 \medskip
 
-Pour conclure, cette thèse a permis d'apporter des réponses théoriques à des problèmes récurrents connexes au \textit{Credit Scoring} et nécessitant un tel travail de formalisation. Elle a également permis, s'agissant d'une thèse CIFRE, d'apporter une solution pratique aux problèmes de quantification et de croisements de variables sous la forme de deux solutions logicielles. Le chapitre~\ref{chap1} a permis d'introduire plusieurs autres problèmes ouverts liés au \textit{Credit Scoring}, parmi lesquels la ``segmentation'' et l'utilisation de ``Big'' mais surtout ``new data'' dans leur forme et granularité. Ces deux sujets ont fait l'objet des derniers travaux et ont abouti à une bibliographie épurée ainsi que de travaux de simulation donnant une base solide à de futurs travaux. Les perspectives de travaux de recherche applicables au \textit{Credit Scoring} ne se tariront pas de si tôt, tant le contexte de disponibilité de nombreuses sources de données et les enjeux économiques importants sont catalyseurs des besoins de traitements statistiques rigoureux.
+Pour conclure, cette thèse a permis d'apporter des réponses théoriques à des problèmes récurrents connexes au \textit{Credit Scoring} et nécessitant un tel travail de formalisation. Elle a également permis, s'agissant d'une thèse CIFRE, d'apporter une solution pratique aux problèmes de quantification et de croisements de variables sous la forme de deux solutions logicielles. Le chapitre~\ref{chap1} a permis d'introduire plusieurs problèmes ouverts liés au \textit{Credit Scoring}, parmi lesquels la ``segmentation'' et l'utilisation de ``Big'' mais surtout ``new data'' dans leur forme et granularité. Ces deux sujets ont fait l'objet des derniers travaux et ont abouti à une bibliographie épurée ainsi qu'à des simulations donnant une base solide à de futurs travaux. Les perspectives de travaux de recherche applicables au \textit{Credit Scoring} ne se tariront pas de si tôt, tant le contexte de disponibilité de nombreuses sources de données et les enjeux économiques importants sont catalyseurs des besoins de traitements statistiques rigoureux.
 
 \printbibliography[heading=subbibliography, title=Références de la conclusion]

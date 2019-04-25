@@ -4,7 +4,7 @@
 % arara: pdflatex: {shell: yes}
 % arara: biber 
 % arara: pdflatex: {shell: yes}
-% arara: remove: { patterns: [ '*.aux', '*.log', '*.acn', '*.acr', '*.alg', '*.bbl', '*.bcf', '*.blg', '*.glg', '*.glo', '*.gls', '*.loa', '*.lof', '*.log', '*.lot', '*.maf', '*.mtc*', '*.mw', '*.run.xml', '*.slg', '*.slo', '*.sls', '*.toc', '*.xdy'], recursive: yes }
+% arara: remove: { patterns: [ '*.aux', '*.log', '*.acn', '*.acr', '*.alg', '*.bbl', '*.bcf', '*.blg', '*.glg', '*.glo', '*.gls', '*.loa', '*.lof', '*.log', '*.lot', '*.maf', '*.mtc*', '*.mw', '*.run.xml', '*.slg', '*.slo', '*.sls', '*.toc', '*.xdy', '*.ist','*.nlg*', '*.not*','*.ntn*'], recursive: yes }
 
 
 %Document de classe yathesis
@@ -41,11 +41,15 @@
 \usepackage{listings}
 \usepackage{cancel}
 \usetikzlibrary{arrows,intersections,positioning,shapes.arrows,babel}
+\usepackage{morewrites}
 %\usepackage[xindy,acronyms,symbols]{glossaries}
-\usepackage[xindy,symbols]{glossaries}
+%\usepackage[xindy,symbols]{glossaries}
+\usepackage[xindy, acronym, symbols, section=chapter]{glossaries}
+\usepackage{glossary-longbooktabs}
 \usepackage[english]{algorithm2e}
 \usepackage{float}
 \usepackage[customcolors,markings]{hf-tikz}
+%\usepackage{auto-pst-pdf}
 %\usepackage{colortbl}
 %
 % (Facultatif) Génération de l'index (obligatoire si un package d'index, par
@@ -66,6 +70,11 @@
 %
 % (Facultatif) Génération du glossaire (obligatoire si le package « glossaries »
 % est chargé)
+\newglossary[nlg1]{space}{not1}{ntn1}{Espaces}
+\newglossary[nlg2]{variable}{not2}{ntn2}{Variables}
+\newglossary[nlg3]{scalaire}{not3}{ntn3}{Scalaires}
+\newglossary[nlg4]{fonction}{not4}{ntn4}{Fonctions}
+\newglossary[nlg5]{parametre}{not5}{ntn5}{Paramètres}
 \makeglossaries
 %
 % (Facultatif) Configuration des styles du glossaire et de la liste d'acronymes
@@ -156,11 +165,19 @@
 % chargé)
 %\lstlistoflistings
 % (Facultatif) Glossaire (si souhaité distinct de la liste des acronymes) :
-\printglossary[title={Glossaire et acronymes}]
+\printglossary[title={Glossaire}]
 % (Facultatif) Liste des acronymes
-%\printacronyms
+\printacronyms[title={Acronymes}]
 % (Facultatif) Liste des symboles
-\printsymbols[title={Notations}]
+%\printsymbols[title={Notations}]
+\chapter*{Notations}
+%\addcontentsline{toc}{chapter}{Notations}
+\setglossarysection{section}% <- added
+\printglossary[type=space,title=Espaces,style=long3colheaderborder]
+\printglossary[type=variable,title=Variables aléatoires,style=long3colheaderborder]
+\printglossary[type=scalaire,title=Scalaires,style=long3colheaderborder]
+\printglossary[type=fonction,title=Fonctions,style=long3colheaderborder]
+\printglossary[type=parametre,title=Paramètres,style=long3colheaderborder]
 % (Facultatif) Liste des algorithmes
 \listofalgorithms
 %

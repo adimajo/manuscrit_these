@@ -39,6 +39,8 @@
 
 \newacronym{spc}{SPC}{Supervised Principal Components}
 
+\newacronym{mle}{MLE}{Maximum Likelihood Estimation}
+
 
 % companies
 
@@ -89,331 +91,319 @@
 	plural = cuts
 }
 
-
 % math
 
 \newglossaryentry{R}{
-        name={nombres réels},
-        description={},
-        symbol={\ensuremath{\mathbb{R}}},
-        type=symbols,
+        description={nombres réels},
+        name={\ensuremath{\mathbb{R}}},
+        type=space,
   	   sort={aa},  
 }
 
 \newglossaryentry{N}{
-        name={entiers naturels},
-        description={},
-	   symbol={\ensuremath{\mathbb{N}}},
-        type=symbols,
+        description={entiers naturels},
+	   name={\ensuremath{\mathbb{N}}},
+        type=space,
   	   sort={ab},  
 }
 
 \newglossaryentry{NO}{
-        name={entiers naturels de $1$ à $l_j$},
-        description={},
-        symbol={\ensuremath{\mathbb{N}_{l_j}}},
-        type=symbols,
+        description={entiers naturels de $1$ à $l_j$},
+        name={\ensuremath{\mathbb{N}_{l_j}}},
+        type=space,
   	   sort={ac},  
 }
 
 \newglossaryentry{X}{
-        name={variable aléatoire},
-        description={},
-        symbol={\ensuremath{X}},
-        type=symbols,
+        description={variable aléatoire},
+        name={\ensuremath{X}},
+        type=variable,
   	   sort={ad},  
 }
 
 \newglossaryentry{x}{
-        name={réalisation de $X$},
-        description={},
-        symbol={\ensuremath{{x}}},
-        type=symbols,
+        description={réalisation de $X$},
+        name={\ensuremath{{x}}},
+        type=scalaire,
   	   sort={ae},  
 }
 
 \newglossaryentry{bX}{
-        name={vecteur aléatoire de caractéristiques à $d$ composantes continues ou catégorielles},
-        description={},
-        symbol={\ensuremath{\bm{X}}},
-        type=symbols,
+        description={vecteur aléatoire de caractéristiques à $d$ composantes continues ou catégorielles},
+        name={\ensuremath{\bm{X}}},
+        type=variable,
   	   sort={af},  
 }
 
 \newglossaryentry{Xspace}{
-        name={espace du vecteur de caractéristiques (on se limite au produit de l'ensemble des réelles -variables continues- et des entiers naturels -variables catégorielles)},
-        description={},
-        symbol={\ensuremath{\mathcal{X}}},
-        type=symbols,
+        description={espace du vecteur de caractéristiques (on se limite au produit de l'ensemble des réelles -variables continues- et des entiers naturels -variables catégorielles)},
+        name={\ensuremath{\mathcal{X}}},
+        type=space,
   	   sort={afa},  
 }
 
 \newglossaryentry{bx}{
-        name={réalisation du vecteur de caractéristiques d'un client},
-        description={},
-        symbol={\ensuremath{\bm{x}}},
-        type=symbols,
+        description={réalisation du vecteur de caractéristiques d'un client},
+        name={\ensuremath{\bm{x}}},
+        type=scalaire,
   	   sort={ag},  
 }
 
 \newglossaryentry{Xj}{
-        name={$j^{\text{ème}}$ variable aléatoire de $\bm{X}$},
-        description={},
-        symbol={\ensuremath{X_j}},
-        type=symbols,
+        description={$j^{\text{ème}}$ variable aléatoire de $\bm{X}$},
+        name={\ensuremath{X_j}},
+        type=variable,
   	   sort={ag},  
 }
 
 \newglossaryentry{lj}{
-        name={nombre de modalités associés à la variable qualitative $X_j$},
-        description={},
-        symbol={\ensuremath{{{l_j}}}},
-        type=symbols,
+        description={nombre de modalités associés à la variable qualitative $X_j$},
+        name={\ensuremath{{{l_j}}}},
+        type=scalaire,
   	   sort={aga},  
 }
 
 \newglossaryentry{Xnotj}{
-        name={vecteur aléatoire $\bm{X}$ privé de sa $j^{\text{ème}}$ composante},
-        description={},
-        symbol={\ensuremath{X_{-\{j\}}}},
-        type=symbols,
+        description={vecteur aléatoire $\bm{X}$ privé de sa $j^{\text{ème}}$ composante},
+        name={\ensuremath{X_{-\{j\}}}},
+        type=variable,
   	   sort={ag},  
 }
 
 \newglossaryentry{xij}{
-        name={réalisation de $X_j$ pour le $i^{\text{ème}}$ client (en colonne)},
-        description={},
-        symbol={\ensuremath{x_{i,j}}},
-        type=symbols,
+        description={réalisation de $X_j$ pour le $i^{\text{ème}}$ client (en colonne)},
+        name={\ensuremath{x_{i,j}}},
+        type=scalaire,
   	   sort={ah},  
 }
 
 \newglossaryentry{bbx}{
-        name={matrice de design de caractéristiques (en colonnes) d'un ensemble de clients (en lignes)},
-        description={},
-        symbol={\ensuremath{\mathbf{x}}},
-        type=symbols,
+        description={matrice de design de caractéristiques (en colonnes) d'un ensemble de clients (en lignes)},
+        name={\ensuremath{\mathbf{x}}},
+        type=scalaire,
   	   sort={ai},  
 }
 
 \newglossaryentry{bxi}{
-        name={Ligne de caractéristiques du client $i$ dans la matrice de design $\mathbf{x}$},
-        description={},
-        symbol={\ensuremath{\bm{x}_i}},
-        type=symbols,
+        description={Ligne de caractéristiques du client $i$ dans la matrice de design $\mathbf{x}$},
+        name={\ensuremath{\bm{x}_i}},
+        type=scalaire,
   	   sort={aj},  
 }
 
 \newglossaryentry{bbxj}{
-        name={Colonne d'observations de la caractéristique $j$ de la matrice de design $\mathbf{x}$},
-        description={},
-        symbol={\ensuremath{\bm{x}_i}},
-        type=symbols,
+        description={Colonne d'observations de la caractéristique $j$ de la matrice de design $\mathbf{x}$},
+        name={\ensuremath{\bm{x}_i}},
+        type=scalaire,
   	   sort={ak},  
 }
 
 \newglossaryentry{Y}{
-        name={variable aléatoire binaire dissociant ``bons'' et ``mauvais'' clients},
-        description={},
-        symbol={\ensuremath{Y}},
-        type=symbols,
+        description={variable aléatoire binaire dissociant ``bons'' et ``mauvais'' clients},
+        name={\ensuremath{Y}},
+        type=variable,
   	   sort={al},  
 }
 
 \newglossaryentry{y}{
-        name={observation du caractère ``bon'' ($1$) ou ``mauvais'' ($0$) d'un client},
-        description={},
-        symbol={\ensuremath{y}},
-        type=symbols,
+        description={observation du caractère ``bon'' ($1$) ou ``mauvais'' ($0$) d'un client},
+        name={\ensuremath{y}},
+        type=scalaire,
   	   sort={am},  
 }
 
 \newglossaryentry{bby}{
-        name={colonne de réponses associées à la matrice de design $\mathbf{x}$},
-        description={},
-        symbol={\ensuremath{\mathbf{y}}},
-        type=symbols,
+        description={colonne de réponses associées à la matrice de design $\mathbf{x}$},
+        name={\ensuremath{\mathbf{y}}},
+        type=scalaire,
   	   sort={an},  
 }
 
 \newglossaryentry{Z}{
-        name={variable aléatoire binaire dissociant clients ``financés'' et ``non financés''},
-        description={},
-        symbol={\ensuremath{{Z}}},
-        type=symbols,
+        description={variable aléatoire binaire dissociant clients ``financés'' et ``non financés''},
+        name={\ensuremath{{Z}}},
+        type=variable,
   	   sort={ao},  
 }
 
 \newglossaryentry{z}{
-        name={observation du caractère ``financé'' (f) ou ``non financé'' (nf) d'un client},
-        description={},
-        symbol={\ensuremath{z}},
-        type=symbols,
+        description={observation du caractère ``financé'' (f) ou ``non financé'' (nf) d'un client},
+        name={\ensuremath{z}},
+        type=scalaire,
   	   sort={ap},  
 }
 
 \newglossaryentry{bbz}{
-        name={colonne de décisions d'acceptation / rejet associées à la matrice de design $\mathbf{x}$},
-        description={},
-        symbol={\ensuremath{\mathbf{z}}},
-        type=symbols,
+        description={colonne de décisions d'acceptation / rejet associées à la matrice de design $\mathbf{x}$},
+        name={\ensuremath{\mathbf{z}}},
+        type=scalaire,
   	   sort={aq},
 }
 
 \newglossaryentry{bq}{
-        name={fonction de quantification multivariée},
-        description={},
-        symbol={\ensuremath{{\bm{q}}}},
-        type=symbols,
+        description={fonction de quantification multivariée},
+        name={\ensuremath{{\bm{q}}}},
+        type=fonction,
   	   sort={aqa},  
 }
 
 \newglossaryentry{bQ}{
-        name={espace des quantifications multivariées},
-        description={},
-        symbol={\ensuremath{{\bm{q}}}},
-        type=symbols,
+        description={espace des quantifications multivariées},
+        name={\ensuremath{{\bm{Q}}}},
+        type=space,
   	   sort={aqa},  
 }
 
 \newglossaryentry{bm}{
-        name={vecteur du nombre de modalités associés à chaque quantification},
-        description={},
-        symbol={\ensuremath{{\bm{m}}}},
-        type=symbols,
+        description={vecteur du nombre de modalités associés à chaque quantification},
+        name={\ensuremath{{\bm{m}}}},
+        type=scalaire,
   	   sort={aqaa},  
 }
 
 \newglossaryentry{bQm}{
-        name={espace des quantifications multivariées à $\bm{m}$ modalités},
-        description={},
-        symbol={\ensuremath{{\mathcal{Q}_{\bm{m}}}}},
-        type=symbols,
+        description={espace des quantifications multivariées à $\bm{m}$ modalités},
+        name={\ensuremath{{\mathcal{Q}_{\bm{m}}}}},
+        type=space,
   	   sort={aqab},  
 }
 
 \newglossaryentry{qj}{
-        name={fonction de quantification univariée de la $j^{\text{ème}}$ composante},
-        description={},
-        symbol={\ensuremath{{\bm{q}_j}}},
-        type=symbols,
+        description={fonction de quantification univariée de la $j^{\text{ème}}$ composante},
+        name={\ensuremath{{\bm{q}_j}}},
+        type=fonction,
   	   sort={aqb},
 }
 
 \newglossaryentry{bQj}{
-        name={espace des quantifications univariées de la variable $j$},
-        description={},
-        symbol={\ensuremath{{\mathcal{Q}_{j}}}},
-        type=symbols,
+        description={espace des quantifications univariées de la variable $j$},
+        name={\ensuremath{{\mathcal{Q}_{j}}}},
+        type=space,
   	   sort={aqba},  
 }
 
 \newglossaryentry{mj}{
-        name={nombre de modalités associés à la quantification de la $j^{\text{ème}}$ composante},
-        description={},
-        symbol={\ensuremath{{{m_j}}}},
-        type=symbols,
+        description={nombre de modalités associés à la quantification de la $j^{\text{ème}}$ composante},
+        name={\ensuremath{{{m_j}}}},
+        type=scalaire,
   	   sort={aqbb},  
 }
 
 \newglossaryentry{bQjmj}{
-        name={espace des quantifications univariées à $m_j$ modalités},
-        description={},
-        symbol={\ensuremath{{\mathcal{Q}_{j,m_j}}}},
-        type=symbols,
+        description={espace des quantifications univariées à $m_j$ modalités},
+        name={\ensuremath{{\mathcal{Q}_{j,m_j}}}},
+        type=space,
   	   sort={aqc},  
 }
 
 \newglossaryentry{ehmj}{
-        name={$h^{\text{ième}}$ vecteur de base de $\mathbb{R}^{m_j}$: $(0,\dots,0,1,0,\dots,0)$},
-        description={},
-        symbol={\ensuremath{\bm{e}_h^{m_j}}},
-        type=symbols,
+        description={$h^{\text{ième}}$ vecteur de base de $\mathbb{R}^{m_j}$: $(0,\dots,0,1,0,\dots,0)$},
+        name={\ensuremath{\bm{e}_h^{m_j}}},
+        type=scalaire,
   	   sort={aqd},
 }
 
 \newglossaryentry{bdelta}{
-        name={matrice d'interactions dont l'entrée $\delta_{k,\ell}$ encode l'interaction (1) ou l'absence d'interaction (0) entre les variables $k$ et $\ell$},
-        description={},
-        symbol={\ensuremath{{\bm{\delta}}}},
-        type=symbols,
+        description={matrice d'interactions dont l'entrée $\delta_{k,\ell}$ encode l'interaction (1) ou l'absence d'interaction (0) entre les variables $k$ et $\ell$},
+        name={\ensuremath{{\bm{\delta}}}},
+        type=scalaire,
   	   sort={aqe},  
 }
 
 \newglossaryentry{bth}{
-        name={vecteur de paramètres, généralement pour la régression logistique, du modèle prédictif de $Y$ conditionnellement aux caractéristiques $\bm{X}$},
-        description={},
-        symbol={\ensuremath{\bm{\theta}}},
-        type=symbols,
+        description={vecteur de paramètres, généralement pour la régression logistique, du modèle prédictif de $Y$ conditionnellement aux caractéristiques $\bm{X}$},
+        name={\ensuremath{\bm{\theta}}},
+        type=parametre,
   	   sort={ar},  
 }
 
 \newglossaryentry{bthstar}{
-        name={vrai (bon modèle) ou ``meilleur'' (mauvais modèle) vecteur de paramètres au sens de la divergence de Kullback-Leibler},
-        description={},
-        symbol={\ensuremath{\bm{\theta}^\star}},
-        type=symbols,
+        description={vrai (bon modèle) ou ``meilleur'' (mauvais modèle) vecteur de paramètres au sens de la divergence de Kullback-Leibler},
+        name={\ensuremath{\bm{\theta}^\star}},
+        type=parametre,
   	   sort={ara},  
 }
 
 \newglossaryentry{phi}{
-        name={paramètre du mécanisme d'acceptation / rejet ($Z$) des demandeurs de crédit conditionnellement aux données $\bm{X}$ et $Y$},
-        description={},
-        symbol={\ensuremath{\bm{\phi}}},
-        type=symbols,
+        description={paramètre du mécanisme d'acceptation / rejet ($Z$) des demandeurs de crédit conditionnellement aux données $\bm{X}$ et $Y$},
+        name={\ensuremath{\bm{\phi}}},
+        type=parametre,
   	   sort={arba},
 }
 
 \newglossaryentry{ag}{
-        name={paramètre de relaxation du problème de quantification},
-        description={},
-        symbol={\ensuremath{\bm{\alpha}}},
-        type=symbols,
+        description={paramètre de relaxation du problème de quantification},
+        name={\ensuremath{\bm{\alpha}}},
+        type=parametre,
   	   sort={arbb},
 }
 
 \newglossaryentry{beta}{
-        name={paramètre de relaxation du problème de segmentation},
-        description={},
-        symbol={\ensuremath{\bm{\beta}}},
-        type=symbols,
+        description={paramètre de relaxation du problème de segmentation},
+        name={\ensuremath{\bm{\beta}}},
+        type=parametre,
   	   sort={arc},
 }
 
 \newglossaryentry{KL}{
-        name={divergence de Kullback-Leibler},
-        description={},
-        symbol={\ensuremath{\text{KL}}},
-        type=symbols,
+        description={divergence de Kullback-Leibler},
+        name={\ensuremath{\text{KL}}},
+        type=fonction,
   	   sort={as},  
 }
 
-
-
-
 \newglossaryentry{T}{
-        name={ensemble d'observations d'apprentissage},
-        description={},
-        symbol={\ensuremath{\mathcal{T}}},
-        type=symbols,
+        description={ensemble d'observations d'apprentissage},
+        name={\ensuremath{\mathcal{T}}},
+        type=scalaire,
   	   sort={at},  
 }
 
-
 \newglossaryentry{Tf}{
-        name={ensemble d'observations de clients financés},
-        description={},
-        symbol={\ensuremath{\mathcal{T}_\f}},
-        type=symbols,
+        description={ensemble d'observations de clients financés},
+        name={\ensuremath{\mathcal{T}_{\text{f}}}},
+        type=scalaire,
   	   sort={au},  
 }
 
+\newglossaryentry{K}{
+        description={nombre de segments de clients},
+        name={\ensuremath{\text{K}}},
+        type=scalaire,
+  	   sort={aua},  
+}
 
+\newglossaryentry{c}{
+        description={observation du segment d'un client},
+        name={\ensuremath{c}},
+        type=scalaire,
+  	   sort={aub},  
+}
+
+\newglossaryentry{C}{
+        description={variable aléatoire latente du segment auquel appartient un client},
+        name={\ensuremath{C}},
+        type=variable,
+  	   sort={aub},  
+}
 
 \newglossaryentry{Tnf}{
-        name={ensemble d'observations de clients non financés},
-        description={},
-        symbol={\ensuremath{\mathcal{T}_{\text{nf}}}},
-        type=symbols,
+        description={ensemble d'observations de clients non financés},
+        name={\ensuremath{\mathcal{T}_{\text{nf}}}},
+        type=scalaire,
+  	   sort={av},  
+}
+
+\newglossaryentry{F}{
+        description={ensemble des indices de clients financés},
+        name={\ensuremath{{\text{F}}}},
+        type=space,
+  	   sort={av},  
+}
+
+\newglossaryentry{NF}{
+        description={ensemble des indices de clients non financés},
+        name={\ensuremath{{\text{NF}}}},
+        type=space,
   	   sort={av},  
 }
