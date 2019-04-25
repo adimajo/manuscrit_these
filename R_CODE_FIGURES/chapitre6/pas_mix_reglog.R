@@ -196,7 +196,7 @@ for (j in 1:3) {
 
 glmdisc::normalizedGini(test$y,pred)
 
-tikz("graph_pas_mix_reglog_pca.tex", standAlone=FALSE, width = 12, height = 6, lwdUnit = 1.3, fg = "black", sanitize = FALSE)
+tikz("graph_pas_mix_reglog_pca.tex", standAlone=FALSE, width = 12, height = 6, lwdUnit = 1.3, fg = "black", sanitize = TRUE)
 plot(mixed, choix = 'ind', label = "none")
 dev.off()
 

@@ -219,6 +219,8 @@ tikz("graph_lmt_b.tex", standAlone=FALSE, width = 12, height = 6, lwdUnit = 1.3,
 plot(lmt_data)
 dev.off()
 
+write_to_dot(lmt_data, file("LMT_DOT"))
+
 glmdisc::normalizedGini(test$y, predict(lmt_data, test, type = "probability")[,1])
 
 
