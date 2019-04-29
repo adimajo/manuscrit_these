@@ -146,7 +146,7 @@ Mixing previous model and data, the maximum likelihood principle can be invoked 
 \begin{equation}\label{eq:like.MNAR}
 \ell(\gamma;\gls{T}) = \sum_{i\in\text{F}}\ln p_{\gamma}(\gls{y}_i,\text{f} | \gls{bx}_i) + \sum_{i'\in\text{NF}} \ln \left[ \sum_{\gls{y}\in\{0,1\}} p_{\gamma}(\gls{y},\text{nf} | \gls{bx}_{i'}) \right].
 \end{equation}
-Within this missing data paradigm, the EM algorithm (see~\cite{dempster1977maximum}) can be used. Starting from an initial value $\gamma^{(0)}$, iteration $(s)$ of the algorithm is decomposed into the following two classical steps:
+Within this missing data paradigm, the EM algorithm (see~\cite{dempster1977maximum}) can be used: it aims at maximizing the expectation of the complete likelihood $\ell_c(\gamma;\gls{T}_c)$ (defined hereafter) where $\gls{T}_c = \gls{T} \sqcup \gls{bby}_{\text{nf}}$ over the missing labels. Starting from an initial value $\gamma^{(0)}$, iteration $(s)$ of the algorithm is decomposed into the following two classical steps:
 \paragraph{E-step} compute the conditional probabilities of missing $\gls{y}_i$ values:
 \begin{equation}
 t_{i\gls{y}}^{(s)} = p_{\gls{bth}(\gamma^{(s-1)})}(\gls{y}|\gls{bx}_i,\nf) = \frac{p_{\gamma^{(s-1)}}(\gls{y}, \nf|\gls{bx}_i)}{\sum_{\gls{y}' = 0}^{1} p_{\gamma^{(s-1)}}(\gls{y}', \nf|\gls{bx}_i)};
@@ -156,9 +156,10 @@ t_{i\gls{y}}^{(s)} = p_{\gls{bth}(\gamma^{(s-1)})}(\gls{y}|\gls{bx}_i,\nf) = \fr
 \ell_c(\gamma;\gls{T}_c) = \sum_{i=1}^{n+m}\ln p_{\gamma}(\gls{y}_i,\gls{z}_i | \gls{bx}_i) = \sum_{i=1}^{n}\ln p_{\gamma}(\gls{y}_i,\f | \gls{bx}_i) + \sum_{i=n+1}^{n+m}\ln p_{\gamma}(\gls{y}_i,\nf | \gls{bx}_i);
 \end{equation}
 leading to:
-\begin{equation}
-\gamma^{(s)} = \argmax_{\gamma \in \Gamma} \sum_{i\in \text{F}} \ln p_{\gamma}(\gls{y}_i, \f|\gls{bx}_i) +  \sum_{i'\in \text{NF}}\sum_{\gls{y} = 0}^{1}t_{i'\gls{y}}^{(s)} \ln p_{\gamma}(\gls{y}, \nf | \gls{bx}_{i'}).
-\end{equation}
+\begin{align*}
+\gamma^{(s)} & = \argmax_{\gamma \in \Gamma} \mathbb{E}_{\gls{bby}_{\text{nf}}} [\ell_c(\gamma;\gls{T}_c) | \gls{T},\gamma^{(s-1)}] \\
+& = \argmax_{\gamma \in \Gamma} \sum_{i\in \text{F}} \ln p_{\gamma}(\gls{y}_i, \f|\gls{bx}_i) +  \sum_{i'\in \text{NF}}\sum_{\gls{y} = 0}^{1}t_{i'\gls{y}}^{(s)} \ln p_{\gamma}(\gls{y}, \nf | \gls{bx}_{i'}).
+\end{align*}
 Usually, stopping rules rely either on a predefined number of iterations, or on a predefined stability criterion of the observed log-likelihood.
 
 \subsection{Some current restrictive missingness mechanisms}
