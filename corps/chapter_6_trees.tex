@@ -688,15 +688,17 @@ Gini & 69.7 & 25.8 & \textbf{69.7} & 17.7 & 48.4 & 65.8 & \textbf{69.7} \\
 
 \subsubsection{The running example: the Automobile dataset}
 
-Recall from Sections~\ref{subsec:adhoc} and~\ref{subsec:sup_gen} that \gls{pca}, \gls{mca}, \gls{famd} and \gls{pls} revealed no segments on this dataset and from Section~\ref{subsec:direct} that \gls{lmt} produced disappointing results and \gls{mob} could not be tested.
+Recall from Sections~\ref{subsec:adhoc} and~\ref{subsec:sup_gen} that \gls{pca}, \gls{mca}, \gls{famd} and \gls{pls} revealed no segments on this dataset and from Section~\ref{subsec:direct} that \gls{lmt} produced disappointing results and \gls{mob} could not be tested. A \gls{lr} learnt on 70 \% of the sample yields an overall performance of $57.9$ Gini points.
 
-By applying \textit{glmtree}-SEM to the Automobile dataset, we get $\hat{\gls{K}} = $ segments defined by the tree given in Figure~\ref{fig:tree_sem_auto} yielding an overall performance of $ $ Gini points.
+By applying \textit{glmtree}-SEM to the Automobile dataset, we get $\hat{\gls{K}} = 2$ segments defined by the 
+%tree given in Figure~\ref{fig:tree_sem_auto} 
+value of the car being over $10{,}000$ Euros, yielding an overall performance of $58.7$ Gini points. This difference might not seem significant, but in the \textit{Credit Scoring} industry, and as was argued in Chapter~\ref{chap4} and~\ref{chap5} to motivate quantization and interaction screening, such small improvements might result in the selection of a few more good applicants (resp.\ a few less bad applicants) whose car loans are of high amount. It is thus a high stake for financial institutions.
 
-\begin{figure}
-\centering
-
-\caption{\label{fig:tree_sem_auto} bla.}
-\end{figure}
+%\begin{figure}
+%\centering
+%
+%\caption{\label{fig:tree_sem_auto} bla.}
+%\end{figure}
 
 \subsubsection{One year of financed applications}
 
@@ -704,9 +706,25 @@ A subset of all applications, representative of approx.\ $30$ portfolios with di
 
 Generative approaches (\gls{famd} and \gls{pls}) are not used due to their subjectivity (visual separation) and the fact that they are used by practitioners to provide ``local'' segments (\textit{e.g.}\ for the Automobile market). Hence for such a large dataset, they would have to be applied ``recursively'' (applying \gls{famd} / \gls{pls} on each of the resulting visually separated segments). For computational reasons that became apparent in applying \gls{lmt} and \gls{mob} to the Automobile dataset, these methods cannot cope either with this larger dataset.
 
-Consequently, \textit{glmtree}-SEM is only compared to the current performance. The combined scorecards have an overall performance of approximately 46 Gini points but they are not on the same ``scale'' since they were developed at different times. I rely on the Platt scaling method developed in~\cite{platt1999probabilistic} and~\cite{zadrozny2002transforming} and used in common \textit{machine learning} libraries such as Scikit-learn, to put all of them on the same scale by fitting a \gls{lr} between the observed labels $\gls{bby}$ and the scores outputted by each scorecard. After this procedure, overall performance jumps to approximately 55 Gini points which will be our baseline.
+Consequently, \textit{glmtree}-SEM is only compared to the current performance. The combined scorecards have an overall performance of approximately 46 Gini points but they are not on the same ``scale'' since they were developed at different times. I rely on the Platt scaling method developed in~\cite{platt1999probabilistic} and~\cite{zadrozny2002transforming} and used in common \textit{machine learning} libraries such as Scikit-learn, to put all of them on the same scale by fitting a \gls{lr} between the observed labels $\gls{bby}$ and the scores outputted by each scorecard. After this procedure, overall performance jumps to approximately 54.6 Gini points.
 
-The \textit{glmtree}-SEM applied to this big dataset .
+Another possible benchmark with the current segmentation is to learn additive linear \gls{lr} (hereafter ALLR as in Chapter~\ref{chap4} for each existing segment. This approach leads to an overall Gini fo 52. As our proposed algorithm \textit{glmtree}-SEM will be applied without quantization or interaction screening, this result is a ``fairer'' baseline than the preceding one since they are both in the same model space: additive linear logistic regression trees.
+
+The \textit{glmtree}-SEM applied to this big dataset yields only $\hat{\gls{K}} = 10$ segments for an overall performance of 49.6 Gini points. This is satisfactory in two aspects: the performance is relatively close to the existing segmentation while using 3 times less segments / logistic regressions. We can hope for even better interpretability and performance by performing quantization and interaction screening. Results are summarized in Table~\ref{tab:res_tot_trees}.
+
+\begin{table}[t]
+\caption{\label{tab:res_tot_trees} Comparison of the existing segmentation and the proposed approach \textit{glmtree}-SEM.}
+\centering
+\begin{tabular}{l|l|l}
+\multicolumn{2}{c|}{Current segmentation} & \textit{glmtree}-SEM \\
+\multicolumn{2}{c|}{$K = 30$} & $K = 10$ \\
+\hline
+Current performance \textit{via} Platt scaling & ALLR & ALLR \\
+\hline
+54.6 & 52.0 & 49.6 \\
+\end{tabular}
+\end{table}
+
 
 \bigskip
 
