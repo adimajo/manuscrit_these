@@ -245,6 +245,23 @@ AUTOS$LIBMARQ[is.na(AUTOS$LIBMARQ)] = "manquant"
 AUTOS = AUTOS %>% drop_na()
 
 
+
+AUTOS$LIBMARQ2 = ifelse(AUTOS$LIBMARQ %in% c('TNTMOTOR','YCF','OCQUETEAU','GASGAS','BETA','DODGE','QUADRO','AIXAM','MICROCAR',
+                                             'APRILIA','ISUZU','GILERA','LIGIER','FERRARI','TRITON','CHATENET','YAMAHA','IVECO','LEONART','MBK',
+                                             'WESTFALIA','BENETEAU','CARADO','ELIOS','ROYALENFIELD','STERCKEMAN','SMART','PIAGGIO','ERIBA',
+                                             'DIVERSDEUXROUES','LANCIA','PEUGEOTMTC','ALFAROMEO','LOTUS','MV-AGUSTA','PORSCHE','DERBI',
+                                             'DIVERSCARAVANES','SUBARU','3DTENDER','VICTORY','AUDI','BMW'),"01_LIB_MARQVH_01",ifelse(AUTOS$LIBMARQ %in% c('TGB','IRM','KAWASAKI','SYM','BMWMOTOS','CI','MERCEDES','MEGA','RIEJU','MINI',
+                                                                                                                                                          'HARLEYDAVIDSON','HYTRACK','VOLKSWAGEN','PEUGEOT','FIAT','KYMCO','RENAULT','LEVOYAGEUR','CHEVROLET',
+                                                                                                                                                          'CITROEN','SUZUKIMOTOS'),"02_LIB_MARQVH_02",ifelse(AUTOS$LIBMARQ %in% c('DIVERSAUTO','DACIA','FLEURETTE','BURSTNER','DUCATI',
+                                                                                                                                                                                                                                  'TRIUMPH','JEEP','SUZUKIAUTO','VOLVO','TOYOTA','MAZDA','CHALLENGER','DETHLEFFSCAMPING-CAR',
+                                                                                                                                                                                                                                  'HYMER','BAVARIA','HONDA','POLARIS','ADRIA'),"04_LIB_MARQVH_04","03_LIB_MARQVH_03")))
+
+AUTOS$CSP2 = substr(AUTOS$CSP,1,1)
+AUTOS$CSPCJ2 = substr(AUTOS$CSPCJ,1,1)
+AUTOS$CSP2 = factor(AUTOS$CSP2)
+AUTOS$CSPCJ2 = factor(AUTOS$CSPCJ2)
+AUTOS$LIBMARQ2 = factor(AUTOS$CSPCJ2)
+
 ind_train = rbinom(nrow(AUTOS),1, c(0.3,0.7))
 ind_test = 1-ind_train
 
@@ -255,7 +272,7 @@ K_depart = 6
 max_iter = 100
 data$c_map <- data$c_hat <- as.factor(sample(K_depart, size=n, replace = TRUE))
 
-var_explicatives = c("APPORT","CDENERG","COTARGUS","CREDAC","CSP","CSPCJ","CVFISC","DUR_CRED","ENDEXT","E_CLI_ACTIF","HABIT","LIBMARQ","MCDE","MLOYER","NBENF","SITFAM","anc_AMCIRC","anc_AMEMBC","anc_DCLEM","anc_DNAISS","revtot") 
+var_explicatives = c("APPORT","CDENERG","COTARGUS","CREDAC","CSP2","CSPCJ2","CVFISC","DUR_CRED","ENDEXT","E_CLI_ACTIF","HABIT","LIBMARQ2","MCDE","MLOYER","NBENF","SITFAM","anc_AMCIRC","anc_DCLEM","anc_DNAISS","revtot") 
 current_best = 1
 library(rpart)
 criterion_iter = list()
@@ -307,3 +324,42 @@ for (i in 1:max_iter) {
   data$c_hat <- factor(apply(p,1,function(row) sample(levels(data$c_hat),1,prob = row)))
   
 }
+
+
+
+test = AUTOS[as.logical(ind_test),c(var_explicatives,"top_perf")]
+
+test$c_map = predict(best_link,test,type = "class")
+
+test$c_map = factor(test$c_map)
+
+test$pred = rep(0,nrow(test))
+
+test <- test[!(test$c_map == 10 & test$AMCIRC == 24),]
+test <- test[!(test$c_map == 11 & test$AMEMBC == 10),]
+test <- test[!(test$c_map == 11 & test$CDENERG == "W"),]
+test <- test[!(test$c_map == 14 & test$CDENERG == "G"),]
+test <- test[!(test$c_map == 15 & test$AMCIRC %in% c(1801,40,52)),]
+test <- test[!(test$c_map == 15 & test$AMEMBC == 13),]
+test <- test[!(test$c_map == 2 & test$AMEMBC == 7),]
+test <- test[!(test$c_map == 5 & test$AMCIRC %in% c(-4,22,80)),]
+test <- test[!(test$c_map == 6 & test$AMEMBC == 9),]
+test <- test[!(test$c_map == 8 & test$AMCIRC %in% c(13,15)),]
+test <- test[!(test$c_map == 9 & test$AMCIRC == 33),]
+
+for (c_iter in levels(test$c_map)) {
+  test$pred[test$c_map == c_iter] <- predict(best_reglogs[[which(levels(test$c_map) == c_iter)]], test[test$c_map==c_iter,], type = "response")
+}
+
+glmdisc::normalizedGini(test$top_perf, test$pred)
+
+
+tout_logistique = glm(top_perf ~ ., data = data[,c(var_explicatives,"top_perf")], family = binomial(link="logit"))
+
+test = AUTOS[as.logical(ind_test),c(var_explicatives,"top_perf")]
+
+test <- test[!test$AMCIRC %in% c(-4, 1801, 22, 24, 33, 40, 52, 80),]
+
+glmdisc::normalizedGini(test$top_perf, predict(tout_logistique, test, type = "response"))
+
+
