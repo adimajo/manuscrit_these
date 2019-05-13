@@ -153,11 +153,16 @@ This section is an eluded literature review of problems that arise in high dimen
 
 \subsection{The $d > n$ setting}
 
+A lot of work has been dedicated to this setting (see~\cite{} for a review) since a lot of classical statistical methods do not work out-of-the box, including \gls{lr}. Recall from Section~\ref{} that the \gls{lr} coefficient $\gls{bth}$ is iteratively calculated from $ $ which is not defined for $d > n$.
+
 In the next section, we review the statistical properties associated with the ``curse of dimensionality'', a term attributed to Bellman:
 \epigraph{All [problems due to high dimension] may be subsumed under the heading “the curse of dimensionality”. Since this is a curse, [...], there is no need to feel discouraged about the possibility of obtaining significant results despite it.}{R. Bellman, ``Dynamic programming'', 1957}
 
 \subsection{The curse of dimensionality}
 
+The foundation of statistics is that by observing a 
+
+ref article
 
 %\begin{figure}[!ht]
 %\centering
@@ -175,6 +180,13 @@ In the next section, we review the statistical properties associated with the ``
 
 \subsection{The blessings of dimensionality}
 
+The relative ``emptiness'' of the feature space $\gls{Xspace}$ in high dimension is not solely a curse: recall from Section~\ref{} that .
+
+we want linear boundaries // does not exist in credit scoring (could predict perfectly good / bad + lr is degenerescent) // linear is even far from optimal (see chapters...) // the separability of classes is nevertheless more in high dimension (if all these added dimensions have predictive power) which is beneficial
+
+equation
+
+attention, si elles n'apportent pas, ça rajoute beaucoup de bruit (ref christophe)
 
 \subsection{Dimension reduction}
 
@@ -182,14 +194,17 @@ A straightforward way of avoiding the curse(s) of dimensionality is to get back 
 
 \subsubsection{By combining input features}
 
-
+\gls{famd}
 
 \subsubsection{By selecting input features}
 
+adaptative lasso / ridge 
 
 \section{New data types in a supervised classification setting}
 
-
+functional (categorical) pca
+text mining
+self-learning models
 
 \selectlanguage{french}
 

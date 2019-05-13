@@ -520,7 +520,7 @@ The previous E-step allows to derive the new \gls{mle} of the \gls{lr} parameter
 
 \paragraph{M2-step}
 Similarly, a new tree structure can be derived by the new \gls{mle} of its parameter $\betag$:
-\[ \betag^{(s)} = \argmax_{\betag} \sum_{i=1}^n \sum_{c=1}^{\gls{K}} t_{i,c} \ln p_{\betag}( c | \gls{bx}_i). \]
+\[ \betag^{(s+1)} = \argmax_{\betag} \sum_{i=1}^n \sum_{c=1}^{\gls{K}} t_{i,c}^{(s+1)} \ln p_{\betag}( c | \gls{bx}_i). \]
 Unfortunately, tree induction methods like CART or C4.5 do not follow a maximum likelihood approach, so that they rather try to minimize a so-called impurity measure, the Gini index or the entropy, respectively. However, since it is hoped that segments $c^\star$ are ``peaks'' of the distribution $p_{\betag}( c | \gls{bx})$, just as it was supposed that the best quantization $\bqk^\star$ dominated its posterior \gls{pdf} in the \gls{sem} algorithm proposed in Section~\ref{subsec:fuzzy}, the log-likelihood can be well approximated by the entropy, such that:
 \[ \betag^{(s+1)} \approx \argmax_{\betag} \sum_{i=1}^n \sum_{c=1}^{\gls{K}} t_{i,c}^{(s+1)} \underbrace{p_{\betag}( c | \gls{bx}_i)}_{\begin{cases} \approx 1 \text{ for } c = c^\star, \\ 0 \text{ otherwise.} \end{cases}} \ln p_{\betag}( c | \gls{bx}_i). \]
 This last formulation allows to obtain $\betag^{(s)}$ from a simple application of the C4.5 algorithm, with observations properly weighted by $t_{i,c}$.
@@ -580,7 +580,7 @@ As proposed in Chapter~\ref{chap4}, parallel to this \gls{sem} algorithm, ``hard
 \[ \hat{q}_{j,h}^{c(s)}(\cdot) = 1 \text{ if } h = \argmax_{1 \leq h' \leq m_j} p_{{\ag}_{j,h'}^{(c(s)}}(\bm{e}_{h'}^{m_j} | \cdot), 0 \text{ otherwise.} \]
 As proposed in Section~\ref{subsec:hard_seg}, ``hard'' segments are obtained \textit{via} a \textit{maximum a posteriori} operation on the segmentation probability $p_{\betag}$ (see Equation~\eqref{eq:max_seg}). The best logistic regression tree is thereafter chosen via the following BIC criterion~\eqref{eq:BICtree} adapted from Equations~\eqref{eq:BICc} and~\eqref{eq:BICq}.
 
-Although this extension seems straightforward, it is relatively computationally expensive since at each step (s), $\gls{K}$ Metropolis-Hastings steps have to be performed and a tree, $\gls{K}$ \gls{lr} and $\gls{K} \times d$ polytomous logistic regressions are fitted. With a relatively small number of segments, \textit{i.e.}\ 4 to 30 as proposed earlier, it seems nevertheless feasible but it will require more work.
+Although this extension seems straightforward, it is relatively computationally expensive since at each step (s), $\gls{K}$ Metropolis-Hastings steps have to be performed and a tree, $\gls{K}$ \gls{lr} and $\gls{K} \times d$ polytomous logistic regressions are fitted. With a relatively small number of segments, \textit{i.e.}\ 4 to 30 as proposed earlier, it seems nevertheless feasible but it will require more work. In particular, since classification tree methods with more than 2 labels are computationally intensive when presented with categorical features with many levels (see Section~\ref{subsec:direct}), a straightforward workaround is to consider the quantized features as ordered.
 
 \section{Numerical experiments} \label{sec:num_exp}
 
@@ -702,7 +702,7 @@ value of the car being over $10{,}000$ Euros, yielding an overall performance of
 
 \subsubsection{One year of financed applications}
 
-A subset of all applications, representative of approx.\ $30$ portfolios with different scorecards, has been extracted for the purpose of the present benchmark with $n = 900{,}000$ observations and $d = 18$ among which $12$ continuous features and $8$ categorical features with $6$ to $100$ levels (most features are similar to the Automobile dataset). The missing values have been preprocessed such that no continuous features have missing values and the categorical features have a separate and meaningful ``missing'' level. Also for simplification purposes, no quantization or interaction screening is performed so that the \gls{sem} algorithm is conducted as presented in Section~\ref{subsec:sem}.
+A subset of all applications, representative of approx.\ $30$ portfolios with different scorecards, has been extracted for the purpose of the present benchmark with $n = 900{,}000$ observations and $d = 18$ among which $12$ continuous features and $6$ categorical features with $6$ to $100$ levels (most features are similar to the Automobile dataset). The missing values have been preprocessed such that no continuous features have missing values and the categorical features have a separate and meaningful ``missing'' level. Also for simplification purposes, no quantization or interaction screening is performed so that the \gls{sem} algorithm is conducted as presented in Section~\ref{subsec:sem}.
 
 Generative approaches (\gls{famd} and \gls{pls}) are not used due to their subjectivity (visual separation) and the fact that they are used by practitioners to provide ``local'' segments (\textit{e.g.}\ for the Automobile market). Hence for such a large dataset, they would have to be applied ``recursively'' (applying \gls{famd} / \gls{pls} on each of the resulting visually separated segments). For computational reasons that became apparent in applying \gls{lmt} and \gls{mob} to the Automobile dataset, these methods cannot cope either with this larger dataset.
 

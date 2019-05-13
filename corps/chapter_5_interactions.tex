@@ -17,7 +17,8 @@ Continuing my pursuit of interpretable representation learning algorithms for \g
 
 As described in the introduction, \gls{lr} is linear in its inputs which does not allow to take into account conditional dependency: the change of slope of a feature's log-odds given another (moderator) feature (see~\cite{berry2010testing}). This problem is often dealt with by sparsely introducing ``interactions'', \textit{i.e.}\ products of two features. Unfortunately, this leads again to a model selection challenge as the number of pairs of features is $\dfrac{d(d-1)}{2}$. We denote by $\bdelta$ the triangular inferior matrix with $\delta_{k,\ell} = 1$ if $k < \ell$ and features $k$ and $\ell$ ``interact'' in the \gls{lr} in the sense of~\cite{berry2010testing}. The \gls{lr} with interactions $\bdelta$ is thus:
 \begin{equation} \label{eq:reglog_sans}
-\text{logit}[p_{\gls{bth}}(1|\q(\gls{bx}),\bdelta)] = \theta_{0} + \sum_{j=1}^d \gls{qj}(\gls{x}_j)' \gls{bth}_j + \sum_{1 \leq k < \ell \leq d} \delta_{k,\ell} \sigma( \gls{bth}_{k,\ell} \odot \q_k(\gls{x}_k) \q_\ell(\gls{x}_\ell)' ),
+%\text{logit}[p_{\gls{bth}}(1|\q(\gls{bx}),\bdelta)] = \theta_{0} + \sum_{j=1}^d \gls{qj}(\gls{x}_j)' \gls{bth}_j + \sum_{1 \leq k < \ell \leq d} \delta_{k,\ell} \sigma( \gls{bth}_{k,\ell} \odot \q_k(\gls{x}_k) \q_\ell(\gls{x}_\ell)' ),
+\text{logit}[p_{\gls{bth}}(1|\q(\gls{bx}),\bdelta)] = \theta_{0} + \sum_{j=1}^d \gls{qj}(\gls{x}_j)' \gls{bth}_j + \sum_{1 \leq k < \ell \leq d} \delta_{k,\ell} \q_k(\gls{x}_k)' \gls{bth}_{k,\ell} \q_\ell(\gls{x}_\ell),
 \end{equation}
 where $\odot$ denotes the element-wise (Hadamard) matrix multiplication (already used in Chapter~\ref{chap1}), $\sigma(\cdot)$ the sum of all elements of a matrix (used here only for notational convenience since all matrices of coefficients of pairwise interactions have varying dimensions), $\gls{bth}_{k,\ell} = (\theta_{k,\ell}^{r,s})_{1 \leq r \leq m_k, 1 \leq s \leq m_\ell}$ and for all features $j$, $\gls{mj}$ is set as the ``reference'' value and consequently for all $j$, $\theta_{j}^{\gls{mj}}=0$ and for all $1 \leq k < \ell \leq d$, $\theta_{k,\ell}^{m_k,m_{\ell}}=0$. Since, in presence of an interaction between $k$ and $\ell$, $\theta_{k}$ already encodes the log-odd ratio of feature $k$ conditionally to $\ell$ being at its reference value $m_\ell$, $\theta_{k,\ell}^{1,m_\ell},\dots,\theta_{k,\ell}^{m_k-1,m_\ell}$ are redundant and thus set to $0$. Note that we could have removed the ``main effect'' $\theta_k$ altogether instead (which is the classical, in-house formulation of interactions at \gls{cacf}) but since we will be adding / removing interactions back and forth, the present formulation seems more adequate.
 
@@ -44,7 +45,7 @@ Model-free approaches have been proposed in the biostatistics literature (\cite{
 
 \section{A novel model selection approach}
 
-We take another approach here, which foremost benefit will appear in the subsequent section, and which closely resembles the strategy employed in the quantization setting of Chapter~\ref{chap4} and in particular Section~\ref{sec:sem}. The variable $\bdelta$ can be seen as an observation of a latent random matrix so that we will employ a stochastic approach to search for $\bdelta^\star$.
+We take another approach here, which foremost benefit will appear in the subsequent section, and which closely resembles the strategy employed in the quantization setting of Chapter~\ref{chap4} and in particular the \gls{sem} approach developed in Section~\ref{sec:sem}. The variable $\bdelta$ can be seen as an observation of a latent random matrix so that we will employ a stochastic approach to search for $\bdelta^\star$.
 
 \subsection{Relation of the BIC criterion and the interaction probability}
 
@@ -70,11 +71,11 @@ This last expression will be useful to design a stochastic algorithm proposing c
 
 This section is dedicated to describing the Metropolis-Hastings~\cite{hastings1970monte} sampling algorithm that will be used in the next section to sample from $p(\bdelta | \q(\gls{bbx}),\gls{bby})$ that will be denoted, for simplicity, by $\pi(\bdelta)$ in this Section.
 
-The distribution $\pi(\bdelta)$ is not known explicitly but $f(\bdelta) = \exp(-\text{BIC}(\hat{\gls{bth}}_{\q,\bdelta})/2) p(\bdelta)$ is proportional to $\pi(\bdelta)$. Consequently, given two matrices $\bdelta$ and $\bdelta'$, the \gls{pdf} ratio is: $\frac{\pi(\bdelta)}{\pi(\bdelta')} = \frac{f(\bdelta)}{f(\bdelta')}$.
+The distribution $\pi(\bdelta)$ is not known explicitly but $f(\bdelta) = \exp(-\text{BIC}(\hat{\gls{bth}}_{\q,\bdelta})/2) p(\bdelta)$ is approximately proportional to $\pi(\bdelta)$. Consequently, given two matrices $\bdelta$ and $\bdelta'$, the \gls{pdf} ratio is: $\frac{\pi(\bdelta)}{\pi(\bdelta')} \approx \frac{f(\bdelta)}{f(\bdelta')}$.
 
-Now suppose we have at our disposal a proposal distribution of the form:
+Now suppose we have at our disposal a transition kernel, that defines a probability distribution, of the form:
 \begin{alignat}{2}
-\tr: \; & ({\{0,1\}}^{\frac{d(d-1)}{2}},{\{0,1\}}^{\frac{d(d-1)}{2}}) && \mapsto \gls{R} \nonumber \\ 
+\tr: \; & ({\{0,1\}}^{\frac{d(d-1)}{2}},{\{0,1\}}^{\frac{d(d-1)}{2}}) && \mapsto [0;1] \nonumber \\ 
 & (\bdelta,\bdelta') && \to \tr(\bdelta,\bdelta') = \tr(\bdelta' | \bdelta) \nonumber
 \end{alignat}
 This instrumental conditional distribution will be used to design a Markov Chain which empirical distribution of drawn matrices $\bdelta^{(0)}, \dots, \bdelta^{(\text{iter})}$ approaches $\pi(\bdelta)$. The \gls{sem} algorithm in Section~\ref{sec:sem} followed the same strategy. The algorithm is the following:
@@ -88,7 +89,7 @@ This instrumental conditional distribution will be used to design a Markov Chain
 
 Draw $\bdelta' \sim \tr(\cdot | \bdelta^{(s)})$\;
 
-Calculate the acceptance probability $\alpha = \min \left( 1, \frac{f(\bdelta')}{f(\bdelta^{(s)})} \frac{\tr(\bdelta' | \bdelta^{(s)})}{\tr(\bdelta^{(s)} | \bdelta')} \right) $\;
+Calculate the acceptance probability $A = \min \left( 1, \frac{f(\bdelta')}{f(\bdelta^{(s)})} \frac{\tr(\bdelta', \bdelta^{(s)})}{\tr(\bdelta^{(s)}, \bdelta')} \right) $\;
 
 %\uIf{$\alpha \geq 1$}{
 %Let $\bdelta^{(s+1)} \leftarrow \bdelta'$\;
@@ -96,9 +97,9 @@ Calculate the acceptance probability $\alpha = \min \left( 1, \frac{f(\bdelta')}
 %\Else{
 %Let $\bdelta^{(s+1)} \leftarrow \begin{cases} \bdelta' \text{ with probability } \alpha, \\ \bdelta^{(s)} \text{ with probability } 1-\alpha.  \end{cases}$\;
 %}
-Let $\bdelta^{(s+1)} \leftarrow \begin{cases} \bdelta' \text{ with probability } \alpha, \\ \bdelta^{(s)} \text{ with probability } 1-\alpha.  \end{cases}$\;
+Let $\bdelta^{(s+1)} \leftarrow \begin{cases} \bdelta' \text{ with probability } A, \\ \bdelta^{(s)} \text{ with probability } 1-A.  \end{cases}$\;
 }
-\caption{\label{metropolis} Metropolis-Hastings (the $\min$ function enforce $0 \leq \alpha \leq 1$).}
+\caption{\label{metropolis} Metropolis-Hastings (the $\min$ function enforce $0 \leq A \leq 1$).}
 \label{alg:metro}
 \end{algorithm}
 
@@ -128,14 +129,17 @@ Only $\frac{d(d-1)}{2}$ coefficients are now needed, which can be reinterpreted 
 & \approx \exp(-\text{BIC}(\hat{\gls{bth}}_{\q_k,\q_\ell,\delta_{k,\ell}})/2) p(\delta_{k,\ell}).
 \end{align*}
 
-Setting a uniform prior $p(\delta_{k,\ell}=1) =\begin{cases} 0 \text{ if } k \geq \ell \\ \frac{1}{2} \text{ otherwise} \end{cases}$ and denoting by $p_{k,\ell}$ the probability of an interaction given features $\q_k(\gls{x}_k)$ and $\q_\ell(\gls{x}_\ell)$:
+Setting a uniform prior which will simplify all subsequent calculations (see next section) $p(\delta_{k,\ell}=1) =\begin{cases} 0 \text{ if } k \geq \ell \\ \frac{1}{2} \text{ otherwise} \end{cases}$ and denoting by $p_{k,\ell}$ the probability of an interaction given features $\q_k(\gls{x}_k)$ and $\q_\ell(\gls{x}_\ell)$:
 \begin{equation} \label{eq:pkl}
 p_{k,\ell} = p(\delta_{k,\ell} = 1 | \q_k(\gls{bbx}_k), \q_\ell(\gls{bbx}_\ell), \gls{bby}) \appropto \exp \left( \frac{\text{BIC}(\hat{\gls{bth}}_{\q_k,\q_\ell,\delta_{k,\ell}=0}) - \text{BIC}(\hat{\gls{bth}}_{\q_k,\q_\ell,\delta_{k,\ell}=1})}{2} \right)
 \end{equation}
 We normalize $p_{k,\ell}$ s.t.\ $\sum_{1 \leq k < \ell \leq d} p_{k,\ell} = 1$ and denote their triangular inferior matrix arrangement by $P$. Note that in this setting, we have nested models that were discussed in Paragraph~\nameref{par:consistency} of Section~\ref{subsec:embedding} such that the approximation in \eqref{eq:pkl} is consistent in $n$.
 We claim that if $p_{k,\ell}$ is close to $1$ (resp. $0$), then there is a strong chance that $\delta_{k,\ell}^\star = 1$ (resp. $\delta_{k,\ell}^\star = 0$) even in the full multivariate model, which amounts to:
 \[ p_{k,\ell} \approx p(\delta_{k,\ell} = 1 | \q(\gls{bbx}),\gls{bby}) \]
-This holds in particular if features $\q_k(\gls{bbx}_k)$ and $\q_\ell(\gls{bbx}_\ell)$ are independent to other features $\q_{-\{k,\ell\}}(\gls{bbx}_{-\{k,\ell\}})$:
+This holds in particular if features $\q_k(\gls{bbx}_k)$ and $\q_\ell(\gls{bbx}_\ell)$ are independent to other features $\q_{-\{k,\ell\}}(\gls{bbx}_{-\{k,\ell\}})$: the presence or absence of their interaction in the \gls{lr} $p_{\gls{bth}}(\gls{y} | \q(\glssymbol{bx}), \bdelta)$ controlled by $\delta_{k,\ell}$ depends solely on $\gls{y}, \q_k(\gls{bbx}_k)$ and $\q_\ell(\gls{bbx}_\ell)$, as formalized in the following lemma.
+
+\paragraph{Lemma} If quantized features $\q_k(\gls{bbx}_k)$ and $\q_\ell(\gls{bbx}_\ell)$ are independent to other features $\q_{-\{k,\ell\}}(\gls{bbx}_{-\{k,\ell\}})$, then our instrument $p_{k,\ell} = p(\delta_{k,\ell} = 1 | \q_k(\gls{bbx}_k), \q_\ell(\gls{bbx}_\ell), \gls{bby})$ for constructing a transition kernel is equal to our target distribution $p((\delta_{k,\ell} = 1 | \q(\gls{bx}),\gls{y})$.
+
 \begin{proof}
 \begin{align*}
 p(\delta_{k,\ell} | \q(\gls{bx}),y) & = \frac{p(y , \q(\gls{bx}), \delta_{k,\ell})}{p(y , \q(\gls{bx}))} \\
@@ -158,10 +162,10 @@ This defines a proper transition probability between two interaction matrices:
 
 Following Algorithm~\eqref{alg:metro}, a Metropolis-Hastings step can now be conducted by drawing $\bdelta' \sim \tr(\bdelta^{(s)},\cdot)$. The acceptance probability of this candidate is given by:
 \begin{align*}
-\alpha & = \min \left( 1, \frac{p(\bdelta' | \q(\gls{bbx}), \gls{bby})}{p(\bdelta^{(s)} | \q(\gls{bbx}), \gls{bby})} \frac{1-\tr(\bdelta^{(s)},\bdelta')}{\tr(\bdelta^{(s)},\bdelta')} \right) \\
+A & = \min \left( 1, \frac{p(\bdelta' | \q(\gls{bbx}), \gls{bby})}{p(\bdelta^{(s)} | \q(\gls{bbx}), \gls{bby})} \frac{1-\tr(\bdelta^{(s)},\bdelta')}{\tr(\bdelta^{(s)},\bdelta')} \right) \\
 & \approx \min \left( 1, \exp \left( \frac{\text{BIC}(\hat{\gls{bth}}_{\q(\gls{bbx}),\delta_{k,\ell}=0}) - \text{BIC}(\hat{\gls{bth}}_{\q(\gls{bbx}),\delta_{k,\ell}=1})}{2} \right) \frac{1-\tr(\bdelta^{(s)},\bdelta')}{\tr(\bdelta^{(s)},\bdelta')} \right).
 \end{align*}
-It must here be remarked that by construction of $\tr^{(s)}$ and the transition probability $\tr(\bdelta^{(s)},\bdelta')$, we have $\tr(\bdelta',\bdelta^{(s)}) = 1 - \tr(\bdelta^{(s)},\bdelta')$. Still following Algorithm~\eqref{alg:metro}, the candidate $\bdelta'$ is accepted with probability $\alpha$ s.t.\ $\bdelta^{(s+1)} = \begin{cases} \bdelta' \text{ with probability } \alpha, \\ \bdelta^{(s)} \text{ with probability } 1-\alpha. \end{cases}$
+It must here be remarked that by construction of $\tr^{(s)}$ and the transition probability $\tr(\bdelta^{(s)},\bdelta')$, we have $\tr(\bdelta',\bdelta^{(s)}) = 1 - \tr(\bdelta^{(s)},\bdelta')$. Still following Algorithm~\eqref{alg:metro}, the candidate $\bdelta'$ is accepted with probability $A$ s.t.\ $\bdelta^{(s+1)} = \begin{cases} \bdelta' \text{ with probability } A, \\ \bdelta^{(s)} \text{ with probability } 1-A. \end{cases}$
 
 \subsubsection{Validity of the approach}
 
@@ -176,7 +180,7 @@ We return to our original objective~\eqref{eq:criterion_inter} and consider opti
 
 We can mix the MCMC approach proposed in the previous section with the \textit{glmdisc} algorithm proposed in the previous chapter. A brute force way of doing this is to conduct a full Metropolis-Hastings algorithm, as proposed in the previous section, for each proposed quantization $\hat{\q}^{(s)}$ from Chapter~\ref{chap4} (either with the SEM or NN approach). Of course, this is too computationally intensive: our proposed Metropolis-Hastings algorithm necessitates the calculation of 2 bivariate \gls{lr} per $p_{k,\ell}$ \textit{i.e.}\ $d(d-1)$ \gls{lr} and one \gls{lr} per step $(s)$. These $O(d^2 + S)$ \gls{lr} shall be estimated for each proposed quantization which itself requires the estimation of $O(d)$ softmax (see Section~\ref{subsec:relaxation}) or polytomous \gls{lr} and contingency tables (see Section~\ref{subsec:fuzzy}). Focus is given to the \textit{glmdisc}-SEM approach in what follows.
 
-The foremost bottleneck lies in the aforementioned initialization of the Metropolis-Hastings algorithm. In essence, the proposed initialization is not required: the closer the proposal distribution to the target distribution, the quicker the convergence, which was our aim with the formulation of $p_{k,\ell}$ in Equation~\eqref{eq:pkl}. However, the asymptotic convergence in distribution is nevertheless maintained whatever proposal distribution is used, provided the resulting Markov Chain has a unique stationary distribution. We will consequently design a proposal distribution of $\bdelta$ for all quantizations $\bqk \in \Q$. To still put ``\textit{prior}'' information (to the Markov Chain, it is not \textit{a priori} in the Bayesian sense) about potential interactions into it, we will rely on the ``raw'' features instead:
+The foremost bottleneck lies in the aforementioned initialization of the Metropolis-Hastings algorithm. In essence, the proposed initialization is not required: the closer the proposal distribution to the target distribution, the quicker the convergence, which was our aim with the formulation of $p_{k,\ell}$ in Equation~\eqref{eq:pkl}. However, the asymptotic convergence in distribution is nevertheless maintained whatever proposal distribution is used, provided the resulting Markov Chain has a unique stationary distribution. We will consequently design a proposal distribution of $\bdelta$ for all quantizations $\bqk \in \Q$. To still put ``\textit{prior}'' information (to the Markov Chain, it is not \textit{a priori} in the Bayesian sense) about potential interactions into it, we will rely, to construct the transition kernel $t$ from bivariate \gls{lr}, on the ``raw'' features instead:
 \begin{equation} \label{eq:pklnew}
 p_{k,\ell} = p(\delta_{k,\ell} = 1 | \gls{bbx}_k, \gls{bbx}_\ell, \gls{bby}) \appropto \exp \left( \frac{\text{BIC}(\hat{\gls{bth}}_{\gls{x}_k,\gls{x}_\ell,\delta_{k,\ell}=0}) - \text{BIC}(\hat{\gls{bth}}_{\gls{x}_k,\gls{x}_\ell,\delta_{k,\ell}=1})}{2} \right).
 \end{equation}
@@ -358,6 +362,8 @@ glmdisc w. interactions & 62.0 & {\textbf{95.0}} & {\textbf{54.0}} \\
 We complement Table~\ref{tab:real_data} (see Section~\ref{subsec:exp_real} for details about the datasets) with the \textit{glmdisc}-SEM approach with interactions in the last column of Table~\ref{tab:real_data_inter}.
 
 The enriched model space allows obviously for better predictive performance, provided this space can be effectively visited by the Metropolis-Hastings algorithm, itself very dependent of the propositional transition probability. It seems effective on real data since it yields the best performance on most datasets, significantly above all other methods, at the price of higher computational cost.
+
+From the results of Chapter~\ref{chap4} which showed a slight advantage for \textit{glmdisc}-NN over \textit{glmdisc}-SEM, a natural question that arises from Table~\ref{tab:real_data} is the adaptation of the interaction screening procedure developed in this chapter to the neural network quantization approach \textit{glmdisc}-NN which is not straightforward: $\bdelta$ would be represented by nodes on the computation graph given their dependence structure with $\gls{bth}$ (see \textit{e.g.}\ Figure~\ref{}) which would have to be changed at each iteration. In standard deep learning frameworks, in particular TensorFlow~\cite{}, this graph is compiled and cannot be changed once gradient descent has begun.
 
 \begin{table}
     \centering

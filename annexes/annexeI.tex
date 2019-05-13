@@ -212,6 +212,8 @@ Reclassification can be found in \cite{RI6}, also sometimes referred to as extra
 
 \subsection{Augmentation} \label{augmentation}
 
+Augmentation can be found in \cite{RI6}. It is also documented as a ``Re-Weighting method'' by \cite{saporta,banasik,economix}.
+
 \begin{enumerate}
 \item Construct Scorecard "Accept Reject" (ACRJ) $\hat{\gls{phi}}$ with financed clients' data on target variable $Z$ (Figure~\ref{augment:sfig1})
 \item Create $K$ score bands $B_1, \ldots, B_K$ according to $p_{\hat{\gls{phi}}}(\gls{z} | \gls{bx})$
@@ -548,30 +550,30 @@ This early work aimed at comparing several reject inference methods in the well-
 \end{figure}
 
 
-\subsection{Reject inference methods applied to real data: previous experiments} \label{subsec:app_reject_real}
-
-This early work shows all reject inference methods based on \gls{lr} applied to various \gls{cacf} datasets: Electronics loans, Sports goods and Standard loans in Figure~\ref{fig:darty_reject},~\ref{fig:decathlon_reject} and~\ref{fig:M3_reject} respectively (beware: the colors / symbols do not correspond to the same methods in each graph). The acceptance / rejection mechanism $p_{\gls{phi}}(\gls{z} | \gls{bx})$ is again simulated using a \gls{lr}. Two things are striking in these figures: first, all methods perform relatively similarly and suffer a big performance drop once the acceptance rate is below 50 \% (at which point there are very few ``bad borrower'' events - $y = 0$); second, the multivariate generative model that performed best on simulated data in the previous section performs worst with real data, since it makes more hypotheses and is thus less flexible.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.4\textwidth]{figures/appendix/rejectinferencedarty3.png}
-\caption{Performance resulting from the use of reject inference methods in terms of Gini on an Electronics loans dataset from \gls{cacf}.}
-\label{fig:darty_reject}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.4\textwidth]{figures/appendix/rejectinferencedecathlon.png}
-\caption{Performance resulting from the use of reject inference methods in terms of Gini on a Sports goods loans dataset from \gls{cacf}.}
-\label{fig:decathlon_reject}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.4\textwidth]{figures/appendix/rejectinferenceM3.png}
-\caption{Performance resulting from the use of Reject Inference methods in terms of Gini on a Standard loans dataset from \gls{cacf}.}
-\label{fig:M3_reject}
-\end{figure}
+%\subsection{Reject inference methods applied to real data: previous experiments} \label{subsec:app_reject_real}
+%
+%This early work shows all reject inference methods based on \gls{lr} applied to various \gls{cacf} datasets: Electronics loans, Sports goods and Standard loans in Figure~\ref{fig:darty_reject},~\ref{fig:decathlon_reject} and~\ref{fig:M3_reject} respectively (beware: the colors / symbols do not correspond to the same methods in each graph). The acceptance / rejection mechanism $p_{\gls{phi}}(\gls{z} | \gls{bx})$ is again simulated using a \gls{lr}. Two things are striking in these figures: first, all methods perform relatively similarly and suffer a big performance drop once the acceptance rate is below 50 \% (at which point there are very few ``bad borrower'' events - $y = 0$); second, the multivariate generative model that performed best on simulated data in the previous section performs worst with real data, since it makes more hypotheses and is thus less flexible.
+%
+%\begin{figure}[H]
+%\centering
+%\includegraphics[width=0.4\textwidth]{figures/appendix/rejectinferencedarty3.png}
+%\caption{Performance resulting from the use of reject inference methods in terms of Gini on an Electronics loans dataset from \gls{cacf}.}
+%\label{fig:darty_reject}
+%\end{figure}
+%
+%\begin{figure}[H]
+%\centering
+%\includegraphics[width=0.4\textwidth]{figures/appendix/rejectinferencedecathlon.png}
+%\caption{Performance resulting from the use of reject inference methods in terms of Gini on a Sports goods loans dataset from \gls{cacf}.}
+%\label{fig:decathlon_reject}
+%\end{figure}
+%
+%\begin{figure}[H]
+%\centering
+%\includegraphics[width=0.4\textwidth]{figures/appendix/rejectinferenceM3.png}
+%\caption{Performance resulting from the use of Reject Inference methods in terms of Gini on a Standard loans dataset from \gls{cacf}.}
+%\label{fig:M3_reject}
+%\end{figure}
 
 
 \subsection{Performance of other predictive models w.r.t.\ the acceptance level} \label{subsec:app_reject_real_method}
