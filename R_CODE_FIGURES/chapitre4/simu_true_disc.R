@@ -76,7 +76,7 @@ for (k in 2:100) {
     max_poly = max(x[which(x_disc == as.numeric(substr(lev,2,3))),1])
     polygon(c(min_poly, max_poly, max_poly, min_poly), unname(c(coeff_x_disc_high[,lev],coeff_x_disc_high[,lev],coeff_x_disc_low[,lev],coeff_x_disc_low[,lev])), col=redtrans, border = NA)
   }
-  legend(0.3,1,c("True distribution","Bad discretization"), lty=c(1,1),col =c("green","red"), lwd=2)
+  legend(0.3,1,c("True distribution",paste("equal-length disc. in", k, "bins")), lty=c(1,1),col =c("green","red"), lwd=2)
   dev.off()
 }
 
