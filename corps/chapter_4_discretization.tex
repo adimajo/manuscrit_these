@@ -138,16 +138,16 @@ We formalize these empirical findings in the next section.
 \paragraph{General principle}
 
 The quantization procedure consists in turning a $d$-dimensional raw vector of continuous and/or categorical features $\gls{bx} = (\gls{x}_1, \ldots, \gls{x}_d)$ into a $d$-dimensional categorical vector \textit{via} a component wise mapping $\q=(\gls{qj})_1^d$:
-\[\q(\gls{bx})=(\q_1(\gls{x}_1),\ldots,\q_d(\gls{x}_d)),\]
-where each of the $\gls{qj}$'s is a vector of $\gls{mj}$ dummies: 
+\[\q(\gls{bx})=(\q_1(\gls{x}_1),\ldots,\q_d(\gls{x}_d)).\]
+Each of the univariate quantizations $\gls{qj}$'s is a vector of $\gls{mj}$ dummies: 
 \begin{align}\label{eq:qj}
 & q_{j,h}(\cdot) =  1 \text{ if } \gls{x}_j \in C_{j,h}, 0 \text{ otherwise, } 1 \leq h \leq \gls{mj}, \\
 \equiv & \gls{qj}(\cdot) = \gls{ehmj} \nonumber
 \end{align}
-where $\gls{mj}$ is an integer, $\gls{ehmj}$ is the $h^{\text{th}}$ basis vector of $\gls{R}^{\gls{mj}}$ and the sets $C_{j,h}$ are defined with respect to each feature type as is described just below.
-\paragraph{Raw continuous features} If $\gls{x}_j$ is a continuous component of $\gls{bx}$, quantization $\gls{qj}$ has to perform a discretization of $\gls{x}_j$ and the $C_{j,h}$'s, $1 \leq h \leq \gls{mj}$, are contiguous intervals  
+where $\gls{mj}$ is an integer, denoting the number of intervals / groups to which $\gls{x}_j$ is mapped, $\gls{ehmj}$ is the $h^{\text{th}}$ basis vector of $\gls{R}^{\gls{mj}}$ and the sets $C_{j,h}$ are defined with respect to each feature type as is described just below.
+\paragraph{Raw continuous features} If $\gls{x}_j$ is a continuous component of $\gls{bx}$, quantization $\gls{qj}$ has to perform a discretization of $\gls{x}_j$ and the $C_{j,h}$'s, $1 \leq h \leq \gls{mj}$, are contiguous intervals:
 \begin{equation}\label{eq:Cjhcont}
-C_{j,h}=(c_{j,h-1},c_{j,h}]
+C_{j,h}=(c_{j,h-1},c_{j,h}],
 \end{equation}
 where $c_{j,1},\ldots,c_{j,\gls{mj}-1}$ are increasing numbers called cutpoints, $c_{j,0}=-\infty$, $c_{j,\gls{mj}}=\infty$. For example, the quantization of the unit segment in thirds would be defined as $\gls{mj}=3$, $c_{j,1} = 1/3$, $c_{j,2} = 2/3$ and subsequently $\gls{qj}(0.1) = (1,0,0)$. This is visually exemplified on Figure~\ref{fig:disc_cont}.
 \paragraph{Raw categorical features} If $\gls{x}_j$ is a categorical component of $\gls{bx}$, quantization $\gls{qj}$ consists in grouping levels of $\gls{x}_j$ and the $C_{j,h}$s form a partition of the set $\gls{NO}$:
@@ -156,7 +156,7 @@ where $c_{j,1},\ldots,c_{j,\gls{mj}-1}$ are increasing numbers called cutpoints,
 %\bigsqcup_{h=1}^{\gls{mj}}C_{j,h}=\{1,\ldots,\gls{lj}\}.
 \bigcup_{h=1}^{\gls{mj}}C_{j,h} & = \gls{NO}, \\
 \forall h, h', \: C_{j,h} \cap C_{j,h'} & = \varnothing 
-\end{align*}*}
+\end{align*}
 For example, the grouping of levels encoded as ``1'' and ``2'' would yield $C_{j,1} = \{1,2\}$ such that $\gls{qj}(1) = \gls{qj}(2) = (1,0,\ldots,0)$. Note that it is assumed that there are no empty buckets, \textit{i.e.}\ $\nexists j, h$ s.t.\ $C_{j,h} = \varnothing$.
 % and that there is no overlap, \textit{i.e.}\ $\nexists j,h,h'$ s.t.\ $C_{j,h} \cup C_{j,h'} = \varnothing$. 
 This is visually exemplified on Figure~\ref{fig:disc_disc}.
@@ -462,7 +462,7 @@ and can be used as a tractable substitute for (\ref{eq:lq}) to solve the origina
 We wish to maximize the log-likelihood (\ref{eq:reglogqa}) which would yield parameters $(\hat{\ag},\hat{\gls{bth}})$; these are consistent if the model is well-specified (\textit{i.e.}\ there is a ``true'' quantization under classical regularity conditions). Denoting by $A$ the space of $\ag$ and $\Q_A$ the space of $\q_{\ag}$, to ``push'' $\Q_A$ further into $\Q$, $\hat{\q}$ is deduced from a \textit{maximum a posteriori} procedure applied to $\q_{\hat{\ag}}$:
 \begin{equation}
     \label{eq:ht}
-    & \hat{q}_{j,h}(\gls{x}_j) = 1 \equiv & \hat{\q}_j(\gls{x}_j) = \gls{ehmj} \text{ if } h = \argmax_{1 \leq h' \leq \gls{mj}} q_{\hat{\ag}_{j,h'}}(\gls{x}_j), 0 \text{ otherwise.}
+    \hat{q}_{j,h}(\gls{x}_j) = 1 \equiv \hat{\q}_j(\gls{x}_j) = \gls{ehmj} \text{ if } h = \argmax_{1 \leq h' \leq \gls{mj}} q_{\hat{\ag}_{j,h'}}(\gls{x}_j), 0 \text{ otherwise.}
      %\nonumber
 \end{equation}
 If there are several levels $h$ that satisfy (\ref{eq:ht}), we simply take the level that corresponds to smaller values of $\gls{x}_j$ to be in accordance with the definition of $C_{j,h}$ in Equation~(\ref{eq:Cjhcont}). This {\it maximum a posteriori} principle will be exemplified in Figure~\ref{fig:MAP} on simulated data. These approximations are justified by the following arguments. 
@@ -618,7 +618,7 @@ Secondly, the result of the quantization is assumed to be ``self-contained'' w.r
 \begin{equation} \label{hyp:squeeze}
 \forall \gls{bx},y,\: p(y|\gls{bx},\bqk) = p(y|\bqk).
 \end{equation}
-Thirdly, the component-wise nature of the quantization can be stated as:
+Thirdly, the component-wise nature of the quantization can be stated as a conditional independence assumption:
 \begin{equation} \label{hyp:component}
 \forall \gls{bx},\bqk,\: p(\bqk|\gls{bx}) = \prod_{j=1}^d p(\bqk_j | \gls{x}_j).
 \end{equation}
@@ -679,7 +679,7 @@ A straightforward way to maximize the likelihood of $p(y | \gls{bx}, \gls{bth}, 
 However, maximizing this likelihood directly is intractable as the Expectation step requires to sum over $\bqk \in \Q$:
 
 \paragraph{E-step:}
-\[ t_{i,\bqk}^(s)} = \frac{p_{\gls{bth}^{(s)}}(\gls{y}_i | \bqk) \prod_{j=1}^d p_{\ag_j^{(s)}}(\bqk_j | \gls{x}_{i,j})}{\sum_{\bqk ' \in \Q_{\gls{bm}}} p_{\gls{bth}^{(s)}}(\gls{y}_i | \bqk) \prod_{j=1}^d p_{\ag_j^{(s)}}(\bqk_j'  | \gls{x}_{i,j})}. \]
+\[ t_{i,\bqk}^{(s)} = \frac{p_{\gls{bth}^{(s)}}(\gls{y}_i | \bqk) \prod_{j=1}^d p_{\ag_j^{(s)}}(\bqk_j | \gls{x}_{i,j})}{\sum_{\bqk ' \in \Q_{\gls{bm}}} p_{\gls{bth}^{(s)}}(\gls{y}_i | \bqk) \prod_{j=1}^d p_{\ag_j^{(s)}}(\bqk_j'  | \gls{x}_{i,j})}. \]
 
 Classically, the \gls{em} can be replaced by the \acrlong{sem}~\cite{celeux1985sem} algorithm: the expectation (the sum over $\bqk \in \Q$) is approximated by the empirical distribution (up to a normalization constant) of draws $\bqk^{(1)}, \dots, \bqk^{(S)}$ from $p_{\gls{bth}}(y | \cdot) \prod_{j=1}^d p_{\ag_j}(\cdot | \gls{x}_j)$.
 
@@ -704,7 +704,7 @@ As the \gls{lr} $p_{\gls{bth}}(y | \bqk)$ is multivariate, it is hard to sample 
 \end{equation}
 This process is repeated for all features $1 \leq j \leq d$.
 
-This \gls{sem} provides parameters ${\ag}^{(1)}, \dots, {\ag}^{(S)}$ which can be used to produce $\hat{\q}^{(1)}, \dots, \hat{\q}^{(S)}$ following the \textit{maximum a posteriori} scheme from Equation~\eqref{eq:ht}, adapated to this new formulation:
+This \gls{sem} provides parameters ${\ag}^{(1)}, \dots, {\ag}^{(S)}$ which can be used to produce $\hat{\q}^{(1)}, \dots, \hat{\q}^{(S)}$ following the \textit{maximum a posteriori} scheme from Equation~\eqref{eq:ht}, adapted to this new formulation:
 \[ \hat{\q}_j^{(s)}(\cdot) = \argmax_{h} p_{\ag_j^{(s)}}(\gls{ehmj} | \cdot ) .\]
 The \gls{lr} parameters $\hat{\gls{bth}}^{(s)}$ on quantized data are obtained similarly as in~\eqref{eq:lr_param_q}. The best proposed quantization $\q^\star$ is thus chosen among them \textit{via e.g.}\ the BIC criterion as in Equation~\eqref{eq:opt_epoch}.
 
@@ -721,7 +721,42 @@ Contrary to the neural network approach developed in Section~\ref{sec:proposal},
 
 The MCMC has thus an absorbing state for which all features are quantized into one level (the empty model with no features) which is reached in a finite number of steps (although very high if $n$ is sufficiently large as is the case with \textit{Credit Scoring} data). The \gls{sem} algorithm is an effective way to start from a high number of levels per feature $\gls{bm}_{\max}$ and explore smaller values.
 
-The full algorithm is described in Appendix~\ref{app1:glmdiscSEM}.
+The full algorithm is described in Appendix~\ref{app1:glmdiscSEM} and schematically in Figure~\ref{fig:schema_sem}.
+
+\tikzstyle{int}=[draw, minimum size=2em]
+\tikzstyle{init} = [pin edge={to-,thin,black}]
+
+\tikzstyle{int}=[draw, minimum size=2em]
+\tikzstyle{init} = [pin edge={to-,thin,black}]
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[node distance=2.5cm,auto,>=latex', every node/.style={scale=0.7}, outer/.style={draw=gray,dashed,fill=green!1,thick,inner sep=45pt}]
+    \node [int] (a) {Initialize $\bqk$};
+    \node [int] (b) [right=1cm of a, align=left] {Fit LR \\ $p_{\gls{bth}}(\gls{y} | \bqk)$};
+    \path[->] (a) edge node {} (b);
+    \node [int] (c) [right=3cm of b, align=left] {Fit continuous \\ approximation $p_{\ag_j}(\bqk_j | \gls{x}_j)$};
+    \path[->] (b) edge node {} (c);
+    \node [int] (d) [below left=0.75cm and -0.5cm of c, align=left] {Draw ``fuzzy'' \\ candidate $\bqk \sim p_{\gls{bth}}(\gls{y} | \bqk) p_{\ag}(\bqk | \gls{x})$};
+    \node (e) [below=1cm of c] {};
+    \path[-] (c) edge node {} (e.center);
+    \path[->] (e.center) edge node {} (d);
+    \node (f) [below=1cm of b] {};
+    \path[-] (d) edge node {} (f.center);
+    \path[->] (f.center) edge node {} (b);
+    \node [int] (g) [right=2cm of e, align=left] {Calculate ``hard'' \\ candidate $\hat{\q}(\cdot) = (\argmax_{h} p_{\ag_j}(\gls{ehmj} | \cdot))_1^d$};
+    \path[->] (e.center) edge node {} (g);
+    \node [int] (h) [below=1cm of g, align=left] {Evaluate ``hard'' \\ candidate $\mbox{BIC}(\hat{\gls{bth}}_{\q})$};
+    \path[->] (g) edge node {} (h);
+    \begin{pgfonlayer}{background}
+	\node[outer,fit=(b) (c) (d)] (i) {};
+	\end{pgfonlayer}
+    \node (j) [above right=1cm of b, align=left] {As long as the budget $T$ is not over};
+\end{tikzpicture}
+\caption{\label{fig:schema_sem} Schema of the SEM quantization approach.}
+\end{figure}
+
+
 
 \section{Numerical experiments} \label{sec:experiments}
 
@@ -1085,7 +1120,9 @@ Another problem that \gls{cacf} faces is to have interpretable cutpoints, \text{
 
 Feature quantization (discretization for continuous features, grouping of factor levels for categorical ones) in a supervised multivariate classification setting is a recurring problem in many industrial contexts. This setting was formalized as a highly combinatorial representation learning problem and a new algorithmic approach, named \textit{glmdisc}, has been proposed as a sensible approximation of a classical statistical information criterion.
 
-The first proposed implementation relies on the use of a neural network of particular architecture and specifically a softmax approximation of each discretized or grouped feature. The second proposed implementation relies on an SEM algorithm and a polytomic multiclass \gls{lr} approximation in the same flavor as the softmax. These proposals can alternatively be replaced by any other univariate multiclass predictive model, which make them flexible and adaptable to other problems. Prediction of the target feature, given quantized features, was exemplified with \gls{lr}, although here as well, it can be swapped with any other supervised classification model.
+The first proposed implementation relies on the use of a neural network of particular architecture and specifically a softmax approximation of each discretized or grouped feature. The second proposed implementation relies on an \gls{sem} algorithm and a polytomic multiclass \gls{lr} approximation in the same flavor as the softmax. These proposals can alternatively be replaced by any other univariate multiclass predictive model, which make them flexible and adaptable to other problems. Prediction of the target feature, given quantized features, was exemplified with \gls{lr}, although here as well, it can be swapped with any other supervised classification model.
+
+Although both estimation methods are arguably much alike, since they rely on the same continuous approximation, results differed sensibly. Indeed, the \gls{sem} approach necessitated a sampling step, whereas the neural network , which has nevertheless the clear advantage of exploring . Additionally, the neural network approach relies on standard deep learning libraries, highly parallelizable and , which can make it way faster than the \gls{sem} approach that cannot be parallelized straightforwardly .
 
 The experiments showed that, as was sensed empirically by statisticians in the field of \textit{Credit Scoring}, discretization and grouping can indeed provide better models than standard \gls{lr}. This novel approach allows practitioners to have a fully automated and statistically well-grounded tool that achieves better performance than \textit{ad hoc} industrial practices at the price of decent computing time but much less of the practitioner's valuable time.
 

@@ -1,6 +1,7 @@
 # Installation du package
 library(devtools)
 install_github("adimajo/glmdisc", build_vignettes = TRUE)
+library(xtable)
 
 # Chargement des données
 library(MASS)
@@ -115,6 +116,9 @@ birthwt_data_test <- sapply(birthwt_data_test, as.numeric)
 glmdisc_pima_pred = predict(glmdisc_pima, Pima.te[,-ncol(Pima.te)])
 glmdisc_breast_pred = predict(glmdisc_breast, breast_test[,-ncol(breast_test)])
 glmdisc_heart_pred = predict(glmdisc_heart_data, heart_data_test[,-ncol(heart_data_test)])
+
+birthwt_data_test <- sapply(birthwt_data_test, as.numeric)
+colnames(birthwt_data_test) = paste0("X",0:(ncol(birthwt_data_test)-1))
 glmdisc_birthwt_pred = predict(glmdisc_birthwt, birthwt_data_test[,-1])
 
 colnames(Pima.te) = paste0("X",1:ncol(Pima.te))

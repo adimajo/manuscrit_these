@@ -73,10 +73,10 @@ Finally, some guidelines are given to practitioners in Section~\ref{sec:conclusi
 
 The decision process of financial institutions to accept a credit application is usually embedded in the  probabilistic framework. The latter offers rigorous tools for taking into account both the variability of applicants and the uncertainty on their ability to pay back the loan. In this context, the important term is $p(\gls{y}|\gls{bx})$, designing the probability that a new applicant (described by his characteristics $\gls{bx}$) will pay back his loan ($\gls{y}=1$) or not ($\gls{y}=0$). Estimation of $p(\gls{y}|\gls{bx})$ is thus an essential task of any \textit{Credit Scoring} process.
 
-To perform estimation, a specific $n + m$-sample $\gls{T}$ is available, decomposed into two disjoint and meaningful subsets, denoted by $\gls{Tf}$ and $\gls{Tnf}$ ($\gls{T}=\gls{Tf} \cup \gls{Tnf}$, $\gls{Tf} \cap \gls{Tnf}=\emptyset$). The first subset ($\gls{Tf}$) corresponds to $n$ applicants with features $\gls{bx}_i$ who have been financed ($\gls{z}_i={\text{f}}$) and, consequently, for who the repayment status $\gls{y}_i$ is known, with their respective matrix notation $\gls{bbx}_\f$, $\gls{bbz}_\f$ and $\gls{bby}_\f$. Thus, $\gls{Tf}=(\gls{bx}_i,\gls{y}_i,\gls{z}_i)_{i\in \text{F}} = (\gls{bbx}_\f,\gls{bby}_\f,\gls{bbz}_\f)$ where $\text{F}=\{i:\gls{z}_i={\text{f}}\}$ denotes the corresponding subset of indexes. The second subset ($\gls{Tnf}$) corresponds to $m$ applicants with features $\gls{bx}_i$ who have {\it not} been financed ($\gls{z}_i={\text{nf}}$) and, consequently, for who the repayment status $\gls{y}_i$ is {\it unknown}, with their respective matrix notation $\gls{bbx}_{\text{nf}}$ and $\gls{bbz}_{\text{nf}}$. Thus, $\gls{Tnf}=(\gls{bx}_i,\gls{z}_i)_{i\in \text{NF}} = (\gls{bbx}_{\text{nf}}, \gls{bbz}_{\text{nf}})$ where $\text{NF}=\{i:z_i={\text{nf}}\}$ denotes the corresponding subset of indexes. We notice that $\gls{y}_i$ values are excluded from the observed sample $\gls{Tnf}$, since they are missing. These data can be represented schematically as:
+To perform estimation, a specific $n + m$-sample $\gls{T}$ is available, decomposed into two disjoint and meaningful subsets, denoted by $\gls{Tf}$ and $\gls{Tnf}$ ($\gls{T}=\gls{Tf} \cup \gls{Tnf}$, $\gls{Tf} \cap \gls{Tnf}=\emptyset$). The first subset ($\gls{Tf}$) corresponds to $n$ applicants with features $\gls{bx}_i$ who have been financed ($\gls{z}_i={\text{f}}$) and, consequently, for who the repayment status $\gls{y}_i$ is known, with their respective matrix notation $\gls{bbx}_\f$, $\gls{bbz}_\f$ and $\gls{bby}_\f$. Thus, $\gls{Tf}=(\gls{bx}_i,\gls{y}_i,\gls{z}_i)_{i\in \gls{F}} = (\gls{bbx}_\f,\gls{bby}_\f,\gls{bbz}_\f)$ where $\gls{F}=\{i:\gls{z}_i={\text{f}}\}$ denotes the corresponding subset of indexes. The second subset ($\gls{Tnf}$) corresponds to $m$ applicants with features $\gls{bx}_i$ who have {\it not} been financed ($\gls{z}_i={\text{nf}}$) and, consequently, for who the repayment status $\gls{y}_i$ is {\it unknown}, with their respective matrix notation $\gls{bbx}_{\text{nf}}$ and $\gls{bbz}_{\text{nf}}$. Thus, $\gls{Tnf}=(\gls{bx}_i,\gls{z}_i)_{i\in \gls{NF}} = (\gls{bbx}_{\nf}, \gls{bbz}_{\nf})$ where $\gls{NF}=\{i:z_i={\nf}\}$ denotes the corresponding subset of indexes. We notice that $\gls{y}_i$ values are excluded from the observed sample $\gls{Tnf}$, since they are missing. These data can be represented schematically as:
 
 \[ \gls{T} = \begin{array}{c}
-\gls{Tf} = \bigg( \; \tikzmarkin[hor=style green]{el02} \gls{bbx}_{\text{f}} \tikzmarkend{el02}\\
+\gls{Tf} = \bigg( \; \tikzmarkin[hor=style green]{el02} \gls{bbx}_{\text{f}} \tikzmarkend{el02} \\
 \\
 \cup \\
 \\
@@ -91,7 +91,7 @@ To perform estimation, a specific $n + m$-sample $\gls{T}$ is available, decompo
  x_{n+m}^1 & \cdots & x_{n+m}^d \tikzmarkend{e2} \end{array} \right),
  \hspace{1.5cm}
  \begin{array}{c}
-\tikzmarkin[hor=style green]{el11} \gls{bby}_{\text{f}} \tikzmarkend{el11}\\
+\tikzmarkin[hor=style green]{el11} \gls{bby}_{\text{f}} \tikzmarkend{el11} \\
 \\
 \\
 \\
@@ -105,11 +105,11 @@ y_n \tikzmarkend{e4} \\
 \text{NA} \tikzmarkend{e3} \end{array} \right) ,
  \hspace{1.5cm}
  \begin{array}{c}
-\tikzmarkin[hor=style green]{el111} \gls{bbz}_{\text{f}} \tikzmarkend{el111}\\
+\tikzmarkin[hor=style green]{el111} \gls{bbz}_{\text{f}} \tikzmarkend{el111} \\
 \\
 \\
 \\
-\tikzmarkin[hor=style orange]{el121} \gls{bbz}_{\text{nf}} \tikzmarkend{el121}\end{array}
+\tikzmarkin[hor=style orange]{el121} \gls{bbz}_{\text{nf}} \tikzmarkend{el121} \end{array}
 \left( \begin{array}{c}
 \tikzmarkin[hor=style green]{e41} \text{f} \\
 \vdots \\
@@ -129,7 +129,7 @@ y_n \tikzmarkend{e4} \\
 
 \subsection{General parametric model}
 
-Estimation of $p(\gls{y}|\gls{bx})$ has to rely on modelling since the true probability distribution is unknown. Firstly, it is both convenient and realistic to assume that triplets in $\gls{T}_c = (\gls{bx}_i,\gls{y}_i,\gls{z}_i)_{1\le i\le n+m}$ are all independent and identically distributed (i.i.d.), including the unknown values of $\gls{y}_i$ when $i\in \text{NF}$. Secondly, it is usual and convenient to assume that the unknown distribution $p(\gls{y}|\gls{bx})$ belongs to a given parametric family $\{p_{\gls{bth}}(\gls{y}|\gls{bx})\}_{\gls{bth} \in\Theta}$, where $\Theta$ is the parameter space as was discussed in Chapter~\ref{chap1}. For instance, \gls{lr} is often considered in practice, even if we will be more general in this section. However, \gls{lr} will be important for other sections since some standard reject inference methods are specific to this family (Section~\ref{sec:methods_reject}) and numerical experiments (Section~\ref{sec:num_exp_reject}, Appendices~\ref{subsec:app_reject_sim}, and~\ref{subsec:app_reject_real_method}) will implement them.
+Estimation of $p(\gls{y}|\gls{bx})$ has to rely on modelling since the true probability distribution is unknown. Firstly, it is both convenient and realistic to assume that triplets in $\gls{T}_c = (\gls{bx}_i,\gls{y}_i,\gls{z}_i)_{1\le i\le n+m}$ are all independent and identically distributed (i.i.d.), including the unknown values of $\gls{y}_i$ when $i\in \gls{NF}$. Secondly, it is usual and convenient to assume that the unknown distribution $p(\gls{y}|\gls{bx})$ belongs to a given parametric family $\{p_{\gls{bth}}(\gls{y}|\gls{bx})\}_{\gls{bth} \in\Theta}$, where $\Theta$ is the parameter space as was discussed in Chapter~\ref{chap1}. For instance, \gls{lr} is often considered in practice, even if we will be more general in this section. However, \gls{lr} will be important for other sections since some standard reject inference methods are specific to this family (Section~\ref{sec:methods_reject}) and numerical experiments (Section~\ref{sec:num_exp_reject}, Appendices~\ref{subsec:app_reject_sim}, and~\ref{subsec:app_reject_real_method}) will implement them.
 
 As in any missing data situation (here $\gls{z}$ indicates if $\gls{y}$ is observed or not), the relative modelling process, namely $p(\gls{z}|\gls{bx},\gls{y})$, has also to be clarified. For convenience, we can also consider a parametric family $\{p_{\gls{phi}}(\gls{z}|\gls{bx},\gls{y})\}_{\gls{phi} \in \Phi}$, where $\gls{phi}$ denotes the parameter and $\Phi$ the associated parameter space of the financing mechanism. Note we consider here the most general missing data situation, namely a \glsfirst{mnar} mechanism~\cite{littlerubin}. It means that $\gls{z}$ can be stochastically dependent on some missing data $\gls{y}$, namely that $p(\gls{z}|\gls{bx},\gls{y})\neq p(\gls{z}|\gls{bx})$. We will discuss this fact in Section~\ref{sec:mechanisms}.
 
@@ -144,7 +144,7 @@ where $\{p_{\gamma}(\gls{y},\gls{z}|\gls{bx})\}_{\gamma \in \Gamma}$ denotes a d
 
 Mixing previous model and data, the maximum likelihood principle can be invoked for estimating the whole parameter $\gamma$, thus yielding as a by-product an estimate of the parameter $\gls{bth}$. Indeed, $\gls{bth}$ is of particular interest, the goal of the financial institutions being solely to obtain an estimate of $p_{\gls{bth}}(\gls{y}|\gls{bx})$. The observed log-likelihood can be written as:
 \begin{equation}\label{eq:like.MNAR}
-\ell(\gamma;\gls{T}) = \sum_{i\in\text{F}}\ln p_{\gamma}(\gls{y}_i,\text{f} | \gls{bx}_i) + \sum_{i'\in\text{NF}} \ln \left[ \sum_{\gls{y}\in\{0,1\}} p_{\gamma}(\gls{y},\text{nf} | \gls{bx}_{i'}) \right].
+\ell(\gamma;\gls{T}) = \sum_{i\in\gls{F}}\ln p_{\gamma}(\gls{y}_i,\text{f} | \gls{bx}_i) + \sum_{i'\in\gls{NF}} \ln \left[ \sum_{\gls{y}\in\{0,1\}} p_{\gamma}(\gls{y},\text{nf} | \gls{bx}_{i'}) \right].
 \end{equation}
 Within this missing data paradigm, the EM algorithm (see~\cite{dempster1977maximum}) can be used: it aims at maximizing the expectation of the complete likelihood $\ell_c(\gamma;\gls{T}_c)$ (defined hereafter) where $\gls{T}_c = \gls{T} \sqcup \gls{bby}_{\text{nf}}$ over the missing labels. Starting from an initial value $\gamma^{(0)}$, iteration $(s)$ of the algorithm is decomposed into the following two classical steps:
 \paragraph{E-step} compute the conditional probabilities of missing $\gls{y}_i$ values:
@@ -158,7 +158,7 @@ t_{i\gls{y}}^{(s)} = p_{\gls{bth}(\gamma^{(s-1)})}(\gls{y}|\gls{bx}_i,\nf) = \fr
 leading to:
 \begin{align*}
 \gamma^{(s)} & = \argmax_{\gamma \in \Gamma} \mathbb{E}_{\gls{bby}_{\text{nf}}} [\ell_c(\gamma;\gls{T}_c) | \gls{T},\gamma^{(s-1)}] \\
-& = \argmax_{\gamma \in \Gamma} \sum_{i\in \text{F}} \ln p_{\gamma}(\gls{y}_i, \f|\gls{bx}_i) +  \sum_{i'\in \text{NF}}\sum_{\gls{y} = 0}^{1}t_{i'\gls{y}}^{(s)} \ln p_{\gamma}(\gls{y}, \nf | \gls{bx}_{i'}).
+& = \argmax_{\gamma \in \Gamma} \sum_{i\in \gls{F}} \ln p_{\gamma}(\gls{y}_i, \f|\gls{bx}_i) +  \sum_{i'\in \gls{NF}}\sum_{\gls{y} = 0}^{1}t_{i'\gls{y}}^{(s)} \ln p_{\gamma}(\gls{y}, \nf | \gls{bx}_{i'}).
 \end{align*}
 Usually, stopping rules rely either on a predefined number of iterations, or on a predefined stability criterion of the observed log-likelihood.
 
@@ -173,7 +173,7 @@ The second restriction to \gls{mnar} is the \glsfirst{mar} setting, meaning that
 \begin{equation}\label{eq:like.MAR}
 \ell(\gamma;\gls{T}) = \ell(\gls{bth};\gls{Tf}) + \sum_{i=1}^{n+m} \ln p_{\gls{phi}}(\gls{z}_{i} | \gls{bx}_{i}),
 \end{equation}
-with $\ell(\gls{bth};\gls{Tf})=\sum_{i\in\text{F}}\ln p_{\gls{bth}}(\gls{y}_i | \gls{bx}_i)$.
+with $\ell(\gls{bth};\gls{Tf})=\sum_{i\in\gls{F}}\ln p_{\gls{bth}}(\gls{y}_i | \gls{bx}_i)$.
 Combining it with the ignorable assumption, estimation of $\gls{bth}$ relies only on the first part $\ell(\gls{bth};\gls{Tf})$, since the value $\gls{phi}$ has no influence on~$\gls{bth}$. In that case, invoking an EM algorithm due to missing data $\gls{y}$ is no longer required as will be made explicit in Section~\ref{subsec:strat1}.
 
 \subsection{Model selection} \label{subsec:model_selection}
@@ -192,7 +192,7 @@ where $\gls{T}^\text{test}$ is an i.i.d.\ test sample from $p(\gls{y}|\gls{bx})$
 \begin{equation} \label{eq:error2}
 p(\gls{y}|\gls{bx}) = \sum_{\gls{z}\in\{\text{f},\text{nf}\}} p(\gls{y}|\gls{bx},\gls{z}) p(\gls{z}|\gls{bx})
 \end{equation}
-where $p(\gls{y}|\gls{bx},\gls{z})$ is unknown and $p(\gls{z}|\gls{bx})$ is known since this latter is defined by the financial institution itself. We notice that obtaining a sample from $p(\gls{y}|\gls{bx})$ would require that the financial institution draws $\gls{bbz}^\text{test}$ i.i.d.\ from $p(\gls{z}|\gls{bx})$ before to observe the results $\gls{bby}^\text{test}$ i.i.d.\ from $p(\gls{y}|\gls{bx},\gls{z})$. But in practice it is obviously not the case, a threshold being applied to the distribution $p(\gls{z}|\gls{bx})$ for retaining only a set of fundable applicants, the non-fundable applicants being definitively discarded, preventing us from getting a test sample $\gls{T}^\text{test}$ from $p(\gls{y} | \gls{bx})$. As a matter of fact, only a sample $\gls{T}^\text{test}_{\text{f}}$ of $p(\gls{y}|\gls{bx},\text{f})$ is available, 
+where $p(\gls{y}|\gls{bx},\gls{z})$ is unknown and $p(\gls{z}|\gls{bx})$ is known since this latter is defined by the financial institution itself. We notice that obtaining a sample from $p(\gls{y}|\gls{bx})$ would require that the financial institution draws $\gls{bbz}^\text{test}$ i.i.d.\ from $p(\gls{z}|\gls{bx})$ before to observe the results $\gls{bby}^\text{test}$ i.i.d.\ from $p(\gls{y}|\gls{bx},\gls{z})$. But in practice it is obviously not the case, a threshold being applied to the distribution $p(\gls{z}|\gls{bx})$ for retaining only a set of fundable applicants, the non-fundable applicants being definitively discarded, preventing us from getting a test sample $\gls{T}^\text{test}$ from $p(\gls{y} | \gls{bx})$. As a matter of fact, only a sample $\gls{Tf}^\text{test}$ of $p(\gls{y}|\gls{bx},\text{f})$ is available, 
 irrevocably prohibiting the calculus of~(\ref{eq:error}) as a model selection criterion.
 
 In the category of information criteria, the BIC criterion (presented in Section~\ref{subsubsec:choix_modele}) is expressed as the following penalization of the maximum log-likelihood:
@@ -220,14 +220,14 @@ The simplest reject inference strategy is to ignore not financed clients for est
 In fact, this strategy is equivalent to using the whole sample $\gls{T}$ (financed and not financed applicants) under both the \gls{mar} and ignorable assumptions. See the related explanation in Section~\ref{sec:mechanisms} and~\cite{zadrozny2004learning}. Consequently, this strategy is truly a particular ``reject inference'' strategy although it does not seem to be.
 
 \subsubsection{Additional remarks}
-By denoting by $\hat{\gls{bth}}_\text{f}$ and $\hat{\gls{bth}}$ respectively the maximum likelihood estimates of $\ell(\gls{bth};\gls{Tf})$ and $\ell(\gls{bth};\gls{T} \cup \gls{bby}_{\nf})$ provided we know $\gls{y}_i$ for $i \in \text{NF}$, classic maximum likelihood properties~\cite{10.2307/1912526,zadrozny2004learning} yield under a well-specified model hypothesis (there exists $\gls{bthstar}$ s.t.\ $p(\gls{y} | \gls{bx}) = p_{\gls{bthstar}}(\gls{y} | \gls{bx})$ for all $(\gls{bx},\gls{y})$) and a \gls{mar} missingness mechanism that $\hat{\gls{bth}} \approx \hat{\gls{bth}}_\text{f}$ for large-enough samples $\gls{Tf}$ and $\gls{Tnf}$.
+By denoting by $\hat{\gls{bth}}_\text{f}$ and $\hat{\gls{bth}}$ respectively the maximum likelihood estimates of $\ell(\gls{bth};\gls{Tf})$ and $\ell(\gls{bth};\gls{T} \cup \gls{bby}_{\nf})$ provided we know $\gls{y}_i$ for $i \in \gls{NF}$, classic maximum likelihood properties~\cite{10.2307/1912526,zadrozny2004learning} yield under a well-specified model hypothesis (there exists $\gls{bthstar}$ s.t.\ $p(\gls{y} | \gls{bx}) = p_{\gls{bthstar}}(\gls{y} | \gls{bx})$ for all $(\gls{bx},\gls{y})$) and a \gls{mar} missingness mechanism that $\hat{\gls{bth}} \approx \hat{\gls{bth}}_\text{f}$ for large-enough samples $\gls{Tf}$ and $\gls{Tnf}$.
 
 
 
 \subsection{Strategy 2: fuzzy augmentation}
 
 \subsubsection{Definition}
-This strategy can be found in~\cite{economix} and is developed in depth in Appendix~\ref{fuzzy}. It corresponds to an algorithm which is starting with $\hat{\gls{bth}}^{(0)} = \hat{\gls{bth}}_\text{f}$ (see previous section). Then, all $(\gls{y}_i)^{(1)}_{i \in \text{NF}}$ are imputed by their expected value given by: $\hat{\gls{y}}^{(1)}_i = p_{\hat{\gls{bth}}^{(0)}}(1 | \gls{bx}_i)$ (notice that these imputed values are not in $\{0,1\}$ but in $]0,1[$). The completed log-likelihood $\ell_c(\gls{bth};\gls{T}_c^{(1)})$ given in~(\ref{eq:like.c}) with $\gls{T}_c^{(1)}=\gls{Tf} \cup (\gls{y}_i)^{(1)}_{i \in \gls{NF}}$ is maximized and yields parameter estimate $\hat{\gls{bth}}^{(1)}$.
+This strategy can be found in~\cite{economix} and is developed in depth in Appendix~\ref{fuzzy}. It corresponds to an algorithm which is starting with $\hat{\gls{bth}}^{(0)} = \hat{\gls{bth}}_\text{f}$ (see previous section). Then, all $(\gls{y}_i)^{(1)}_{i \in \gls{NF}}$ are imputed by their expected value given by: $\hat{\gls{y}}^{(1)}_i = p_{\hat{\gls{bth}}^{(0)}}(1 | \gls{bx}_i)$ (notice that these imputed values are not in $\{0,1\}$ but in $]0,1[$). The completed log-likelihood $\ell_c(\gls{bth};\gls{T}_c^{(1)})$ given in~(\ref{eq:like.c}) with $\gls{T}_c^{(1)}=\gls{Tf} \cup (\gls{y}_i)^{(1)}_{i \in \gls{NF}}$ is maximized and yields parameter estimate $\hat{\gls{bth}}^{(1)}$.
 
 \subsubsection{Interpretation}
 %There are two possible interpretations of this method's optimized criterion, as found in~\cite{economix} and developed in depth in Appendix~\ref{fuzzy}: first as a completed log-likelihood as underlined in the previous paragraph; second as a generative log-likelihood $\mathbb{E}_{\gls{bby}_{\text{nf}}}\left[\ell(\gls{bth};\gls{bbx},\gls{bby}_{\text{f}},{\gls{bby}}_{\text{nf}}) \middle| \hat{\gls{bth}}_{\text{f}}\right] = \ell(\gls{bth};\gls{bbx}_{\text{f}},\gls{bby}_{\text{f}}) + \sum_{i=n+1}^{n+m} \sum_{\gls{y}_i=0}^{1} \mathbb{E}\left[\gls{y}_i \middle| \gls{bx}_i,\hat{\gls{bth}}_{\text{f}}\right] p_{\gls{bth}}(\gls{y}_i|\gls{bx}_i)$. In a way, it is a one-step \gls{em}-algorithm, as presented in Section~\ref{sec:EM}, without taking into account the financing mechanism $p(\gls{z} | \gls{bx},\gls{y})$.
@@ -264,8 +264,7 @@ Following the notations introduced in Section~\ref{sec:EM}, and recalling that t
 \tikzmarkin[hor=style green]{el111} \gls{bbz}_{\text{f}} \tikzmarkend{el111}\\
 \\
 \\
-\\
-\tikzmarkin[hor=style orange]{el121} \gls{bbz}_{\text{nf}} \tikzmarkend{el121}\end{array}
+\tikzmarkin[hor=style green]{el121} \gls{bbz}_{\text{nf}} \tikzmarkend{el121}\end{array}
 \left( \begin{array}{c}
 \tikzmarkin[hor=style green]{e41} \text{f} \\
 \vdots \\
@@ -281,7 +280,7 @@ It can be easily shown (Appendix~\ref{fuzzy}) that $\argmax_{\gls{bth}} \ell_c(\
 \subsection{Strategy 3: reclassification}
 
 \subsubsection{Definition}
-This strategy corresponds to an algorithm which is starting with $\hat{\gls{bth}}^{(0)} = \hat{\gls{bth}}_\text{f}$ (see Section~\ref{subsec:strat1}). Then, all $(\gls{y}_i)^{(1)}_{i \in \text{NF}}$ are imputed by the {\it maximum a posteriori} (MAP) principle given by: $\hat{\gls{y}}^{(1)}_i = \argmax_{\gls{y} \in \{0,1\}} p_{\hat{\gls{bth}}^{(0)}}(\gls{y} | \gls{bx}_i)$. The completed log-likelihood $\ell_c(\gls{bth};\gls{T}_c^{(1)})$ given in~(\ref{eq:like.c}) with $\gls{T}_c^{(1)}=\gls{T} \cup (\gls{y}_i)^{(1)}_{i \in \gls{NF}}$ is maximized and yields parameter estimate $\hat{\gls{bth}}^{(1)}$.
+This strategy corresponds to an algorithm which is starting with $\hat{\gls{bth}}^{(0)} = \hat{\gls{bth}}_\text{f}$ (see Section~\ref{subsec:strat1}). Then, all $(\gls{y}_i)^{(1)}_{i \in \gls{NF}}$ are imputed by the {\it maximum a posteriori} (MAP) principle given by: $\hat{\gls{y}}^{(1)}_i = \argmax_{\gls{y} \in \{0,1\}} p_{\hat{\gls{bth}}^{(0)}}(\gls{y} | \gls{bx}_i)$. The completed log-likelihood $\ell_c(\gls{bth};\gls{T}_c^{(1)})$ given in~(\ref{eq:like.c}) with $\gls{T}_c^{(1)}=\gls{T} \cup (\gls{y}_i)^{(1)}_{i \in \gls{NF}}$ is maximized and yields parameter estimate $\hat{\gls{bth}}^{(1)}$.
 
 Its first variant stops at this value $\hat{\gls{bth}}^{(1)}$. Its second variant iterates until potential convergence of $(\hat{\gls{bth}}^{(s)})$, $s$ designing the iteration number. In practice, this method can be found in~\cite{saporta} under the name ``iterative reclassification'', in~\cite{RI6} under the name ``reclassification'' or under the name ``extrapolation'' in~\cite{banasik}. It is developed in depth in Appendix~\ref{reclassification}.
 
@@ -333,13 +332,17 @@ this method is similar to the scorecard learnt on the financed clients.
 \subsection{Strategy 6: parcelling} \label{subsec:parcel}
 
 \subsubsection{Definition}
-The Parcelling method can be found in~\cite{saporta,banasik,RI6}. It is also described in Appendix~\ref{Parceling}. This method aims to correct the log-likelihood estimation in the \gls{mnar} case by making further assumptions on $p(\gls{y} | \gls{bx}, \gls{z})$. It is a little deviation from the fuzzy augmentation method in a \gls{mnar} setting: we start with $\hat{\gls{bth}}^{(0)} = \hat{\gls{bth}}_\f$ and then impute $(\gls{y}_i)_{i \in \text{NF}}^{(1)}$ by a user-defined prudence factor over their expected value (see next paragraphs).
+The Parcelling method can be found in~\cite{saporta,banasik,RI6}. It is also described in Appendix~\ref{Parceling}. This method aims to correct the log-likelihood estimation in the \gls{mnar} case by making further assumptions on $p(\gls{y} | \gls{bx}, \gls{z})$. It is a little deviation from the fuzzy augmentation method in a \gls{mnar} setting: we start with $\hat{\gls{bth}}^{(0)} = \hat{\gls{bth}}_\f$ and the practitioner arbitrarily decides to discretize the subsequent range of scores $(p_{\hat{\gls{bth}}^{(0)} }(\gls{y}_i | \gls{bx}_i)_1^n$ into, say, $K$ scorebands $B_1, \dots, B_K$ and ``prudence factors'' $1 < \epsilon_1 < \dots < \epsilon_K$. The method is thereafter strictly equivalent to fuzzy reclassification: a new \gls{lr} parameter is deduced from maximizing the expected complete log-likelihood as follows:
+\[ \hat{\gls{bth}}^{(1)} = \argmax_{\gls{bth}} \mathbb{E}_{\gls{bby}_{\text{nf}}} [\ell_c(\gls{bth};\gls{T}_c) | \gls{T},\hat{\gls{bth}}^{(0)}, \bm{\epsilon}] = \ell(\gls{bth};\gls{T}_{\f}) + \sum_{i' = n + 1}^{n+m} \epsilon_i p_{\hat{\gls{bth}}^{(0)}}(\gls{y}_i | \gls{bx}_i) \ln p_{\gls{bth}}(\gls{y}_i | \gls{bx}_i), \]
+where $\epsilon_i = \sum_{k=1}^K \mathds{1}(p_{\hat{\gls{bth}}^{(0)}}(\gls{y}_i | \gls{bx}_i) \in B_k) \epsilon_k$ is simply the prudence factor of each individual, depending on their scoreband, decided by the practitioner.
 
 \subsubsection{Interpretation}
 By considering not-financed clients as riskier than financed clients with the same level of \gls{score}, \textit{i.e.}\ $p(\gls{y} | \gls{bx}, \nf) > p(\gls{y} | \gls{bx}, \f)$, it is implicitly assumed that manual operators (see Figure~\ref{fig:figure1}) have access to additional information, say $\tilde{\gls{bx}}$, that influence the outcome $\gls{y}$ even when $\gls{bx}$ is accounted for, such that rejected and accepted clients with the same \gls{score} differ only by $\tilde{\gls{bx}}$, to which we do not have access and is accounted for in a user-defined prudence factor stating that rejected clients would have been riskier than accepted ones.
 
 \subsubsection{Additional remarks}
-A completed dataset $\gls{T}_c$ is derived by making bins of observations in $\gls{T}$ in, say, 10 \textit{equal-length} intervals of the \gls{score} given by $p_{\hat{\gls{bth}}_\text{f}}(1 | \gls{bx})$ and estimating $p(\gls{y} | \gls{bx}, \nf)$ as the mean of $\gls{Y} | \gls{bx}, \f$ in each bin multiplied by a prudence factor encompassing the practitioner's \textit{belief} about the effectiveness of the operators' rejections.
+%A completed dataset $\gls{T}_c$ is derived by making bins of observations in $\gls{T}$ in, say, 10 \textit{equal-length} intervals of the \gls{score} given by $p_{\hat{\gls{bth}}_\text{f}}(1 | \gls{bx})$ and estimating $p(\gls{y} | \gls{bx}, \nf)$ as the mean of $\gls{Y} | \gls{bx}, \f$ in each bin multiplied by a prudence factor encompassing the practitioner's \textit{belief} about the effectiveness of the operators' rejections.
+
+The prudence factor encompasses the practitioner's \textit{belief} about the effectiveness of the operators' rejections. It cannot be estimated from the data nor tested and is consequently more a matter of religion than science.
 
 %\bigskip
 %
@@ -395,6 +398,6 @@ For years, the necessity of {reject inference} at \gls{cacf} and other instituti
 
 By formalizing the {reject inference} problem in section~\ref{sec:criteres}, we were able to pinpoint in which cases the current scorecard construction methodology, using only financed clients' data, could be unsatisfactory: under a \gls{mnar} missingness mechanism and / or a misspecified model. We also defined criteria to reinterpret existing {reject inference} methods and assess their performance in Section~\ref{subsec:model_selection}. We concluded that no current {reject inference} method could enhance the current scorecard construction methodology: only the augmentation method (strategy 4) and the parcelling method (strategy 6) had theoretical justifications but introduce other estimation procedures. Additionally, they cannot be compared through classical model selection tools (Section~\ref{subsec:model_selection}).
 
-We confirmed numerically these findings in the Appendices: given a true model and the \gls{mar} assumption, no \gls{lr}-based {reject inference} method performed best than the current method. In the misspecified model case, the Augmentation method seemed promising but it introduces a model that also comes with its bias and variance resulting in very close performances compared with the current method. With real data provided by \gls{cacf}, we showed that all methods gave very similar results: the ``best'' method (by the Gini index) was highly dependent on the data and/or the proportion of unlabelled observations. Last but not least, in practice such a benchmark would not be tractable as $\gls{bby}_{\text{nf}}$ is missing. In light of those limitations, adding to the fact that implementing those methods is a non-negligible time-consuming task, we recommend credit modellers to work only with financed loans' data unless there is significant information available on either rejected applicants ($\gls{bby}_{\text{nf}}$ - credit bureau information for example, which does not apply to France) or on the acceptance mechanism $\gls{phi}$ in the \gls{mnar} setting. On a side note, it must be emphasized that this work only applies to \gls{lr} and can be extended to all ``local'' models per the terminology introduced in~\cite{zadrozny2004learning}. For ``global'' models, \textit{e.g.} decision trees, it can be shown that they are biased even in the \gls{mar} and well-specified settings, thus requiring \textit{ad hoc} reject inference techniques such as an adaptation of the augmentation method (strategy 4 - see~\cite{zadrozny2004learning}).
+We confirmed numerically these findings in the Appendices: given a true model and the \gls{mar} assumption, no \gls{lr}-based {reject inference} method performed best than the current method. In the misspecified model case, the Augmentation method seemed promising but it introduces a model that also comes with its bias and variance resulting in very close performances compared with the current method. With real data provided by \gls{cacf}, we showed that all methods gave very similar results: the ``best'' method (by the Gini index) was highly dependent on the data and/or the proportion of unlabelled observations. Last but not least, in practice such a benchmark would not be tractable as $\gls{bby}_{\nf}$ is missing. In light of those limitations, adding to the fact that implementing those methods is a non-negligible time-consuming task, we recommend credit modellers to work only with financed loans' data unless there is significant information available on either rejected applicants ($\gls{bby}_{\nf}$ - credit bureau information for example, which does not apply to France) or on the acceptance mechanism $\gls{phi}$ in the \gls{mnar} setting. On a side note, it must be emphasized that this work only applies to \gls{lr} and can be extended to all ``local'' models per the terminology introduced in~\cite{zadrozny2004learning}. For ``global'' models, \textit{e.g.} decision trees, it can be shown that they are biased even in the \gls{mar} and well-specified settings, thus requiring \textit{ad hoc} reject inference techniques such as an adaptation of the augmentation method (strategy 4 - see~\cite{zadrozny2004learning}).
 
 \printbibliography[heading=subbibliography, title=References of Chapter 2]

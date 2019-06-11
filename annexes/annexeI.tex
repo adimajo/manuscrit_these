@@ -998,9 +998,8 @@ The \gls{mob} algorithm given in~\eqref{alg:mob} has been proposed in~\cite{zeil
  \KwData{$\gls{bbx}, \gls{bby}$}
  \KwResult{The logistic regression tree}
  Fit a \gls{lr} to all observations in current node\;
- Test for parameters instability by calculating \textit{e.g.}\ $ $ for all features $x_j \in \gls{bx}$\;
- If $\min_{} \leq  $, the process is recursively repeated on the children nodes\;
- The splitting criterion is given by \;
+ Test for ``parameters instability'' for all features $x_j \in \gls{bx}$\;
+ If the minimum p-value of these tests is lower than a user-defined threshold, the process is recursively repeated on the children nodes defined by this feature\;
  \caption{\label{alg:mob} \gls{mob} algorithm (adapted from~\cite{zeileis2008model}).}
 \end{algorithm}
 
