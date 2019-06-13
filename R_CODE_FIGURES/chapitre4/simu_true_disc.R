@@ -23,6 +23,8 @@ generate_data <- function(k,n) {
   return(list(x=x,y=y,log_odd=log_odd))
 }
 
+redtrans <- rgb(255, 0, 0, 127, maxColorValue=255) 
+
 # Figure vraie distribution
 
 list2env(generate_data(1,5000),env=environment())
@@ -34,11 +36,15 @@ dev.off()
 
 # Figure régression logistique linéaire
 
-coeff_x_1 = glm(y~V1, data=data.frame(cbind(x,y)),family=binomial(link="logit"))$coefficients[c("(Intercept)","V1")]
+coeff_x_1 = glm(y~V1, data=data.frame(cbind(x,y)),family=binomial(link="logit"))
+intervals = confint(coeff_x_1)
+
+coeff_x_1 = coeff_x_1$coefficients[c("(Intercept)","V1")]
 
 tikz(file = 'linear_plot.tex', width = 8, height = 3.2, engine="pdftex")
 plot(sort(x[,1]),sin((sort(x[,1])-0.7)*7), type="l", xlab = "x", ylab = "logit(p(1|x))", col = "green", lwd=2)
 lines(sort(x[,1]),(coeff_x_1["(Intercept)"]+coeff_x_1["V1"]*x[,1])[order(x[,1])], type="l", col = "red", lwd=2)
+polygon(c(0,1,1,0), c(min(intervals[1,1]+intervals[2,1]*x[,1]), max(intervals[1,1]+intervals[2,1]*x[,1]), max(intervals[1,2]+intervals[2,2]*x[,1]), min(intervals[1,2]+intervals[2,2]*x[,1])), col=redtrans, border = NA)
 legend(0.3,1,c("True distribution","Linear logistic regression"), lty=1,col = c("green","red"), lwd=2)
 dev.off()
 
@@ -65,8 +71,6 @@ for (k in 2:100) {
   coeff_x_disc_low = t(intervals[,1])
   gini_list = c(gini_list,normalizedGini(y_test,predict(coeff_x_disc,data.frame(x=factor(x_disc_test),y_test))))
   coeff_x_disc_co = coeff_x_disc$coefficients
-  
-  redtrans <- rgb(255, 0, 0, 127, maxColorValue=255) 
   
   tikz(file = paste0('disc_plot',k,'.tex'), width = 8, height = 3.2, engine="pdftex")
   plot(sort(x[,1]),sin((sort(x[,1])-0.7)*7), type="l", xlab = "x", ylab = "logit(p(1|x))", col = "green", lwd=2)
