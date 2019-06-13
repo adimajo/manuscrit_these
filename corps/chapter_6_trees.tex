@@ -403,17 +403,17 @@ In the next section, we formalize the problem as a model selection problem, simi
 
 \section{Logistic regression trees as a combinatorial model selection problem} \label{sec:model_selec_tree}
 
-We assume there are $\gls{K}^\star$ ``clusters'' which form the leaves of a tree similar to Figure~\ref{fig:arbre} and which assigning latent random feature is denoted by $\gls{C}^\star$ (lower-case for observations). The other notations employed inspire from the preceding chapters: the superscript notation is used to insist on the fact that available features $\gls{bx}^{c^\star}$ differ potentially in each of the scorecards. For $c^\star \in \gls{N}_{\gls{K}^\star}$, $(\gls{bbx}^{c^\star}, \gls{bby}^{c^\star})$ denotes the subset of observations of $(\gls{bbx}, \gls{bby})$ for which $\gls{C}^\star = c^\star$, such that $ \bigsqcup_{c^\star=1}^{\gls{K}^\star} (\gls{bbx}^{c^\star}, \gls{bby}^{c^\star}) = (\gls{bbx}, \gls{bby})$. It follows that quantizations $\q^{c^\star}$ and interactions $\bdelta^{c^\star}$, discussed in Chapters~\ref{chap4} and~\ref{chap5} respectively are also different. Consequently, the \gls{lr} coefficients $\gls{bth}^{\star,c^\star}$ are also obviously different. In this section, we drop the quantization and interactions requirement, such that:
+We assume there are $\gls{K}^\star$ ``clusters'' which form the leaves of a tree similar to Figure~\ref{fig:arbre} and which assigning latent random feature is denoted by $\gls{C}^\star$ (lower-case for observations). The other notations employed inspire from the preceding chapters: the superscript notation is used to insist on the fact that available features $\gls{bx}^{c^\star}$ differ potentially in each of the scorecards. For $c^\star \in \gls{N}_{\gls{K}^\star}$, $(\gls{bbx}^{c^\star}, \gls{bby}^{c^\star})$ denotes the subset of observations of $(\gls{bbx}, \gls{bby})$ for which $\gls{C}^\star = c^\star$, such that $\cup_{c^\star=1}^{\gls{K}^\star} (\gls{bbx}^{c^\star}, \gls{bby}^{c^\star}) = (\gls{bbx}, \gls{bby})$ and for $c^\star, c^{'\star}$, $(\gls{bbx}^{c^\star}, \gls{bby}^{c^\star}) \cap (\gls{bbx}^{c^{'\star}}, \gls{bby}^{c^{'\star}}) = \varnothing$. It follows that quantizations $\q^{c^\star}$ and interactions $\bdelta^{c^\star}$, discussed in Chapters~\ref{chap4} and~\ref{chap5} respectively are also different. Consequently, the \gls{lr} coefficients $\gls{bth}^{\star,c^\star}$ are also obviously different. In this section, we drop the quantization and interactions requirement, such that:
 \begin{equation} \label{eq:lr_tree}
-\forall \gls{bx}, y, \exists c^\star \in \gls{N}_{\gls{K}^\star}, \gls{bth}^{\star,c^\star}, p(y | \gls{bx}) = p_{\gls{bth}^{\star,c^\star}}(y | \gls{bx})
+\forall \gls{bx}, y, \exists c^\star \in \gls{N}_{\gls{K}^\star}, \gls{bth}^{\star,c^\star}, p(y | \gls{bx}) = p_{\gls{bth}^{\star,c^\star}}(y | \gls{bx}).
 \end{equation}
 %In this Section, it is supposed the well-specified model is indeed a \gls{lr} tree, which amounts to assuming there $K^\star$ segments. 
-The membership of an observation $\gls{bx}$ to a segment $\gls{c}$ is given by a tree. We restrict to binary trees for simplicity, such that a segment $\gls{c}$ with depth $\mathcal{D}(c)$ has $r = 1, \dots, \mathcal{D}(c)$ parents successively denoted by $\mathcal{P}a^r(c)$. At these parent nodes, a binary rule is taken. This rule is univariate: it depends on only one feature $\gls{x}_{\sigma(r,c)}$ where $\sigma(r,c)$ denotes the anti-rank of the feature used in rule $r$ for segment $\gls{c}$. Being a binary rule, the membership of $\gls{x}_{\sigma(r,c)}$ is tested between $C_{\mathcal{P}a^r(c),1}$ and $C_{\mathcal{P}a^r(c),2}$ such that $C_{\mathcal{P}a^r(c),1} \bigsqcup C_{\mathcal{P}a^r(c),2} =\gls{R}$ for continuous features (half-spaces), or $\gls{N}_{l_{\sigma(r,c)}}$ for categorical features respectively. 
+The membership of an observation $\gls{bx}$ to a segment $\gls{c}$ is given by a tree. We restrict to binary trees for simplicity, such that a segment $\gls{c}$ with depth $\mathcal{D}(c)$ has $r = 1, \dots, \mathcal{D}(c)$ parents successively denoted by $\mathcal{P}a^r(c)$. At these parent nodes, a binary rule is taken. This rule is univariate: it depends on only one feature $\gls{x}_{\sigma(r,c)}$ where $\sigma(r,c)$ denotes the anti-rank of the feature used in rule $r$ for segment $\gls{c}$. Being a binary rule, the membership of $\gls{x}_{\sigma(r,c)}$ is tested between $C_{\mathcal{P}a^r(c),1}$ and $C_{\mathcal{P}a^r(c),2}$ such that $C_{\mathcal{P}a^r(c),1} \cup C_{\mathcal{P}a^r(c),2} =\gls{R}$ for continuous features (half-spaces), or $\gls{N}_{l_{\sigma(r,c)}}$ for categorical features respectively. 
 %The `unique `side'' $1$ or $2$ of rule $r$ that yields eventually to $\gls{c}$ is denoted by $\lambda(r,c)$. 
 This membership is denoted by $\lambda(r,c)$ such that $\gls{x}_{\sigma(r,c)} \in C_{\mathcal{P}a^r(c),\lambda(r,c)}$.
 With all these newly introduced notations, the probability of a segment $\gls{c}$ given covariates $\gls{bx}$ can be expressed as:
 \begin{equation} \label{eq:tree}
-p( c | \gls{bx}) = \prod_{r = 1}^{\mathcal{D}(c)} \mathds{1}_{C_{\mathcal{P}a^r(c),\lambda(r,c)}} (\gls{x}_{\sigma(r,c)})
+p( c | \gls{bx}) = \prod_{r = 1}^{\mathcal{D}(c)} \mathds{1}_{C_{\mathcal{P}a^r(c),\lambda(r,c)}} (\gls{x}_{\sigma(r,c)}).
 \end{equation}
 %where $r$ denotes the inverse depth of each rule relative to $\gls{c}$ ($r=\ln_2 K$ gives the root rule, and so on) and $\sigma(r,c)$ gives the anti-rank of the feature used in rule $r$, at node $\mathcal{P}a^r(c)$, $C_{\mathcal{P}a^r(c),\lambda(r,c)} = \begin{cases} ]-\infty ; \lambda_r] \\ \text{or} \\ ] \lambda_r ; +\infty[ \end{cases}$ for a continuous feature and $C_{r,c} = \begin{cases} \lambda_{r,1} \\ \text{or} \\ \lambda_{r,2} \end{cases}$ such that $ \lambda_{r,1} \bigsqcup \lambda_{r,2} = \gls{N}_{l_{\sigma(r)}}$ for a categorical feature depending on the ``side'' of the segment $\gls{c}$ w.r.t.\ the rule $r$.
 An example is given on Figure~\ref{fig_arbre_ex_notations}.
@@ -464,11 +464,11 @@ Another approach can be taken by considering the segment $\gls{c}$ as a latent r
 p(\gls{bbx},\gls{bby}) & =  \sum_{c=1}^{\gls{K}^\star} p(\gls{bby} | \gls{bbx}, c) p(c | \gls{bbx}) p(\gls{bbx}) & \text{($p(c | \gls{bx})$ is non-zero only for $c = c^\star$)} \nonumber \\
  & = \prod_{c^\star=1}^{\gls{K}^\star} p(\gls{bby}^{c^\star} | \gls{bbx}^{c^\star}, c^\star) p(\gls{bbx}) \nonumber \\
  & = \prod_{c^\star=1}^{\gls{K}^\star} \int_{\Theta_{c^\star}} p_{\gls{bth}^{c^\star}}(\gls{bby}^{c^\star} | \gls{bbx}^{c^\star}) p(\gls{bth}^{c^\star} | c^\star) d\gls{bth}^{c^\star} p(\gls{bbx}) \label{eq:likelihood_segment}
-%\ln p(\gls{bby}, \gls{bbx}) & = \sum_{c=1}^{\gls{K}^\star} \exp \left( \frac{-\text{BIC}(\hat{\gls{bth}^c}) + O(1)}{2} \right) + \ln p(\gls{bbx}) 
+%\ln p(\gls{bby}, \gls{bbx}) & = \sum_{c=1}^{\gls{K}^\star} \exp \left( \frac{-\text{BIC}(\hat{\gls{bth}^c}) + O(1)}{2} \right) + \ln p(\gls{bbx}).
 \end{align}
 Consequently, the following criterion can be used to select a segmentation:
 \begin{equation} \label{eq:BICc}
-(\gls{K}^\star, c^\star) = \argmin_{\gls{K},c} \sum_{c=1}^{\gls{K}} \text{BIC}(\hat{\gls{bth}}^c)
+(\gls{K}^\star, c^\star) = \argmin_{\gls{K},c} \sum_{c=1}^{\gls{K}} \text{BIC}(\hat{\gls{bth}}^c).
 \end{equation}
 As was thoroughly explained for quantizations and interactions in Sections~\ref{par:consistency} and~\ref{sec:pairwise} respectively, it is unclear how many parameters should be accounted for in this BIC criterion since the tree of Equation~\eqref{eq:tree} has ``parameters'', in the sense that it selects a splitting feature and a splitting criterion, 
 %$C_{\cdot,\cdot}$
@@ -540,7 +540,7 @@ Similarly to the quantization and the interaction screening problems, doing so f
 \paragraph{M1-step} Thanks to the previous step, the segments are now ``hardly'' assigned such that the \gls{lr} are estimated using only observations affected to their segment:
 \[ \gls{bth}^{c(s+1)} = \argmax_{\gls{bth}} \ell(\gls{bth};\gls{bbx}^{c(s+1)},\gls{bby}^{c(s+1)}). \]
 \paragraph{M2-step} Similarly, a new tree structure is given by:
-\[ \betag^{(s)} = \argmax_{\betag} \ell(\betag, \gls{bbx}, \mathbf{\bm{c}}). \]
+\[ \betag^{(s)} = \argmax_{\betag} \ell(\betag; \gls{bbx}, \mathbf{\bm{c}}). \]
 This last expression is again approximated by C4.5's impurity measure: the entropy. Without more theoretical and empirical work, it is unclear which of the \gls{em} and \gls{sem} approaches will perform best. However, as mentioned earlier, this \gls{sem} algorithm calls for an easy integration with the quantization and interaction screening methods proposed in the previous chapter.
 
 \subsection{Choosing an appropriate number of ``hard'' segments} \label{subsec:hard_seg}
@@ -728,8 +728,7 @@ Current performance \textit{via} Platt scaling & ALLR & ALLR \\
 \end{tabular}
 \end{table}
 
-
-\bigskip
+\section{Conclusion}
 
 This chapter aimed at formalizing an old problem in \textit{Credit Scoring}, providing a literature review as well as a research idea for future work. As is often the case, practitioners have had good intuitions to deal with practical and theoretical requirements, such as performing clustering techniques, choosing segments empirically from the resulting visualization and fitting \gls{lr} on these.
 
