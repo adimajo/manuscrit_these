@@ -83,12 +83,12 @@ To perform estimation, a specific $n + m$-sample $\gls{T}$ is available, decompo
 \gls{Tnf} = \bigg( \; \tikzmarkin[hor=style orange]{el-12} \gls{bbx}_{\text{nf}} \tikzmarkend{el-12} \end{array}
 \left( \begin{array}{ccc}
 %\rowcolor{red!20}
-\tikzmarkin[hor=style green]{e1} \; \; x_1^1 & \cdots & x_1^d  \\
+\tikzmarkin[hor=style green]{e1} \; \; x_{1,1} & \cdots & x_{1,d}  \\
  \vdots & \vdots & \vdots  \\
- x_n^1 & \cdots & x_n^d \tikzmarkend{e1} \\
-\tikzmarkin[hor=style orange]{e2} \; \; x_{n+1}^1 & \cdots & x_{n+1}^d  \\
+ x_{n,1} & \cdots & x_{n,d} \tikzmarkend{e1} \\
+\tikzmarkin[hor=style orange]{e2} \; \; x_{n+1,1} & \cdots & x_{n+1,d}  \\
  \vdots & \vdots & \vdots \\
- x_{n+n'}^1 & \cdots & x_{n+n'}^d \tikzmarkend{e2} \end{array} \right),
+ x_{n+n',1} & \cdots & x_{n+n',d} \tikzmarkend{e2} \end{array} \right),
  \hspace{1.5cm}
  \begin{array}{c}
 \tikzmarkin[hor=style green]{el11} \gls{bby}_{\text{f}} \tikzmarkend{el11} \\
@@ -240,12 +240,12 @@ Following the notations introduced in Section~\ref{sec:EM}, and recalling that t
 \tikzmarkin[hor=style green]{el-1} \gls{bbx}_{\nf} \tikzmarkend{el-1} \end{array}
 \left( \begin{array}{ccc}
 %\rowcolor{red!20}
-\tikzmarkin[hor=style green]{el1} \; \; x_1^1 & \cdots & x_1^d  \\
+\tikzmarkin[hor=style green]{el1} \; \; x_{1,1} & \cdots & x_{1,d}  \\
  \vdots & \vdots & \vdots \\
- x_n^1 & \cdots & x_n^d \\
- x_{n+1}^1 & \cdots & x_{n+1}^d  \\
+ x_{n,1} & \cdots & x_{n,d} \\
+ x_{n+1,1} & \cdots & x_{n+1,d}  \\
  \vdots & \vdots & \vdots \\
- x_{n+n'}^1 & \cdots & x_{n+n'}^d \tikzmarkend{el1} \end{array} \right),
+ x_{n+n',1} & \cdots & x_{n+n',d} \tikzmarkend{el1} \end{array} \right),
  \hspace{1.5cm}
  \begin{array}{c}
 \tikzmarkin[hor=style green]{l1} \gls{bby}_{\f} \tikzmarkend{l1}\\
@@ -352,7 +352,7 @@ The prudence factor encompasses the practitioner's \textit{belief} about the eff
 
 Appendix~\ref{subsec:app_reject_sim} shows all reject inference methods developed here applied to simulated data from a multivariate Gaussian distribution for each class. A \gls{lr} is learnt on all drawn observations, yielding $\hat{\gls{bth}} = \argmax_{\gls{bth}} \ell(\gls{bth}; \mathcal{T}_{\text{c}})$ where $\gls{bby}_{\nf}$ is known. We simulate not-financed clients by progressively ``rejecting'' observations such that $p_{\hat{\gls{bth}}}(1 | \gls{bx}_i) < \epsilon$ with a varying threshold $\epsilon$. This corresponds to a well-specified \gls{lr} and a MAR missingness mechanism. It comes as no surprise that no reject inference method performs better than standard \gls{lr} on financed clients (strategy 1). Since the data generating mechanism is Gaussian homoscedastic, we also resorted to semi-supervised linear discriminant analysis (LDA). This is straightforward with the Rmixmod \textsf{R} package~\cite{lebret2014rmixmod}: the membership of unlabeled observations is assessed by the \gls{em} algorithm. Although the decision boundaries of these two models is asymptotically equivalent, by making further assumptions, LDA suffers from less variance even asymptotically~\cite{efron1975efficiency}. With less financed clients, its advantage becomes clearer since it benefits from information on non-financed clients to evaluate $p(\gls{bx})$. This model was tested on real data but since the normality assumption does not hold, it shows poor results.
 
-Here we focus on reject inference methods based on \gls{lr} applied to various \gls{cacf} datasets: Electronics loans, Sports goods and Standard loans. They contain $n=180{,}000$, $n=35{,}000$ and $n=28{,}000$ respectively and $d=5$, $d=8$ and $d=6$ categorical features with $3$ to $10$ levels per feature. The Electronics dataset consists in one year of financed clients through a partner of \gls{cacf} that mainly sells electronics goods. The Sports dataset consists in one year of financed clients through a partner of \gls{cacf} that sells all kinds of sports goods. The Standard consists in one year of financed clients stemming directly from sofinco.fr. The acceptance / rejection mechanism $p_{\gls{phi}}(\gls{z} | \gls{bx})$ is the existing scorecard and we simulate rejected applicants by progressively increasing the \textit{cutoff} (the preceding threshold $\epsilon$) of the existing scorecard.
+Here we focus on reject inference methods based on \gls{lr} applied to various \gls{cacf} datasets: Electronics loans, Sports goods and Standard loans. They contain $n=180{,}000$, $n=35{,}000$ and $n=28{,}000$ respectively and $d=5$, $d=8$ and $d=6$ categorical features with $3$ to $10$ levels per feature. The Electronics dataset consists in one year of financed clients through a partner of \gls{cacf} that mainly sells electronics goods. The Sports dataset consists in one year of financed clients through a partner of \gls{cacf} that sells all kinds of sports goods. The Standard consists in one year of financed clients stemming directly from sofinco.fr. The acceptance / rejection mechanism $p_{\gls{phi}}(\gls{z} | \gls{bx})$ is the existing scorecard and we simulate rejected applicants by progressively increasing the \gls{cut} (the preceding threshold $\epsilon$) of the existing scorecard.
 
 The results in terms of Gini index are reported in Figure~\ref{fig:darty_reject},~\ref{fig:decathlon_reject} and~\ref{fig:M3_reject} respectively. All methods perform relatively similarly and suffer a big performance drop once the acceptance rate is below 50 \% (at which point there are very few ``bad borrower'' events - $y = 0$). If we were to report 95 \% confidence intervals around the Gini indices, we would get insignificant predictive performances, which confirms our theoretical findings.
 

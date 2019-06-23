@@ -11,9 +11,9 @@
 Fuzzy Augmentation can be found in \cite{economix}; it is the following procedure:
 \begin{enumerate}
 \item Construct Scorecard "Known Good Bad" (KGB) $\hat{\gls{bth}}_\f$ with financed clients' data (Figure \ref{fuzzy:sfig1})
-\item Calculate $p(1|x,\hat{\theta}_{\text{f}})$ for rejects (Figure \ref{fuzzy:sfig2})
-\item Infer rejected client $i$ as good with weight $p(1|x,\hat{\theta}_{\text{f}})$ and as bad with weight {\begin{sloppypar} $1-p(1|x,\hat{\theta}_{\text{f}})$ (Figures \ref{fuzzy:sfig2} and \ref{fuzzy:sfig3}) \end{sloppypar} }
-\item Calibrate a new scorecard with the ‘‘augmented'' dataset (Figure \ref{fuzzy:sfig4})
+\item Calculate $p_{\hat{\gls{bth}}_{\f}}(1|\gls{bbx}_{\nf})$ for rejects (Figure \ref{fuzzy:sfig2})
+\item Infer rejected client $i$ as good with weight $p_{\hat{\gls{bth}}_{\text{f}}}(1|\gls{bbx}_{\nf})$ and as bad with weight {\begin{sloppypar} $1-p_{\hat{\gls{bth}}_{\text{f}}}(1|\gls{bbx}_{\nf})$ (Figures \ref{fuzzy:sfig2} and \ref{fuzzy:sfig3}) \end{sloppypar} }
+\item Calibrate a new scorecard with the ``augmented'' dataset (Figure \ref{fuzzy:sfig4})
 \end{enumerate}
 
 \begin{table}
@@ -27,7 +27,7 @@ Fuzzy Augmentation can be found in \cite{economix}; it is the following procedur
 \begin{adjustbox}{max width=0.95\textwidth}
 \begin{tabular}{l l}
 \toprule
-\textbf{${\bm{y}}_{\text{f}}$} & \textbf{${\bm{x}}_{\text{f}}$}\\
+\textbf{${\gls{bby}}_{\f}$} & \textbf{${\gls{bbx}}_{\f}$}\\
 \midrule
 1 & 0.562 \\
 1 & 0.910 \\
@@ -48,7 +48,7 @@ Fuzzy Augmentation can be found in \cite{economix}; it is the following procedur
 \begin{adjustbox}{max width=0.95\textwidth}
 \begin{tabular}{l l l}
 \toprule
-\textbf{Weight} & \textbf{$\hat{\bm{y}}_{\text{nf}}$} & \textbf{${\bm{x}}_{\text{nf}}$}\\
+\textbf{Weight} & \textbf{$\hat{\gls{bby}}_{\nf}$} & \textbf{${\gls{bbx}}_{\nf}$}\\
 \midrule
 0.68 & 1 & 0.347 \\
 0.10 & 1 & 0.140 \\
@@ -69,7 +69,7 @@ Fuzzy Augmentation can be found in \cite{economix}; it is the following procedur
 \begin{adjustbox}{max width=0.95\textwidth}
 \begin{tabular}{l l l}
 \toprule
-\textbf{Weight} & \textbf{$\hat{\bm{y}}_{\text{nf}}$} & \textbf{${\bm{x}}_{\text{nf}}$}\\
+\textbf{Weight} & \textbf{$\hat{\gls{bby}}_{\nf}$} & \textbf{${\gls{bbx}}_{\nf}$}\\
 \midrule
 0.32 & 0 & 0.347 \\
 0.90 & 0 & 0.140 \\
@@ -90,7 +90,7 @@ Fuzzy Augmentation can be found in \cite{economix}; it is the following procedur
 \begin{adjustbox}{max width=0.95\textwidth}
 \begin{tabular}{l l l}
 \toprule
-\textbf{Weight} & \textbf{${\bm{y}}$} & \textbf{${\bm{x}}$}\\
+\textbf{Weight} & \textbf{${\gls{bby}}$} & \textbf{${\gls{bbx}}$}\\
 \midrule
 1 & 0 & 0.562 \\
 1 & 1 & 0.910 \\
@@ -115,13 +115,13 @@ Fuzzy Augmentation can be found in \cite{economix}; it is the following procedur
 
  Clearly:
 
- \[ \forall j = 1, \ldots, d, \: \frac{\partial \sum_{i=n+1}^{m+n} \sum_{y_i = 0}^{1} p_{\hat{\gls{bth}}_\f}(\gls{y}_i| \gls{bx}_i)\ln (p_{\gls{bth}}(\gls{y}_i| \gls{bx}_i))}{\partial \theta_j} = 0 \Leftrightarrow \theta = \hat{\theta}_{\text{f}} \]
+ \[ \forall j = 1, \ldots, d, \: \frac{\partial \sum_{i=n+1}^{m+n} \sum_{y_i = 0}^{1} p_{\hat{\gls{bth}}_\f}(\gls{y}_i| \gls{bx}_i)\ln (p_{\gls{bth}}(\gls{y}_i| \gls{bx}_i))}{\partial \theta_j} = 0 \Leftrightarrow \theta = \hat{\gls{bth}}_{\f} \]
 
  Such that:
- \[\argmax_{\theta \in \Theta}  \sum_{i=n+1}^{m+n} \sum_{y_i = 0}^{1} p_{\hat{\theta}_{\text{f}}}(y_i| x_i)\ln (p_\theta(y_i| x_i)) = \hat{\theta}_{\text{f}}\]
+ \[\argmax_{\gls{bth} \in \Theta}  \sum_{i=n+1}^{m+n} \sum_{y_i = 0}^{1} p_{\hat{\gls{bth}}_{\f}}(y_i| \gls{bx}_i)\ln (p_{\gls{bth}}(y_i| \gls{bx}_i)) = \hat{\gls{bth}}_{\f}\]
 
  And finally:
- \[\argmax_{\theta \in \Theta} \ell(\theta;{\bm{x}},{\bm{y}}_{\text{f}},{\bm{y}}_{\text{nf}}) = \argmax_{\theta \in \Theta} \ell(\theta;{\bm{x}},{\bm{y}}_{\text{f}}) = \hat{\theta}_{\text{f}}\]
+ \[\argmax_{\gls{bth} \in \Theta} \ell(\gls{bth};\mathcal{T}_{c}) = \argmax_{\gls{bth} \in \Theta} \ell(\gls{bth};\gls{Tf}) = \hat{\gls{bth}}_{\f}. \]
 
  To conclude, this method will not change the estimated parameters of any discriminant model, asymptotically and with a finite set of observations, regardless of any assumption on the missingness mechanism or the true model hypothesis. In other words, Fuzzy Augmentation has no effect on the $\gls{KL}$ divergence, making this method useless because it is no different than the financed clients model.
 
@@ -131,9 +131,9 @@ Fuzzy Augmentation can be found in \cite{economix}; it is the following procedur
 Reclassification can be found in \cite{RI6}, also sometimes referred to as extrapolation as in \cite{banasik}; it is the following procedure:
 \begin{enumerate}
 \item Construct Scorecard "Known Good Bad" (KGB) $\hat{\gls{bth}}_{\text{f}}$ with financed clients' data (Figure~\ref{reclass:sfig1})
-\item Calculate $p_{\hat{\theta}_{\text{f}}}(1|\gls{bx})$ for rejects
-\item Infer default status of rejected client $i$ if $p_{\hat{\theta}_{\text{f}}}(1|\gls{bx}) > \text{threshold}$; typically threshold $=0.5$ (Figure~\ref{reclass:sfig2})
-\item Calibrate a new scorecard with the ‘‘augmented'' dataset (Figure~\ref{reclass:sfig3})
+\item Calculate $p_{\hat{\gls{bth}}_{\f}}(1|\gls{bx})$ for rejects
+\item Infer default status of rejected client $i$ if $p_{\hat{\gls{bth}}_{\f}}(1|\gls{bx}) > \text{threshold}$; typically threshold $=0.5$ (Figure~\ref{reclass:sfig2})
+\item Calibrate a new scorecard with the ``augmented'' dataset (Figure~\ref{reclass:sfig3})
 \end{enumerate}
 
 \begin{table}
@@ -146,7 +146,7 @@ Reclassification can be found in \cite{RI6}, also sometimes referred to as extra
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{l l}
 \toprule
-\textbf{${\bm{y}}^{\text{f}}$} & \textbf{${\bm{x}}^{\text{f}}$}\\
+\textbf{${\gls{bby}}_{\f}$} & \textbf{${\gls{bbx}}_{\f}$}\\
 \midrule
 1 & 0.562 \\
 1 & 0.910 \\
@@ -168,7 +168,7 @@ Reclassification can be found in \cite{RI6}, also sometimes referred to as extra
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{l l l}
 \toprule
-\textbf{$p(1|x,\hat{\theta}^{\text{f}})$} & \textbf{$\hat{\bm{y}}^{\text{nf}}$} & \textbf{${\bm{x}}^{\text{nf}}$}\\
+\textbf{$p_{\hat{\gls{bth}}_{\f}}(1|\gls{bbx})$} & \textbf{$\hat{\gls{bby}}_{\nf}$} & \textbf{${\gls{bbx}}_{\nf}$}\\
 \midrule
 0.68 & 1 & 0.347 \\
 0.10 & 0 & 0.140 \\
@@ -178,7 +178,7 @@ Reclassification can be found in \cite{RI6}, also sometimes referred to as extra
 \end{adjustbox}
 \end{center}
 
-\caption{We force $y^{\text{nf}}=1$ if $\text{logit}(S^{\text{f}}(x)) \geq 0.5$}
+\caption{We force $\gls{bby}_{\nf}=\bm{1}$ if $\text{logit}(S^{\text{f}}(x)) \geq 0.5$}
 \label{reclass:sfig2}
 \end{subfigure}
 
@@ -189,7 +189,7 @@ Reclassification can be found in \cite{RI6}, also sometimes referred to as extra
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{l l}
 \toprule
-\textbf{${\bm{y}}$} & \textbf{${\bm{x}}$}\\
+\textbf{${\gls{bby}}$} & \textbf{${\gls{bbx}}$}\\
 \midrule
 0 & 0.562 \\
 1 & 0.910 \\
@@ -212,12 +212,12 @@ Reclassification can be found in \cite{RI6}, also sometimes referred to as extra
 
 \subsection{Augmentation} \label{augmentation}
 
-Augmentation can be found in \cite{RI6}. It is also documented as a ``Re-Weighting method'' by \cite{saporta,banasik,economix}.
+Augmentation can be found in \cite{RI6}. It is also documented as a ``Re-Weighting method'' in \cite{saporta,banasik,economix}.
 
 \begin{enumerate}
 \item Construct Scorecard "Accept Reject" (ACRJ) $\hat{\gls{phi}}$ with financed clients' data on target variable $Z$ (Figure~\ref{augment:sfig1})
 \item Create $K$ score bands $B_1, \ldots, B_K$ according to $p_{\hat{\gls{phi}}}(\gls{z} | \gls{bx})$
-\item Compute in each score band $\hat{p}(\text{f}|x \in B_k) = \dfrac{|B_k|}{|\gls{F}|}$ (Figure~\ref{augment:sfig2})
+\item Compute in each score band $\hat{p}(\text{f}|p_{\hat{\gls{phi}}}(\gls{z} | \gls{bx}) \in B_k) = \dfrac{|B_k|}{|\gls{F}|}$ (Figure~\ref{augment:sfig2})
 \item Construct a new scorecard on target variable Good/Bad with financed clients' data re-weighted (Figure~\ref{augment:sfig3})
 \end{enumerate}
 
@@ -232,7 +232,7 @@ Augmentation can be found in \cite{RI6}. It is also documented as a ``Re-Weighti
 
 \begin{tabular}{l l l}
 \toprule
-\textbf{${\bm{y}}$} & \textbf{${\bf{z}}$} & \textbf{Score-band}\\
+\textbf{${\gls{bby}}$} & \textbf{${\mathbf{z}}$} & \textbf{Score-band}\\
 \midrule
 1 & \text{f} & 1 \\
 1 & \text{f} & 1 \\
@@ -280,7 +280,7 @@ K & 1.1 \\
 
 \begin{tabular}{l l l l}
 \toprule
-\textbf{Weight} & \textbf{Score-band} & \textbf{${\bm{y}}$} & \textbf{${\bm{x}}$}\\
+\textbf{Weight} & \textbf{Score-band} & \textbf{${\gls{bby}}$} & \textbf{${\gls{bbx}}$}\\
 \midrule
 2 & 1 & 1 & 0.123 \\
 2 & 1 & 0 & 0.432 \\
@@ -306,7 +306,7 @@ The Twins Method is an internal method at \gls{cacf} documented in~\cite{groupe}
 \begin{enumerate}
 \item Develop KGB (Known Good/Bad) scorecard $\hat{\gls{bth}}_\f$ on financed clients' data predicting $\gls{bby}_\f$ given $\gls{bbx}_\f$ (Figure~\ref{twins:sfig1})
 \item Develop ACRJ (Accept/Reject) scorecard $\hat{\gls{phi}}$ on all applicants predicting $\mathbf{\bm{z}}$ given $\gls{bbx}$; this gives us $\hat{\gls{phi}}$ (Figure~\ref{twins:sfig2})
-\item Develop a scorecard on financed clients' data predicting $\gls{bby}_\f$ based solely on $(1,\gls{bbx}_f)' \hat{\gls{bth}}_\f$ and $(1,\gls{bbx}_f)' \hat{\gls{phi}}$; this gives us $\hat{\theta}^{\text{twins}}$ (Figure~\ref{twins:sfig3})
+\item Develop a scorecard on financed clients' data predicting $\gls{bby}_\f$ based solely on $(1,\gls{bbx}_\f)' \hat{\gls{bth}}_\f$ and $(1,\gls{bbx}_\f)' \hat{\gls{phi}}$; this gives us $\hat{\gls{bth}}^{\text{twins}}$ (Figure~\ref{twins:sfig3})
 \item Calculate $p_{\hat{\gls{bth}}^{\text{twins}}}(1 | \gls{bx})$ on rejected applicants and reintegrate them twice in the training dataset like we did with Fuzzy Augmentation in Section \ref{fuzzy} (Figure~\ref{twins:sfig4})
 \item Develop a new scorecard on all applicants' data
 \end{enumerate}
@@ -328,7 +328,7 @@ The Twins Method is an internal method at \gls{cacf} documented in~\cite{groupe}
 \begin{adjustbox}{max width=0.95\textwidth}
 \begin{tabular}{l l l}
 \toprule
-\textbf{${\bm{y}}$} & \textbf{${\bm{x}}$}\\
+\textbf{${\gls{bby}}$} & \textbf{${\gls{bbx}}$}\\
 \midrule
 1 & 0.562 \\
 1 & 0.910 \\
@@ -352,7 +352,7 @@ NA & 0.294 \\
 \begin{adjustbox}{max width=0.95\textwidth}
 \begin{tabular}{l l l}
 \toprule
-\textbf{${\bm{z}}$} &  \textbf{${\bm{x}}$} \\
+\textbf{${\mathbf{z}}$} &  \textbf{${\gls{bbx}}$} \\
 \midrule
 \text{f} & 0.562 \\
 \text{f} & 0.910 \\
@@ -376,7 +376,7 @@ NA & 0.294 \\
 \begin{adjustbox}{max width=0.95\textwidth}
 \begin{tabular}{l l l}
 \toprule
-\textbf{${\bm{y}}$} & \textbf{$(1,\gls{bbx}_f)' \hat{\gls{bth}}_\f$} & \textbf{$(1,\gls{bbx}_f)' \hat{\gls{phi}}$}\\
+\textbf{${\gls{bby}}$} & \textbf{$(1,\gls{bbx}_\f)' \hat{\gls{bth}}_\f$} & \textbf{$(1,\gls{bbx}_\f)' \hat{\gls{phi}}$}\\
 \midrule
 1 & 1.3 & 2.5\\
 1 & 3.1 & 4.5 \\
@@ -400,7 +400,7 @@ NA & -2.0 & -2.5 \\
 \begin{adjustbox}{max width=0.95\textwidth}
 \begin{tabular}{l l l}
 \toprule
-\textbf{Weight} & \textbf{$\hat{\bm{y}}_{\text{nf}}$} & \textbf{${\bm{x}}_{\text{nf}}$}\\
+\textbf{Weight} & \textbf{$\hat{\gls{bby}}_{\nf}$} & \textbf{${\gls{bbx}}_{\nf}$}\\
 \midrule
 1 & 1 & 0.562 \\
 1 & 1 & 0.910 \\
@@ -425,8 +425,8 @@ NA & -2.0 & -2.5 \\
 \end{table}
 
 Following notations introduced in Chapter~\ref{chap2}, we have:
-\[ \ell(\gls{bth};(\bm{1},\gls{bbx})' \hat{\gls{phi}}, (\bm{1},\gls{bbx})' \hat{\gls{bth}}_\f, \gls{bby}) = \sum_{i=1}^{n} \ln(p_{\gls{bth}}(y_i | (1, \gls{bx}_i)' \hat{\theta}_{\text{f}}, (1, \gls{bx}_i)' \hat{\gls{phi}})).\]
-We can rewrite $\ell(\gls{bth};(\bm{1},\gls{bbx})' \hat{\gls{phi}}, (\bm{1},\gls{bbx})' \hat{\gls{bth}}_\f, \gls{bby})$ by remarking that the logit of $p_{\gls{bth}}(y_i | (1, \gls{bx}_i)' \hat{\theta}_{\text{f}}, (1, \gls{bx}_i)' \hat{\gls{phi}})$ is a linear combination of $\bm{x}$.
+\[ \ell(\gls{bth};(\bm{1},\gls{bbx})' \hat{\gls{phi}}, (\bm{1},\gls{bbx})' \hat{\gls{bth}}_\f, \gls{bby}) = \sum_{i=1}^{n} \ln(p_{\gls{bth}}(y_i | (1, \gls{bx}_i)' \hat{\gls{bth}}_{\f}, (1, \gls{bx}_i)' \hat{\gls{phi}})).\]
+We can rewrite $\ell(\gls{bth};(\bm{1},\gls{bbx})' \hat{\gls{phi}}, (\bm{1},\gls{bbx})' \hat{\gls{bth}}_\f, \gls{bby})$ by remarking that the logit of $p_{\gls{bth}}(y_i | (1, \gls{bx}_i)' \hat{\gls{bth}}_{\f}, (1, \gls{bx}_i)' \hat{\gls{phi}})$ is a linear combination of $\gls{bx}$.
 %: $\ell(\gls{bth};(\bm{1},\gls{bbx})' \hat{\gls{phi}}, (\bm{1},\gls{bbx})' \hat{\gls{bth}}_\f, \gls{bby}) = \ell(\theta;\gls{bbx}^{\text{f}}, \gls{bby}^{\text{f}})$ where $\begin{cases}
 %\gls{bth} = (\theta_0,\theta_1,\theta_2). \\
 %\theta_j = \delta_1 \hat{\theta}_{\text{f}j} + \delta_2 \hat{\zeta}_{j} \text{ for } 1 \leq j \leq d. \\
@@ -442,7 +442,7 @@ Parcelling is a process of reweighing according to the probability of default by
 \item Construct Scorecard "Known Good Bad" (KGB) $\hat{\gls{bth}}_\f$ with financed clients' data (Figure~\ref{parcel:sfig1})
 \item Create $K$ score bands $B_1, \ldots, B_K$ according to $p_{\hat{\gls{bth}}_\f}(1 | \gls{bx})$.
 \item Compute the observed default rate for each band $T(k) = \dfrac{|\text{Bad financed in } B_k|}{|B_k|}$, $1 \leq k  \leq K$.
-\item Infer for each band the not financed default rate $U(k) = \epsilon_k T(k)$ where $\epsilon_1 > \ldots > \epsilon_k > \ldots > \epsilon_K > 1$ (Figure~\ref{parcel:sfig2}).
+\item Infer for each band the not financed default rate $U(k) = \epsilon_k T(k)$ where $1 < \epsilon_1 < \ldots < \epsilon_k < \ldots < \epsilon_K$ (Figure~\ref{parcel:sfig2}).
 \item Reintegrate 2 times each rejected applicant from $B_k$ with weight $U(k)$ as bad and weight $1-U(k)$ as good, like the Fuzzy Augmentation method in Section \ref{fuzzy} (Figure~\ref{parcel:sfig3}).
 \item Construct the final scorecard.
 \end{enumerate}
@@ -465,7 +465,7 @@ Parcelling is a process of reweighing according to the probability of default by
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{l l l}
 \toprule
-\textbf{Weight} & \textbf{${\bm{y}}_{\text{f}}$} & \textbf{${\bm{x}}_{\text{f}}$}\\
+\textbf{Weight} & \textbf{${\gls{bby}}_{\f}$} & \textbf{${\gls{bbx}}_{\f}$}\\
 \midrule
 1 & 1 & 0.562 \\
 1 & 1 & 0.910 \\
@@ -507,7 +507,7 @@ K & 0.01 & 0.04 \\
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{l l l}
 \toprule
-\textbf{Weight} & \textbf{${\bm{y}}$} & \textbf{${\bm{x}}$}\\
+\textbf{Weight} & \textbf{${\gls{bby}}$} & \textbf{${\gls{bbx}}$}\\
 \midrule
 1 & 0 & 0.562 \\
 1 & 1 & 0.910 \\
@@ -646,11 +646,11 @@ The \textit{equal-freq} algorithm~\ref{equal-freq-disc} is illustrated on Figure
 
 
 \begin{algorithm}[H]
- \KwData{$n,\gls{bbx},(m_j)_1^d$}
+ \KwData{$n,\gls{bbx},\gls{bm} = (\gls{mj})_1^d$}
  \KwResult{$\hat{\q}$}
  \For{$j=1$ to $d$}{
-Sort $\gls{bbx}^j$ by ascending order\;
-Let $c_0=-\infty$, $c_{m_j} = + \infty$ and $c_{j,h} = x_{\left\lceil{{\frac{h \cdot n}{m_j}}}\right\rceil,j}$\;
+Sort $\gls{bbx}_j$ by ascending order\;
+Let $c_0=-\infty$, $c_{m_j} = + \infty$ and $c_{j,h} = x_{j,\left\lceil{{\frac{h \cdot n}{m_j}}}\right\rceil,j}$\;
 Let $C_{j,h} = ]c_{j,h-1};c_{j,h}]$ and $\hat{\q}_j(\cdot) = (\hat{q}_{j,h}(\cdot))_1^{m_j}$\;
 Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
 %\For{$i=1$ to $n$}{
@@ -700,7 +700,7 @@ The \textit{equal-length} algorithm~\ref{equal-length-disc} is illustrated on Fi
 
 
 \begin{algorithm}[H]
- \KwData{$n,\gls{bbx},(m_j)_1^d$}
+ \KwData{$n,\gls{bbx},\gls{bm} = (\gls{mj})_1^d$}
  \KwResult{$\hat{\q}$}
  \For{$j=1$ to $d$}{
 Let $w_j = \max_{i} x_{i,j} - \min_{i} x_{i,j}$\;
@@ -717,7 +717,7 @@ Set $\hat{q}_{j,h}(\cdot)=\mathds{1}_{C_{j,h}}(\cdot)$.
 
 \subsubsection{The \textit{ChiMerge} algorithm}
 
-\textit{ChiMerge}~\cite{kerber1992chimerge}, given in Algorithm~\ref{chimerge}, is a supervised (it takes into account the labels $\gls{bby}$) univariate (it does not take into account the other features $\gls{bbx}_{\{-j\}}$)). It is used indirectly in the benchmarks of Chapter~\ref{chap4} where we applied the same approach to categorical features by computing all the pairwise $\chi^2$ indepedence tests. Here we showcase a rather na\"{\i}ve implementation as a pseudo-code in Algorithm~\ref{chicollapse}, which in practice would perform poorly (because of exponential complexity in the number of categories $l_j$) but, from an iteration to another, a lot of $\chi^2$ tests are unaffected, so they can be stored rather than computed again. The initial and final steps of \textit{ChiMerge} are illustrated in Table~\ref{tab:chimerge_ex}. Refinements of the method, taking into account multiple testing and / or adapting the tests' siognificance level $\alpha$ to each feature, were done in~\cite{liu1995chi2,wang1998concurrent,tay2002modified,su2005extended}.
+\textit{ChiMerge}~\cite{kerber1992chimerge}, given in Algorithm~\ref{chimerge}, is a supervised (it takes into account the labels $\gls{bby}$) univariate (it does not take into account the other features $\gls{bbx}_{\{-j\}} = (\gls{bbx}_1, \dots, \gls{bbx}_{j-1}, \gls{bbx}_{j+1}, \dots, \gls{bbx}_d)$)). It is used indirectly in the benchmarks of Chapter~\ref{chap4} where we applied the same approach to categorical features by computing all the pairwise $\chi^2$ indepedence tests. Here we showcase a rather na\"{\i}ve implementation as a pseudo-code in Algorithm~\ref{chicollapse}, which in practice would perform poorly (because of exponential complexity in the number of categories $l_j$) but, from an iteration to another, a lot of $\chi^2$ tests are unaffected, so they can be stored rather than computed again. The initial and final steps of \textit{ChiMerge} are illustrated in Table~\ref{tab:chimerge_ex}. Refinements of the method, taking into account multiple testing and / or adapting the tests' siognificance level $\alpha$ to each feature, were done in~\cite{liu1995chi2,wang1998concurrent,tay2002modified,su2005extended}.
 
 %\begin{table}
 %\centering
@@ -796,7 +796,7 @@ This section describes the \textit{glmdisc}-NN algorithm developed in Chapter~\r
 
 \begin{algorithm}[H]
  \KwData{$((\gls{bbx}_j)_1^{d}, \gls{bby}),S,\bm{m}_\text{start}$}
- \KwResult{$\hat{\q}^{(s_\star)}$}
+ \KwResult{$\hat{\q}^{(s^\star)}$}
  Initialization of the network: for each feature feature $j$, add a softmax with $m_{j,\text{start}}$ outputs which are themselves combined in a sigmoid neuron\;
  Initialization of the network's weights at random\;
  $s = 0$\;
@@ -807,7 +807,7 @@ Perform back-propagation of the error via Stochastic Gradient Descent which yiel
  Compute the associated \gls{lr} parameters $\hat{\gls{bth}}^{(s)} = \argmax_{\gls{bth}} \ell(\gls{bth} ; {\hat{\q}_j^{(s)}}, \gls{bby})$\;
     $s \leftarrow s+1$\;
 }
- Choose the best quantization $\hat{\q}^{(s_\star)}$, which associated \gls{lr} parameters yield the lowest BIC criterion\;
+ Choose the best quantization $\hat{\q}^{(s^\star)}$, which associated \gls{lr} parameters yield the lowest BIC criterion\;
  \caption{\label{NN-disc} \textit{glmdisc}-NN: supervised multivariate quantization for logistic regression with neural networks.}
 \end{algorithm}
 
@@ -827,7 +827,7 @@ This section describes the \textit{glmdisc}-SEM algorithm developed in Chapter~\
 
 \begin{algorithm}[H]
  \KwData{$((\gls{bbx}_j)_1^{d}, \gls{bby}),S,\bm{m}_\text{start}$}
- \KwResult{$\hat{\bbqk}^{(s_\star)}$}
+ \KwResult{$\hat{\bbqk}^{(s^\star)}$}
  Initialization of $\bbqk_j^{(0)}$ at random in $\{1, \dots, m_{j,\text{start}}\}$ and one-hot encode the resulting vector\;
  $s = 0$\;
  \While{$s < S$}{
@@ -840,12 +840,12 @@ Draw new latent features ${\bqk_j^{(s+1)}} \sim \text{ Mult} \left( p_{\gls{bth}
    }
    $s \leftarrow s+1$\;
  }
- Choose the best quantization $\hat{\bbqk}^{(s_\star)}$, which associated \gls{lr} parameters $\hat{\gls{bth}}^{(s_\star)}$ yield the lowest BIC criterion.
+ Choose the best quantization $\hat{\bbqk}^{(s^\star)}$, which associated \gls{lr} parameters $\hat{\gls{bth}}^{(s_\star)}$ yield the lowest BIC criterion.
  \caption{\label{SEM-disc} \textit{glmdisc}-SEM: supervised multivariate quantization for logistic regression with an \gls{sem} algorithm.}
 \end{algorithm}
 
 \begin{figure}[!h]
-\begin{animateinline}[poster=first, controls=all, palindrome, autopause, autoresume, width=\textwidth, height=10cm]{5}
+\begin{animateinline}[poster=first, controls=all, palindrome, autopause, autoresume, width=\textwidth, height=9.5cm]{5}
 \multiframe{200}{i=1+1}{\input{R_CODE_FIGURES/appendix/animation_disc_SEM/sem_simulated_data/sem_feature_1_iter_\i.tex}}%
 \end{animateinline}
 \caption{\label{fig:animSEM} Animation of the $\bqk_j$ of \textit{glmdisc}-SEM through the iterations $(s)$.}
@@ -945,7 +945,7 @@ The \gls{pls} algorithm given in~\eqref{alg:pls} has been proposed in~\cite{wold
  \KwData{$\gls{bbx},\gls{bby}$}
  \KwResult{$\mathbf{z}$}
 Standardize each $\gls{bbx}_j$ to have mean zero and variance one (which implies that categorical features have been one-hot encoded prior to this step) \;
-Set $\hat{\gls{bby}}^{(0)} = |\gls{bby}| \mathbf{1}$\;
+Set $\hat{\gls{bby}}^{(0)} = \mathbf{1}' |\gls{bby}|$\;
 Set $\gls{bbx}_j^{(0)} = \gls{bbx}_j$\;
 \For{$j=1$ to $d$}{
 Let $\mathbf{z}_j = \sum_{j {'} = 1}^d \hat{\phi}_{j,j {'} } \gls{bbx}_{j {'} }^{(j-1)}$ where $\hat{\phi}_{j,j {'} } = \gls{bbx}_{j {'} }^{(j-1)} {'} \gls{bby}$ \;
@@ -984,8 +984,8 @@ The \gls{lmt} algorithm given in~\eqref{alg:lmt} has been proposed in~\cite{land
  \KwData{$\gls{bbx}, \gls{bby}$}
  \KwResult{The logistic regression tree}
  Fit a classification tree using the C4.5 algorithm\;
- Fit a \gls{lr} at the root node by using the LogitBoost algorithm~\ref{alg:logitboost} (the number of iterations is determined by cross-validation)\;
- Fit a \gls{lr} at the children nodes by resuming the LogitBoost algorithm~\ref{alg:logitboost} on the respective sub-populations\;
+ Fit a \gls{lr} at the root node by using LogitBoost (Algorithm~\ref{alg:logitboost} - the number of iterations is determined by cross-validation)\;
+ Fit a \gls{lr} at the children nodes by resuming LogitBoost (Algorithm~\ref{alg:logitboost}) on the respective sub-populations\;
  Prune the tree based on the CART algorithm's pruning criterion (composed of misclassification error and complexity penalization)\;
  \caption{\label{alg:lmt} \gls{lmt} algorithm (adapted from~\cite{landwehr2005logistic}).}
 \end{algorithm}

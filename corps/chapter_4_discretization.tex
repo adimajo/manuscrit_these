@@ -610,8 +610,13 @@ The full algorithm is described in Appendix~\ref{app1:glmdiscNN}.
 
 \section{An alternative \gls{sem} approach} \label{sec:sem}
  
- 
-In what follows, the quantization $\q(\cdot)$ is seen as a latent feature denoted by $\bm{\mathfrak{Q}}$. The same notations can be introduced for this new feature:  $\bqk$ is an observation of $\bm{\mathfrak{Q}}$, $\bqk_j$ will designate the $j^{\text{th}}$ vectorial component of $\bqk$, $\bbqk$ will designate the $n$-sample, and so on. In the following section, we translate earlier assumptions in probabilitics terms. In the subsequent section, we make good use of these assumptions to provide a continuous relaxation of the quantization problem, as was empirically argumented in Section~\ref{subsec:relaxation}. This relaxation is equivalent to the one proposed in Section~\ref{sec:proposal}, although its use differs drastically, as will be emphasized in Section~\ref{subsec:stoch}, where we provide a stochastic estimation algorithm for the latent feature $\bqk$.
+In what follows, the quantization $\q(\gls{bx})$ is seen as a latent (unobserved) feature denoted by $\bqk$, which is still the vector of quantizations $(\bqk_1, \dots, \bqk_d)$ of features $(\gls{x}_1, \dots, \gls{x}_d)$ (see Equation~\eqref{eq:qj}). These component-wise quantizations are themselves binary-valued vectors $(\mathfrak{q}_{j,h})_1^{\gls{mj}}$ where $\mathfrak{q}_{j,h} \in \{0,1\}$ and $\sum_{h=1}^{\gls{mj}} \mathfrak{q}_{j,h} = 1$. We denote by $\bm{\mathfrak{Q}}_{\gls{bm}}$ the space of such latent features and the $n$-sample of latent quantizations corresponding to $\q(\gls{bbx}_\f)$ by $\bbqk$, \textit{i.e.}\ the matrix of all $n$ quantizations.
+
+%The same notations can be introduced for this new feature:  $\bqk$ is an observation of $\bm{\mathfrak{Q}}$, $\bqk_j$ will designate the $j^{\text{th}}$ vectorial component of $\bqk$, $\bbqk$ will designate the $n$-sample, and so on. 
+
+In the following section, we translate earlier assumptions on the function $\q(\cdot)$ in probabilistic terms for the latent featutre $\bqk$. In the subsequent section, we make good use of these assumptions to provide a continuous relaxation of the quantization problem, as was empirically argumented in Section~\ref{subsec:relaxation}.
+%This relaxation is equivalent to the one proposed in Section~\ref{sec:proposal}, although its use differs drastically, as 
+The main reason to resort to this formulation as a latent feature problem will be made clear in Section~\ref{subsec:stoch}, where we provide a stochastic estimation algorithm for the latent feature $\bqk$.
 
 \subsection{Probabilistic assumptions regarding the quantization latent feature}
 
@@ -641,12 +646,14 @@ which is a step function. Rewriting $p(y| \gls{bx})$ by integrating over these n
 we get:
 \begin{align*}
 p(y | \gls{bx}) & = p_{\gls{bthstar}}(y | \bqk^\star) & \text{ (using \eqref{hyp:true}) } \\
-& = \sum_{\bqk \in \Q} p(y, \bqk | \gls{bx}) \\
-& = \sum_{\bqk \in \Q} p(y | \bqk, \gls{bx}) p(\bqk | \gls{bx}) \\
-& = \sum_{\bqk \in \Q} p(y | \bqk) p(\bqk | \gls{bx}) & \text{ (using \eqref{hyp:squeeze}) } \\
-& = \sum_{\bqk \in \Q} p(y | \bqk) \prod_{j=1}^d p(\bqk_j | \gls{x}_j) & \text{ (using \eqref{hyp:component}). }
+& = \sum_{\bqk \in \bm{\mathfrak{Q}}_{\gls{bm}}} p(y, \bqk | \gls{bx}) \\
+& = \sum_{\bqk \in \bm{\mathfrak{Q}}_{\gls{bm}}} p(y | \bqk, \gls{bx}) p(\bqk | \gls{bx}) \\
+& = \sum_{\bqk \in \bm{\mathfrak{Q}}_{\gls{bm}}} p(y | \bqk) p(\bqk | \gls{bx}) & \text{ (using \eqref{hyp:squeeze}) } \\
+& = \sum_{\bqk \in \bm{\mathfrak{Q}}_{\gls{bm}}} p(y | \bqk) \prod_{j=1}^d p(\bqk_j | \gls{x}_j) & \text{ (using \eqref{hyp:component}). }
 \end{align*}
-This sum over \Q is intractable given its cardinality calculated explicitly in Section~\ref{subsec:cardinality_quant}. The well-specified model hypothesis~\eqref{hyp:true} yields for all $\gls{x}_j$, $p(\bqk_j^\star | \gls{x}_j) = 1$. Conversely, for $\bqk \in \Q$ such that $\bqk \cancel{\mathcal{R}_{\gls{T}_n}} \bqk^\star$, there exists a feature $j$ and an observation $\gls{xij}$ such that $p(\bqk_j | \gls{x}_j) = 0$. Consequently, the above sum, over all training observations in $\gls{T}_n$, reduces to:
+This sum over $\bm{\mathfrak{Q}}_{\gls{bm}}$ is intractable.
+% given its cardinality calculated explicitly in Section~\ref{subsec:cardinality_quant}. 
+The well-specified model hypothesis~\eqref{hyp:true} yields for all $\gls{x}_j$, $p(\bqk_j^\star | \gls{x}_j) = 1$. Conversely, for $\bqk \in \Q$ such that $\bqk \cancel{\mathcal{R}_{\gls{T}_n}} \bqk^\star$, there exists a feature $j$ and an observation $\gls{xij}$ such that $p(\bqk_j | \gls{x}_j) = 0$. Consequently, the above sum, over all training observations in $\gls{T}_n$, reduces to:
 \begin{align*}
 p(\gls{bby}_\f | \gls{bbx}_\f) & = \prod_{i=1}^n p(y_i | \gls{bx}_i) \\
  & = \sum_{\bqk \in \Q} \prod_{i=1}^n p(y_i | \bqk_i) \prod_{j=1}^d p(\bqk_{i,j} | \gls{xij}) \\
@@ -688,9 +695,16 @@ However, maximizing this likelihood directly is intractable as the Expectation s
 
 Classically, the \gls{em} can be replaced by the \acrlong{sem}~\cite{celeux1985sem} algorithm: the expectation (the sum over $\bqk \in \Q$) is approximated by the empirical distribution (up to a normalization constant) of draws $\bqk^{(1)}, \dots, \bqk^{(S)}$ from $p_{\gls{bth}}(y | \cdot) \prod_{j=1}^d p_{\ag_j}(\cdot | \gls{x}_j)$.
 
-\subsubsection{\gls{sem} as a quantization provider}
+\subsubsection{\gls{sem} as a quantization provider} \label{subsubsec:multinouilli}
 
-As the parameters $\ag$ of $\q_{\ag}$ were initialized randomly in the neural network approach, the latent features observations $\bbqk^{(0)}$ are initialized uniformly (\textit{i.e.}\ by sampling from an equiprobable multinouilli distribution). At step $s$, the \gls{sem} algorithm allows us to compute the \gls{mle} ${\gls{bth}}^{(s)}$ (resp. ${\ag}^{(s)}$) of $\gls{bth}$ (resp. $\ag$) given $\bbqk^{(s)}$ by maximizing the following likelihoods (M-steps):
+As the parameters $\ag$ of $\q_{\ag}$ were initialized randomly in the neural network approach, the latent features observations $\bbqk^{(0)}$ are initialized uniformly (\textit{i.e.}\ by sampling from an equiprobable multinouilli distribution). At step $s$, the \gls{sem} algorithm allows us to draw $\bbqk^{(s)}$. As the \gls{lr} $p_{\gls{bth}}(y | \bqk)$ is multivariate, it is hard to sample simultaneously all latent features. We have to resort to the Gibbs-sampler~\cite{casella1992explaining}: $\bqk_j$ is sampled while holding latent features $\bqk_{-\{j\}} = (\bqk_1, \dots, \bqk_{j-1}, \bqk_{j+1}, \dots, \bqk_d)$ fixed:
+\paragraph{S-step:}
+\begin{equation} \label{eq:q_draw}
+\bqk_j^{(s)} \sim p_{\hat{\gls{bth}}^{(s-1)}}(y | \bqk_{-\{j\}}^{(s-1)}, \cdot) p_{\hat{\ag}_j^{(s-1)}}(\cdot | \gls{x}_j).
+\end{equation}
+This process is repeated for all features $1 \leq j \leq d$.
+
+Using these latent features, we can compute the \gls{mle} ${\gls{bth}}^{(s)}$ (resp. ${\ag}^{(s)}$) of $\gls{bth}$ (resp. $\ag$) given $\bbqk^{(s)}$ by maximizing the following likelihoods (M-steps):
 \paragraph{M-steps:}
 \begin{alignat}{2}
 {\gls{bth}}^{(s)} & = \argmax_{\gls{bth}} \ell(\gls{bth}; \bbqk^{(s)}, \gls{bby}_\f) && = \argmax_{\gls{bth}} \sum_{i=1}^n \ln p_{\gls{bth}}(y_i | \bqk^{(s)}_i), \nonumber \\
@@ -701,13 +715,6 @@ As the parameters $\ag$ of $\q_{\ag}$ were initialized randomly in the neural ne
 
 The \gls{mle} of $\gls{bth}$ is obtained, as in the preceding sections and as was thoroughly discussed in Chapter~\ref{chap1}, \textit{via} Newton-Raphson. For polytomous logistic regression, the same optimization procedure can be used. For categorical features, the \gls{mle} is simply the proportion of observations in each category:
 \[ \hat{\ag}_{j,h}^o = \frac{|\bbqk_{j,h}|}{|\{\gls{x}_j=o\}|} \text{ for } 1 \leq o \leq \gls{lj}. \]
-
-As the \gls{lr} $p_{\gls{bth}}(y | \bqk)$ is multivariate, it is hard to sample simultaneously all latent features. We have to resort to the Gibbs-sampler~\cite{casella1992explaining}: $\bqk_j$ is sampled while holding latent features $\bqk_{-\{j\}} = (\bqk_1, \dots, \bqk_{j-1}, \bqk_{j+1}, \dots, \bqk_d)$ fixed:
-\paragraph{S-step:}
-\begin{equation} \label{eq:q_draw}
-\bqk_j^{(s+1)} \sim p_{\hat{\gls{bth}}^{(s)}}(y | \bqk_{-\{j\}}^{(s)}, \cdot) p_{\hat{\ag}_j^{(s)}}(\cdot | \gls{x}_j).
-\end{equation}
-This process is repeated for all features $1 \leq j \leq d$.
 
 This \gls{sem} provides parameters ${\ag}^{(1)}, \dots, {\ag}^{(S)}$ which can be used to produce $\hat{\q}^{(1)}, \dots, \hat{\q}^{(S)}$ following the \textit{maximum a posteriori} scheme from Equation~\eqref{eq:ht}, adapted to this new formulation:
 \[ \hat{\q}_j^{(s)}(\cdot) = \argmax_{h} p_{\ag_j^{(s)}}(\gls{ehmj} | \cdot ) .\]
@@ -742,7 +749,7 @@ The full algorithm is described in Appendix~\ref{app1:glmdiscSEM} and schematica
     \path[->] (a) edge node {} (b);
     \node [int] (c) [right=3cm of b, align=left] {Fit continuous \\ approximation $p_{\ag_j^{(s)}}(\bqk_j^{(s)} | \gls{x}_j)$};
     \path[->] (b) edge node {} (c);
-    \node [int] (d) [below left=0.75cm and -0.5cm of c, align=left] {Draw ``fuzzy'' \\ candidate $\bqk ^{(s+1)}\sim p_{\gls{bth}^{(s)}}(\gls{y} | \bqk^{(s)}) p_{\ag^{(s)}}(\bqk^{(s)} | \gls{x})$};
+    \node [int] (d) [below left=0.75cm and -1cm of c, align=left] {Draw ``fuzzy'' \\ candidate $\bqk ^{(s+1)}\sim p_{\gls{bth}^{(s)}}(\gls{y} | \bqk^{(s)}) p_{\ag^{(s)}}(\bqk^{(s)} | \gls{x})$};
     \node (e) [below=1cm of c] {};
     \path[-] (c) edge node {} (e.center);
     \path[->] (e.center) edge node {} (d);
@@ -751,7 +758,7 @@ The full algorithm is described in Appendix~\ref{app1:glmdiscSEM} and schematica
     \path[->] (f.center) edge node {} (b);
     \node [int] (g) [right=2cm of e, align=left] {Calculate ``hard'' \\ candidate $\hat{\q}^{(s)}(\cdot) = (\argmax_{h} p_{\ag_j^{(s)}}(\gls{ehmj} | \cdot))_1^d$};
     \path[->] (e.center) edge node {} (g);
-    \node [int] (h) [below=1cm of g, align=left] {Evaluate ``hard'' \\ candidate $\mbox{BIC}(\hat{\gls{bth}}_{\q^{(s)}})$};
+    \node [int] (h) [below=1cm of g, align=left] {Evaluate ``hard'' \\ candidate $\mbox{BIC}(\hat{\gls{bth}}_{\hat{\q}^{(s)}})$};
     \path[->] (g) edge node {} (h);
     \begin{pgfonlayer}{background}
 	\node[outer,fit=(b) (c) (d)] (i) {};
@@ -810,9 +817,11 @@ From the \textit{glmdisc} algorithm, we studied three cases:
 \end{enumerate}
 From a statistical point of view, experiment (a) assesses the empirical consistency of the estimation of $C_{j,h}$, whereas experiments (b) and (c) focus on the consistency of the estimation of $\gls{mj}$. The results are summarized in Table~\ref{tab:estim_precision} where 95\% confidence intervals (CI~\cite{sun2014fast}) are given, with a varying sample size. Note in particular that the slight underestimation in (b) is a classical consequence of the BIC criterion on small samples. 
 
+The neural network approach \textit{glmdisc}-NN seems to outperform the \gls{sem} approach on experiments (b) and (c) where the true number of levels $\gls{bm}$ has to be estimated. This is rather surprising since theoretically, the \gls{sem} approach can explore the model space easier than \textit{glmdisc}-SEM thanks to the additional ``disappearing'' effect of the drawing procedure (the absorbing state of the MCMC: see paragraph~``\nameref{par:choosing_sem}'' in Section~\ref{subsec:stoch}). This inferior performance is somewhat confirmed with real data in the subsequent sections. A rough guess about this performance drop with an equivalent computational budget $S$ is the ``noise'' introduced by drawing $\bqk$ rather than maximizing directly the log-likelihood $\ell_{\q,\ag}$ (Equation~\eqref{eq:lqa}) which can be achieved by \textit{glmdisc}-NN through gradient descent. Therefore, \textit{glmdisc}-SEM might need way more iterations than \textit{glmdisc}-NN to converge, especially in a misspecified model setting.
+
 \begin{table}[ht]
     \centering
-    \caption{For \textit{glmdisc}-NN and \textit{glmdisc}-SEM and different sample sizes $n$, (a) CI of $\hat{c}_{j,2}$ for $c_{j,2} = 2/3$. (b) Bar plot of $\hat{m} = 2, 3, 4$ (resp.) for $m_1=3$. (c) Bar plot of $\hat{m}_3 = 1, 2, 3$ (resp.) for $m_3=1$.}
+    \caption{For \textit{glmdisc}-NN and \textit{glmdisc}-SEM and different sample sizes $n$, (a) CI of $\hat{c}_{j,2}$ for $c_{j,2} = 2/3$. (b) Bar plot of $\hat{m} = 2, 3, 4$ (resp.) for $m_1=3$. (c) Bar plot of $\hat{m}_3 = 1, 2, 3$ (resp.) for $m_3=1$ with a computational budget $S = 500$ iterations.}
     \label{tab:estim_precision}
 \begin{tabular}{lllllll}
 Algorithm & $n$ & (a) $\hat{c}_{j,2}$ & (b) & $\hat{m}_1$ & (c) & $\hat{m}_3$ \\
@@ -828,7 +837,7 @@ Algorithm & $n$ & (a) $\hat{c}_{j,2}$ & (b) & $\hat{m}_1$ & (c) & $\hat{m}_3$ \\
 
 To complement these experiments on simulated data following a well-specified model, a similar study can be done for categorical features: 10 levels are drawn uniformly and 3 groups of levels, which share the same log-odd ratio, are created. The same phenomenon as in Table~\ref{tab:estim_precision} is witnessed: the empirical distribution of the estimated number of groups of levels is peaked at its true value of 3.
 
-Finally, it was argued in Section~\ref{sec:model_selection} that by considering all features when quantizing the data, relying on a multivariate approach could yield better results than classical univariate techniques in presence of correlation. This claim is verified in Table~\ref{tab:sim_false} where multivariate heteroskedastic Gaussian data is simulated on which the log odd ratio of $y$ depends linearly (misspecified model setting for the quantized \gls{lr}). The proposed approach yields significantly better results.
+Finally, it was argued in Section~\ref{sec:model_selection} that by considering all features when quantizing the data, relying on a multivariate approach could yield better results than classical univariate techniques in presence of correlation. This claim is verified in Table~\ref{tab:sim_false} where multivariate heteroskedastic Gaussian data is simulated on which the log odd ratio of $y$ depends linearly (misspecified model setting for the quantized \gls{lr}). The proposed \gls{sem} approach yields significantly better results then ChiMerge and MDLP.
 
 \begin{table}[ht]
     \centering
@@ -873,9 +882,11 @@ To test further the effectiveness of \textit{glmdisc} in a predictive setting, w
 
 Now that the proposed approach was shown empirically consistent, \textit{i.e.}\ it is able to find the true quantization in a well-specified setting, it is desirable to verify the previous claim that embedding the learning of a good quantization in the predictive task \textit{via glmdisc} is better than other methods that rely on \textit{ad hoc} criteria. As we were primarily interested in \gls{lr}, I will compare the proposed approach to a na\"{\i}ve linear \gls{lr} (hereafter ALLR), \textit{i.e.}\ on non-quantized data, a \gls{lr} on continuous discretized data using the now standard MDLP algorithm from~\cite{fayyad1993multi} and categorical grouped data using $\chi^2$ tests of independence between each pair of factor levels and the target in the same fashion as the ChiMerge discretization algorithm proposed by~\cite{kerber1992chimerge} (hereafter MDLP/$\chi^2$). In this section and the next, Gini indices are reported on a random 30~\% test set and CIs are given following a method found in~\cite{sun2014fast}. Table~\ref{tab:banchmark} shows our approach yields significantly better results on these rather small datasets where the added flexibility of quantization might help the predictive task.
 
+As argued in the preceding section, \textit{glmdisc}-SEM yields slightly worse results than \textit{glmdisc}-NN which, additionally to their inherent difference (the S-step of the \gls{sem}), might be due to the sensitivity of the \gls{sem} to its starting points (a single Markov Chain is run in this section and the next).
+
 \begin{table}
     \centering
-        \caption{Gini indices (the greater the value, the better the performance) of our proposed quantization algorithm \textit{glmdisc} and two baselines: ALLR and MDLP / $\chi^2$ tests obtained on several benchmark datasets from the UCI library.}
+        \caption{Gini indices (the greater the value, the better the performance) of our proposed quantization algorithm \textit{glmdisc} and two baselines: ALLR and MDLP / $\chi^2$ tests obtained on several benchmark datasets from the UCI library with a single run and a computational budget $S = 500$ iterations.}
     \label{tab:banchmark}
 \begin{small}
 \begin{tabular}{lllll}
@@ -910,7 +921,7 @@ The usefulness of discretization and grouping is clear on \textit{Credit Scoring
 
 \begin{table}
     \centering
-        \caption{Gini indices (the greater the value, the better the performance) of our proposed quantization algorithm \textit{glmdisc}, the two baselines of Table~\ref{tab:banchmark} and the current scorecard (manual / expert representation) obtained on several portfolios of Cr\'edit Agricole Consumer Finance.}
+        \caption{Gini indices (the greater the value, the better the performance) of our proposed quantization algorithm \textit{glmdisc}, the two baselines of Table~\ref{tab:banchmark} and the current scorecard (manual / expert representation) obtained on several portfolios of Cr\'edit Agricole Consumer Finance with a single run and a computational budget $S = 500$ iterations.}
     \label{tab:real_data}
 \begin{footnotesize}
 %\begin{tabular}{lp{0.1\linewidth}p{0.138\linewidth}p{0.13\linewidth}p{0.15\linewidth}p{0.15\linewidth}l}
