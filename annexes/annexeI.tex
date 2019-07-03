@@ -532,22 +532,27 @@ K & 0.01 & 0.04 \\
 
 \subsection{Simulation of reject inference methods applied to multivariate gaussian data} \label{subsec:app_reject_sim}
 
-This early work aimed at comparing several reject inference methods in the well-specified model-case for 4 multivariate Gaussian features on Figure~\ref{fig:simu_4var} and 30 features on Figure~\ref{fig:simu_30var} in terms of error rate. The horizontal axis represents the cut-off value of a \gls{lr} that simulates the acceptance / rejection mechanism $p_{\gls{phi}}(\gls{z} | \gls{bx})$, such that it roughly corresponds to the fraction of missing labels $\gls{bby}_{\nf}$. In this setting, the semi-supervised generative approach obviously yields better results since the data lies in its restricted hypothesis space and it is able to use the predictors with missing labels $\gls{bbx}_{\nf}$. As explained thoroughly in Chapter~\ref{chap2}, standard \gls{lr} and Augmentation perform similarly (since they are both well-specified models and we are in a \gls{mar} setting). Parcelling does not work well since it is designed for a \gls{mnar} setting. In presence of well-separated data, Reclassification works well with 30 features since the true decision boundary is ``sharp'' (see the very small error rate) such that $\argmax_y \hat{p}(y | \gls{bx}) \approx \max_y \hat{p}(y | \gls{bx})$, which is less apparent with 4 features.
+This early work aimed at comparing several reject inference methods in the well-specified model-case for 8 multivariate Gaussian features on Figure~\ref{fig:simu_4var} and 20 features on Figure~\ref{fig:simu_30var} in terms of error rate. The horizontal axis represents the cut-off value of a \gls{lr} that simulates the acceptance / rejection mechanism $p_{\gls{phi}}(\gls{z} | \gls{bx})$, such that it roughly corresponds to the fraction of missing labels $\gls{bby}_{\nf}$. In this setting, the semi-supervised generative approach obviously yields better results since the data lies in its restricted hypothesis space and it is able to use the predictors with missing labels $\gls{bbx}_{\nf}$. As explained thoroughly in Chapter~\ref{chap2}, standard \gls{lr} and Augmentation perform similarly (since they are both well-specified models and we are in a \gls{mar} setting). Parcelling does not work well since it is designed for a \gls{mnar} setting. In presence of well-separated data, Reclassification works well with 20 features since the true decision boundary is ``sharp'' (see the very small error rate) such that $\argmax_y \hat{p}(y | \gls{bx}) \approx \max_y \hat{p}(y | \gls{bx})$, which is less apparent with 8 features. In both cases, the mean of all features is $0$ (resp.\ $1$) if $Y=0$ (resp.\ $Y=1$) and the respective variance matrices are random positive definite matrices (see the Github repository of the manuscript at \url{https://www.github.com/adimajo/manuscrit_these} to reproduce them).
 
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.4\textwidth]{figures/appendix/rejectinferencesimulation4var.png}
-\caption{Simulation of multivariate 4-dimensional Gaussian features and performance of various reject inference methods including the proposed generative approach.}
+\begin{figure}[!ht]
+\centering \resizebox{.8\textwidth}{!}{\input{R_CODE_FIGURES/appendix/CODE_REINTEGRATION/reintegration_simu_4var.tex}}
+\caption{Simulation of multivariate 8-dimensional Gaussian features and performance of various reject inference methods including the proposed generative approach.}
 \label{fig:simu_4var}
 \end{figure}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.4\textwidth]{figures/appendix/rejectinferencesimulation30var.png}
-\caption{Simulation of multivariate 30-dimensional Gaussian features and performance of various reject inference methods including the proposed generative approach.}
+\begin{figure}[!ht]
+\centering \resizebox{.8\textwidth}{!}{\input{R_CODE_FIGURES/appendix/CODE_REINTEGRATION/reintegration_simu_20var.tex}}
+\caption{Simulation of multivariate 20-dimensional Gaussian features and performance of various reject inference methods including the proposed generative approach.}
 \label{fig:simu_30var}
 \end{figure}
+
+
+%\begin{figure}[H]
+%\centering
+%\includegraphics[width=0.4\textwidth]{figures/appendix/rejectinferencesimulation30var.png}
+%\caption{Simulation of multivariate 30-dimensional Gaussian features and performance of various reject inference methods including the proposed generative approach.}
+%\label{fig:simu_30var}
+%\end{figure}
 
 
 %\subsection{Reject inference methods applied to real data: previous experiments} \label{subsec:app_reject_real}
@@ -578,7 +583,7 @@ This early work aimed at comparing several reject inference methods in the well-
 
 \subsection{Performance of other predictive models w.r.t.\ the acceptance level} \label{subsec:app_reject_real_method}
 
-Also part of an earlier work, this section's aim was to compare the performance of other ``machine learning'' models than simple \gls{lr} (although we purposely restricted our focus in Chapter~\ref{chap2} to the \gls{lr}) to see if, when presented with the same data and in presence of a simulated acceptance / rejection mechanism as earlier showcased, it would not be of better interest to switch to a different model, although it was argued in Chapter~\ref{chap2} that these models would not perform good under a \gls{mar} setting. The same datasets as in the previous section are used: the proposed models all perform poorer than \gls{lr} but most importantly their performance drops significantly with the proportion of simulated accepted clients.
+Also part of an earlier work, this section's aim was to compare the performance of other ``machine learning'' models (although we purposely restricted our focus in Chapter~\ref{chap2} to the \gls{lr}) to see if, when presented with the same data and in presence of a simulated acceptance / rejection mechanism as earlier showcased, it would not be of better interest to switch to a different model, although it was argued in Chapter~\ref{chap2} that these models would not perform good under a \gls{mar} setting. The same datasets as in the previous section are used: the proposed models all perform poorer than \gls{lr} but most importantly their performance drops significantly with the proportion of simulated accepted clients. Some studies of the reject inference problem have focused on these ``machine learning'' models, see \textit{e.g.}\ \cite{guiza2014}.
 
 \begin{figure}[H]
 \centering

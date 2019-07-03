@@ -206,8 +206,8 @@ Note also that in this setting and for $n \to +\infty$, the first step of the Me
 
 Consequently, if at step $(s)$ of the Markov chain, $\delta_{k,\ell}^{(s)} = 1$ (resp. $0$) and $p_{k,\ell}$ is close to $0$ (resp. $1$), a good candidate for $\bdelta^{(s+1)}$ should be to change $\delta_{k,\ell}$ to $\delta_{k,\ell}^{(s+1)} = 0$ (resp. $\delta_{k,\ell}^{(s+1)} = 1$). Our proposal is thus to calculate the difference between the current interaction matrix and $P$ which is denoted by $\tr^{(s)} = |\bdelta^{(s)} - P|$ and normalized.
 
-This defines a proper transition probability between two interaction matrices:
-\[ \tr(\bdelta^{(s)},\bdelta') = \begin{cases} 0 \text{ if } ||\bdelta^{(s)} - \bdelta'||_{1,1} \neq 1, \\ \tr^{(s)} \odot |\bdelta^{(s)} - \bdelta'|. \end{cases} \]
+This defines a proper transition probability between two interaction matrices (recall that $\odot$ denotes the element-wise Hadamard product):
+\[ \tr(\bdelta^{(s)},\bdelta') = \begin{cases} 0 \text{ if } ||\bdelta^{(s)} - \bdelta'||_{1,1} \neq 1, \\ \tr^{(s)} \odot |\bdelta^{(s)} - \bdelta'| \text{ otherwise}. \end{cases} \]
 
 \subsubsection{Acceptance probability of the proposed transition}
 

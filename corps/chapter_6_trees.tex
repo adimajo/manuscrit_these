@@ -463,7 +463,7 @@ Another approach can be taken by considering the segment $\gls{c}$ as a latent r
 \begin{align}
 p(\gls{bbx}_\f,\gls{bby}_\f) & =  \sum_{c=1}^{\gls{K}^\star} p(\gls{bby}_\f | \gls{bbx}_\f, c) p(c | \gls{bbx}_\f) p(\gls{bbx}_\f) & \text{($p(c | \gls{bx})$ is non-zero only for $c = c^\star$)} \nonumber \\
  & = \prod_{c^\star=1}^{\gls{K}^\star} p(\gls{bby}^{c^\star} | \gls{bbx}^{c^\star}, c^\star) p(\gls{bbx}_\f) \nonumber \\
- & = \prod_{c^\star=1}^{\gls{K}^\star} \int_{\Theta^{\star,c^\star}} p_{\gls{bth}^{\star, c^\star}}(\gls{bby}^{c^\star} | \gls{bbx}^{c^\star}) p(\gls{bth}^{\star, c^\star} | c^\star) d\gls{bth}^{\star, c^\star} p(\gls{bbx}_\f) \label{eq:likelihood_segment}
+ & = \prod_{c^\star=1}^{\gls{K}^\star} \int_{\Theta^{\star,c^\star}} p_{\gls{bth}^{\star, c^\star}}(\gls{bby}^{c^\star} | \gls{bbx}^{c^\star}) p(\gls{bth}^{\star, c^\star} | c^\star) d\gls{bth}^{\star, c^\star} p(\gls{bbx}_\f). \label{eq:likelihood_segment}
 %\ln p(\gls{bby}, \gls{bbx}) & = \sum_{c=1}^{\gls{K}^\star} \exp \left( \frac{-\text{BIC}(\hat{\gls{bth}^c}) + O(1)}{2} \right) + \ln p(\gls{bbx}_\f).
 \end{align}
 Thus, we have:

@@ -35,7 +35,7 @@ Feature & Level & Points \\
 \end{table}
 
 
-Discretization is also an opportunity for reducing the (possibly large) modeling bias which can appear in \gls{lr} as a result of the linearity assumption on the continuous predictors in the model which was discussed in Section~\ref{chap1:sec3}. Indeed, this restriction can be overcome by approximating the true predictive mapping with a step function where the tuning of the steps and their sizes allow more flexibility. However, the resulting increase of the number of parameters can lead to an increase in variance (overfitting) as shown in \cite{yang2009discretization}. Thus, a precise tuning of the discretization procedure is required. Likewise when dealing with categorical features which take numerous levels, their respective regression coefficients suffer from high variance. A straightforward solution formalized by \cite{maj2015delete} is to merge their factor levels which leads to less coefficients and therefore less variance. We showcase this phenomenon on simple simulated data in the next section. On \textit{Credit Scoring} data, a typical example is the number of children (although not continuous strictly speaking). The log-odd ratio of clients' creditworthiness w.r.t.\ their number of children is often visually ``quadratic'', \textit{i.e.}\ the risk is lower for clients having 1 to 3 children, a bit higher for 0 child, and then it grows steadily with the number of children above 4. This can be fitted with a parabola, see Figure~\ref{fig:nbenf_spline}. As using a spline is not very interpretable, this is not done in practice. Without quantizing the number of children, a linear relationship is assumed as displayed on Figure~\ref{fig:nbenf_cont}. When quantizing this feature, a piecewise constant relationship is assumed, see Figure~\ref{fig:nbenf_disc}. In this example, it is visually unclear which is best, such that there is a need to formalize the problem.
+Discretization is also an opportunity for reducing the (possibly large) modeling bias which can appear in \gls{lr} as a result of the linearity assumption on the continuous predictors in the model which was discussed in Section~\ref{chap1:sec3} of Chapter~\ref{chap1}. Indeed, this restriction can be overcome by approximating the true predictive mapping with a step function where the tuning of the steps and their sizes allow more flexibility. However, the resulting increase of the number of parameters can lead to an increase in variance (overfitting) as shown in \cite{yang2009discretization}. Thus, a precise tuning of the discretization procedure is required. Likewise when dealing with categorical features which take numerous levels, their respective regression coefficients suffer from high variance. A straightforward solution formalized by \cite{maj2015delete} is to merge their factor levels which leads to less coefficients and therefore less variance. We showcase this phenomenon on simple simulated data in the next section. On \textit{Credit Scoring} data, a typical example is the number of children (although not continuous strictly speaking). The log-odd ratio of clients' creditworthiness w.r.t.\ their number of children is often visually ``quadratic'', \textit{i.e.}\ the risk is lower for clients having 1 to 3 children, a bit higher for 0 child, and then it grows steadily with the number of children above 4. This can be fitted with a parabola, see Figure~\ref{fig:nbenf_spline}. As using a spline is not very interpretable, this is not done in practice. Without quantizing the number of children, a linear relationship is assumed as displayed on Figure~\ref{fig:nbenf_cont}. When quantizing this feature, a piecewise constant relationship is assumed, see Figure~\ref{fig:nbenf_disc}. In this example, it is visually unclear which is best, such that there is a need to formalize the problem.
 
 Another potential motivation for quantization is optimal data compression: as will be shown rigorously in subsequent sections, quantization aims at ``squeezing'' as much predictive information in the original features about the class as possible. Taking an informatics point of view, quantization of a continuous feature is equivalent to discarding a float column (taking \textit{e.g.}\ 32 bits per observation) by overwriting it with its quantized version (which would either be one column of unsigned 8 bits integers - ``interval'' encoding without order - or several 1 bit columns - one-hot / dummy encoding). The same thought process is applicable to quantizations of categorical features. In the end, the ``raw'' data can be compressed by a factor of $32 / 8 = 4$ without losing its predictive power, which, in an era of Big Data, is useful both in terms of data storage and of computational power to process these data since by 2040, the energy needs for calculations will exceed the global energy production (see~\cite{villani2018donner} p.\ 123).
 
@@ -118,7 +118,7 @@ This phenomenon can be very simply captured by a small simulation: in the misspe
 \label{fig:sin_trois}
 \end{figure}
  
-As the number of intervals is directly linked to the number of coefficient, and to a notion of ``complexity'' of the resulting \gls{lr} model, the bias-variance trade-off (introduced in Section~\ref{subsubsec:tradeoff}) plays a key role in choosing an appropriate step size, and, as will be seen in the next section which was not possible for the simple \textit{equal-length} algorithm, appropriate step locations (hereafter called cutpoints). Again, this can be witnessed visually by looking at a model selection criterion, \textit{e.g.}\ the BIC criterion (which was introduced in Section~\ref{subsubsec:choix_modele}), for different values of the number of intervals on Figure~\ref{fig:bic_sin}. As expected, the continuous fit is poor, yielding a high BIC value. For a low number of bins, as described in the previous paragraph, the steps of Figure~\ref{fig:anim_sinus} are poor approximations of the true relationship between $\gls{x}$ and $\gls{y}$ resulting in a high BIC value. By discretizing in more intervals, the BIC value gets lower, and eventually starts to increase again when variance kicks in and overfitting occurs. As was visually concluded from Figure~\ref{fig:anim_sinus}, somewhere around 10-15 intervals seem the most satisfactory since we clearly witness a low BIC value. Of course, as the model was misspecified, the flexibility brought by discretization was beneficial. The same phenomenon can be witnessed for categorical features on Figure~\ref{fig:csp} with real data from \gls{cacf}. On Figure~\ref{fig:csp_estim}, the \gls{lr} coefficients of the raw job types are displayed: none are significant and estimation variance is large. Grouping these levels results in narrower confidence intervals and significant \gls{lr} parameters as can be seen in Figure~\ref{fig:csp_estim_disc}.
+As the number of intervals is directly linked to the number of coefficient, and to a notion of ``complexity'' of the resulting \gls{lr} model, the bias-variance trade-off (introduced in Section~\ref{subsubsec:tradeoff} of Chapter~\ref{chap1}) plays a key role in choosing an appropriate step size, and, as will be seen in the next section which was not possible for the simple \textit{equal-length} algorithm, appropriate step locations (hereafter called cutpoints). Again, this can be witnessed visually by looking at a model selection criterion, \textit{e.g.}\ the BIC criterion (which was introduced in Section~\ref{subsubsec:choix_modele} of Chapter~\ref{chap1}), for different values of the number of intervals on Figure~\ref{fig:bic_sin}. As expected, the continuous fit is poor, yielding a high BIC value. For a low number of bins, as described in the previous paragraph, the steps of Figure~\ref{fig:anim_sinus} are poor approximations of the true relationship between $\gls{x}$ and $\gls{y}$ resulting in a high BIC value. By discretizing in more intervals, the BIC value gets lower, and eventually starts to increase again when variance kicks in and overfitting occurs. As was visually concluded from Figure~\ref{fig:anim_sinus}, somewhere around 10-15 intervals seem the most satisfactory since we clearly witness a low BIC value. Of course, as the model was misspecified, the flexibility brought by discretization was beneficial. The same phenomenon can be witnessed for categorical features on Figure~\ref{fig:csp} with real data from \gls{cacf}. On Figure~\ref{fig:csp_estim}, the \gls{lr} coefficients of the raw job types are displayed: none are significant and estimation variance is large. Grouping these levels results in narrower confidence intervals and significant \gls{lr} parameters as can be seen in Figure~\ref{fig:csp_estim_disc}.
 %As can be witnessed from Figure~\ref{fig:bic_sin} with a well-specified model (in \textcolor{blue}{blue}). 
 We formalize these empirical findings in the next section.
 
@@ -234,12 +234,12 @@ The space where quantizations $\q$ live (resp. $\gls{qj}$) will be denoted by $\
 
 \subparagraph{Equivalence of quantizations} \label{par:equiv}
 
-Let $\q^1$ and $\q^2$ in $\Q$ such that $\q^1 \mathcal{R}_{\gls{T}_n} \q^2 \equiv \forall i,j \; \q^1_j(\gls{xij}) = \q^2_j(\gls{xij})$. See Figure~\ref{fig:equiv} for an example.
+Let $\q^1$ and $\q^2$ in $\Q$ such that $\q^1 \mathcal{R}_{\gls{Tf}} \q^2 \equiv \forall i,j \; \q^1_j(\gls{xij}) = \q^2_j(\gls{xij})$. See Figure~\ref{fig:equiv} for an example.
 
-\subparagraph{Lemma} Relation $\mathcal{R}_{\gls{T}_n}$ defines an equivalence relation on $\Q$.
+\subparagraph{Lemma} Relation $\mathcal{R}_{\gls{Tf}}$ defines an equivalence relation on $\Q$.
 
 \begin{proof}
-Relation $\mathcal{R}_{\gls{T}_n}$ is trivially reflexive and symmetric because of the reflexive and symmetric nature of the equality relation in $\gls{R}$: $\forall i,j \; \q^1_j(\gls{xij}) = \q^1_j(\gls{xij})$ and $\forall i,j \; \q^1(\gls{xij}) = \q^2(\gls{xij})$. Similarly, let $\q^3 \in \Q$ such that $\q^1 \mathcal{R}_{\gls{T}_n} \q^3  \equiv \forall i,j \; \q^1_j(\gls{xij}) = \q^3_j(\gls{xij})$. Again, we immediately get $\forall i,j \; \q^2_j(\gls{xij}) = \q^3_j(\gls{xij})$, \textit{i.e.}\ $\q^2 \mathcal{R}_{\gls{T}_n} \q^3$ which proves the transitivity of $\mathcal{R}_{\gls{T}_n}$.
+Relation $\mathcal{R}_{\gls{Tf}}$ is trivially reflexive and symmetric because of the reflexive and symmetric nature of the equality relation in $\gls{R}$: $\forall i,j \; \q^1_j(\gls{xij}) = \q^1_j(\gls{xij})$ and $\forall i,j \; \q^1(\gls{xij}) = \q^2(\gls{xij})$. Similarly, let $\q^3 \in \Q$ such that $\q^1 \mathcal{R}_{\gls{Tf}} \q^3  \equiv \forall i,j \; \q^1_j(\gls{xij}) = \q^3_j(\gls{xij})$. Again, we immediately get $\forall i,j \; \q^2_j(\gls{xij}) = \q^3_j(\gls{xij})$, \textit{i.e.}\ $\q^2 \mathcal{R}_{\gls{Tf}} \q^3$ which proves the transitivity of $\mathcal{R}_{\gls{Tf}}$.
 \end{proof}
 
  \begin{figure}[!ht]
@@ -281,14 +281,14 @@ Relation $\mathcal{R}_{\gls{T}_n}$ is trivially reflexive and symmetric because 
 
  \end{tikzpicture}
 
-     \caption{On the sample $\gls{bbx}$ (blue points), the two discretization functions $\q^1$ and $\q^2$ (which respective unique cutpoint $c^1_1$ and $c^2_1$ are displayed in red) take the same value and are thus equivalent w.r.t. $\mathcal{R}_{\gls{T}_n}$.}
+     \caption{On the sample $\gls{bbx}$ (blue points), the two discretization functions $\q^1$ and $\q^2$ (which respective unique cutpoint $c^1_1$ and $c^2_1$ are displayed in red) take the same value and are thus equivalent w.r.t. $\mathcal{R}_{\gls{Tf}}$.}
      \label{fig:equiv}
  \end{figure}
 
 
 \subparagraph{Cardinality of the quantization family in the continuous case} ~\label{par:cardinality}
 
-For a continuous feature $x_j$, let $\gls{qj} \in \gls{bQjmj}$ and cutpoints $\boldsymbol{c}_j$. Without any loss of generality, \textit{i.e.}\ up to a relabelling on individuals $i$, it can be assumed that there are no empty intervals (all $m_j$ levels are observed) and consequently $\gls{mj}+1$ observations $x_{1,j},\dots,x_{\gls{mj}+1,j}$ s.t.\ $x_{1,j} < c_{j,1} < x_{2,j} < \dots < c_{\gls{mj}-1,1} < x_{\gls{mj}+1,j}$. Indeed, if for example there exists $k < \gls{mj} - 1$ s.t.\ $c_{j,k} < \dots < c_{j,\gls{mj}-1}$ and $\max_{1 \leq i \leq n} x_{i,j} < c_{j,k}$, then discretization $\q^{\text{bis}}_j \in \gls{bQ}_{j,k}$ with $k+1$ cutpoints $(-\infty,c_{j,1},\dots,c_{j,k-1},+\infty)$ is equivalent w.r.t.\ $\mathcal{R}_{\gls{T}_n}$ to $\gls{qj}$: $\forall i, \; \gls{qj}(x_{i,j}) = \q^{\text{bis}}_j(x_{i,j})$. A similar proof can be conducted with cutpoints below the minimum of $\gls{bx}_j$ or with several cutpoints in-between consecutive values of the observations. Subsequently, there are $\binom{n-1}{\gls{mj}-1}$ ways to construct $\bm{c}_j$, \textit{i.e.}\ equivalence classes $[\gls{qj}]$ for a fixed $\gls{mj} \leq n$. The number of intervals $\gls{mj}$ can range from $2$ (binarization) to $n$ (each $x_{i,j}$ is in its own interval, thus $\gls{qj}(x_{i,j}) \neq \gls{qj}(x_{i',j})$ for $i \neq i'$; ), so that the number of admissible discretizations of $\gls{bbx}_j$ is $|\gls{bQj}| = \sum_{i=2}^{n}$ ${n-1}\choose{i-1}$. Note that $|\gls{bQj}|$ depends on the number of observations $n$; we shall go back to this property in the following section.
+For a continuous feature $x_j$, let $\gls{qj} \in \gls{bQjmj}$ and cutpoints $\boldsymbol{c}_j$. Without any loss of generality, \textit{i.e.}\ up to a relabelling on individuals $i$, it can be assumed that there are no empty intervals (all $m_j$ levels are observed) and consequently $\gls{mj}+1$ observations $x_{1,j},\dots,x_{\gls{mj}+1,j}$ s.t.\ $x_{1,j} < c_{j,1} < x_{2,j} < \dots < c_{\gls{mj}-1,1} < x_{\gls{mj}+1,j}$. Indeed, if for example there exists $k < \gls{mj} - 1$ s.t.\ $c_{j,k} < \dots < c_{j,\gls{mj}-1}$ and $\max_{1 \leq i \leq n} x_{i,j} < c_{j,k}$, then discretization $\q^{\text{bis}}_j \in \gls{bQ}_{j,k}$ with $k+1$ cutpoints $(-\infty,c_{j,1},\dots,c_{j,k-1},+\infty)$ is equivalent w.r.t.\ $\mathcal{R}_{\gls{Tf}}$ to $\gls{qj}$: $\forall i, \; \gls{qj}(x_{i,j}) = \q^{\text{bis}}_j(x_{i,j})$. A similar proof can be conducted with cutpoints below the minimum of $\gls{bx}_j$ or with several cutpoints in-between consecutive values of the observations. Subsequently, there are $\binom{n-1}{\gls{mj}-1}$ ways to construct $\bm{c}_j$, \textit{i.e.}\ equivalence classes $[\gls{qj}]$ for a fixed $\gls{mj} \leq n$. The number of intervals $\gls{mj}$ can range from $2$ (binarization) to $n$ (each $x_{i,j}$ is in its own interval, thus $\gls{qj}(x_{i,j}) \neq \gls{qj}(x_{i',j})$ for $i \neq i'$; ), so that the number of admissible discretizations of $\gls{bbx}_j$ is $|\gls{bQj}| = \sum_{i=2}^{n}$ ${n-1}\choose{i-1}$. Note that $|\gls{bQj}|$ depends on the number of observations $n$; we shall go back to this property in the following section.
 
 
 \subparagraph{Cardinality of the quantization family in the categorical case}
@@ -478,7 +478,7 @@ From a statistical point of view,
 %as $\ag$ needs to diverge to infinity for $\q_{{\ag}}$ to approximate $\q$, the maximum likelihood estimator of $\ag$ does not converge. However, 
 provided the model is well-specified, \textit{i.e.}:
 \begin{equation} \label{eq:well_quant}
-\exists \q^\star, \gls{bth}^\star, \forall \gls{bx},\gls{y}, \; p(\gls{y} | \gls{bx}) = p_{\gls{bth}^\star}(\gls{y} | \gls{bx});
+\exists \q^\star, \gls{bth}^\star, \forall \gls{bx},\gls{y}, \; p(\gls{y} | \gls{bx}) = p_{\gls{bth}^\star}(\gls{y} | \q^\star(\gls{bx}));
 \end{equation}
 and under standard regularity conditions and with a suitable estimation procedure (see later for the proposed estimation procedure), the maximum likelihood framework would ensure the consistency of $(\q_{\hat{\ag}}, \hat{\gls{bth}})$ towards $(\q^\star,\gls{bth}^\star)$ if $\ag^\star$ s.t.\ $\q_{\ag^\star} = \q$ was an interior point of the parameter space $A$. However, as emphasized in the previous paragraph, ``$\ag^\star = + \infty$'' such that the maximum likelihood parameter is on the edge of the parameter space which hinders asymptotic properties (\textit{e.g.}\ normality) in some settings~\cite{10.2307/2289471}, but not ``convergence'' on which we focus here. We did not investigate this issue further since numerical experiments showed consistency: from an empirical point of view, we will see in Section~\ref{sec:experiments} and in particular in Figure~\ref{fig:MAP}, that the smooth approximation $\q_{\hat{\ag}}$ converges towards ``hard'' quantizations{\footnotemark[1]{}} $\q$.
 
@@ -624,15 +624,15 @@ Firstly, only the well-specified model case is considered. This hypothesis forma
 \begin{equation} \label{hyp:true}
 \exists \gls{bthstar}, \bqk^\star \text{s.t.\ } Y \sim p_{\gls{bthstar}}(\cdot | \bqk^\star).
 \end{equation}
-Secondly, the result of the quantization is assumed to be ``self-contained'' w.r.t.\ the predictive information in $\gls{bx}$, \textit{i.e.}\ it is assumed that all available information about $y$ in $\gls{bx}$ has been ``squeezed'' by quantizing the data:
+Secondly, the result of the quantization is assumed to be ``self-contained'' w.r.t.\ the predictive information in $\gls{bx}$, \textit{i.e.}\ it is assumed that, independently from the \gls{lr} modelling, all available information about $y$ in $\gls{bx}$ has been ``squeezed'' by quantizing the data, as explained in Section~\ref{subsec:embedding} and Figure~\ref{fig:nn}:
 \begin{equation} \label{hyp:squeeze}
 \forall \gls{bx},y,\: p(y|\gls{bx},\bqk) = p(y|\bqk).
 \end{equation}
-Thirdly, the component-wise nature of the quantization can be stated as a conditional independence assumption:
+Thirdly, the component-wise nature of the quantization can be stated as a conditional independence assumption asin Figure~\ref{fig:nn}:
 \begin{equation} \label{hyp:component}
 \forall \gls{bx},\bqk,\: p(\bqk|\gls{bx}) = \prod_{j=1}^d p(\bqk_j | \gls{x}_j).
 \end{equation}
-These two hypotheses are also implicitly assumed in the neural network approach by looking at the computational graph of Figure~\ref{fig:nn}.
+%These two hypotheses are also implicitly assumed in the neural network approach by looking at the computational graph of Figure~\ref{fig:nn}.
 
 
 \subsection{Continuous relaxation of the quantization as seen as fuzzy assignment} \label{subsec:fuzzy}
@@ -645,23 +645,25 @@ which is a step function. Rewriting $p(y| \gls{bx})$ by integrating over these n
 % and using hypotheses~\ref{hyp:true}, \ref{hyp:squeeze} and \ref{hyp:component} respectively, 
 we get:
 \begin{align*}
-p(y | \gls{bx}) & = p_{\gls{bthstar}}(y | \bqk^\star) & \text{ (using \eqref{hyp:true}) } \\
-& = \sum_{\bqk \in \bm{\mathfrak{Q}}_{\gls{bm}}} p(y, \bqk | \gls{bx}) \\
+p(y | \gls{bx}) & = \sum_{\bqk \in \bm{\mathfrak{Q}}_{\gls{bm}}} p(y, \bqk | \gls{bx}) \\
 & = \sum_{\bqk \in \bm{\mathfrak{Q}}_{\gls{bm}}} p(y | \bqk, \gls{bx}) p(\bqk | \gls{bx}) \\
 & = \sum_{\bqk \in \bm{\mathfrak{Q}}_{\gls{bm}}} p(y | \bqk) p(\bqk | \gls{bx}) & \text{ (using \eqref{hyp:squeeze}) } \\
 & = \sum_{\bqk \in \bm{\mathfrak{Q}}_{\gls{bm}}} p(y | \bqk) \prod_{j=1}^d p(\bqk_j | \gls{x}_j) & \text{ (using \eqref{hyp:component}). }
 \end{align*}
 This sum over $\bm{\mathfrak{Q}}_{\gls{bm}}$ is intractable.
 % given its cardinality calculated explicitly in Section~\ref{subsec:cardinality_quant}. 
-The well-specified model hypothesis~\eqref{hyp:true} yields for all $\gls{x}_j$, $p(\bqk_j^\star | \gls{x}_j) = 1$. Conversely, for $\bqk \in \Q$ such that $\bqk \cancel{\mathcal{R}_{\gls{T}_n}} \bqk^\star$, there exists a feature $j$ and an observation $\gls{xij}$ such that $p(\bqk_j | \gls{x}_j) = 0$. Consequently, the above sum, over all training observations in $\gls{T}_n$, reduces to:
+%The well-specified model hypothesis~\eqref{hyp:true} yields for all $\gls{x}_j$, $p(\bqk_j^\star | \gls{x}_j) = 1$. Conversely, for $\bqk \in \bm{\mathfrak{Q}}_{\gls{bm}}$ such that $\bqk \cancel{\mathcal{R}_{\gls{Tf}}} \bqk^\star$, there exists a feature $j$ and an observation $\gls{xij}$ such that $p(\bqk_j | \gls{x}_j) = 0$. Consequently, the above sum, over all training observations in $\gls{Tf}$, reduces to:
+The well-specified model hypothesis~\eqref{hyp:true} yields $p_{\gls{bthstar}}(y | \bqk^\star) = \sum_{\bqk \in \bm{\mathfrak{Q}}_{\gls{bm}}} p(y | \bqk) \prod_{j=1}^d p(\bqk_j | \gls{x}_j)$; we claim that if the quantizations are ``obvious'' given the data, \textit{i.e.}\ $p(\bqk^\star | \gls{bx}) \approx 1$, then the above sum reduces to $p_{\gls{bth}^\star}(y | \bqk^\star) \prod_{j=1}^d p(\bqk_j^\star | \gls{x}_j)$. The same reasoning over all training observations in $\gls{Tf}$ yields:
 \begin{align*}
 p(\gls{bby}_\f | \gls{bbx}_\f) & = \prod_{i=1}^n p(y_i | \gls{bx}_i) \\
- & = \sum_{\bqk \in \Q} \prod_{i=1}^n p(y_i | \bqk_i) \prod_{j=1}^d p(\bqk_{i,j} | \gls{xij}) \\
- & = \prod_{i=1}^n p(y_i | \bqk_i^\star) \prod_{j=1}^d p(\bqk_{i,j}^\star | \gls{xij})
+ & = \sum_{\bqk \in \bm{\mathfrak{Q}}_{\gls{bm}}} \prod_{i=1}^n p(y_i | \bqk_i) \prod_{j=1}^d p(\bqk_{i,j} | \gls{xij}) \\
+ & \approx \prod_{i=1}^n p_{\gls{bth}^\star}(y_i | \bqk_i^\star) \prod_{j=1}^d p(\bqk_{i,j}^\star | \gls{xij}).
 \end{align*}
 Thus, we have :
-\[ \bqk^\star = \argmax_{\bqk \in \Q} \prod_{i=1}^n p(y_i | \bqk_i ) \prod_{j=1}^d p(\bqk_{i,j} | \gls{xij}). \]
-This new formulation of the best quantization is still intractable since it requires to evaluate all quantizations in $\Q$ just like in~\eqref{eq:BICq}, although all terms except $\bqk^\star$ contribute to $0$ in the above $\argmax$. In the misspecfied model-case however, there is no such guarantee but it can still be claimed that the best candidate $\bqk^\star$ in terms of criterion~\eqref{eq:BICq} dominates the sum.
+\[ \bqk^\star \approx \argmax_{\gls{bth} \in \bm{\Theta}, \bqk \in \bm{\mathfrak{Q}}_{\gls{bm}}} \prod_{i=1}^n p_{\gls{bth}}(y_i | \bqk_i ) \prod_{j=1}^d p(\bqk_{i,j} | \gls{xij}). \]
+This new formulation of the best quantization is still intractable since it requires to evaluate all quantizations in $\bm{\mathfrak{Q}}_{\gls{bm}}$ (possibly for all $\gls{bm}$) just like in Equation~\eqref{eq:BICq}.
+%, although all terms except $\bqk^\star$ contribute to $0$ in the above $\argmax$. 
+In the misspecfied model-case however, there is no such simplification but it can still be claimed that the best candidate $\bqk^\star$ in terms of criterion~\eqref{eq:BICq} dominates the sum.
 
 Our goal in the next section is to generate good candidates $\bbqk$ as in Section~\ref{sec:estim}. Among other things detailed later on, models for $p(y | \bqk)$ and $p(\bqk_j | \gls{x}_j)$ shall be proposed. 
 A stochastic ``quantization provider'' is designed as in the previous section. Following arguments of the preceding paragraph, its empirical distribution of generated candidates shall be dominated by $\q^\star$,
@@ -684,7 +686,7 @@ which restricts the number of parameters since all levels $h$ share the same slo
 
 We parametrized $p(y|\gls{bx})$ as:
 \begin{equation}
-p(y | \gls{bx}; \gls{bth}, \ag) = \sum_{\bqk \in \Q} p_{\gls{bth}}(y | \bqk) \prod_{j=1}^d p_{\ag_j}(\bqk_j | \gls{bbx}_j)
+p(y | \gls{bx}; \gls{bth}, \ag) = \sum_{\bqk \in \Q} p_{\gls{bth}}(y | \bqk) \prod_{j=1}^d p_{\ag_j}(\bqk_j | \gls{bbx}_j).
 \end{equation}
 A straightforward way to maximize the likelihood of $p(y | \gls{bx}; \gls{bth}, \ag)$ in $(\gls{bth}, \ag)$ (not to be mistaken with~\eqref{eq:lqa}), as was done in Section~\ref{sec:proposal}, to deduce $\q^\star$ from $\ag$ \textit{via} the $\argmax$ operation (see Section~\ref{subsec:relaxation} and Equation~\eqref{eq:ht}), is to use an \gls{em} algorithm~\cite{dempster1977maximum}.
 
