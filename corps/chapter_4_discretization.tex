@@ -620,7 +620,7 @@ The main reason to resort to this formulation as a latent feature problem will b
 
 \subsection{Probabilistic assumptions regarding the quantization latent feature}
 
-Firstly, only the well-specified model case is considered. This hypothesis formalized in Equation~\eqaref{eq:well_quant} for the neural network approach, translates with this new latent feature as a probabilistic assumption:
+Firstly, only the well-specified model case is considered. This hypothesis formalized in Equation~\eqref{eq:well_quant} for the neural network approach, translates with this new latent feature as a probabilistic assumption:
 \begin{equation} \label{hyp:true}
 \exists \gls{bthstar}, \bqk^\star \text{s.t.\ } Y \sim p_{\gls{bthstar}}(\cdot | \bqk^\star).
 \end{equation}
@@ -693,7 +693,7 @@ A straightforward way to maximize the likelihood of $p(y | \gls{bx}; \gls{bth}, 
 However, maximizing this likelihood directly is intractable as the Expectation step requires to sum over $\bqk \in \bm{\mathfrak{Q}}_{\gls{bm}}$:
 
 \paragraph{E-step:}
-\[ t_{i,\bqk}^{(s)} = \frac{p_{\gls{bth}^{(s)}}(\gls{y}_i | \bqk) \prod_{j=1}^d p_{\ag_j^{(s)}}(\bqk_j | \gls{x}_{i,j})}{\sum_{\bqk ' \in \bm{\mathfrak{Q}}_{\gls{bm}}}} p_{\gls{bth}^{(s)}}(\gls{y}_i | \bqk ') \prod_{j=1}^d p_{\ag_j^{(s)}}(\bqk_j'  | \gls{x}_{i,j})}. \]
+\[ t_{i,\bqk}^{(s)} = \frac{p_{\gls{bth}^{(s)}}(\gls{y}_i | \bqk) \prod_{j=1}^d p_{\ag_j^{(s)}}(\bqk_j | \gls{x}_{i,j})}{\sum_{\bqk ' \in \bm{\mathfrak{Q}}_{\gls{bm}}}} p_{\gls{bth}^{(s)}}(\gls{y}_i | \bqk ') \prod_{j=1}^d p_{{\ag}_j^{(s)}}(\bqk_j {'}  | \gls{x}_{i,j}) \]
 
 Classically, the \gls{em} can be replaced by the \acrlong{sem}~\cite{celeux1985sem} algorithm: the expectation (the sum over $\bqk \in \bm{\mathfrak{Q}}_{\gls{bm}}$) is approximated by the empirical distribution (up to a normalization constant) of draws $\bqk^{(1)}, \dots, \bqk^{(S)}$ from $p_{\gls{bth}}(y | \cdot) \prod_{j=1}^d p_{\ag_j}(\cdot | \gls{x}_j)$.
 

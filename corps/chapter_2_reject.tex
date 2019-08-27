@@ -59,7 +59,7 @@ Over some cut-off value of the \gls{score}, the applicant is accepter, except if
 The through-the-door population (all applicants) can be classified into two categories thanks to a binary variable $z$ taking values in $\{\f,\nf\}$ where $\f$ stands for financed applicants (in \textcolor{green}{green} on Figure~\ref{fig:figure2}) and $\nf$ for not financed ones (in \textcolor{red}{red} on Figure~\ref{fig:figure2}). As the repayment variable $\gls{y}$ is unobserved for not financed applicants, credit scorecards are only constructed on financed clients' data but then applied to the whole  through-the-door population. The relevance of this process is a natural question which is dealt in the field of {reject inference}. The idea is to use the characteristics of not financed clients in the scorecard building process to avoid a population bias, and thus to improve the prediction on the whole through-the-door population. Such methods have been described in~\cite{RI6,saporta,banasik,economix}, and have also notably been investigated in~\cite{RI2} who first saw {reject inference} as a missing data problem. In~\cite{RI3}, the misspecified model case on real data is studied specifically and is also developed here.
 
 
-In fact, it can be considered as a part of the semi-supervised learning setting, which consists in learning from both labelled and unlabelled data. However, in the semi-supervised setting~\cite{Chapelle:2010:SL:1841234} it is generally assumed that labelled data and unlabelled data come from the same distribution, which is rarely the case in \textit{Credit Scoring}. Moreover, the main use case of semi-supervised learning is when the number of unlabelled data is far larger than the number of labelled data, which is not the case in \textit{Credit Scoring} since the number of rejected clients and accepted clients is often balanced and depends heavily on the financial institution, the portfolio considered, \textit(etc}.
+In fact, it can be considered as a part of the semi-supervised learning setting, which consists in learning from both labelled and unlabelled data. However, in the semi-supervised setting~\cite{Chapelle:2010:SL:1841234} it is generally assumed that labelled data and unlabelled data come from the same distribution, which is rarely the case in \textit{Credit Scoring}. Moreover, the main use case of semi-supervised learning is when the number of unlabelled data is far larger than the number of labelled data, which is not the case in \textit{Credit Scoring} since the number of rejected clients and accepted clients is often balanced and depends heavily on the financial institution, the portfolio considered, \textit{etc}.
 
 
 The purpose of the present chapter is twofold: a clarification of which mathematical hypotheses, if any, underlie those reject inference methods and a clear conclusion on their relevance. In Section~\ref{sec:criteres}, we present a criterion to assess a method's performance and discuss missingness mechanisms that characterize the relationship of $\gls{z}$ with respect to $\gls{bx}$ and $\gls{y}$. In Section~\ref{sec:methods_reject}, we go through some of the most common reject inference methods and exhibit their mathematical properties. 
@@ -175,6 +175,31 @@ The second restriction to \gls{mnar} is the \glsfirst{mar} setting, meaning that
 \end{equation}
 with $\ell(\gls{bth};\gls{Tf})=\sum_{i\in\gls{F}}\ln p_{\gls{bth}}(\gls{y}_i | \gls{bx}_i)$.
 Combining it with the ignorable assumption, estimation of $\gls{bth}$ relies only on the first part $\ell(\gls{bth};\gls{Tf})$, since the value $\gls{phi}$ has no influence on~$\gls{bth}$. In that case, invoking an EM algorithm due to missing data $\gls{y}$ is no longer required as will be made explicit in Section~\ref{subsec:strat1}.
+In practice, if there are other features $\tilde{\gls{bx}}$ that are either present in the preceding scorecard or that are available to manual operators that influence the outcome $\gls{y}$ (see Figures \ref{fig:figure1} and \ref{fig:mar}), a \gls{mnar} missingness mechanism has to be assumed. However, as is generally assumed in Credit Scoring, the \gls{mar} mechanism can be safely hypothesized since features used in the scorecards do not differ much (all available features are usually retained) and lots of portfolios (\textit{e.g.}\ for low amounts) have almost-automatic acceptance rules (such that manual operators follow the decision of the scorecards and only control the adequacy between declarative features $\gls{bx}$ and supporting documents).
+
+\begin{figure}
+\begin{centering}
+\begin{tikzpicture}
+ 
+\tikzset{vertex/.style = {shape=circle,draw,minimum size=1.5em}}
+\tikzset{edge/.style = {->,> = latex'}}
+% vertices
+\node[vertex] (y) at  (0,0) {$\gls{y}$};
+\node[vertex] (x) at  (2,0) {$\gls{bx}$};
+\node[vertex] (xc) at  (2,1) {$\tilde{\gls{bx}}$};
+\node[vertex] (z) at (4,0) {$\gls{z}$};
+ 
+edges
+\draw[edge] (y) to (x);
+\draw[edge] (xc) to (x);
+\draw[edge] (xc) to (z);
+\draw[edge] (x) to (z);
+\draw[dashed] (y) to (xc);
+ 
+\end{tikzpicture}
+\end{centering}
+\caption{\label{fig:mar} Dependencies between random variables $\gls{y}$, $\tilde{\gls{bx}}$, $\gls{bx}$ and $\gls{z}$}
+\end{figure}
 
 \subsection{Model selection} \label{subsec:model_selection}
 
