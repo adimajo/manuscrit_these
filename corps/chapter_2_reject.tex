@@ -178,7 +178,7 @@ Combining it with the ignorable assumption, estimation of $\gls{bth}$ relies onl
 In practice, if there are other features $\tilde{\gls{bx}}$ that are either present in the preceding scorecard or that are available to manual operators that influence the outcome $\gls{y}$ (see Figures \ref{fig:figure1} and \ref{fig:mar}), a \gls{mnar} missingness mechanism has to be assumed. However, as is generally assumed in Credit Scoring, the \gls{mar} mechanism can be safely hypothesized since features used in the scorecards do not differ much (all available features are usually retained) and lots of portfolios (\textit{e.g.}\ for low amounts) have almost-automatic acceptance rules (such that manual operators follow the decision of the scorecards and only control the adequacy between declarative features $\gls{bx}$ and supporting documents).
 
 \begin{figure}
-\begin{centering}
+\begin{center}
 \begin{tikzpicture}
  
 \tikzset{vertex/.style = {shape=circle,draw,minimum size=1.5em}}
@@ -197,7 +197,7 @@ edges
 \draw[dashed] (y) to (xc);
  
 \end{tikzpicture}
-\end{centering}
+\end{center}
 \caption{\label{fig:mar} Dependencies between random variables $\gls{y}$, $\tilde{\gls{bx}}$, $\gls{bx}$ and $\gls{z}$}
 \end{figure}
 
