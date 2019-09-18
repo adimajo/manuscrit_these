@@ -2,8 +2,8 @@
 
 # Mon manuscrit de thèse
 
-Modèles prédictifs pour données volumineuses et biaisées  
-Application à l’amélioration du scoring en risque de crédit
+Formalisation et étude de problématiques de scoring en risque de crédit
+Inférence de rejet, discrétisation de variables et interactions, arbres de régression logistique
 
 Thèse de Doctorat en Mathématiques et leurs interactions de l'Université de Lille, Spécialité Statistique  
 Soutenue le ...  
@@ -28,8 +28,8 @@ Le fichier `these.pdf` est ainsi obtenu.
 
 # My PhD thesis
 
-Predictive models for big and biased data  
-Application to Credit Scoring
+Formalization and study of statistical problems in Credit Scoring
+Reject inference, discretization and pairwise interactions, logistic regression trees
 
 PhD of Applied Mathematics from the University of Lille, Speciality Statistics  
 Thesis defended on ...  
