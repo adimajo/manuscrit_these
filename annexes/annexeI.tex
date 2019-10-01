@@ -12,7 +12,7 @@ Fuzzy augmentation can be found in \cite{economix}; it is the following procedur
 \begin{enumerate}
 \item Construct Scorecard ``Known Good Bad'' (KGB) $\hat{\gls{bth}}_\f$ with financed clients' data (Figure \ref{fuzzy:sfig1});
 \item Calculate $p_{\hat{\gls{bth}}_{\f}}(1|\gls{bbx}_{\nf})$ for rejects (Figure \ref{fuzzy:sfig2});
-\item Infer rejected client $i$ as good with weight $p_{\hat{\gls{bth}}_{\text{f}}}(1|\gls{bbx}_{\nf})$ and as bad with weight {\begin{sloppypar} $1-p_{\hat{\gls{bth}}_{\text{f}}}(1|\gls{bbx}_{\nf})$ (Figures \ref{fuzzy:sfig2} and \ref{fuzzy:sfig3}) \end{sloppypar} };
+\item Infer rejected client $i$ as good with weight $p_{\hat{\gls{bth}}_{\text{f}}}(1|\gls{bbx}_{\nf})$ and as bad with weight {\begin{sloppypar} $1-p_{\hat{\gls{bth}}_{\text{f}}}(1|\gls{bbx}_{\nf})$ (Figures \ref{fuzzy:sfig2} and \ref{fuzzy:sfig3}) ; \end{sloppypar} }
 \item Calibrate a new scorecard with the ``augmented'' dataset (Figure \ref{fuzzy:sfig4}).
 \end{enumerate}
 
@@ -115,10 +115,10 @@ Fuzzy augmentation can be found in \cite{economix}; it is the following procedur
 
 Clearly:
 
-\[ \forall j = 1, \ldots, d, \: \frac{\partial \sum_{i=n+1}^{m+n} \sum_{y_i = 0}^{1} p_{\hat{\gls{bth}}_\f}(\gls{y}_i| \gls{bx}_i)\ln (p_{\gls{bth}}(\gls{y}_i| \gls{bx}_i))}{\partial \theta_j} = 0 \Leftrightarrow \theta = \hat{\gls{bth}}_{\f}, \]
+\[ \forall j = 1, \ldots, d, \: \frac{\partial \sum_{i=n+1}^{n'+n} \sum_{y_i = 0}^{1} p_{\hat{\gls{bth}}_\f}(\gls{y}_i| \gls{bx}_i)\ln (p_{\gls{bth}}(\gls{y}_i| \gls{bx}_i))}{\partial \theta_j} = 0 \Leftrightarrow \theta = \hat{\gls{bth}}_{\f}, \]
 
 such that:
-\[\argmax_{\gls{bth} \in \Theta}  \sum_{i=n+1}^{m+n} \sum_{y_i = 0}^{1} p_{\hat{\gls{bth}}_{\f}}(y_i| \gls{bx}_i)\ln (p_{\gls{bth}}(y_i| \gls{bx}_i)) = \hat{\gls{bth}}_{\f},\]
+\[\argmax_{\gls{bth} \in \Theta}  \sum_{i=n+1}^{n'+n} \sum_{y_i = 0}^{1} p_{\hat{\gls{bth}}_{\f}}(y_i| \gls{bx}_i)\ln (p_{\gls{bth}}(y_i| \gls{bx}_i)) = \hat{\gls{bth}}_{\f},\]
 
 and finally:
 \[\argmax_{\gls{bth} \in \Theta} \ell(\gls{bth};\mathcal{T}_{c}) = \argmax_{\gls{bth} \in \Theta} \ell(\gls{bth};\gls{Tf}) = \hat{\gls{bth}}_{\f}. \]
